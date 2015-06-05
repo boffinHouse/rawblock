@@ -1,0 +1,35 @@
+/*********************************************************
+
+b-logo
+----------------------------------------------------------
+Main logo of the website
+**********************************************************/
+.rb-logo {
+	//Global Style
+	position: relative;
+
+	> .logo-inner {
+		@extend %flexbox-wrap;
+		align-items: center;
+		min-height: 55px;
+		width: 100%;
+		height: 100%;
+	}
+
+	.logo-image {
+		display: none;
+	}
+
+	.logo-title {
+		@extend %hide-text;
+		position: absolute;
+		top: 0;
+		bottom: 5px;
+		left: 0;
+		height: 45px;
+		width: 85px;
+		margin: auto;
+		background: url(../img/rawblock.svg) no-repeat 0 0;
+		background-size: 100% 100%;
+	}
+}

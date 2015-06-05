@@ -1,0 +1,9 @@
+// Hide elements in sake of accessibility
+%aural {
+	display: block;
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}

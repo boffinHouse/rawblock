@@ -1,0 +1,190 @@
+// ====================================================================
+//  Generate Grid
+//
+//  variable:
+//  Dependency: [
+//      col-generator
+//  ]
+//=====================================================================
+@mixin generate-grid ($breakpoints) {
+
+	//Styles breakpoints
+	@each $breakpoint in $breakpoints {
+		$class-name:        nth($breakpoint, 1);
+		$breakpoint-media:  nth($breakpoint, 2);
+		$gutter:           nth($breakpoint, 3);
+
+		@media #{$breakpoint-media} {
+			@include column-generator($class-name);
+			@include get-gutter-values($class-name, $gutter);
+			@include order-generator($class-name, 10);
+		}
+	}
+}
+
+// ====================================================================
+//  Generate Grid
+//
+//  variable:
+//  Dependency: [
+//      column-generator
+//  ]
+//=====================================================================
+@mixin get-gutter-values($class-name, $gutter) {
+	$value-lenght: length($gutter);
+
+	@for $i from 1 through $value-lenght {
+		$gutter-vertical: nth($gutter, 1);
+		$gutter-horizontal: nth($gutter, 2);
+		@include col-gutter-generator($class-name, $gutter-vertical, $gutter-horizontal);
+	}
+
+}
+
+@mixin col-gutter-generator($class-name, $gutter-vertical, $gutter-horizontal) {
+
+	.col-group {
+
+		&.is-gutter {
+			padding: 0 $gutter-horizontal;
+
+			.col {
+				padding: $gutter-vertical $gutter-horizontal;
+			}
+		}
+
+		&.is-gutter-vertical {
+
+			.col {
+				padding: $gutter-vertical 0;
+			}
+		}
+
+		&.is-gutter-horizontal {
+
+			.col {
+				padding: 0 $gutter-horizontal;
+			}
+		}
+
+		.col-group {
+			margin: 0 -$gutter-horizontal;
+		}
+	}
+}
+// ====================================================================
+//  Order Generator
+//
+//  variable:
+//  Dependency: [
+//
+//  ]
+//=====================================================================
+@mixin order-generator($class-name, $amount) {
+	$i: 1;
+
+	.col {
+		@while $i <= $amount {
+
+			@if $class-name == 'all' {
+				&.is-order-#{$i} {
+					order: #{$i};
+				}
+			}
+			@else {
+				&.is-order-#{$i}-#{$class-name} {
+					order: #{$i}
+				}
+			}
+
+			$i: $i + 1;
+		}
+	}
+}
+
+// ====================================================================
+//  Column Generator
+//
+//  variable:
+//  Dependency: [
+//      column-generator
+//  ]
+//=====================================================================
+@mixin column-generator($class-name) {
+
+	$i: 5;
+	$steps: 5;
+
+	.col {
+
+		// The default col size. Counts for all screens.
+		// The size has no className identifer.
+		@if $class-name == "all" {
+
+			@while $i <= 100 {
+				//
+				@if $i > 30 and $i <= 35 {
+					&.is-size-33 {
+						width: 33.33%;
+					}
+				}
+
+				// generate the 66% width
+				@if $i > 65 and $i <= 70 {
+					&.is-size-66 {
+						width: 66.66%;
+					}
+				}
+
+				// generate the 16% width
+				@if $i > 15 and $i <= 20 {
+					&.is-size-16 {
+						width: 16.66%;
+					}
+				}
+
+				// generate the 5% step widths
+				&.is-size-#{$i} {
+					width: $i * 1%;
+				}
+
+				// increment the counter
+				$i: $i + $steps;
+			}
+
+		} @else {
+
+			@while $i <= 100 {
+				// create width: 33%
+				@if $i > 30 and $i <= 35 {
+					&.is-size-33-#{$class-name} {
+						width: 33.33%;
+					}
+				}
+
+				// create width: 66%
+				@if $i > 65 and $i <= 70 {
+					&.is-size-66-#{$class-name} {
+						width: 66.66%;
+					}
+				}
+
+				// create width: 16%
+				@if $i > 15 and $i <= 20 {
+					&.is-size-16-#{$class-name} {
+						width: 16.66%;
+					}
+				}
+
+				// create
+				&.is-size-#{$i}-#{$class-name} {
+					width: $i * 1%;
+				}
+
+				// increment the counter
+				$i: $i + $steps;
+			}
+		}
+
+	}
+}
