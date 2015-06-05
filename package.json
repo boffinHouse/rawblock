@@ -2,6 +2,7 @@
   "name": "Rohbau",
   "description": "An easy to use flexible grid framework",
   "version": "0.1.0",
+  "private": true,
   "author": {
     "name": "jeroen smit",
     "email": "jeroen@boffinhouse.com",
@@ -17,7 +18,9 @@
     "assemble": "~0.4.42",
     "grunt": "^0.4.5",
     "grunt-autoprefixer": "^1.0.1",
+    "babelify": "^6.1.1",
     "grunt-bg-shell": "*",
+    "grunt-browserify": "^3.8.0",
     "grunt-concurrent": "~0.4.2",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-connect": "~0.5.0",

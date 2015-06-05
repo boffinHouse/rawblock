@@ -84,7 +84,7 @@
 			'copy:favicon',
 			//'copy:fonts',
 			//'copy:icon_sprite',
-			'copy:js',
+			'browserify',
 			//'copy:modernizr',
 			//'uglify',
 			'prettify:dist'
