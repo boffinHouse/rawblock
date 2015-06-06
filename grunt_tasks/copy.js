@@ -17,10 +17,4 @@ module.exports = {
 	//	expand: true,
 	//	src: ['**/*']
 	//},
-	js: {
-		cwd: '<%= paths.src %>/js/',
-		dest: '<%= paths.dist %>/js/',
-		expand: true,
-		src: ['**/*']
-	}
 };

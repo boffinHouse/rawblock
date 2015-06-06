@@ -37,9 +37,9 @@ module.exports = {
 		files: ['<%= paths.src %>/img/{,*/}*.{svg, png, jpg}'],
 		tasks: ['sync:js']
 	},
-	sync_js: {
-		files: ['<%= paths.src %>/js/{,*/}*.js'],
-		tasks: ['sync:js']
+	js: {
+		files: ['<%= paths.src %>/js/**/*.js'],
+		tasks: ['browserify']
 	},
 	templates: {
 		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}'],

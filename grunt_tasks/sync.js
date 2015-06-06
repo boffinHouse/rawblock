@@ -6,15 +6,6 @@
  * {@link} https://github.com/tomusdrw/grunt-sync
  */
 module.exports = {
-	js: {
-		files: [
-			{
-				cwd: '<%= paths.src %>/js/',
-				dest: '<%= paths.dist %>/js/',
-				src: ['**/*']
-			}
-		]
-	},
 	favicon: {
 		files: [
 			{
