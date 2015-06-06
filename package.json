@@ -1,14 +1,21 @@
 {
-  "name": "Rohbau",
-  "description": "An easy to use flexible grid framework",
+  "name": "RawBlock",
+  "description": "The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces. ",
   "version": "0.1.0",
-  "author": {
-    "name": "jeroen smit",
-    "email": "jeroen@boffinhouse.com",
-    "url": "http://github.com/j-smit"
-  },
+  "author": [
+    {
+      "name": "jeroen smit",
+      "email": "jeroen@boffinhouse.com",
+      "url": "http://github.com/j-smit"
+    },
+    {
+      "name": "Alexander Farkas",
+      "email": "alex@boffinhouse.com",
+      "url": "http://github.com/afarkas"
+    },
+  ],
   "engines": {
-    "node": ">=0.8"
+    "node": ">=0.11"
   },
   "scripts": {
     "test": "grunt test"
