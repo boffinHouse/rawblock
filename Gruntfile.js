@@ -50,6 +50,7 @@
 			'concurrent:dev2',
 			'autoprefixer:dev',
 			//'concat:dev',
+			'browserify:dev',
 			'sync',
 			'prettify:dev'
 		]);
@@ -82,9 +83,9 @@
 			//'concat:dist',
 			//'copy:ajax',
 			'copy:favicon',
+			'browserify:dist',
 			//'copy:fonts',
 			//'copy:icon_sprite',
-			'browserify',
 			//'copy:modernizr',
 			//'uglify',
 			'prettify:dist'

@@ -9,7 +9,6 @@ Main logo of the website
 	position: relative;
 
 	> .logo-inner {
-		@extend %flexbox-wrap;
 		align-items: center;
 		min-height: 55px;
 		width: 100%;
@@ -22,12 +21,8 @@ Main logo of the website
 
 	.logo-title {
 		@extend %hide-text;
-		position: absolute;
-		top: 0;
-		bottom: 5px;
-		left: 0;
-		height: 45px;
-		width: 85px;
+		height: 100px;
+		width: 100px;
 		margin: auto;
 		background: url(../img/rawblock.svg) no-repeat 0 0;
 		background-size: 100% 100%;
