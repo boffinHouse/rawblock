@@ -1,8 +1,13 @@
-(function (window) {
+(function(window, factory) {
+	var life = factory(window, window.document);
+	window.rbLife = life;
+	if(typeof module == 'object' && module.exports){
+		module.exports = life;
+	}
+}(typeof window != 'undefined' ? window : this , function(window, document) {
 	'use strict';
 
-	var elements, useMutationEvents;
-	var document = window.document;
+	var elements, useMutationEvents, timer;
 	var docElem = document.documentElement;
 
 	var life = {};
@@ -13,6 +18,7 @@
 
 	life.init = function(options){
 		if (elements) {throw('only once');}
+		clearTimeout(timer);
 
 		if (options) {
 			initClass = options.initClass || initClass;
@@ -25,6 +31,7 @@
 		life.batch = life.createBatch();
 
 		life.initObserver();
+		life.throttledFindElements();
 	};
 
 	life.camelCase = (function() {
@@ -263,6 +270,5 @@
 		}
 	};
 
-	window.rbLife = life;
-
-})( typeof window != 'undefined' ? window : this );
+	timer = setTimeout(life.init);
+}));

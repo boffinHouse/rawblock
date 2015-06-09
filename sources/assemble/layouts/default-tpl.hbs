@@ -6,9 +6,11 @@
 		{{> app-icons }}
 		{{> polyfill-script }}
 		{{> styles }}
-		<script src="js/head-async.js" async=""></script>
+		<link rel="subresource" href="js/body-async.js" />
+		<link rel="prefetch" href="js/body-async.js" />
+
 		<!--
-		<script src="js/head-sync.js"></script>
+		<script src="js/head.js"></script>
 		-->
 	</head>
 	<body>
@@ -22,6 +24,7 @@
 			{{> rb-page-footer }}
 		</div>
 
+		<script src="js/body-async.js" async=""></script>
 	</body>
 	
 </html>
