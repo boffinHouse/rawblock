@@ -6,7 +6,10 @@
 		{{> app-icons }}
 		{{> polyfill-script }}
 		{{> styles }}
-		<script src="js/head.js"></script>
+		<script src="js/head-async.js" async=""></script>
+		<!--
+		<script src="js/head-sync.js"></script>
+		-->
 	</head>
 	<body>
 		<div class="rb-page-wrapper">
@@ -19,7 +22,6 @@
 			{{> rb-page-footer }}
 		</div>
 
-		<script src="js/body.js"></script>
 	</body>
 	
 </html>

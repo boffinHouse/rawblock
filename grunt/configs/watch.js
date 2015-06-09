@@ -39,7 +39,7 @@ module.exports = {
 	},
 	js: {
 		files: ['<%= paths.src %>/js/**/*.js'],
-		tasks: ['newer:browserify:dev']
+		tasks: ['browserify:dev'] //newer:
 	},
 	templates: {
 		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}'],

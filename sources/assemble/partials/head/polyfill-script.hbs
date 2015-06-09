@@ -1,5 +1,7 @@
 <script>
-	if(!window.MutationObserver){
-		document.write('<script src="js/polyfill.js"><\/script>');
-	}
+	(function(docElem){
+		if(!window.MutationObserver || !docElem.closest || !docElem.before){
+			document.write('<script src="js/polyfill.js"><\/script>');
+		}
+	})(document.documentElement);
 </script>

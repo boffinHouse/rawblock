@@ -8,7 +8,7 @@
 		// Project settings
 		var options = {
 			config: {
-				src: "grunt_tasks/*.js" //config tasks
+				src: "grunt/configs/*.js" //config tasks
 			},
 			// define your path structure
 			paths: {
@@ -17,7 +17,7 @@
 				dist: 'dist', // Production folder
 				tmp: 'tmp',
 				// helpers folder with grunt tasks
-				helper: 'grunt_tasks'
+				helper: 'grunt/configs'
 			},
 			// define your ports for grunt-contrib-connect
 			ports: {
@@ -27,9 +27,13 @@
 			}
 		};
 
+		grunt._rbOptions = options;
+
 		// Load grunt configurations automatically
 		var configs = require('load-grunt-configs')(grunt, options);
 		grunt.initConfig(configs);
+
+		grunt.task.loadTasks('grunt/tasks');
 
 
 		// Default standard build Task
@@ -90,50 +94,6 @@
 			//'uglify',
 			'prettify:dist'
 		]);
-
-
-		// task to generate styles.scss without sass-globbing
-		grunt.registerTask('generate-tmp-styles-scss', 'Generate styles tmp file', function () {
-			var resultContent = grunt.file.read(options.paths.src +'/sass/_styles-config.scss');
-
-			//get rid of ../../-prefix, since libsass does not support them in @import-statements+includePaths option
-			resultContent = resultContent.replace(/\"\.\.\/\.\.\//g, '"');
-
-			var importMatches = resultContent.match(/^@import.+\*.*$/mg);
-
-			if (importMatches) {
-				importMatches.forEach(function(initialMatch) {
-					// remove all " or '
-					var match = initialMatch.replace(/["']/g,'');
-					// remove the preceeding @import
-					match = match.replace(/^@import/g,'');
-					// lets get rid of the final ;
-					match = match.replace(/;$/g,'');
-					// remove all whitespaces
-					match = match.trim();
-
-					// get all files, which match this pattern
-					var files = grunt.file.expand(
-						{
-							'cwd': options.paths.src+'/sass/',
-							'filter': 'isFile'
-						},
-						match
-					);
-
-					var replaceContent = [];
-
-					files.forEach(function(matchedFile)
-					{
-						replaceContent.push('@import "' + matchedFile + '";');
-					});
-
-					resultContent = resultContent.replace(initialMatch, replaceContent.join("\n"));
-				});
-			}
-			grunt.file.write(options.paths.src +'/sass/styles.scss', resultContent);
-		});
-
 
 	};
 
