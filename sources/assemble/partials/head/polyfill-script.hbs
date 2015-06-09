@@ -1,7 +1,7 @@
 <script>
 	(function(docElem){
-		if(!window.MutationObserver || !docElem.closest || !docElem.before){
-			document.write('<script src="js/polyfill.js"><\/script>');
+		if(!window.fetch || !docElem.closest || !String.prototype.includes){ // || !docElem.before || !docElem.queryAll || !Array.prototype.find
+			document.write('<script src="js/polyfills.js"><\/script>');
 		}
 	})(document.documentElement);
 </script>
