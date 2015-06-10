@@ -271,4 +271,6 @@
 	};
 
 	timer = setTimeout(life.init);
+
+	return life;
 }));
