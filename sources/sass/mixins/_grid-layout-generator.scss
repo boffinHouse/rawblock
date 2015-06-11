@@ -116,7 +116,6 @@
 	$steps: 5;
 
 	.col {
-
 		// The default col size. Counts for all screens.
 		// The size has no className identifer.
 		@if $class-name == "all" {

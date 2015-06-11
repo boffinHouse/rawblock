@@ -1,16 +1,17 @@
 (function(window, factory) {
 	var dom = factory(window, window.document);
-
+	window.dom = dom;
 	if(typeof module == 'object' && module.exports){
 		module.exports = dom;
-	} else {
-		window.dom = dom;
 	}
 }(typeof window != 'undefined' ? window : this , function(window, document) {
 	'use strict';
 	var slice = [].slice;
 	var dom = function(elements){
 
+		if(typeof elements == 'string'){
+			return dom.q(elements);
+		}
 		if(!this){
 			return new dom(elements);
 		}

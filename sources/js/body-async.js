@@ -5,4 +5,9 @@ import templates from './templates';
 templates.call(window, Handlebars);
 */
 
+import './libs/dom';
+import './libs/rb-life';
+
+import './modules/dialog';
+
 
