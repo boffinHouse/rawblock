@@ -187,3 +187,35 @@
 
 	}
 }
+
+
+// ====================================================================
+//  Respond-to
+//
+//
+//  Credits https://github.com/nikita-kit/nikita-css/blob/master/mixins/_respond-to.scss
+//=====================================================================
+@mixin respond-to($medias...) {
+	$breakpoints-length: length($breakpoints);
+
+	@each $media in $medias {
+		$had-a-hit: false;
+
+		@for $i from 1 through $breakpoints-length {
+			$breakpoint: nth($breakpoints, $i);
+
+			@if $media == nth($breakpoint, 1) {
+				$definition: nth($breakpoint, 2);
+				$had-a-hit: true;
+
+				@media #{$definition} {
+					@content;
+				}
+			}
+		}
+
+		@if $had-a-hit == false {
+			@warn "Media #{media} not found!";
+		}
+	}
+}
