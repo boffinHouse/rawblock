@@ -37,6 +37,10 @@ module.exports = {
 		files: ['<%= paths.src %>/img/{,*/}*.{svg, png, jpg}'],
 		tasks: ['sync:js']
 	},
+	clienthbs: {
+		files: ['<%= paths.src %>/assemble/**/*-hybrid.hbs', '<%= paths.src %>/hbs/**/*.hbs'],
+		tasks: ['handlebars:dev']
+	},
 	js: {
 		files: ['<%= paths.src %>/js/**/*.js'],
 		tasks: ['browserify:dev'] //newer:
@@ -44,5 +48,5 @@ module.exports = {
 	templates: {
 		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}'],
 		tasks: ['newer:assemble:dev', 'prettify:dev']
-	}
+	},
 };
