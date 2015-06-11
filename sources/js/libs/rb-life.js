@@ -101,7 +101,10 @@
 
 		life._behaviors[ name ] = lifeClass;
 
-		if ( !noCheck && elements ) {
+		if ( !noCheck ) {
+			if(!elements && !timer){
+				timer = setTimeout(life.init);
+			}
 			life.throttledFindElements();
 		}
 	};
@@ -260,7 +263,7 @@
 				return function(e){
 					if (!mutation.removedNodes) {
 						mutation.removedNodes = [];
-						setTimeout(run, 19);
+						setTimeout(run, 9);
 					}
 					if (e.target.nodeType == 1) {
 						mutation.removedNodes.push(e.target);
@@ -269,8 +272,6 @@
 			})());
 		}
 	};
-
-	timer = setTimeout(life.init);
 
 	return life;
 }));
