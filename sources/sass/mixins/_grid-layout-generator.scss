@@ -7,6 +7,7 @@
 //  ]
 //=====================================================================
 @mixin generate-grid ($breakpoints) {
+	$order-genenator-amount: 5;
 
 	//Styles breakpoints
 	@each $breakpoint in $breakpoints {
@@ -14,11 +15,22 @@
 		$breakpoint-media:  nth($breakpoint, 2);
 		$gutter:           nth($breakpoint, 3);
 
-		@media #{$breakpoint-media} {
+		@if $class-name == 'all' {
+
 			@include column-generator($class-name);
 			@include get-gutter-values($class-name, $gutter);
-			@include order-generator($class-name, 10);
+			@include order-generator($class-name, $order-genenator-amount);
+
+		} @else {
+
+			@media #{$breakpoint-media} {
+				@include column-generator($class-name);
+				@include get-gutter-values($class-name, $gutter);
+				@include order-generator($class-name, $order-genenator-amount);
+			}
+
 		}
+
 	}
 }
 
@@ -114,76 +126,47 @@
 
 	$i: 5;
 	$steps: 5;
+	@if $class-name == 'all' {
+		$column-type: '';
+	} @else {
+		$column-type: '-' + $class-name;
+	}
 
 	.col {
 		// The default col size. Counts for all screens.
-		// The size has no className identifer.
-		@if $class-name == "all" {
 
-			@while $i <= 100 {
-				//
-				@if $i > 30 and $i <= 35 {
-					&.is-size-33 {
-						width: 33.33%;
-					}
+
+		@while $i <= 100 {
+			// create width: 33%
+			@if $i > 30 and $i <= 35 {
+				&.is-size-33#{$column-type} {
+					width: 33.33%;
 				}
-
-				// generate the 66% width
-				@if $i > 65 and $i <= 70 {
-					&.is-size-66 {
-						width: 66.66%;
-					}
-				}
-
-				// generate the 16% width
-				@if $i > 15 and $i <= 20 {
-					&.is-size-16 {
-						width: 16.66%;
-					}
-				}
-
-				// generate the 5% step widths
-				&.is-size-#{$i} {
-					width: $i * 1%;
-				}
-
-				// increment the counter
-				$i: $i + $steps;
 			}
 
-		} @else {
-
-			@while $i <= 100 {
-				// create width: 33%
-				@if $i > 30 and $i <= 35 {
-					&.is-size-33-#{$class-name} {
-						width: 33.33%;
-					}
+			// create width: 66%
+			@if $i > 65 and $i <= 70 {
+				&.is-size-66#{$column-type} {
+					width: 66.66%;
 				}
-
-				// create width: 66%
-				@if $i > 65 and $i <= 70 {
-					&.is-size-66-#{$class-name} {
-						width: 66.66%;
-					}
-				}
-
-				// create width: 16%
-				@if $i > 15 and $i <= 20 {
-					&.is-size-16-#{$class-name} {
-						width: 16.66%;
-					}
-				}
-
-				// create
-				&.is-size-#{$i}-#{$class-name} {
-					width: $i * 1%;
-				}
-
-				// increment the counter
-				$i: $i + $steps;
 			}
+
+			// create width: 16%
+			@if $i > 15 and $i <= 20 {
+				&.is-size-16#{$column-type} {
+					width: 16.66%;
+				}
+			}
+
+			// create
+			&.is-size-#{$i}#{$column-type} {
+				width: $i * 1%;
+			}
+
+			// increment the counter
+			$i: $i + $steps;
 		}
+
 
 	}
 }
@@ -208,9 +191,14 @@
 				$definition: nth($breakpoint, 2);
 				$had-a-hit: true;
 
-				@media #{$definition} {
+				@if $media == 'all' {
 					@content;
+				} @else {
+					@media #{$definition} {
+						@content;
+					}
 				}
+
 			}
 		}
 

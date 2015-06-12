@@ -3,7 +3,7 @@
 //arg1 = classname,
 //arg2 = media-query,
 $breakpoints: (
-	('all', '', (20px 20px) ), //styling for all screens
+	('all', 'all', (20px 20px) ), //styling for all screens
 	('l',  'screen and (min-width: 1240px)', (20px 20px) ),
 	('m', 'screen and (min-width: 569px) and (max-width: 1239px)', (10px 10px) ),
 	('s', 'screen and (max-width: 568px)', (5px 5px) )
