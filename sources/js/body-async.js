@@ -9,5 +9,6 @@ import './libs/dom';
 import './libs/rb-life';
 
 import './modules/dialog';
+import './modules/button';
 
 

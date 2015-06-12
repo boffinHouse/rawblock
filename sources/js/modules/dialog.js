@@ -45,6 +45,7 @@
 			dom(document.documentElement).addClass('has-open-dialog');
 
 			setTimeout(() => this.element.focus());
+			this.$element.trigger('openchange');
 		}
 
 		close(){
@@ -56,10 +57,15 @@
 						this._activeElement.focus();
 						this._activeElement = null
 					});
-
 			}
+
 			this.$backdrop.removeClass('is-open');
 			dom(document.documentElement).removeClass('has-open-dialog');
+			this.$element.trigger('openchange');
+		}
+
+		toggle(){
+			this[this.isOpen ? 'close' : 'open']();
 		}
 
 		_setUpEvents(){

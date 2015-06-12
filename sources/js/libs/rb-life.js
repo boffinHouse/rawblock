@@ -13,8 +13,8 @@
 	var life = {};
 	var regData = /^data-/;
 	var removeElements = [];
-	var initClass = 'rb-js';
-	var attachedClass = 'rb-attached';
+	var initClass = 'is-rb-life';
+	var attachedClass = 'is-rb-attached';
 
 	life.init = function(options){
 		if (elements) {throw('only once');}

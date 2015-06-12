@@ -1,10 +1,18 @@
 ---
 component: rb-logo
 ---
-<div class="rb-dialog rb-js" data-module="dialog" data-open="true">
+
+<button type="button" class="is-rb-life" data-module="button" data-target="dialog">button</button>
+
+
+<div class="rb-dialog is-rb-life" data-module="dialog" data-open="true" id="dialog">
 	<div class="dialog-inner">
 		<h1 class="dialog-title">{{ title }}</h1>
 		<p>{{content}}</p>
 	</div>
+    <button type="button" class="is-rb-life" data-module="button"
+            data-target="closest(.rb-dialog)"
+            data-type="close"
+            >button</button>
 	<button type="button" class="dialog-close">Close Dialog</button>
 </div>

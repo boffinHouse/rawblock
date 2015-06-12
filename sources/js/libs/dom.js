@@ -231,7 +231,7 @@
 		return this;
 	};
 
-	fn.fire = function(type, options, getEvent){
+	fn.trigger = function(type, options, getEvent){
 		var ret;
 
 		if(typeof options == 'boolean'){
