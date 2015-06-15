@@ -231,8 +231,30 @@
 		return this;
 	};
 
+	fn.each = function(cb){
+		this.elements.forEach(cb);
+		return this;
+	};
+
+	DOM.Event = function(type, options){
+		if(!options){
+			options = {};
+		}
+
+		if(options.bubbles == null){
+			options.bubbles = true;
+		}
+
+		return new CustomEvent(type, options);
+	};
+
 	fn.trigger = function(type, options, getEvent){
-		var ret;
+		var ret, firstEvent;
+
+		if(typeof type == 'object'){
+			firstEvent = type;
+			type = firstEvent.type;
+		}
 
 		if(typeof options == 'boolean'){
 			getEvent = options;
@@ -248,7 +270,8 @@
 		}
 
 		this.elements.forEach(function(elem){
-			var event = new CustomEvent(type, options);
+			var event = firstEvent || new CustomEvent(type, options);
+			firstEvent = null;
 
 			if(!ret && getEvent){
 				ret = event;
@@ -273,7 +296,7 @@
 		};
 	});
 
-	['every', 'find', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
+	['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
 		fn[name] = function(){
 			return this.elements[name].apply(this.elements, arguments);
 		};
