@@ -58,7 +58,7 @@ module.exports = function(grunt) {
 			tmp: 'tmp_rbinstall',
 			dirs: {},
 		});
-		var modules = (grunt.option('rbmodule') || grunt.option('rbm') || '').split(/\s*,\s*/g);
+		var modules = (grunt.option('rbm') || grunt.option('rbmodule') || '').split(/\s*,\s*/g);
 
 		var done = this.async();
 
@@ -78,7 +78,8 @@ module.exports = function(grunt) {
 
 		npm.load(function(er, npm){
 			if(er){
-				remove();
+				console.log('no module found');
+				done();
 			} else {
 				npm.commands.install(options.tmp, modules, copy);
 			}
