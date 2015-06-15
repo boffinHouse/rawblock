@@ -1,5 +1,6 @@
 var fse = require('fs-extra');
 var npm = require('npm');
+var path = require('path');
 
 module.exports = function(grunt) {
 	'use strict';
@@ -18,9 +19,8 @@ module.exports = function(grunt) {
 
 			for(dir in dirs){
 				index++;
-				fse.copy(basePath + dir, dirs[dir], {clobber: false}, function(error){
+				fse.copy(path.join(basePath, dir), dirs[dir], {clobber: false}, function(error){
 					index--;
-					console.log(index);
 					run();
 				});
 			}
@@ -34,8 +34,8 @@ module.exports = function(grunt) {
 
 			for(i = 0; i < items.length; i++){
 				tmpBasePath = basePath + items[i];
-				depPath = tmpBasePath + '/node_modules/';
-				sourcesPath = tmpBasePath + '/sources/';
+				depPath = path.join(tmpBasePath, '/node_modules/');
+				sourcesPath = path.join(tmpBasePath, '/sources/');
 
 				if(isDir(depPath)){
 					stepModules(depPath);
@@ -51,18 +51,19 @@ module.exports = function(grunt) {
 		run();
 	}
 
-	grunt.registerMultiTask( 'rbinstall', 'npm insall + copy components', function(module_path) {
+	grunt.registerMultiTask( 'rbinstall', 'npm insall + copy components', function() {
 
 
 		var options = this.options({
 			tmp: 'tmp_rbinstall',
 			dirs: {},
 		});
+		var modules = (grunt.option('rbmodule') || grunt.option('rbm') || '').split(/\s*,\s*/g);
 
 		var done = this.async();
 
 		var copy = function(){
-			copyToSource(options.tmp+'/node_modules/', options.dirs, remove);
+			copyToSource(path.join(options.tmp, '/node_modules/'), options.dirs, remove);
 		};
 
 		var remove = function(){
@@ -71,11 +72,15 @@ module.exports = function(grunt) {
 			});
 		};
 
+		if(!modules.length){
+			console.log('Set your module[s] grunt rbinstall --rbm=modulename');
+		}
+
 		npm.load(function(er, npm){
 			if(er){
 				remove();
 			} else {
-				npm.commands.install(options.tmp, module_path, copy);
+				npm.commands.install(options.tmp, modules, copy);
 			}
 		});
 
