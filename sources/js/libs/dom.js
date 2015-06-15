@@ -36,6 +36,18 @@
 		return new dom( (context || document).querySelectorAll(sel) );
 	};
 
+	dom.Event = function(type, options){
+		if(!options){
+			options = {};
+		}
+
+		if(options.bubbles == null){
+			options.bubbles = true;
+		}
+
+		return new CustomEvent(type, options);
+	};
+
 	fn.find = function(sel){
 		var array = [];
 		this.elements.forEach(function(elem){
@@ -234,18 +246,6 @@
 	fn.each = function(cb){
 		this.elements.forEach(cb);
 		return this;
-	};
-
-	DOM.Event = function(type, options){
-		if(!options){
-			options = {};
-		}
-
-		if(options.bubbles == null){
-			options.bubbles = true;
-		}
-
-		return new CustomEvent(type, options);
 	};
 
 	fn.trigger = function(type, options, getEvent){
