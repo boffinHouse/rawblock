@@ -4,7 +4,7 @@
 	@if type-of($data) == "map" {
 		$string: $string + "{";
 		@each $key, $value in $data {
-			$string: $string + '"' + $key + '":' + tojson($value) +',';
+			$string: $string + '"' + $key + '":' + rbToJSON($value) +',';
 		}
 		$string: str-slice($string, 0, str-length($string) - 1) + '}';
 	}
@@ -12,7 +12,7 @@
 		$string: $string + "[";
 		@for $i from 1 through length($data) {
 
-			$string: $string + tojson(nth($data, $i)) +',';
+			$string: $string + rbToJSON(nth($data, $i)) +',';
 		}
 
 		$string: str-slice($string, 0, str-length($string) - 1)  + ']';
