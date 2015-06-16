@@ -1,0 +1,30 @@
+@function rbToJSON($data) {
+	$string: "";
+
+	@if type-of($data) == "map" {
+		$string: $string + "{";
+		@each $key, $value in $data {
+			$string: $string + '"' + $key + '":' + tojson($value) +',';
+		}
+		$string: str-slice($string, 0, str-length($string) - 1) + '}';
+	}
+	@else if type-of($data) == "list" {
+		$string: $string + "[";
+		@for $i from 1 through length($data) {
+
+			$string: $string + tojson(nth($data, $i)) +',';
+		}
+
+		$string: str-slice($string, 0, str-length($string) - 1)  + ']';
+	}
+	@else if type-of($data) == "number" {
+		$string: $string + $data;
+	}
+	@else if type-of($data) == "string" {
+		$string: $string + ' "' + $data + '"';
+	} @else {
+		$string: $string + $data;
+	}
+
+	@return $string;
+}

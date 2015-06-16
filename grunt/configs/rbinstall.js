@@ -5,7 +5,6 @@
  * {@link} https://github.com/gruntjs/grunt-contrib-handlebars
  */
 module.exports = {
-
     install: {
         options: {
             dirs: {
