@@ -60,11 +60,11 @@
 		}
 
 		parseCSSOptions(){
-			var style = getComputedStyle(this.element, '::after').getPropertyValue('content') || '';
+			var style = getComputedStyle(this.element, ':after').getPropertyValue('content') || '';
 			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
 				this._styleOptsStr = style;
 				try {
-					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, ''));
+					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, '').replace(/\\"/g, '"'));
 				} catch(e){}
 			}
 
