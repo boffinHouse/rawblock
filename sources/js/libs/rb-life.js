@@ -16,6 +16,64 @@
 	var initClass = 'is-rb-life';
 	var attachedClass = 'is-rb-attached';
 
+	class Widget {
+		constructor(element) {
+
+			this.element = element;
+			this.options = {};
+
+			this.parseOptions();
+		}
+
+		parseOptions(){
+			var options = Object.assign({}, this.constructor.defaults || {}, this.parseCSSOptions(), this.parseHTMLOptions());
+
+			this.setOptions(options);
+		}
+
+		setOptions(opts){
+			for(var prop in opts){
+				if(opts[prop] != this.options[prop]){
+					this.setOption(prop, opts[prop]);
+				}
+			}
+		}
+
+		setOption(name, value){
+			this.options[name] = value;
+		}
+
+		parseHTMLOptions(){
+			var i, name;
+			var options = {};
+			var attributes = this.element.attributes;
+			var len = attributes.length;
+
+			for ( i = 0; i < len; i++ ) {
+				name = attributes[ i ].nodeName;
+				if ( !name.indexOf( 'data-' ) ) {
+					options[ life.camelCase( name.replace( regData , '' ) ) ] = life.parseValue( attributes[ i ].nodeValue );
+				}
+			}
+
+			return options;
+		}
+
+		parseCSSOptions(){
+			var style = getComputedStyle(this.element, '::after').getPropertyValue('content') || '';
+			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
+				this._styleOptsStr = style;
+				try {
+					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, ''));
+				} catch(e){}
+			}
+
+			return style || {};
+		}
+	}
+
+	life.Widget = Widget;
+
 	life.init = function(options){
 		if (elements) {throw('only once');}
 		clearTimeout(timer);
@@ -112,7 +170,7 @@
 	life.create = function(element, lifeClass) {
 		var instance;
 		if ( !element._rbWidget ) {
-			element[ lifeClass.domName ] = new lifeClass( element, life.getOptions( element ) );
+			element[ lifeClass.domName ] = new lifeClass( element );
 			element._rbWidget = element[ lifeClass.domName ];
 		}
 
@@ -130,22 +188,6 @@
 				life.batch.timedRun();
 			}
 		}
-	};
-
-	life.getOptions = function( element ) {
-		var i, name;
-		var options = {};
-		var attributes = element.attributes;
-		var len = attributes.length;
-
-		for ( i = 0; i < len; i++ ) {
-			name = attributes[ i ].nodeName;
-			if ( !name.indexOf( 'data-' ) ) {
-				options[ life.camelCase( name.replace( regData , '' ) ) ] = life.parseValue( attributes[ i ].nodeValue );
-			}
-		}
-
-		return options;
 	};
 
 	life.findElements = function() {

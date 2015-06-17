@@ -8,6 +8,15 @@
 	.dialog-close {
 
 	}
+
+	@if function-exists(rbToJSON) {
+		$dialogJSCFG: (
+			closeOnEsc: false,
+			closeOnBackdropClick: true
+		);
+
+		@include exportToJS($dialogJSCFG);
+	}
 }
 
 .rb-backdrop {
@@ -38,7 +47,7 @@
 	overflow: hidden;
 }
 
-@media (max-width: 720px), (max-height: 420px) {
+@media (max-width: 620px), (max-height: 320px) {
 	.rb-dialog {
 		margin: 0;
 		width: 100%;

@@ -8,13 +8,19 @@
 	'use strict';
 	var dom = window.jQuery || window.dom;
 
+	const DEFAULTS = {
+		open: false,
+		closeOnEsc: true,
+		closeOnBackdropClick: false
+	};
 
-	class Dialog {
-		constructor(element, options){
+	class Dialog extends rbLife.Widget {
+		constructor(element){
+
+			super(element);
 
 			this.element = element;
 			this.$element = dom(element);
-			this.options = options;
 
 			this.isOpen = false;
 
@@ -30,57 +36,97 @@
 
 			this._setUpEvents();
 
-			if(options.open){
+			if(this.options.open){
 				this.open();
 			}
 		}
 
 		open(){
-			if(this.isOpen){return;}
+			if(this.isOpen){return false;}
 			this._activeElement = document.activeElement;
 			this.isOpen = true;
 
 			this.$backdrop.addClass('is-open');
 
+			this.setupOpenEvents();
+
 			dom(document.documentElement).addClass('has-open-dialog');
 
-			setTimeout(() => this.element.focus());
+			this.setFocus(this.element.querySelector('.primary-focus') || this.element);
+
 			this.$element.trigger('openchange');
+			return true;
+		}
+
+		setFocus(elem){
+			try {
+				setTimeout(() => elem.focus(), 0);
+			} catch(e){}
 		}
 
 		close(){
-			if(!this.isOpen){return;}
+			if(!this.isOpen){return false;}
 			this.isOpen = false;
 
+			this.teardownOpenEvents();
+
 			if(this._activeElement){
-				setTimeout(() => {
-						this._activeElement.focus();
-						this._activeElement = null
-					});
+				this.setFocus(this._activeElement);
 			}
 
 			this.$backdrop.removeClass('is-open');
 			dom(document.documentElement).removeClass('has-open-dialog');
 			this.$element.trigger('openchange');
+			return true;
 		}
 
 		toggle(){
 			this[this.isOpen ? 'close' : 'open']();
 		}
 
-		_setUpEvents(){
-			this.$backdrop.on('click', '.dialog-close', (e) => {
-				this.close();
-				e.preventDefault();
-				e.stopPropagation();
-			});
+		setupOpenEvents(){
+			if(!this.closeOnEsc){
+				this.closeOnEsc = (e) => {
+					if(e.keyCode ==  27 && this.options.closeOnEsc && !e.defaultPrevented){
+						this.close();
+					}
+				};
+			}
+
+			this.$backdrop.on('keydown', this.closeOnEsc);
 		}
 
+		teardownOpenEvents(){
+			if(this.closeOnEsc){
+				this.$backdrop.off('keydown', this.closeOnEsc);
+			}
+		}
+
+		_setUpEvents(){
+			this.$backdrop
+				.on('click', '.dialog-close', (e) => {
+					this.close();
+					e.preventDefault();
+					e.stopPropagation();
+				})
+				.on('click', (e) => {
+					if(this.options.closeOnBackdropClick && e.target == e.currentTarget){
+						this.close();
+						e.preventDefault();
+						e.stopPropagation();
+					}
+				})
+			;
+		}
 	}
+
+	Dialog.defaults = DEFAULTS;
 
 	window.rbModules = window.rbModules || {};
 
 	window.rbModules.Dialog = Dialog;
 
 	rbLife.register('dialog', Dialog);
+
+	return Dialog;
 }));
