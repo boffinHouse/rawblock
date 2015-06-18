@@ -16,6 +16,10 @@
 	var initClass = 'is-rb-life';
 	var attachedClass = 'is-rb-attached';
 
+	window.rbModules = window.rbModules || {};
+
+
+
 	class Widget {
 		constructor(element) {
 

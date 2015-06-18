@@ -34,12 +34,10 @@
 }
 
 @mixin exportToJS($data){
-
 	&::after {
 		$string: rbToJSON($data);
 		content: $string !important;
-		font-familiy: $string !important;
+		//font-familiy: $string !important;
 		display: none !important;
 	}
-
 }

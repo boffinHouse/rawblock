@@ -5,10 +5,17 @@ import templates from './templates';
 templates.call(window, Handlebars);
 */
 
+import assign from 'object.assign';
 import './libs/dom';
 import './libs/rb-life';
 
-import './modules/dialog';
+//import Dialog from './modules/dialog';
 import './modules/button';
+
+if(!Object.assign){
+	Object.assign = assign;
+}
+
+
 
 
