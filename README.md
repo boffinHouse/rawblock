@@ -1,12 +1,12 @@
 #RawBlock
-The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces. 
+The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces.
 
 
 
 ##How the project is build
-RawBlock gives you a way to build modular interfaces which are easy to maintain for future optimizations. 
+RawBlock gives you a way to build modular interfaces which are easy to maintain for future optimizations.
 
-There are already great frameworks, modules, methologies, starterkits to setup your project, all with there own purpose, advantages and disadvantages. With RawBlock we are not trying to invent the wheel again, but just combining what we see as the good parts of all of them. 
+There are already great frameworks, modules, methologies, starterkits to setup your project, all with there own purpose, advantages and disadvantages. With RawBlock we are not trying to invent the wheel again, but just combining what we see as the good parts of all of them.
 
 ###RawBlock is separatet in 3 parts
 
@@ -23,16 +23,16 @@ RawBlock Web Starterkit relies on [NodeJS](https://nodejs.org/), [NPM](https://w
 
 
 ####Build Process Tasks
-Node and NMP are used to run [Grunt](http://gruntjs.com/), the task runner. NPM will download the modules needed to perform certain tasks in Grunt. The tasks are stored in the `grunt_tasks` folder inside the `root` and loaded with [load-grunt-configs](https://github.com/creynders/load-grunt-configs/). 
-Which modules are included: 
+Node and NMP are used to run [Grunt](http://gruntjs.com/), the task runner. NPM will download the modules needed to perform certain tasks in Grunt. The tasks are stored in the `grunt_tasks` folder inside the `root` and loaded with [load-grunt-configs](https://github.com/creynders/load-grunt-configs/).
+Which modules are included:
 
 ####General Tasks
-- [Clean](https://github.com/gruntjs/grunt-contrib-clean): Clear files and folders. 
+- [Clean](https://github.com/gruntjs/grunt-contrib-clean): Clear files and folders.
 - [Concurrent](https://github.com/sindresorhus/grunt-concurrent): Run grunt tasks concurrently
 - [Concat](https://github.com/gruntjs/grunt-contrib-concat): Concatenate files.
 - [Copy](https://github.com/gruntjs/grunt-contrib-copy): Copy files and folders
 - [Watch](https://github.com/gruntjs/grunt-contrib-watch): Run tasks whenever watched files change.
-- [Newer](https://github.com/tschaub/grunt-newer): Configure Grunt tasks to run with newer files only. 
+- [Newer](https://github.com/tschaub/grunt-newer): Configure Grunt tasks to run with newer files only.
 - [Sync](https://github.com/tomusdrw/grunt-sync): task providing one-way synchronization of directories. Instead of copying all files only those that has been changed are copied which actually results in much faster execution.
 - [Just in Time(JIT)](https://github.com/shootaroo/jit-grunt): JIT(Just In Time) plugin loader for Grunt.
 - [Time Execution](https://github.com/sindresorhus/time-grunt): Display the elapsed execution time of grunt tasks
@@ -55,7 +55,7 @@ Which modules are included:
 
 
 #####Template Tasks
-- [Assemble](https://github.com/assemble/assemble): Static template generator. 
+- [Assemble](https://github.com/assemble/assemble): Static template generator.
 - [HTML Prettify](https://github.com/jonschlinkert/grunt-prettify): plugin for beautifying HTML
 
 
@@ -76,42 +76,78 @@ Which modules are included:
 
 
 ##2. Gridsystem
-RawBlock provides a layout grid system that is flexible, responsive and uses a human readable syntax. 
+RawBlock provides a layout grid system that is flexible, responsive and uses a human readable syntax. Our grid is
+
 
 ### Basic principles
+The layout grid targeting several screen sizes. To accomplish this, we use percentages as our base units and @media queries to allow you to decide what width an element should take when viewed in a specific screen sizes.
 
+Inside `sources/sass/variables/_layout.scss` you can find the variable `$breakpointConfig` where you can declare your breakpoints and give the specific breakpoint-class. To share styles in all screen sizes the property `all` must be used.
+
+Example
+
+	$breakpointConfigs: (
+		all: (
+			gutter: (
+				vertical: 40px,
+				horizontal: 40px
+			)
+		),
+		l: (
+			media:'(min-width: 1240px)'
+		),
+		m: (
+			media:'(min-width: 569px) and (max-width: 1239px)'
+		),
+		s: (
+			media: '(max-width: 568px)',
+			gutter: (
+				vertical: 20px,
+				horizontal: 20px
+			)
+		)
+	);
+
+
+###Setup
 
 
 
 ##3. Component
-The base of RawBlock is modularity. We archieve this by creating isolated components who are context unaware. Two methologies who have influences this setup are [BEM](https://en.bem.info/method/) and [SMACSS](https://smacss.com/).
+The base of RawBlock is modularity. We archieve this by creating isolated components who are context unaware. Two methologies who have influences the setup of a component are [BEM](https://en.bem.info/method/) and [SMACSS](https://smacss.com/).
 
 
 ###Block
 In RawBlock a **block** is the top-level abstraction of a object, that represent a piece of interface on a page. A block container get a CSS class of a prefix (in Rawblock this is `rb-`) and the block name (or component name). This prefix gives everyone a good indication where each component starts. A block is not an encapsulated module, but may contain other blocks.
 
-- a main nav `.rb-main-nav`
-- a search `.rb-search`
-- a logo `.rb-logo`
+- a main nav: `.rb-main-nav`
+- a search: `.rb-search`
+- a logo: `.rb-logo`
 
-**HTML Example**	
+**HTML Example**
 
 	<div class="rb-head">
 		<div class="rb-logo">...</div>
 		<form action="..." class="rb-search">...</div>
 		<nav class="rb-main-nav">...</div>
 	</div>
-	
-####Element
-An element represents a descendent within the block. It should only make sense in the context of the block. An element starts with the block name, but without the prefix `rb-`. Elements are written in the scope of a block element. So we dont have  
 
+####Block Page
+
+####Element
+An element represents a descendent within the block. It should only make sense in the context of the block. An element starts with the block name, but without the prefix `rb-`. Important is that elements always are written in the scope of a block element. This means that an block always only hav one nested selector.
+
+**Examples are:**
+
+- An item inside b-main-nav: `rb-main-nav main-nav-item`
+- An field inside b-search: `b-search search-field`
+
+This is a different approach then the BEM syntax, where you only define one unique selector. The advantages of this is that you exactly know where a block starts and ends.
 
 
 ####Modifier
-Modifiers are flags set on **block** or **element**, they represent a different state or version.
+Modifiers are flags set on **block** or **element**, they represent a different state or version. This is done with the modifier class, like `.is-collapse` or `is-offset-left`.
 
 
 
-
- 
 

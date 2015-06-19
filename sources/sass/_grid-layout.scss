@@ -2,7 +2,7 @@
 *
 *    Layout styles
 *
-*   
+*
 **********************************************************/
 
 .col-group {
@@ -35,4 +35,6 @@
 	flex-direction: row-reverse;
 }
 
-@include generate-grid($breakpoints);
+//@include generate-grid($breakpoints);
+@include generate-global-styles($breakpointConfigs);
+

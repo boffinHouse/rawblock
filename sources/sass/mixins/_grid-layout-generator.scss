@@ -3,171 +3,164 @@
 //
 //  variable:
 //  Dependency: [
-//      col-generator
+//      global-style-config
 //  ]
 //=====================================================================
-@mixin generate-grid ($breakpoints) {
-	$order-genenator-amount: 5;
-
+@mixin generate-global-styles($configs) {
 	//Styles breakpoints
-	@each $breakpoint in $breakpoints {
-		$class-name:        nth($breakpoint, 1);
-		$breakpoint-media:  nth($breakpoint, 2);
-		$gutter:           nth($breakpoint, 3);
+	@each $className, $config in $configs {
+		$gutter: map-get($config, gutter);
+		$order: map-get($config, flex-order-amount);
 
-		@if $class-name == 'all' {
 
-			@include column-generator($class-name);
-			@include get-gutter-values($class-name, $gutter);
-			@include order-generator($class-name, $order-genenator-amount);
 
+		@if $className == 'all' {
+			@include global-style-config($className, $gutter, $order);
 		} @else {
-
-			@media #{$breakpoint-media} {
-				@include column-generator($class-name);
-				@include get-gutter-values($class-name, $gutter);
-				@include order-generator($class-name, $order-genenator-amount);
+			@media #{map-get($config, media)} {
+				@include global-style-config($className, $gutter, $order);
 			}
-
 		}
-
 	}
 }
 
 // ====================================================================
-//  Generate Grid
+// global-style-config
 //
 //  variable:
 //  Dependency: [
-//      column-generator
+//      size-generator,
+//      gutter-values,
+//      order
 //  ]
 //=====================================================================
-@mixin get-gutter-values($class-name, $gutter) {
-	$value-lenght: length($gutter);
-
-	@for $i from 1 through $value-lenght {
-		$gutter-vertical: nth($gutter, 1);
-		$gutter-horizontal: nth($gutter, 2);
-		@include col-gutter-generator($class-name, $gutter-vertical, $gutter-horizontal);
-	}
-
+@mixin global-style-config($className, $gutter, $order) {
+	@include size-generator($className);
+	@include col-gutter-generator($gutter);
+	@include flex-order-generator($className, $order);
 }
 
-@mixin col-gutter-generator($class-name, $gutter-vertical, $gutter-horizontal) {
 
-	.col-group {
+// ====================================================================
+//  Generate Grid
+//
+//=====================================================================
 
-		&.is-gutter {
-			padding: 0 $gutter-horizontal;
+@mixin col-gutter-generator($gutter) {
 
-			.col {
-				padding: $gutter-vertical $gutter-horizontal;
-			}
+	@if type-of($gutter) == 'map' {
+
+		@if map-has-key($gutter, horizontal) {
+			$gutterHorizontal: map-get($gutter, horizontal);
 		}
-
-		&.is-gutter-vertical {
-
-			.col {
-				padding: $gutter-vertical 0;
-			}
-		}
-
-		&.is-gutter-horizontal {
-
-			.col {
-				padding: 0 $gutter-horizontal;
-			}
+		@if map-has-key($gutter, vertical) {
+			$gutterVertical: map-get($gutter, vertical);
 		}
 
 		.col-group {
-			margin: 0 -$gutter-horizontal;
+
+			&.is-gutter {
+				padding: 0 $gutterHorizontal;
+
+				.col {
+					padding: 0 $gutterHorizontal;
+					margin: $gutterVertical 0;
+				}
+			}
+
+			&.is-gutter-vertical {
+
+				.col {
+					margin: $gutterHorizontal 0;
+				}
+			}
+
+			&.is-gutter-horizontal {
+
+				.col {
+					margin: 0;
+					padding: 0 $gutterHorizontal;
+				}
+			}
+
+			.col-group {
+				margin: 0 -$gutterHorizontal;
+			}
 		}
+
+
 	}
 }
 // ====================================================================
 //  Order Generator
 //
-//  variable:
-//  Dependency: [
-//
-//  ]
 //=====================================================================
-@mixin order-generator($class-name, $amount) {
+@mixin flex-order-generator($className, $amount: 0) {
 	$i: 1;
 
-	.col {
-		@while $i <= $amount {
-
-			@if $class-name == 'all' {
-				&.is-order-#{$i} {
-					order: #{$i};
-				}
-			}
-			@else {
-				&.is-order-#{$i}-#{$class-name} {
-					order: #{$i}
-				}
-			}
-
-			$i: $i + 1;
-		}
+	@if type-of($amount) != 'number' {
+		$amount: 0;
 	}
+
+	@if $className == 'all' {
+		$orderType: '';
+	} @else {
+		$orderType: '-' + $className;
+	}
+
+	@while $i <= $amount {
+		&.is-order-#{$i}#{$orderType} {
+			order: #{$i}
+		}
+
+		$i: $i + 1;
+	}
+
 }
 
 // ====================================================================
-//  Column Generator
+//  Size Generator
 //
-//  variable:
-//  Dependency: [
-//      column-generator
-//  ]
 //=====================================================================
-@mixin column-generator($class-name) {
-
+@mixin size-generator($className) {
 	$i: 5;
 	$steps: 5;
-	@if $class-name == 'all' {
-		$column-type: '';
+
+	@if $className == 'all' {
+		$colomnType: '';
 	} @else {
-		$column-type: '-' + $class-name;
+		$colomnType: '-' + $className;
 	}
 
-	.col {
-		// The default col size. Counts for all screens.
-
-
-		@while $i <= 100 {
-			// create width: 33%
-			@if $i > 30 and $i <= 35 {
-				&.is-size-33#{$column-type} {
-					width: 33.33%;
-				}
+	@while $i <= 100 {
+		// create width: 33%
+		@if $i > 30 and $i <= 35 {
+			&.is-size-33#{$colomnType} {
+				width: 33.33%;
 			}
-
-			// create width: 66%
-			@if $i > 65 and $i <= 70 {
-				&.is-size-66#{$column-type} {
-					width: 66.66%;
-				}
-			}
-
-			// create width: 16%
-			@if $i > 15 and $i <= 20 {
-				&.is-size-16#{$column-type} {
-					width: 16.66%;
-				}
-			}
-
-			// create
-			&.is-size-#{$i}#{$column-type} {
-				width: $i * 1%;
-			}
-
-			// increment the counter
-			$i: $i + $steps;
 		}
 
+		// create width: 66%
+		@if $i > 65 and $i <= 70 {
+			&.is-size-66#{$colomnType} {
+				width: 66.66%;
+			}
+		}
 
+		// create width: 16%
+		@if $i > 15 and $i <= 20 {
+			&.is-size-16#{$colomnType} {
+				width: 16.66%;
+			}
+		}
+
+		// create
+		&.is-size-#{$i}#{$colomnType} {
+			width: $i * 1%;
+		}
+
+		// increment the counter
+		$i: $i + $steps;
 	}
 }
 
@@ -175,35 +168,24 @@
 // ====================================================================
 //  Respond-to
 //
-//
-//  Credits https://github.com/nikita-kit/nikita-css/blob/master/mixins/_respond-to.scss
 //=====================================================================
-@mixin respond-to($medias...) {
-	$breakpoints-length: length($breakpoints);
+@mixin respond-to($breakpoint) {
+	@if map-has-key($breakpointConfigs, $breakpoint) {
+		$breakpointMedia: map-deep-get($breakpointConfigs, $breakpoint, media);
 
-	@each $media in $medias {
-		$had-a-hit: false;
-
-		@for $i from 1 through $breakpoints-length {
-			$breakpoint: nth($breakpoints, $i);
-
-			@if $media == nth($breakpoint, 1) {
-				$definition: nth($breakpoint, 2);
-				$had-a-hit: true;
-
-				@if $media == 'all' {
-					@content;
-				} @else {
-					@media #{$definition} {
-						@content;
-					}
-				}
-
+		@if($breakpoint == 'all') {
+			@content;
+		}
+		@else {
+			@media #{$breakpointMedia} {
+				@content;
 			}
 		}
-
-		@if $had-a-hit == false {
-			@warn "Media #{media} not found!";
-		}
+	}
+	@else {
+		@warn "Value #{$breakpoint} not found in $breakpoint-configs"
 	}
 }
+
+
+
