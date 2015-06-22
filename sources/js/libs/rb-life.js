@@ -27,11 +27,47 @@
 			this.options = {};
 
 			this.parseOptions();
+
+			this.setupLifeOptions();
+		}
+
+		setupLifeOptions(){
+			var runs, runner, onResize;
+			var old = {};
+			if (this.options.watchCSS) {
+				old.attached = this.attached;
+				old.detached = this.detached;
+				runner = () => {
+					runs = false;
+					if(this._styleOptsStr != (getComputedStyle(this.element, '::after').getPropertyValue('content') || '')){
+						this.parseOptions();
+					}
+				};
+				onResize = () => {
+					if(!runs){
+						runs = true;
+						setTimeout(runner, 33);
+					}
+				};
+
+				this.attached = function(){
+					window.addEventListener('resize', onResize);
+					if(old.attached){
+						return old.attached.apply(this, arguments);
+					}
+				};
+				this.detached = function(){
+					window.removeEventListener('resize', onResize);
+					if(old.detached){
+						return old.detached.apply(this, arguments);
+					}
+				};
+			}
+
 		}
 
 		parseOptions(){
-			var options = Object.assign({}, this.constructor.defaults || {}, this.parseCSSOptions(), this.parseHTMLOptions());
-
+			var options = Object.assign(this.options, this.constructor.defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
 			this.setOptions(options);
 		}
 
@@ -69,10 +105,14 @@
 				this._styleOptsStr = style;
 				try {
 					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, '').replace(/\\"/g, '"'));
-				} catch(e){}
+				} catch(e){
+					style = false;
+				}
+			} else {
+				style = false;
 			}
 
-			return style || {};
+			return style;
 		}
 	}
 
