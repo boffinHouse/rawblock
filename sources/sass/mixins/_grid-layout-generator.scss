@@ -10,13 +10,14 @@
 	//Styles breakpoints
 	@each $className, $config in $configs {
 		$gutter: map-get($config, gutter);
-		$order: map-get($config, flex-order-amount);
+		$flexOrderSize: map-get($config, flexOrderSize);
+		$gridMaxWidth: map-get($config, gridMaxWidth);
 
 		@if $className == 'all' {
-			@include global-style-config($className, $gutter, $order);
+			@include global-style-config($className, $gutter, $flexOrderSize, $gridMaxWidth);
 		} @else {
 			@media #{map-get($config, media)} {
-				@include global-style-config($className, $gutter, $order);
+				@include global-style-config($className, $gutter, $flexOrderSize, $gridMaxWidth);
 			}
 		}
 	}
@@ -32,15 +33,34 @@
 //      order
 //  ]
 //=====================================================================
-@mixin global-style-config($className, $gutter, $order) {
+@mixin global-style-config($className, $gutter, $flexOrderSize, $gridMaxWidth) {
 	@include size-generator($className);
 	@include col-gutter-generator($gutter);
-	@include flex-order-generator($className, $order);
+	@include flex-order-generator($className, $flexOrderSize);
+	@include generate-grid($gridMaxWidth)
 }
-
-
 // ====================================================================
 //  Generate Grid
+//
+//=====================================================================
+@mixin generate-grid($gridMaxWidth) {
+
+	.col-group {
+		display: flex;
+		flex-flow: row wrap;
+		max-width: $gridMaxWidth;
+		margin: 0 auto;
+
+
+		.col {
+			display: flex;
+			flex-wrap: wrap;
+		}
+	}
+}
+
+// ====================================================================
+//  Generate Gutters Columns
 //
 //=====================================================================
 
@@ -95,8 +115,6 @@
 					margin: 0 (-$gutterHorizontal / 2);
 				}
 			}
-
-
 
 		}
 
