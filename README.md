@@ -1,12 +1,10 @@
 #RawBlock
-The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces.
+The worlds most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces.
 
 
 
-##How the project is build
-RawBlock gives you a way to build modular interfaces which are easy to maintain for future optimizations.
-
-There are already great frameworks, modules, methologies, starterkits to setup your project, all with there own purpose, advantages and disadvantages. With RawBlock we are not trying to invent the wheel again, but just combining what we see as the good parts of all of them.
+##What is RawBlock
+RawBlock gives you a way to build modular interfaces which are easy to maintain for future optimizations. It combines modern best practices, new technologies and solution to optimize the frontend development process. 
 
 ###RawBlock is separatet in 3 parts
 
@@ -16,7 +14,7 @@ There are already great frameworks, modules, methologies, starterkits to setup y
 3. **Components**
 
 ##1. RawBlock Web Starterkit
-It is often a hard and time consuming part to start a new project. To help you with this, we developed **RawBlock Web Starterkit**. Which gives you a solid base with a selection of tools to help you with this process.
+It is often a hard and time consuming part to start a new project. To help you with this, we developed the **RawBlock Web Starterkit**. Which gives you a solid base with a selection of tools to help you with this process.
 
 ###One Time Setup Requirements
 RawBlock Web Starterkit relies on [NodeJS](https://nodejs.org/), [NPM](https://www.npmjs.com/), [SASS](http://sass-lang.com/) and [Grunt](http://gruntjs.com/). These tools must be globally installed on your machine. If you finished with this, you can start using RawBlock Web Starterkit in your projects.
@@ -75,7 +73,8 @@ Which modules are included:
 
 
 
-##2. Gridsystem
+##2. Layout Grid
+RawBlock 
 RawBlock provides a layout grid system that is flexible, responsive and uses a human readable syntax. Our grid is
 
 

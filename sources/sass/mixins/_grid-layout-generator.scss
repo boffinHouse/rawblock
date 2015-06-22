@@ -12,8 +12,6 @@
 		$gutter: map-get($config, gutter);
 		$order: map-get($config, flex-order-amount);
 
-
-
 		@if $className == 'all' {
 			@include global-style-config($className, $gutter, $order);
 		} @else {
@@ -60,32 +58,46 @@
 		.col-group {
 
 			&.is-gutter {
-				padding: 0 $gutterHorizontal;
+				padding: 0 ($gutterHorizontal / 2);
 
-				.col {
-					padding: 0 $gutterHorizontal;
-					margin: $gutterVertical 0;
+				> .col {
+					padding: 0 ($gutterHorizontal / 2);
+					margin: ($gutterVertical / 2) 0;
+				}
+
+				.col-group {
+					padding: 0;
+					margin: (-$gutterVertical / 2) (-$gutterHorizontal / 2);
 				}
 			}
 
 			&.is-gutter-vertical {
 
-				.col {
-					margin: $gutterHorizontal 0;
+				> .col {
+					margin: ($gutterVertical / 2) 0;
+				}
+
+				.col-group {
+					padding: 0;
+					margin: (-$gutterVertical / 2) 0;
 				}
 			}
 
 			&.is-gutter-horizontal {
 
-				.col {
+				> .col {
 					margin: 0;
-					padding: 0 $gutterHorizontal;
+					padding: 0 ($gutterHorizontal / 2);
+				}
+
+				.col-group {
+					padding: 0;
+					margin: 0 (-$gutterHorizontal / 2);
 				}
 			}
 
-			.col-group {
-				margin: 0 -$gutterHorizontal;
-			}
+
+
 		}
 
 
