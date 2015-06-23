@@ -10,16 +10,20 @@
 	//Styles breakpoints
 	@each $className, $config in $configs {
 		$gutter: map-get($config, gutter);
-		$order: map-get($config, flex-order-amount);
+		$flexOrderSize: map-get($config, flexOrderSize);
+		$gridMaxWidth: map-get($config, gridMaxWidth);
 
 		@if $className == 'all' {
-			@include global-style-config($className, $gutter, $order);
+			@include global-style-config($className, $gutter, $flexOrderSize);
+			@include generate-layout-columns($gridMaxWidth);
 		} @else {
 			@media #{map-get($config, media)} {
-				@include global-style-config($className, $gutter, $order);
+				@include global-style-config($className, $gutter, $flexOrderSize);
 			}
 		}
 	}
+
+
 }
 
 // ====================================================================
@@ -32,17 +36,62 @@
 //      order
 //  ]
 //=====================================================================
-@mixin global-style-config($className, $gutter, $order) {
+@mixin global-style-config($className, $gutter, $flexOrderSize) {
 	@include size-generator($className);
 	@include col-gutter-generator($gutter);
-	@include flex-order-generator($className, $order);
+	@include flex-order-generator($className, $flexOrderSize);
+
 }
-
-
 // ====================================================================
 //  Generate Grid
 //
 //=====================================================================
+@mixin generate-layout-columns($gridMaxWidth) {
+
+	.rb-col-group {
+		display: flex;
+		flex-flow: row wrap;
+		max-width: $gridMaxWidth;
+		margin: 0 auto;
+
+		.rb-col-group {
+			max-width: inherit;
+			margin: inherit;
+		}
+	}
+
+
+
+	.rb-col {
+		display: flex;
+		flex-wrap: row wrap;
+	}
+
+}
+
+// ====================================================================
+//  Generate Gutters Columns
+//
+//=====================================================================
+@mixin colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical) {
+	.rb-col-group {
+
+		&.is-gutter {
+			padding: 0;
+			margin: (-$gutterVertical / 2) (-$gutterHorizontal / 2);
+		}
+
+		&.is-gutter-vertical {
+			padding: 0;
+			margin: (-$gutterVertical / 2) 0;
+		}
+
+		&.is-gutter-horizontal {
+			padding: 0;
+			margin: 0 (-$gutterHorizontal / 2);
+		}
+	}
+}
 
 @mixin col-gutter-generator($gutter) {
 
@@ -55,48 +104,37 @@
 			$gutterVertical: map-get($gutter, vertical);
 		}
 
-		.col-group {
+		.rb-col-group {
 
 			&.is-gutter {
 				padding: 0 ($gutterHorizontal / 2);
 
-				> .col {
+				> .rb-col {
 					padding: 0 ($gutterHorizontal / 2);
 					margin: ($gutterVertical / 2) 0;
 				}
 
-				.col-group {
-					padding: 0;
-					margin: (-$gutterVertical / 2) (-$gutterHorizontal / 2);
-				}
+				@include colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
 			}
 
 			&.is-gutter-vertical {
 
-				> .col {
+				> .rb-col {
 					margin: ($gutterVertical / 2) 0;
 				}
 
-				.col-group {
-					padding: 0;
-					margin: (-$gutterVertical / 2) 0;
-				}
+				@include colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
 			}
 
 			&.is-gutter-horizontal {
 
-				> .col {
+				> .rb-col {
 					margin: 0;
 					padding: 0 ($gutterHorizontal / 2);
 				}
 
-				.col-group {
-					padding: 0;
-					margin: 0 (-$gutterHorizontal / 2);
-				}
+				@include colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
 			}
-
-
 
 		}
 
@@ -121,8 +159,12 @@
 	}
 
 	@while $i <= $amount {
-		&.is-order-#{$i}#{$orderType} {
+		.is-order-#{$i}#{$orderType} {
 			order: #{$i}
+		}
+
+		&.is-order-minus-#{$i}#{$orderType} {
+			order: #{-$i}
 		}
 
 		$i: $i + 1;

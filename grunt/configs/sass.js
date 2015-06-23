@@ -11,7 +11,7 @@ module.exports = {
             sourceMap: true
         },
         files: {
-            '<%= paths.dev %>/css/styles.css': '<%= paths.src %>/sass/styles.scss'
+            '<%= paths.dev %>/css/styles.css': '<%= paths.tmp %>/styles.scss'
 	        //'<%= paths.dev %>/css/universal.css': '<%= paths.src %>/sass/universal.scss'
         }
     },

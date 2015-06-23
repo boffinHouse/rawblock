@@ -33,12 +33,12 @@ module.exports = function(grunt) {
 				var replaceContent = [];
 
 				files.forEach( function(matchedFile) {
-					replaceContent.push( '@import "' + matchedFile + '";' );
+					replaceContent.push( '@import "../' +  options.paths.src + '/sass/'  + matchedFile + '";' );
 				} );
 
 				resultContent = resultContent.replace( initialMatch, replaceContent.join( "\n" ) );
 			} );
 		}
-		grunt.file.write( options.paths.src + '/sass/styles.scss', resultContent );
+		grunt.file.write( options.paths.tmp + '/styles.scss', resultContent );
 	} );
 };

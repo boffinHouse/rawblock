@@ -52,10 +52,10 @@
 			//'string-replace',
 			'generate-tmp-styles-scss',
 			'concurrent:dev2',
-			'autoprefixer:dev',
 			//'concat:dev',
 			'handlebars:dev',
 			'browserify:dev',
+			'autoprefixer:dev',
 			'sync',
 			'prettify:dev'
 		]);
@@ -80,7 +80,6 @@
 			//'generate-tmp-styles-scss',
 			'sass:dist',
 			'assemble:dist',
-			//'modernizr',
 			'autoprefixer:dist',
 			//'group_css_media_queries',
 			'cssmin',
