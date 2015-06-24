@@ -4,14 +4,17 @@ The worlds most flexible and efficient responsive system to build maintainable m
 
 
 ##What is RawBlock
-RawBlock gives you a way to build modular interfaces which are easy to maintain for future optimizations. It combines modern best practices, new technologies and solution to optimize the frontend development process.
+RawBlock gives you a way to build modular interfaces which are easy to maintain for future optimizations. It combines modern best practices, new technologies and solution to optimize the frontend development process. 
 
-###RawBlock is separated in 3 parts
+###RawBlock is separatet in 3 parts
 
 
-1. **RawBlock Web Starterkit**
-2. **Gridsystem**
-3. **Components**
+1. **RawBlock Web Starter Kit** <br>
+To boost your project startup. Start your project with the Rawblock Starter Kit. 
+2. **Grid Layout**<br>
+We use flexible, multi-device and human readable syntax to setup the basis of your site. 
+3. **Components**<br>
+A key aspect of RawBlock is modularity. We archieve this by creating isolated components who are context unaware. 
 
 ##1. RawBlock Web Starterkit
 It is often a hard and time consuming part to start a new project. To help you with this, we developed the **RawBlock Web Starterkit**. Which gives you a solid base with a selection of tools to help you with this process.
@@ -74,7 +77,6 @@ Which modules are included:
 
 
 ##2. Layout Grid
-RawBlock
 RawBlock provides a layout grid system that is flexible, responsive and uses a human readable syntax. Our grid is
 
 
