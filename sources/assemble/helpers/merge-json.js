@@ -6,8 +6,13 @@ module.exports.register = function (Handlebars, options)  {
 		var toObj = function(json){
 			if(typeof json == 'string'){
 				try {
-					json = JSON.parse(json)
+					json = json.trim();
+					if(!/^\{|\[/.test(json)){
+						json = '{'+ json +'}';
+					}
+					json = (new Function( 'return (' + json + ')' )());
 				} catch(e){
+					console.log('error with JS string: '+ json);
 					json = null;
 				}
 			}
@@ -20,8 +25,8 @@ module.exports.register = function (Handlebars, options)  {
 
 			args = args.map(toObj);
 
-			if(args.length == 1 && options.data){
-				args.unshift(options.data.root || options.data);
+			if(args.length == 1 && this){
+				args.unshift(this || options.data);
 			}
 
 			args.unshift({});
