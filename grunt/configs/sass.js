@@ -12,7 +12,6 @@ module.exports = {
         },
         files: {
             '<%= paths.dev %>/css/styles.css': '<%= paths.tmp %>/styles.scss'
-	        //'<%= paths.dev %>/css/universal.css': '<%= paths.src %>/sass/universal.scss'
         }
     },
 	dist: {
@@ -21,8 +20,7 @@ module.exports = {
 			sourceMap: false
 		},
 		files: {
-			'<%= paths.dist %>/css/styles.css': '<%= paths.src %>/sass/styles.scss'
-			//'<%= paths.dist %>/css/universal.css': '<%= paths.src %>/sass/universal.scss'
+			'<%= paths.dist %>/css/styles.css': '<%= paths.tmp %>/styles.scss'
 		}
 	}
 }

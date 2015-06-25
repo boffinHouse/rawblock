@@ -1,9 +1,7 @@
 
-@function convert-to-rem($value)  {
+@function rb-convert-to-rem($value)  {
 
 	$base-value: 16;
-
-
 	$value: ($value / $base-value) + rem;
 
 	@if ($value == "0rem") {
@@ -13,18 +11,17 @@
 	@return $value;
 }
 
-@function rem-calc($values) {
-
+@function rb-rem-calc($values) {
 	$value-lenght: length($values);
 
 	@if $value-lenght == 1 {
-		@return convert-to-rem(nth($values, 1));
+		@return rb-convert-to-rem(nth($values, 1));
 	}
 
 	$remValues: ();
 
 	@for $i from 1 through $value-lenght {
-		$remValues: append($remValues, convert-to-rem(nth($values, $i)));
+		$remValues: append($remValues, rb-convert-to-rem(nth($values, $i)));
 	}
 
 	@return $remValues;

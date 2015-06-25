@@ -24,7 +24,8 @@ Main Stylesheet
 //@import "../sources/sass/webfonts";
 
 //Layout Grid
-@import "../sources/sass/basics";
+@import "../sources/sass/rb_basics";
+@include rb-generate-global-styles($breakpointConfigs);
 
 // All Components
 @import "_blocks/**/*.scss";
