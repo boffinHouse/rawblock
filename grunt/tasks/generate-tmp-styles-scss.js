@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 	var options = grunt._rbOptions;
 
 	grunt.registerTask( 'generate-tmp-styles-scss', 'Generate styles tmp file', function() {
-		var resultContent = grunt.file.read( options.paths.src + '/sass/_styles-config.scss' );
+		var resultContent = grunt.file.read( options.paths.src + '/sass/_styles_config.scss' );
 
 		//get rid of ../../-prefix, since libsass does not support them in @import-statements+includePaths option
 		resultContent = resultContent.replace( /\"\.\.\/\.\.\//g, '"' );
