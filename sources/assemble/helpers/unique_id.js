@@ -1,5 +1,5 @@
 /**
- * Helper uniqueData
+ * Helper uniqueID
  *
  */
 

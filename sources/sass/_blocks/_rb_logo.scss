@@ -8,14 +8,6 @@ Main logo of the website
 	//Global Style
 	position: relative;
 
-	@include respond-to(all) {
-		background: black;
-	}
-
-	@include respond-to(m) {
-		background: green;
-	}
-
 	> .logo-inner {
 		align-items: center;
 		min-height: 55px;
