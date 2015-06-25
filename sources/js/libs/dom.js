@@ -244,21 +244,18 @@
 	};
 
 	fn.each = function(cb){
-		this.elements.forEach(cb);
+		this.elements.forEach(function(elem, index){
+			cb.call(elem, index, elem);
+		});
 		return this;
 	};
 
-	fn.trigger = function(type, options, getEvent){
-		var ret, firstEvent;
+	fn.trigger = function(type, options){
+		var firstEvent;
 
 		if(typeof type == 'object'){
 			firstEvent = type;
 			type = firstEvent.type;
-		}
-
-		if(typeof options == 'boolean'){
-			getEvent = options;
-			options = null;
 		}
 
 		if(!options){
@@ -272,27 +269,18 @@
 		this.elements.forEach(function(elem){
 			var event = firstEvent || new CustomEvent(type, options);
 			firstEvent = null;
-
-			if(!ret && getEvent){
-				ret = event;
-			}
 			elem.dispatchEvent(event);
 		});
 
-		return ret || this;
+		return this;
 	};
 
-	['forEach', 'reverse', 'sort', 'push'].forEach(function(name){
-		fn[name] = function(){
-			this.elements[name].apply(this.elements, arguments);
-			return this;
-		};
-	});
-
 	//new array or returns array
-	['map', 'filter', 'pop', 'shift', 'slice', 'splice', 'unshift'].forEach(function(name){
-		fn[name] = function(){
-			return new dom(this.elements[name].apply(this.elements, arguments));
+	['map', 'filter'].forEach(function(name){
+		fn[name] = function(fn){
+			return new dom(this.elements[name](function(elem, index){
+				return fn.call(elem, index, elem);
+			}));
 		};
 	});
 

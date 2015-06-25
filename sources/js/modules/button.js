@@ -7,7 +7,6 @@
 }(typeof window != 'undefined' ? window : this, function (window, document) {
 	'use strict';
 	var dom = window.jQuery || window.dom;
-	var idi = 0;
 
 	class Button extends rbLife.Widget {
 		constructor(element) {
@@ -34,20 +33,14 @@
 		}
 
 		setTarget(dom) {
-			var id = dom.id;
-			if (!id) {
-				idi++;
-				id = 'target-' + idi;
-				dom.id = id;
-			}
-
+			this.element.removeAttribute('data-target');
 			this.$element.attr({
-				'data-target': id
+				'aria-controls': this.getId(dom)
 			});
 		}
 
 		getTarget() {
-			var target = this.$element.attr('data-target') || '';
+			var target = this.$element.attr('data-target') || this.$element.attr('aria-controls') || '';
 			if (!this.target || target != this.targetAttr) {
 				this.targetAttr = target;
 				this.target = null;
