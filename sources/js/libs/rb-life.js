@@ -16,9 +16,9 @@
 	var initClass = 'is-rb-life';
 	var attachedClass = 'is-rb-attached';
 
+	var idIndex = 0;
+
 	window.rbModules = window.rbModules || {};
-
-
 
 	class Widget {
 		constructor(element) {
@@ -64,6 +64,22 @@
 				};
 			}
 
+		}
+
+		getId(element){
+			var id = (element || this.element).id;
+			if (!id) {
+				idIndex++;
+				id = 'rbjsid-' + idIndex;
+				(element || this.element).id = id;
+			}
+			return id;
+		}
+
+		setFocus(elem){
+			try {
+				setTimeout(() => elem.focus(), 0);
+			} catch(e){}
 		}
 
 		parseOptions(){
@@ -232,6 +248,8 @@
 				life.batch.timedRun();
 			}
 		}
+
+		return instance;
 	};
 
 	life.findElements = function() {
@@ -252,10 +270,10 @@
 			else if ( life._failed[ moduleId ] ) {
 				removeElements.push( module );
 			}
-			else if ( modulePath && window.System && System.import ) {
+			else if ( modulePath && window.require ) {
 				(function (module, modulePath, moduleId) {
 					setTimeout(function(){
-						System.import(modulePath ).then(function () {
+						require([modulePath], function () {
 							if (!life._behaviors[ moduleId ]) {
 								module.classList.remove(initClass);
 								life._failed[ moduleId ] = true;
