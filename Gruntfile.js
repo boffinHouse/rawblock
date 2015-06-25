@@ -23,7 +23,7 @@
 			ports: {
 				app: '8000',
 				test: '9001',
-				livereload: 35729
+				livereload: 35730
 			}
 		};
 
