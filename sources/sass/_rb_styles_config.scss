@@ -4,17 +4,12 @@ Main Stylesheet
 ----------------------------------------------------------
 
 **********************************************************/
-// Functions
-@import "functions/**/*.scss";
+// Functions / Mixins
+@import "helpers/**/*.scss";
 
 // Variables
 @import "variables/**/*.scss";
 
-// Mixins
-@import "mixins/**/*.scss";
-
-// Extends
-@import "extends/**/*.scss";
 
 // Basic Formatting
 //@import "basics";

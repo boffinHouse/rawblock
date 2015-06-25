@@ -4,6 +4,8 @@ b-logo
 ----------------------------------------------------------
 Main logo of the website
 **********************************************************/
+$logo-svg: 'rawblock.svg';
+
 .rb-logo {
 	//Global Style
 	position: relative;
@@ -20,11 +22,11 @@ Main logo of the website
 	}
 
 	.logo-title {
-		@extend %hide-text;
+		@include rb-hide-text;
 		height: 100px;
 		width: 100px;
 		margin: auto;
-		background: url(../img/rawblock.svg) no-repeat 0 0;
+		background: url(../img/#{$logo-svg}) no-repeat 0 0;
 		background-size: 100% 100%;
 	}
 
