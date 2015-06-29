@@ -5,13 +5,12 @@ Basics
 
 **********************************************************/
 html {
-	-webkit-font-smoothing: antialiased;
-	-webkit-font-smoothing: subpixel-antialiased;
-
-	box-sizing: border-box;
-	height: 100%;
-	width: 100%;
-}
+	 -webkit-font-smoothing: antialiased;
+	 -webkit-font-smoothing: subpixel-antialiased;
+	 box-sizing: border-box;
+	 height: 100%;
+	 width: 100%;
+ }
 
 body {
 	width: 100%;
@@ -29,24 +28,19 @@ body {
 	box-sizing: inherit;
 }
 
-
-/* ---------------------------------------
-	TEXT-SELECTION
-
---------------------------------------- */
 ::-moz-selection {
 	color: #fff;
 	text-shadow: none;
-	background: $color-2a;
+	background: #19469d;
 }
 ::selection {
 	color: #fff;
 	text-shadow: none;
-	background:  $color-2a;
+	background: #19469d;
 }
 
 a {
-	color: $color-2a;
+	color: #19469d;
 	text-decoration: none;
 }
 
@@ -55,28 +49,12 @@ a {
 }
 
 a:focus {
-	outline: 1px dotted $color-2a;
-	outline-offset: -1px;
+	outline: 1px dotted #19469d;
+	outline-offset: 5px;
 }
 
-.a11y-focus-key,
-.a11y-focus {
-	outline: none;
-}
 
-//-----------------------------------------
-//Position Component
-.is-offset-right {
-	margin-left: auto;
-}
 
-.is-offset-left {
-	margin-right: auto;
-}
-
-.is-reversed {
-	flex-direction: row-reverse;
-}
 
 
 
