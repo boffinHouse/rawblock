@@ -26,7 +26,7 @@
 
 				if(widget[this.options.type]){
 					widget[this.options.type]();
-				} else {
+				} else if(widget.toggle) {
 					widget.toggle();
 				}
 			});
