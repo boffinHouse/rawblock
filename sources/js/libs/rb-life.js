@@ -26,6 +26,8 @@
 			this.element = element;
 			this.options = {};
 
+			element._rbWidget = this;
+
 			this.parseOptions();
 
 			this.setupLifeOptions();
@@ -215,8 +217,6 @@
 
 	life.register = function(name, lifeClass, noCheck) {
 
-		lifeClass.domName = lifeClass.domName || '_rb' + name;
-
 		life._behaviors[ name ] = lifeClass;
 
 		if ( !noCheck ) {
@@ -230,11 +230,8 @@
 	life.create = function(element, lifeClass) {
 		var instance;
 		if ( !element._rbWidget ) {
-			element[ lifeClass.domName ] = new lifeClass( element );
-			element._rbWidget = element[ lifeClass.domName ];
+			instance = new lifeClass( element );
 		}
-
-		instance = element[ lifeClass.domName ];
 
 		element.classList.add( attachedClass );
 
