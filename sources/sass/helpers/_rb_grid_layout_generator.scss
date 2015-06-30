@@ -6,24 +6,23 @@
 //      global-style-config
 //  ]
 //=====================================================================
-@mixin generate-global-styles($configs) {
+@mixin rb-generate-global-styles($configs) {
 	//Styles breakpoints
 	@each $className, $config in $configs {
 		$gutter: map-get($config, gutter);
 		$flexOrderSize: map-get($config, flexOrderSize);
-		$gridMaxWidth: map-get($config, gridMaxWidth);
 
 		@if $className == 'all' {
-			@include global-style-config($className, $gutter, $flexOrderSize);
-			@include generate-layout-columns($gridMaxWidth);
+			@include rb-global-style-config($className, $gutter, $flexOrderSize);
+			@include rb-generate-layout-columns();
 		} @else {
 			@media #{map-get($config, media)} {
-				@include global-style-config($className, $gutter, $flexOrderSize);
+				@include rb-global-style-config($className, $gutter, $flexOrderSize);
 			}
 		}
+
+
 	}
-
-
 }
 
 // ====================================================================
@@ -36,17 +35,18 @@
 //      order
 //  ]
 //=====================================================================
-@mixin global-style-config($className, $gutter, $flexOrderSize) {
-	@include size-generator($className);
-	@include col-gutter-generator($className, $gutter);
-	@include flex-order-generator($className, $flexOrderSize);
-
+@mixin rb-global-style-config($className, $gutter, $flexOrderSize) {
+	@include rb-size-generator($className);
+	@include rb-size-gutter-generator($className, $gutter);
+	@include rb-flex-order-generator($className, $flexOrderSize);
+	@include rb-layout-offset($className);
 }
+
 // ====================================================================
-//  Generate Grid
+//  Generate layout columns
 //
 //=====================================================================
-@mixin generate-layout-columns($gridMaxWidth) {
+@mixin rb-generate-layout-columns() {
 
 	.is-col-group {
 		display: flex;
@@ -68,11 +68,33 @@
 
 }
 
+@mixin rb-layout-offset($className) {
+
+	@if $className == 'all' {
+		$offsetType: '';
+
+	} @else {
+		$offsetType: '-' + $className;
+	}
+
+	.is-offset-right#{$offsetType} {
+		margin-left: auto;
+	}
+
+	.is-offset-left#{$offsetType} {
+		margin-right: auto;
+	}
+
+	.is-offset-middle#{$offsetType} {
+
+	}
+}
+
 // ====================================================================
 //  Generate Gutters Columns
 //
 //=====================================================================
-@mixin colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical) {
+@mixin rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical) {
 	.is-col-group {
 
 		&.is-gutter {
@@ -92,7 +114,7 @@
 	}
 }
 
-@mixin col-gutter-generator($className, $gutter) {
+@mixin rb-size-gutter-generator($className, $gutter) {
 
 	@if type-of($gutter) == 'map' {
 
@@ -113,7 +135,7 @@
 					margin: ($gutterVertical / 2) 0;
 				}
 
-				@include colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
+				@include rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
 			}
 
 			&.is-gutter-vertical {
@@ -122,7 +144,7 @@
 					margin: ($gutterVertical / 2) 0;
 				}
 
-				@include colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
+				@include rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
 			}
 
 			&.is-gutter-horizontal {
@@ -132,7 +154,7 @@
 					padding: 0 ($gutterHorizontal / 2);
 				}
 
-				@include colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
+				@include rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
 			}
 
 		}
@@ -142,7 +164,7 @@
 //  Order Generator
 //
 //=====================================================================
-@mixin flex-order-generator($className, $amount: 0) {
+@mixin rb-flex-order-generator($className, $amount: 0) {
 	$i: 1;
 
 	@if type-of($amount) != 'number' {
@@ -173,7 +195,7 @@
 //  Size Generator
 //
 //=====================================================================
-@mixin size-generator($className) {
+@mixin rb-size-generator($className) {
 	$i: 5;
 	$steps: 5;
 
@@ -224,28 +246,6 @@
 	}
 }
 
-
-// ====================================================================
-//  Respond-to
-//
-//=====================================================================
-@mixin respond-to($breakpoint) {
-	@if map-has-key($breakpointConfigs, $breakpoint) {
-		$breakpointMedia: map-deep-get($breakpointConfigs, $breakpoint, media);
-
-		@if($breakpoint == 'all') {
-			@content;
-		}
-		@else {
-			@media #{$breakpointMedia} {
-				@content;
-			}
-		}
-	}
-	@else {
-		@warn "Value #{$breakpoint} not found in $breakpoint-configs"
-	}
-}
 
 
 

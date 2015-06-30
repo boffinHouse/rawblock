@@ -4,17 +4,12 @@ Main Stylesheet
 ----------------------------------------------------------
 
 **********************************************************/
-// Functions
-@import "functions/**/*.scss";
+// Functions / Mixins
+@import "helpers/**/*.scss";
 
 // Variables
 @import "variables/**/*.scss";
 
-// Mixins
-@import "mixins/**/*.scss";
-
-// Extends
-@import "extends/**/*.scss";
 
 // Basic Formatting
 //@import "basics";
@@ -24,7 +19,8 @@ Main Stylesheet
 //@import "../sources/sass/webfonts";
 
 //Layout Grid
-@import "../sources/sass/basics";
+@import "../sources/sass/rb_basics";
+@include rb-generate-global-styles($breakpointConfigs);
 
 // All Components
 @import "_blocks/**/*.scss";
