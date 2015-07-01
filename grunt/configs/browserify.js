@@ -7,7 +7,7 @@
 module.exports = {
 	options: {
 		sourceMap: true,
-		transform: ['babelify']
+		transform: []
 	},
 	dev: {
 		files: {

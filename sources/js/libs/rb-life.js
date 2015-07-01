@@ -11,130 +11,13 @@
 	var docElem = document.documentElement;
 
 	var life = {};
-	var regData = /^data-/;
 	var removeElements = [];
 	var initClass = 'is-rb-life';
 	var attachedClass = 'is-rb-attached';
 
-	var idIndex = 0;
+
 
 	window.rbModules = window.rbModules || {};
-
-	class Widget {
-		constructor(element) {
-
-			this.element = element;
-			this.options = {};
-
-			element._rbWidget = this;
-
-			this.parseOptions();
-
-			this.setupLifeOptions();
-		}
-
-		setupLifeOptions(){
-			var runs, runner, onResize;
-			var old = {};
-			if (this.options.watchCSS) {
-				old.attached = this.attached;
-				old.detached = this.detached;
-				runner = () => {
-					runs = false;
-					if(this._styleOptsStr != (getComputedStyle(this.element, '::after').getPropertyValue('content') || '')){
-						this.parseOptions();
-					}
-				};
-				onResize = () => {
-					if(!runs){
-						runs = true;
-						setTimeout(runner, 33);
-					}
-				};
-
-				this.attached = function(){
-					window.addEventListener('resize', onResize);
-					if(old.attached){
-						return old.attached.apply(this, arguments);
-					}
-				};
-				this.detached = function(){
-					window.removeEventListener('resize', onResize);
-					if(old.detached){
-						return old.detached.apply(this, arguments);
-					}
-				};
-			}
-
-		}
-
-		getId(element){
-			var id = (element || this.element).id;
-			if (!id) {
-				idIndex++;
-				id = 'rbjsid-' + idIndex;
-				(element || this.element).id = id;
-			}
-			return id;
-		}
-
-		setFocus(elem){
-			try {
-				setTimeout(() => elem.focus(), 0);
-			} catch(e){}
-		}
-
-		parseOptions(){
-			var options = Object.assign(this.options, this.constructor.defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
-			this.setOptions(options);
-		}
-
-		setOptions(opts){
-			for(var prop in opts){
-				if(opts[prop] != this.options[prop]){
-					this.setOption(prop, opts[prop]);
-				}
-			}
-		}
-
-		setOption(name, value){
-			this.options[name] = value;
-		}
-
-		parseHTMLOptions(){
-			var i, name;
-			var options = {};
-			var attributes = this.element.attributes;
-			var len = attributes.length;
-
-			for ( i = 0; i < len; i++ ) {
-				name = attributes[ i ].nodeName;
-				if ( !name.indexOf( 'data-' ) ) {
-					options[ life.camelCase( name.replace( regData , '' ) ) ] = life.parseValue( attributes[ i ].nodeValue );
-				}
-			}
-
-			return options;
-		}
-
-		parseCSSOptions(){
-			var style = getComputedStyle(this.element, ':after').getPropertyValue('content') || '';
-			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
-				this._styleOptsStr = style;
-				try {
-					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, '').replace(/\\"/g, '"'));
-				} catch(e){
-					style = false;
-				}
-			} else {
-				style = false;
-			}
-
-			return style;
-		}
-	}
-
-	life.Widget = Widget;
 
 	life.init = function(options){
 		if (elements) {throw('only once');}
@@ -376,3 +259,201 @@
 
 	return life;
 }));
+
+/* Simple JavaScript Inheritance
+ * By John Resig http://ejohn.org/
+ * MIT Licensed.
+ */
+// Inspired by base2 and Prototype
+(function(){
+	var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+
+	// The base Class implementation (does nothing)
+	window.rbLife.Class = function(){};
+
+	// Create a new Class that inherits from this class
+	window.rbLife.Class.extend = function(prop) {
+		var _super = this.prototype;
+
+		// Instantiate a base class (but only create the instance,
+		// don't run the init constructor)
+		initializing = true;
+		var prototype = new this();
+		initializing = false;
+
+		// Copy the properties over onto the new prototype
+		for (var name in prop) {
+			// Check if we're overwriting an existing function
+			prototype[name] = typeof prop[name] == "function" &&
+			typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+				(function(name, fn){
+					return function() {
+						var tmp = this._super;
+
+						// Add a new ._super() method that is the same method
+						// but on the super-class
+						this._super = _super[name];
+
+						// The method only need to be bound temporarily, so we
+						// remove it when we're done executing
+						var ret = fn.apply(this, arguments);
+						this._super = tmp;
+
+						return ret;
+					};
+				})(name, prop[name]) :
+				prop[name];
+		}
+
+		// The dummy class constructor
+		function Class() {
+			// All construction is actually done in the init method
+			if ( !initializing && this.init )
+				this.init.apply(this, arguments);
+		}
+
+		// Populate our constructed prototype object
+		Class.prototype = prototype;
+
+		// Enforce the constructor to be what we expect
+		Class.prototype.constructor = Class;
+
+		// And make this class extendable
+		Class.extend = this.extend || window.rbLife.Class.extend;
+
+		return Class;
+	};
+})();
+
+(function(window, document, life){
+	'use strict';
+
+	var idIndex = 0;
+	var regData = /^data-/;
+
+	life.getWidget = function(element){
+		return element && element._rbWidget;
+	};
+
+	life.Widget = window.rbLife.Class.extend({
+		defaults: {},
+		init: function(element){
+			this.element = element;
+			this.options = {};
+
+			element._rbWidget = this;
+
+			this.parseOptions();
+
+			this.setupLifeOptions();
+		},
+		widget: life.getWidget,
+		setupLifeOptions: function(){
+			var runs, runner, onResize;
+			var old = {};
+			var that = this;
+			if (this.options.watchCSS) {
+				old.attached = this.attached;
+				old.detached = this.detached;
+				runner = function() {
+					runs = false;
+					if(that._styleOptsStr != (getComputedStyle(that.element, '::after').getPropertyValue('content') || '')){
+						that.parseOptions();
+					}
+				};
+				onResize = function() {
+					if(!runs){
+						runs = true;
+						setTimeout(runner, 33);
+					}
+				};
+
+				this.attached = function(){
+					window.addEventListener('resize', onResize);
+					if(old.attached){
+						return old.attached.apply(this, arguments);
+					}
+				};
+				this.detached = function(){
+					window.removeEventListener('resize', onResize);
+					if(old.detached){
+						return old.detached.apply(this, arguments);
+					}
+				};
+			}
+
+		},
+
+		getId: function(element){
+			var id = (element || this.element).id;
+			if (!id) {
+				idIndex++;
+				id = 'rbjsid-' + idIndex;
+				(element || this.element).id = id;
+			}
+			return id;
+		},
+
+		setFocus: function(elem){
+			try {
+				setTimeout(function(){elem.focus()}, 0);
+			} catch(e){}
+		},
+
+		parseOptions: function(){
+			var options = Object.assign(this.options, this.constructor.defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
+			this.setOptions(options);
+		},
+
+		setOptions: function(opts){
+			for(var prop in opts){
+				if(opts[prop] != this.options[prop]){
+					this.setOption(prop, opts[prop]);
+				}
+			}
+		},
+
+		setOption: function(name, value){
+			this.options[name] = value;
+		},
+
+		parseHTMLOptions: function(){
+			var i, name;
+			var options = {};
+			var attributes = this.element.attributes;
+			var len = attributes.length;
+
+			for ( i = 0; i < len; i++ ) {
+				name = attributes[ i ].nodeName;
+				if ( !name.indexOf( 'data-' ) ) {
+					options[ life.camelCase( name.replace( regData , '' ) ) ] = life.parseValue( attributes[ i ].nodeValue );
+				}
+			}
+
+			return options;
+		},
+
+		parseCSSOptions: function(){
+			var style = getComputedStyle(this.element, '::after').getPropertyValue('content') || '';
+			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
+				this._styleOptsStr = style;
+				try {
+					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, '').replace(/\\"/g, '"'));
+				} catch(e){
+					style = false;
+				}
+			} else {
+				style = false;
+			}
+
+			return style;
+		},
+	});
+
+	life.Widget.extend = function(name, prop){
+		var Class = life.Class.extend.call(this, prop);
+		Class.defaults = prop.defaults || {};
+		rbLife.register(name, Class);
+		return Class;
+	};
+})(window, document, rbLife);

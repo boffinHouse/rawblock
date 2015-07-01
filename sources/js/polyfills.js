@@ -1,3 +1,3 @@
-import 'dom4';
-import 'es6-shim';
-import 'whatwg-fetch';
+require('dom4');
+require('es6-shim');
+require('whatwg-fetch');
