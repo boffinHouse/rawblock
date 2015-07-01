@@ -14,7 +14,6 @@
 		},
 		init: function(element) {
 
-			console.log(element)
 			this._super(element);
 
 			this.regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
