@@ -4,7 +4,6 @@ define([
 	'intern/order!sources/js/polyfills/object-assign',
 	'intern/order!sources/js/libs/dom.js',
 ], function(registerSuite, expect) {
-	var widgetElement, widget;
 
 	registerSuite({
 		name: 'dom tests',

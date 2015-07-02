@@ -5,7 +5,6 @@ define([
 	'intern/order!sources/js/libs/dom.js',
 	'intern/order!sources/js/libs/rb-life.js',
 ], function(registerSuite, expect) {
-	var widgetElement, widget;
 
 	registerSuite({
 		name: 'life tests',

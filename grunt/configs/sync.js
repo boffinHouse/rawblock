@@ -32,5 +32,15 @@ module.exports = {
 				src: ['**/*']
 			}
 		]
+	},
+	dev: {
+		files: [
+			{
+				cwd: '<%= paths.src %>/js/modules/',
+				dest: '<%= paths.dev %>/js/modules/',
+				expand: true,
+				src: ['**/*.js']
+			}
+		]
 	}
 };

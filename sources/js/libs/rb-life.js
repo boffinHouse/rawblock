@@ -118,15 +118,20 @@
 
 		element.classList.add( attachedClass );
 
-		if (instance && (instance.attached || instance.detached)) {
+		if (instance && (instance.attached || instance.detached || instance.attachedOnce)) {
 			life._attached.push(element);
 
-			if ( instance.attached ) {
+			if(instance.attached){
 				life.batch.add(function() {
-					instance.attached( element );
+					instance.attached();
 				});
-				life.batch.timedRun();
 			}
+			if(instance.attachedOnce){
+				life.batch.add(function() {
+					instance.attachedOnce();
+				});
+			}
+			life.batch.timedRun();
 		}
 
 		return instance;
@@ -150,10 +155,10 @@
 			else if ( life._failed[ moduleId ] ) {
 				removeElements.push( module );
 			}
-			else if ( modulePath && window.require ) {
+			else if ( modulePath && window.loadPackage ) {
 				(function (module, modulePath, moduleId) {
 					setTimeout(function(){
-						require([modulePath], function () {
+						loadPackage(modulePath).then(function () {
 							if (!life._behaviors[ moduleId ]) {
 								module.classList.remove(initClass);
 								life._failed[ moduleId ] = true;

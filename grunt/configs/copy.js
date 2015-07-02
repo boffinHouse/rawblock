@@ -11,6 +11,12 @@ module.exports = {
 		expand: true,
 		src: ['**/*.ico']
 	},
+	dist: {
+		cwd: '<%= paths.src %>/js/modules/',
+		dest: '<%= paths.dist %>/js/modules/',
+		expand: true,
+		src: ['**/*.js']
+	}
 	//fonts: {
 	//	cwd: '<%= paths.src %>/fonts/',
 	//	dest: '<%= paths.dist %>/fonts/',
