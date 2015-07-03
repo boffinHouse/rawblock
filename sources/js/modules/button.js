@@ -8,38 +8,45 @@
 	'use strict';
 	var dom = window.jQuery || window.dom;
 
-	class Button extends rbLife.Widget {
-		constructor(element) {
+	return rbLife.Widget.extend('button', {
+		defaults: {
+			target: ''
+		},
+		init: function(element) {
 
-			super(element);
+			this._super(element);
 
 			this.regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
 			this.$element = dom(element);
 
-			this.$element.on('click', () => {
-				var target = this.getTarget() || {};
-				var widget = target._rbWidget;
+			this.setupEvents();
+		},
+		setupEvents: function(){
+			var that = this;
+			this.$element.on('click', function() {
+				var target = that.getTarget() || {};
+				var widget = that.widget(target);
 
 				if (!widget) {
 					return
 				}
 
-				if(widget[this.options.type]){
-					widget[this.options.type]();
-				} else {
+				if(widget[that.options.type]){
+					widget[that.options.type]();
+				} else if(widget.toggle) {
 					widget.toggle();
 				}
 			});
-		}
+		},
 
-		setTarget(dom) {
+		setTarget: function(dom) {
 			this.element.removeAttribute('data-target');
 			this.$element.attr({
 				'aria-controls': this.getId(dom)
 			});
-		}
+		},
 
-		getTarget() {
+		getTarget: function() {
 			var target = this.$element.attr('data-target') || this.$element.attr('aria-controls') || '';
 			if (!this.target || target != this.targetAttr) {
 				this.targetAttr = target;
@@ -57,16 +64,7 @@
 			}
 
 			return this.target;
-		}
-	}
+		},
+	});
 
-	Button.defaults = {
-		target: ''
-	};
-
-	window.rbModules = window.rbModules || {};
-
-	window.rbModules.Button = Button;
-
-	rbLife.register('button', Button);
 }));

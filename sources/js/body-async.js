@@ -5,16 +5,20 @@ import templates from './templates';
 templates.call(window, Handlebars);
 */
 
-import assign from 'object.assign';
-import './libs/dom';
-import './libs/rb-life';
+var loadPackage = require('./libs/packageloader');
+require('./polyfills/object-assign');
+require('./libs/dom');
+require('./libs/rb-life');
 
-//import Dialog from './modules/dialog';
-import './modules/button';
+//var Dialog = require('./modules/dialog');
+//require('./modules/button');
 
-if(!Object.assign){
-	Object.assign = assign;
-}
+
+loadPackage.basePath = 'js/';
+loadPackage.modulePath = 'js/modules/';
+
+rbLife.init();
+
 
 
 

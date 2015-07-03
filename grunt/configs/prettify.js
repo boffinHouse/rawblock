@@ -34,7 +34,7 @@ module.exports = {
 	},
 	dist: {
 		options: {
-			brace_style: 'collapse'
+			brace_style: 'expand'
 		},
 		files: [
 			{

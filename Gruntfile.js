@@ -70,6 +70,7 @@
 
 		// Distributing task
 		grunt.registerTask('dist', [
+			'buildsrc:dist',
 			'clean:dist',
 			//'clean:tmp',
 			//'svgmin:dist_bg',

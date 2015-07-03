@@ -45,6 +45,10 @@ module.exports = {
 		files: ['<%= paths.src %>/js/**/*.js'],
 		tasks: ['browserify:dev'] //newer:
 	},
+	jsmodules: {
+		files: ['<%= paths.src %>/js/modules/**/*.js'],
+		tasks: ['sync:dev'] //newer:
+	},
 	templates: {
 		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}'],
 		tasks: ['newer:assemble:dev', 'prettify:dev']
