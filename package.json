@@ -23,8 +23,13 @@
   },
   "dependencies": {
     "dom4": "^1.4.5",
-    "es6-shim": "^0.32.0",
+    "es6-promise": "^2.3.0",
     "handlebars": "^3.0.3",
+    "is-nan": "^1.1.0",
+    "string.prototype.endswith": "^0.2.0",
+    "string.prototype.includes": "^1.0.0",
+    "string.prototype.repeat": "^0.2.0",
+    "string.prototype.startswith": "^0.2.0",
     "whatwg-fetch": "^0.9.0"
   },
   "devDependencies": {
