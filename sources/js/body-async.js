@@ -9,15 +9,15 @@ var loadPackage = require('./libs/packageloader');
 require('./polyfills/object-assign');
 require('./libs/dom');
 require('./libs/rb-life');
+require('./modules/button');
 
 //var Dialog = require('./modules/dialog');
-//require('./modules/button');
 
 
 loadPackage.basePath = 'js/';
 loadPackage.modulePath = 'js/modules/';
 
-rbLife.init();
+//rbLife.init();
 
 
 
