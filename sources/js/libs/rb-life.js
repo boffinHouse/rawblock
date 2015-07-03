@@ -126,9 +126,9 @@
 					instance.attached();
 				});
 			}
-			if(instance.attachedOnce){
+			if(instance.onceAttached){
 				life.batch.add(function() {
-					instance.attachedOnce();
+					instance.onceAttached();
 				});
 			}
 			life.batch.timedRun();
