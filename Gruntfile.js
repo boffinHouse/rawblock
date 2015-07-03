@@ -56,6 +56,7 @@
 			'handlebars:dev',
 			'browserify:dev',
 			'autoprefixer:dev',
+			'clean:tmp',
 			'sync',
 			'prettify:dev'
 		]);

@@ -2,6 +2,7 @@ node_modules
 build
 dist
 dev
+tmp
 bower_components
 
 .sass-cache

@@ -4,7 +4,8 @@
 //=====================================================================
 @mixin rb-respond-to($breakpoint) {
 	@if map-has-key($breakpointConfigs, $breakpoint) {
-		$breakpointMedia: map-deep-get($breakpointConfigs, $breakpoint, media);
+		$breakpointData: map-get($breakpointConfigs, $breakpoint);
+		$breakpointMedia: map-get($breakpointData, media);
 
 		@if($breakpoint == 'all') {
 			@content;

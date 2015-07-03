@@ -150,7 +150,6 @@
 			&.is-gutter-horizontal {
 
 				> [class*=is-size-]  {
-					margin: 0;
 					padding: 0 ($gutterHorizontal / 2);
 				}
 
