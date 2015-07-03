@@ -41,10 +41,13 @@
 			'build'
 		]);
 
+		grunt.registerTask('css', [
+
+		]);
+
 		// Development task
 		grunt.registerTask('dev', [
 			'clean:dev',
-			//'clean:tmp',
 			//'svgmin:dev_bg',
 			//'svgmin:dev_file',
 			//'svgmin:dev_ico',
@@ -70,7 +73,6 @@
 
 		// Distributing task
 		grunt.registerTask('dist', [
-			'buildsrc:dist',
 			'clean:dist',
 			//'clean:tmp',
 			//'svgmin:dist_bg',
@@ -85,15 +87,12 @@
 			'autoprefixer:dist',
 			//'group_css_media_queries',
 			'cssmin',
-			//'requirejs',
 			//'concat:dist',
-			//'copy:ajax',
 			'copy:favicon',
 			'handlebars:dist',
 			'browserify:dist',
 			//'copy:fonts',
 			//'copy:icon_sprite',
-			//'copy:modernizr',
 			//'uglify',
 			'prettify:dist'
 		]);

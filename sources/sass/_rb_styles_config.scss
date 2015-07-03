@@ -20,7 +20,9 @@ Main Stylesheet
 
 //Layout Grid
 @import "../sources/sass/rb_basics";
-@include rb-generate-global-styles($breakpointConfigs);
+@include rb-generate-layout-styles($breakpointConfigs);
 
 // All Components
 @import "_blocks/**/*.scss";
+
+
