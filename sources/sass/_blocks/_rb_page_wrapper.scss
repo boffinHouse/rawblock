@@ -2,12 +2,12 @@
 *
 *    rb-page-wrapper
 *
-*   
+*
 **********************************************************/
 
 .rb-page-wrapper {
 	//Global Styles
 	width: 100%;
-	display: flex;
-	flex-flow: column wrap;
+	max-width: 1240px;
+	margin: 0 auto;
  }
