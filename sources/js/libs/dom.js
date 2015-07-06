@@ -49,15 +49,18 @@
 			if(pos > 1 || isJumpToEnd){
 				pos = 1;
 			}
-			eased = easing(pos);
 
-			for(prop in startProps){
-				value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
+			if(!isStopped){
+				eased = easing(pos);
 
-				if(prop in elementStyle){
-					elementStyle[prop] = value +'px';
-				} else {
-					element[prop] = value;
+				for(prop in startProps){
+					value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
+
+					if(prop in elementStyle){
+						elementStyle[prop] = value +'px';
+					} else {
+						element[prop] = value;
+					}
 				}
 			}
 
