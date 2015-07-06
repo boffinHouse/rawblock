@@ -456,7 +456,12 @@
 	});
 
 	life.Widget.extend = function(name, prop){
-		var Class = life.Class.extend.call(this, prop);
+		var Class;
+
+		if(!prop.name){
+			prop.name = name;
+		}
+		Class = life.Class.extend.call(this, prop);
 		Class.defaults = prop.defaults || {};
 		rbLife.register(name, Class);
 		return Class;
