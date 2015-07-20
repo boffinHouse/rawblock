@@ -1,3 +1,4 @@
+
 (function(factory) {
 	if(typeof define === 'function' && define.amd){
 		define(factory);
@@ -36,22 +37,18 @@
 	loadPackage.basePath = '';
 	loadPackage.modulePath = '';
 
-	loadPackage.packages = {
-		'tabs': ['libs/common', 'modules/tabs'],
-		'slider': ['libs/common', 'modules/slider'],
-	};
+	loadPackage.packages = {};
 
 	loadPackage.promises = {};
 
-	loadPackage.addPackage = function(moduleId, sources){
-		if(!Array.isArray(sources)){
-			sources = [sources];
+	loadPackage.addPackage = function(moduleId, dependenciesSources){
+		if(!Array.isArray(dependenciesSources)){
+			dependenciesSources = [dependenciesSources];
 		}
-		loadPackage.packages[moduleId] = sources;
+		loadPackage.packages[moduleId] = dependenciesSources;
 	};
 
 	loadPackage.createPath = function(moduleId, index, packageIds){
-		console.log(arguments, this)
 		if(!regPath.test(moduleId)){
 			moduleId = loadPackage[packageIds.isModule ? 'modulePath' : 'basePath'] + moduleId;
 		}
