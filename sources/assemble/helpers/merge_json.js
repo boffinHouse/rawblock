@@ -7,7 +7,7 @@ module.exports.register = function (Handlebars, options)  {
 			if(typeof json == 'string'){
 				try {
 					json = json.trim();
-					if(!/^\{|\[/.test(json)){
+					if(!/^(\{|\[).*(]|})$/.test(json)){
 						json = '{'+ json +'}';
 					}
 					json = (new Function( 'return (' + json + ')' )());
