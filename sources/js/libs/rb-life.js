@@ -12,10 +12,8 @@
 
 	var life = {};
 	var removeElements = [];
-	var initClass = 'is-rb-life';
-	var attachedClass = 'is-rb-attached';
-
-
+	var initClass = 'js-rb-life';
+	var attachedClass = 'js-rb-attached';
 
 	window.rbModules = window.rbModules || {};
 
