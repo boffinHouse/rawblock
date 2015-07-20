@@ -386,6 +386,14 @@
 	//new array or returns array
 	['map', 'filter'].forEach(function(name){
 		fn[name] = function(fn){
+			var sel;
+
+			if(typeof fn == 'string'){
+				sel = fn;
+				fn = function(){
+					this.matches(sel);
+				};
+			}
 			return new dom(this.elements[name](function(elem, index){
 				return fn.call(elem, index, elem);
 			}));
