@@ -391,7 +391,7 @@
 			if(typeof fn == 'string'){
 				sel = fn;
 				fn = function(){
-					this.matches(sel);
+					return this.matches(sel);
 				};
 			}
 			return new dom(this.elements[name](function(elem, index){
