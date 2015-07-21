@@ -51,7 +51,7 @@ module.exports = function(grunt) {
 		run();
 	}
 
-	grunt.registerMultiTask( 'rbinstall', 'npm insall + copy components', function() {
+	grunt.registerMultiTask( 'rbinstall', 'npm install + copy components', function() {
 
 
 		var options = this.options({

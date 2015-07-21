@@ -48,19 +48,21 @@
 //=====================================================================
 @mixin rb-generate-layout-columns() {
 
-	.is-col-group {
+	.is-column-group {
 		display: flex;
 		flex-wrap: wrap;
 
-		.is-col-group {
+		.is-column-group {
 			flex: 1;
+		}
+
+		//Only add flex behaviour to is-size element if in is-column-group
+		> [class*=is-size-] {
+			display: flex;
+			flex-wrap: wrap;
 		}
 	}
 
-	[class*=is-size-] {
-		display: flex;
-		flex-wrap: wrap;
-	}
 
 	.is-unequal-height {
 		display: block;
@@ -95,10 +97,11 @@
 //
 //=====================================================================
 @mixin rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical) {
-	.is-col-group {
+	.is-column-group {
 
 		&.is-gutter {
-			margin: (-$gutterVertical / 2) (-$gutterHorizontal / 2);
+			margin-right: (-$gutterHorizontal / 2);
+			margin-left: (-$gutterHorizontal / 2);
 			padding-right: 0;
 			padding-left: 0;
 		}
@@ -128,7 +131,7 @@
 			$gutterVertical: map-get($gutter, vertical);
 		}
 
-		.is-col-group {
+		.is-column-group {
 
 			&.is-gutter {
 				padding-right: ($gutterHorizontal / 2);
