@@ -246,6 +246,13 @@
 		return this;
 	};
 
+	fn.removeAttr = function(attr){
+		this.elements.forEach(function(elem){
+			elem.removeAttribute(attr);
+		});
+		return this;
+	};
+
 	['add', 'remove'].forEach(function(action){
 		fn[action + 'Class'] =  function(cl){
 			this.elements.forEach(function(elem){
