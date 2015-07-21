@@ -12,10 +12,8 @@
 
 	var life = {};
 	var removeElements = [];
-	var initClass = 'is-rb-life';
-	var attachedClass = 'is-rb-attached';
-
-
+	var initClass = 'js-rb-life';
+	var attachedClass = 'js-rb-attached';
 
 	window.rbModules = window.rbModules || {};
 
@@ -456,7 +454,12 @@
 	});
 
 	life.Widget.extend = function(name, prop){
-		var Class = life.Class.extend.call(this, prop);
+		var Class;
+
+		if(!prop.name){
+			prop.name = name;
+		}
+		Class = life.Class.extend.call(this, prop);
 		Class.defaults = prop.defaults || {};
 		rbLife.register(name, Class);
 		return Class;

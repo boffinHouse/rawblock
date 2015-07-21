@@ -19,7 +19,7 @@
 		if(!Array.isArray(elements)){
 			if(!elements){
 				elements = [];
-			} else if(elements.nodeName || !('length' in elements)){
+			} else if(elements.nodeName || !('length' in elements) || elements == window){
 				elements = [elements];
 			} else {
 				elements = slice.call(elements);
@@ -27,8 +27,92 @@
 		}
 
 		this.elements = elements;
+		this.length = this.elements.length || 0;
 	};
 	var fn = dom.prototype;
+	var tween = function(element, endProps, options){
+
+		var easing, isStopped, isJumpToEnd, bezierArgs;
+		var start = Date.now();
+		var elementStyle = element.style;
+		var startProps = {};
+		var stop = function(clearQueue, jumpToEnd){
+			isStopped = true;
+			if(jumpToEnd){
+				isJumpToEnd = true;
+				step();
+			}
+		};
+		var step = function(){
+			var prop, value, eased;
+			var pos = (Date.now() - start) / options.duration;
+			if(pos > 1 || isJumpToEnd){
+				pos = 1;
+			}
+
+			if(!isStopped){
+				eased = easing(pos);
+
+				for(prop in startProps){
+					value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
+
+					if(prop in elementStyle){
+						elementStyle[prop] = value +'px';
+					} else {
+						element[prop] = value;
+					}
+				}
+			}
+
+			if(pos < 1){
+				if(!isStopped){
+					requestAnimationFrame(step);
+				} else if(options.always){
+					options.always.call(element);
+				}
+			} else{
+				if(element._rbTweenStop){
+					delete element._rbTweenStop;
+				}
+				if(options.complete){
+					options.complete.call(element);
+				}
+				if(options.always){
+					options.always.call(element);
+				}
+			}
+		};
+
+		tween.getStartValues(element, elementStyle, startProps, endProps);
+
+		options = Object.assign({duration: 400, easing: 'ease'}, options || {});
+
+		if(window.BezierEasing && !BezierEasing.css[options.easing] && (bezierArgs = options.easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
+			bezierArgs = bezierArgs.map(function(str){
+				return parseFloat(str);
+			});
+			BezierEasing.css[options.easing] = BezierEasing.apply(this, bezierArgs);
+		}
+
+		easing = window.BezierEasing && (BezierEasing.css[options.easing] || BezierEasing.css.ease) || function(pos){
+				return pos;
+			};
+
+		element._rbTweenStop = stop;
+
+		requestAnimationFrame(step);
+	};
+
+	tween.getStartValues = function(element, elementStyle, startProps, endProps){
+		var prop;
+		for(prop in endProps){
+			if(prop in elementStyle){
+				startProps[prop] = parseFloat(getComputedStyle(element).getPropertyValue(prop));
+			} else {
+				startProps[prop] = element[prop];
+			}
+		}
+	};
 
 	dom.fn = dom.prototype;
 
@@ -37,6 +121,7 @@
 	};
 
 	dom.Event = function(type, options){
+		var event;
 		if(!options){
 			options = {};
 		}
@@ -44,8 +129,15 @@
 		if(options.bubbles == null){
 			options.bubbles = true;
 		}
+		event = new CustomEvent(type, options);
 
-		return new CustomEvent(type, options);
+		if(!event.isDefaultPrevented){
+			event.isDefaultPrevented = function(){
+				return event.defaultPrevented;
+			};
+		}
+
+		return event;
 	};
 
 	fn.find = function(sel){
@@ -154,6 +246,13 @@
 		return this;
 	};
 
+	fn.removeAttr = function(attr){
+		this.elements.forEach(function(elem){
+			elem.removeAttribute(attr);
+		});
+		return this;
+	};
+
 	['add', 'remove'].forEach(function(action){
 		fn[action + 'Class'] =  function(cl){
 			this.elements.forEach(function(elem){
@@ -163,7 +262,7 @@
 		};
 	});
 
-	fn.matches = function(sel){
+	fn.is = function(sel){
 		return this.elements.some(function(elem){
 			return elem.matches(sel);
 		});
@@ -275,9 +374,33 @@
 		return this;
 	};
 
+	fn.animate = function(endProps, options){
+		this.elements.forEach(function(elem){
+			tween(elem, endProps, options);
+		});
+		return this;
+	};
+
+	fn.stop = function(clearQueue, jumpToEnd){
+		this.elements.forEach(function(elem) {
+			if (elem._rbTweenStop) {
+				elem._rbTweenStop(clearQueue, jumpToEnd);
+			}
+		});
+		return this;
+	};
+
 	//new array or returns array
 	['map', 'filter'].forEach(function(name){
 		fn[name] = function(fn){
+			var sel;
+
+			if(typeof fn == 'string'){
+				sel = fn;
+				fn = function(){
+					return this.matches(sel);
+				};
+			}
 			return new dom(this.elements[name](function(elem, index){
 				return fn.call(elem, index, elem);
 			}));
