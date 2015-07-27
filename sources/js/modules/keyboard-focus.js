@@ -25,9 +25,11 @@
 
 	root.addEventListener('focus', setKeyboadFocus, true);
 
-	['mousedown', 'mouseup', 'click', 'touchstart', 'touchend'].forEach(function(eventName){
+	['mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function(eventName){
 		document.addEventListener(eventName, removeKeyBoadFocus, true);
 	});
+
+	document.addEventListener('click', blockKeyboadFocus, true);
 
 	window.addEventListener('focus', blockKeyboadFocus);
 	document.addEventListener('focus', blockKeyboadFocus);
