@@ -9,21 +9,21 @@
 		isKeyboardBlocked = false;
 	};
 	var blockKeyboadFocus = function(){
-		clearTimeout(keyblockTimer);
 		isKeyboardBlocked = true;
+		clearTimeout(keyblockTimer);
 		keyblockTimer = setTimeout(unblockKeyboardFocus, 66);
 	};
 	var removeKeyBoadFocus = function(){
 		root.classList.remove('is-keyboardfocus');
 		blockKeyboadFocus();
 	};
-	var setKeyboadFocus = function(){
+	var setKeyboardFocus = function(){
 		if(!isKeyboardBlocked){
 			root.classList.add('is-keyboardfocus');
 		}
 	};
 
-	root.addEventListener('focus', setKeyboadFocus, true);
+	root.addEventListener('focus', setKeyboardFocus, true);
 
 	['mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function(eventName){
 		document.addEventListener(eventName, removeKeyBoadFocus, true);
