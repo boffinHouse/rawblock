@@ -8,12 +8,12 @@ templates.call(window, Handlebars);
 var loadPackage = require('./libs/packageloader');
 //used by dom for dom.fn.animate
 //window.BezierEasing = require('bezier-easing');
+
 require('./polyfills/object-assign');
 require('./libs/dom');
 require('./libs/rb-life');
 require('./modules/button');
-
-//var Dialog = require('./modules/dialog');
+//require('./modules/focus-within');
 
 
 loadPackage.basePath = 'js/';
