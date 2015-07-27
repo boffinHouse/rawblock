@@ -399,7 +399,10 @@
 
 		setFocus: function(elem){
 			try {
-				setTimeout(function(){elem.focus()}, 0);
+				setTimeout(function(){
+					dom(elem).trigger('rbscriptfocus');
+					elem.focus()
+				}, 0);
 			} catch(e){}
 		},
 

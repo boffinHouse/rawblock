@@ -11,7 +11,7 @@
 	var blockKeyboadFocus = function(){
 		clearTimeout(keyblockTimer);
 		isKeyboardBlocked = true;
-		keyblockTimer = setTimeout(unblockKeyboardFocus, 99);
+		keyblockTimer = setTimeout(unblockKeyboardFocus, 66);
 	};
 	var removeKeyBoadFocus = function(){
 		root.classList.remove('is-keyboardfocus');
@@ -25,14 +25,15 @@
 
 	root.addEventListener('focus', setKeyboadFocus, true);
 
-	document.addEventListener('mousedown', removeKeyBoadFocus, true);
-	document.addEventListener('mouseup', removeKeyBoadFocus, true);
-	document.addEventListener('click', removeKeyBoadFocus, true);
-	document.addEventListener('touchstart', removeKeyBoadFocus, true);
-	document.addEventListener('touchend', removeKeyBoadFocus, true);
+	['mousedown', 'mouseup', 'click', 'touchstart', 'touchend'].forEach(function(eventName){
+		document.addEventListener(eventName, removeKeyBoadFocus, true);
+	});
 
 	window.addEventListener('focus', blockKeyboadFocus);
 	document.addEventListener('focus', blockKeyboadFocus);
-	dom(document).addEventListener('rbscriptfocus', blockKeyboadFocus);
+
+	if(dom){
+		dom(document).addEventListener('rbscriptfocus', blockKeyboadFocus);
+	}
 
 })(window, document);
