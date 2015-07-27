@@ -27,6 +27,7 @@
     "es6-promise": "^2.3.0",
     "handlebars": "^3.0.3",
     "is-nan": "^1.1.0",
+    "lazysizes": "^1.1.4",
     "string.prototype.endswith": "^0.2.0",
     "string.prototype.includes": "^1.0.0",
     "string.prototype.repeat": "^0.2.0",
