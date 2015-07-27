@@ -14,6 +14,7 @@ require('./libs/dom');
 require('./libs/rb-life');
 require('./modules/button');
 //require('./modules/focus-within');
+//require('./modules/keyboard-focus');
 
 
 loadPackage.basePath = 'js/';
