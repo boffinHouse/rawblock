@@ -12,10 +12,13 @@ var loadPackage = require('./libs/packageloader');
 require('./polyfills/object-assign');
 require('./libs/dom');
 require('./libs/rb-life');
-require('./modules/button');
-//require('./modules/focus-within');
-//require('./modules/keyboard-focus');
 
+require('./uitils/simple-slide-updown');
+//require('./uitils/focus-within');
+//require('./uitils/keyboard-focus');
+
+//
+require('./modules/button');
 
 loadPackage.basePath = 'js/';
 loadPackage.modulePath = 'js/modules/';

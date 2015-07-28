@@ -17,6 +17,8 @@
 
 	window.rbModules = window.rbModules || {};
 
+	life.$ = window.jQuery || window.dom;
+
 	life.init = function(options){
 		if (elements) {throw('only once');}
 		clearTimeout(timer);
