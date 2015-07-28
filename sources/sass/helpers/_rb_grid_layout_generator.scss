@@ -158,6 +158,8 @@
 			}
 
 			&.is-gutter-horizontal {
+				padding-right: ($gutterHorizontal / 2);
+				padding-left: ($gutterHorizontal / 2);
 
 				> [class*=is-size-]  {
 					padding-right: ($gutterHorizontal / 2);
