@@ -1,6 +1,6 @@
 (function(window, document){
 	'use strict';
-	var keyblockTimer;
+	var keyboardBlocktimer;
 	var isKeyboardBlocked = false;
 	var root = document.documentElement;
 	var dom = window.jQuery || window.dom;
@@ -10,8 +10,8 @@
 	};
 	var blockKeyboadFocus = function(){
 		isKeyboardBlocked = true;
-		clearTimeout(keyblockTimer);
-		keyblockTimer = setTimeout(unblockKeyboardFocus, 66);
+		clearTimeout(keyboardBlocktimer);
+		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 66);
 	};
 	var removeKeyBoadFocus = function(){
 		root.classList.remove('is-keyboardfocus');
@@ -22,10 +22,14 @@
 			root.classList.add('is-keyboardfocus');
 		}
 	};
+	var pointerEvents = (window.PointerEvent) ?
+		['pointerdown', 'pointerup'] :
+		['mousedown', 'mouseup', 'touchstart', 'touchend']
+	;
 
 	root.addEventListener('focus', setKeyboardFocus, true);
 
-	['mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function(eventName){
+	pointerEvents.forEach(function(eventName){
 		document.addEventListener(eventName, removeKeyBoadFocus, true);
 	});
 
