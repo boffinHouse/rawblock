@@ -1,7 +1,12 @@
 <script>
 	(function(docElem){
+		//polyfills
 		if(!window.fetch || !docElem.closest || !String.prototype.includes){ //  || !Object.assign || !docElem.before || !docElem.queryAll || !Array.prototype.find
 			document.write('<script src="js/polyfills.js"><\/script>');
 		}
 	})(document.documentElement);
+</script>
+
+<script>
+	document.documentElement.classList.remove('no-js');
 </script>

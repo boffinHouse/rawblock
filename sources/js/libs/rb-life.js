@@ -17,6 +17,8 @@
 
 	window.rbModules = window.rbModules || {};
 
+	life.$ = window.jQuery || window.dom;
+
 	life.init = function(options){
 		if (elements) {throw('only once');}
 		clearTimeout(timer);
@@ -276,36 +278,47 @@
 
 	// Create a new Class that inherits from this class
 	window.rbLife.Class.extend = function(prop) {
+		var name, prototype, origDescriptor, copyDescriptor, descProp, superDescriptor;
 		var _super = this.prototype;
 
 		// Instantiate a base class (but only create the instance,
 		// don't run the init constructor)
 		initializing = true;
-		var prototype = new this();
+		prototype = new this();
 		initializing = false;
 
 		// Copy the properties over onto the new prototype
-		for (var name in prop) {
-			// Check if we're overwriting an existing function
-			prototype[name] = typeof prop[name] == "function" &&
-			typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-				(function(name, fn){
-					return function() {
-						var tmp = this._super;
+		for (name in prop) {
+			origDescriptor = Object.getOwnPropertyDescriptor(prop, name);
+			if(!origDescriptor){continue;}
 
-						// Add a new ._super() method that is the same method
-						// but on the super-class
-						this._super = _super[name];
+			superDescriptor = (name in _super && Object.getOwnPropertyDescriptor(_super, name));
 
-						// The method only need to be bound temporarily, so we
-						// remove it when we're done executing
-						var ret = fn.apply(this, arguments);
-						this._super = tmp;
+			for(descProp in origDescriptor){
+				// Check if we're overwriting an existing function and using super keyword
+				origDescriptor[descProp] = superDescriptor && typeof origDescriptor[descProp] == "function" &&
+					typeof superDescriptor[descProp] == "function" && fnTest.test(origDescriptor[descProp]) ?
+					(function(_superFn, fn){
+						return function() {
+							var tmp = this._super;
 
-						return ret;
-					};
-				})(name, prop[name]) :
-				prop[name];
+							// Add a new ._super() method that is the same method
+							// but on the super-class
+							this._super = _superFn;
+
+							// The method only need to be bound temporarily, so we
+							// remove it when we're done executing
+							var ret = fn.apply(this, arguments);
+							this._super = tmp;
+
+							return ret;
+						};
+					})(superDescriptor[descProp], origDescriptor[descProp]) :
+					origDescriptor[descProp]
+				;
+			}
+
+			Object.defineProperty(prototype, name, origDescriptor);
 		}
 
 		// The dummy class constructor
@@ -399,7 +412,10 @@
 
 		setFocus: function(elem){
 			try {
-				setTimeout(function(){elem.focus()}, 0);
+				setTimeout(function(){
+					dom(elem).trigger('rbscriptfocus');
+					elem.focus()
+				}, 0);
 			} catch(e){}
 		},
 
