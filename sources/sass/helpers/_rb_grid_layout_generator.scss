@@ -98,12 +98,14 @@
 //=====================================================================
 @mixin rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical) {
 	.is-column-group {
+		padding-right: 0;
+		padding-left: 0;
 
 		&.is-gutter {
 			margin-right: (-$gutterHorizontal / 2);
 			margin-left: (-$gutterHorizontal / 2);
-			padding-right: 0;
-			padding-left: 0;
+			margin-top: (-$gutterVertical / 2);
+			margin-bottom: (-$gutterVertical / 2);
 		}
 
 		&.is-gutter-vertical {
@@ -144,7 +146,27 @@
 					padding-left: ($gutterHorizontal / 2);
 				 }
 
-				@include rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
+				.is-column-group {
+					padding-right: 0;
+					padding-left: 0;
+
+					&.is-gutter {
+						margin-right: (-$gutterHorizontal / 2);
+						margin-left: (-$gutterHorizontal / 2);
+						margin-top: (-$gutterVertical / 2);
+						margin-bottom: (-$gutterVertical / 2);
+					}
+
+					&.is-gutter-vertical {
+						margin-top: (-$gutterVertical / 2);
+						margin-bottom: (-$gutterVertical / 2);
+					}
+
+					&.is-gutter-horizontal {
+						margin-right: (-$gutterHorizontal / 2);
+						margin-left: (-$gutterHorizontal / 2);
+					}
+				}
 			}
 
 			&.is-gutter-vertical {
@@ -154,7 +176,17 @@
 					margin-bottom: ($gutterVertical / 2);
 				}
 
-				@include rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
+				.is-column-group {
+					padding-right: 0;
+					padding-left: 0;
+
+					&.is-gutter,
+					&.is-gutter-vertical {
+						margin-top: (-$gutterVertical / 2);
+						margin-bottom: (-$gutterVertical / 2);
+					}
+
+				}
 			}
 
 			&.is-gutter-horizontal {
@@ -166,7 +198,16 @@
 					padding-left: ($gutterHorizontal / 2);
 				}
 
-				@include rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical);
+				.is-column-group {
+					padding-right: 0;
+					padding-left: 0;
+
+					&.is-gutter,
+					&.is-gutter-horizontal {
+						margin-right: (-$gutterHorizontal / 2);
+						margin-left: (-$gutterHorizontal / 2);
+					}
+				}
 			}
 
 		}
