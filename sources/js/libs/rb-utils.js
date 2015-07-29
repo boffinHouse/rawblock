@@ -10,18 +10,26 @@ if(!window.rb.$){
 
 	var requestAnimationFrame = window.requestAnimationFrame || setTimeout;
 	var running = false;
+	var isClass = 'is-focus-within';
+	var isClassSelector = '.' + isClass;
 
 	function updateFocus(){
-		var i, len;
-		var focusParents = document.querySelectorAll('.is-focus-within');
-		var parent = document.activeElement;
+		var oldFocusParents, i, len;
 
-		for(i = 0, len = focusParents.length; i < len; i++){
-			focusParents[i].classList.remove('is-focus-within');
+		var parent = document.activeElement;
+		var newFocusParents = [];
+
+		while((parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)){
+			newFocusParents.push(parent);
 		}
 
-		while((parent = parent.parentNode) && parent.classList){
-			parent.classList.add('is-focus-within');
+		if((oldFocusParents = parent.querySelectorAll && parent.querySelectorAll(isClassSelector))){
+			for(i = 0, len = oldFocusParents.length; i < len; i++){
+				oldFocusParents[i].classList.remove(isClass);
+			}
+		}
+		for(i = 0, len = newFocusParents.length; i < len; i++){
+			newFocusParents[i].classList.add(isClass);
 		}
 
 		running = false;
