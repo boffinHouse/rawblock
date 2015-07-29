@@ -53,7 +53,7 @@ if(!window.rb.$){
 	var keyboardBlocktimer;
 	var isKeyboardBlocked = false;
 	var root = document.documentElement;
-	var dom = window.jQuery || window.dom;
+	var dom = rb.$;
 
 	var unblockKeyboardFocus = function(){
 		isKeyboardBlocked = false;
@@ -97,7 +97,7 @@ if(!window.rb.$){
 /* rbSlideUp / rbSlideDown */
 (function(){
 	'use strict';
-	var dom = (window.rbLife && rbLife.$) || window.jQuery || window.dom;
+	var dom = rb.$;
 
 	dom.fn.rbSlideUp = function(options){
 		if(!options){
@@ -130,11 +130,11 @@ if(!window.rb.$){
 		return this.each(function(){
 			var endValue;
 			var $panel = dom(this);
-			var startHeight = this.offsetHeight + 'px';
+			var startHeight = this.clientHeight + 'px';
 
 			$panel.css({overflow: 'hidden', display: 'block', height: 'auto', visibility: 'visible'});
 
-			endValue = this.offsetHeight;
+			endValue = this.clientHeight;
 
 			$panel
 				.css({height: startHeight})
@@ -154,3 +154,72 @@ if(!window.rb.$){
 		});
 	};
 })();
+
+/* scrollIntoView */
+(function(window){
+	'use strict';
+	var document = window.document;
+	var dom = rb.$;
+
+	var getScrollingElement = function(){
+		var bH, dH, isCompat;
+		var scrollingElement = document.scrollingElement;
+
+		if(!scrollingElement){
+			bH = document.body.scrollHeight;
+			dH = document.documentElement.scrollHeight;
+			isCompat = document.compatMode == 'BackCompat';
+			scrollingElement = (dH <= bH || isCompat) ?
+				document.body :
+				document.documentElement;
+
+			if(scrollingElement && (dH != bH || isCompat)){
+				document.scrollingElement = scrollingElement;
+			}
+		}
+
+		return scrollingElement;
+	};
+
+	dom.fn.scrollIntoView = function(options){
+		var bbox, distance, scrollingElement;
+		var elem = this.get(0);
+
+		if(elem){
+			options = options || {};
+			bbox = elem.getBoundingClientRect();
+			distance = Math.max(Math.abs(bbox.top), Math.abs(bbox.left));
+			scrollingElement = getScrollingElement();
+
+			dom(scrollingElement).animate(
+				{
+					scrollTop: scrollingElement.scrollTop + bbox.top + (options.offsetTop || 0),
+					scrollLeft: scrollingElement.scrollLeft + bbox.left + (options.offsetLeft || 0),
+				},
+				{
+					duration: options.duration || Math.min(1700, Math.max(99, distance * 0.6)),
+					always: function(){
+						if(options.focus){
+							try {
+								options.focus.focus();
+							} catch(e){}
+						}
+
+						if(options.hash){
+							location.hash = typeof options.hash == 'string' ?
+								options.hash :
+								elem.id || elem.name
+							;
+						}
+
+						if(options.always){
+							options.always.call(elem);
+						}
+					},
+					easing: options.easing
+				}
+			);
+		}
+		return this;
+	};
+})(window);
