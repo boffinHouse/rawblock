@@ -40,8 +40,8 @@
 			isStopped = true;
 			if(jumpToEnd){
 				isJumpToEnd = true;
-				step();
 			}
+			step();
 		};
 		var step = function(){
 			var prop, value, eased;
