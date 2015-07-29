@@ -32,7 +32,7 @@
 	var fn = dom.prototype;
 	var tween = function(element, endProps, options){
 
-		var easing, isStopped, isJumpToEnd, bezierArgs;
+		var easing, isStopped, isJumpToEnd, bezierArgs, requestID;
 		var start = Date.now();
 		var elementStyle = element.style;
 		var startProps = {};
@@ -42,10 +42,13 @@
 				isJumpToEnd = true;
 			}
 			step();
+			cancelAnimationFrame(requestID);
 		};
-		var step = function(){
+
+		var step = function() {
 			var prop, value, eased;
 			var pos = (Date.now() - start) / options.duration;
+
 			if(pos > 1 || isJumpToEnd){
 				pos = 1;
 			}
@@ -66,7 +69,7 @@
 
 			if(pos < 1){
 				if(!isStopped){
-					requestAnimationFrame(step);
+					requestID = requestAnimationFrame(step);
 				} else if(options.always){
 					options.always.call(element);
 				}
@@ -74,7 +77,7 @@
 				if(element._rbTweenStop){
 					delete element._rbTweenStop;
 				}
-				if(options.complete){
+				if(options.complete && !isStopped){
 					options.complete.call(element);
 				}
 				if(options.always){
@@ -100,7 +103,7 @@
 
 		element._rbTweenStop = stop;
 
-		requestAnimationFrame(step);
+		requestID = requestAnimationFrame(step);
 	};
 
 	tween.getStartValues = function(element, elementStyle, startProps, endProps){
