@@ -1,5 +1,9 @@
 window.rb = window.rb || {};
 
+if(!window.rb.$){
+	window.rb.$ = window.jQuery || window.dom;
+}
+
 /*! focus-within polyfill */
 (function(window, document){
 	'use strict';
@@ -77,7 +81,7 @@ window.rb = window.rb || {};
 	document.addEventListener('focus', blockKeyboadFocus);
 
 	if(dom){
-		dom(document).addEventListener('rbscriptfocus', blockKeyboadFocus);
+		dom(document).on('rbscriptfocus', blockKeyboadFocus);
 	}
 
 })(window, document);

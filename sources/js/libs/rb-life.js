@@ -15,9 +15,8 @@
 	var initClass = 'js-rb-life';
 	var attachedClass = 'js-rb-attached';
 
+	window.rb = window.rb || {};
 	window.rbModules = window.rbModules || {};
-
-	life.$ = window.jQuery || window.dom;
 
 	life.init = function(options){
 		if (elements) {throw('only once');}
@@ -346,6 +345,7 @@
 
 	var idIndex = 0;
 	var regData = /^data-/;
+	var dom = window.rb.$;
 
 	life.getWidget = function(element){
 		return element && element._rbWidget;
@@ -355,6 +355,7 @@
 		defaults: {},
 		init: function(element){
 			this.element = element;
+			this.$element = dom(element);
 			this.options = {};
 
 			element._rbWidget = this;
