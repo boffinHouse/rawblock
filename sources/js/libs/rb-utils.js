@@ -130,14 +130,14 @@ if(!window.rb.$){
 		return this.each(function(){
 			var endValue;
 			var $panel = dom(this);
-			var height = this.style.height;
+			var startHeight = this.offsetHeight + 'px';
 
 			$panel.css({overflow: 'hidden', display: 'block', height: 'auto', visibility: 'visible'});
 
 			endValue = this.offsetHeight;
 
 			$panel
-				.css({height: height})
+				.css({height: startHeight})
 				.animate({height: endValue}, {
 					duration: options.duration || 400,
 					easing: options.easing,
