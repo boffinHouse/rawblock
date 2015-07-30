@@ -248,7 +248,7 @@ if(!window.rb.$){
 			requestAnimationFrame(afterAF);
 		};
 
-		if(throttleDelay){
+		if(!throttleDelay){
 			throttleDelay = 99;
 		}
 
@@ -261,12 +261,12 @@ if(!window.rb.$){
 				return;
 			}
 			var delay = throttleDelay - (Date.now() - lastTime);
-
 			running =  true;
 
 			if(delay < 6){
 				delay = 6;
 			}
+
 			setTimeout(getAF, delay);
 		};
 	};
