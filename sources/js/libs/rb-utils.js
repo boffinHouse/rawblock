@@ -229,7 +229,7 @@ if(!window.rb.$){
 /* throttle */
 (function(){
 	'use strict';
-	var setImmediate = window.setImmediate;
+	var setImmediate = window.setImmediate || setTimeout;
 	var requestAnimationFrame = requestAnimationFrame || setTimeout;
 
 	rb.throttle = function(fn, throttleDelay, write){
