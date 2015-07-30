@@ -1,4 +1,6 @@
-window.rb = window.rb || {};
+if(!window.rb){
+	window.rb = {};
+}
 
 if(!window.rb.$){
 	window.rb.$ = window.jQuery || window.dom;
@@ -223,3 +225,64 @@ if(!window.rb.$){
 		return this;
 	};
 })(window);
+
+/* throttle */
+(function(){
+	'use strict';
+	var setImmediate = window.setImmediate;
+	var requestAnimationFrame = requestAnimationFrame || setTimeout;
+
+	rb.throttle = function(fn, throttleDelay, write){
+		var running;
+		var lastTime = 0;
+		var Date = window.Date;
+		var run = function(){
+			running = false;
+			lastTime = Date.now();
+			fn();
+		};
+		var afterAF = function(){
+			setImmediate(run);
+		};
+		var getAF = function(){
+			requestAnimationFrame(afterAF);
+		};
+
+		if(throttleDelay){
+			throttleDelay = 99;
+		}
+
+		if(write){
+			afterAF = run;
+		}
+
+		return function(){
+			if(running){
+				return;
+			}
+			var delay = throttleDelay - (Date.now() - lastTime);
+
+			running =  true;
+
+			if(delay < 6){
+				delay = 6;
+			}
+			setTimeout(getAF, delay);
+		};
+	};
+})();
+
+/* resize */
+(function(){
+	'use strict';
+
+	rb.resize = {
+		fns: [],
+		on: function(fn){
+
+		},
+		off: function(fn){
+
+		},
+	};
+})();
