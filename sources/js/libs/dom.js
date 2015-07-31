@@ -112,8 +112,11 @@
 	tween.getStartValues = function(element, elementStyle, startProps, endProps){
 		var prop;
 		for(prop in endProps){
+			if(typeof endProps[prop] == 'string'){
+				endProps[prop] = parseFloat(endProps[prop]) || 0;
+			}
 			if(prop in elementStyle){
-				startProps[prop] = parseFloat(getComputedStyle(element).getPropertyValue(prop));
+				startProps[prop] = parseFloat(getComputedStyle(element).getPropertyValue(prop)) || 0;
 			} else {
 				startProps[prop] = element[prop];
 			}
