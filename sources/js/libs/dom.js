@@ -30,6 +30,11 @@
 		this.length = this.elements.length || 0;
 	};
 	var fn = dom.prototype;
+	var defaultEasing = {
+		get: function(pos){
+			return pos;
+		}
+	};
 	var tween = function(element, endProps, options){
 
 		var easing, isStopped, isJumpToEnd, bezierArgs, requestID;
@@ -54,7 +59,7 @@
 			}
 
 			if(!isStopped){
-				eased = easing(pos);
+				eased = easing.get(pos);
 
 				for(prop in startProps){
 					value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
@@ -97,9 +102,7 @@
 			BezierEasing.css[options.easing] = BezierEasing.apply(this, bezierArgs);
 		}
 
-		easing = window.BezierEasing && (BezierEasing.css[options.easing] || BezierEasing.css.ease) || function(pos){
-				return pos;
-			};
+		easing = window.BezierEasing && (BezierEasing.css[options.easing] || BezierEasing.css.ease) || defaultEasing;
 
 		element._rbTweenStop = stop;
 
