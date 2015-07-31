@@ -12,7 +12,7 @@
 		if(typeof elements == 'string'){
 			return dom.q(elements);
 		}
-		if(!this){
+		if(!(this instanceof dom)){
 			return new dom(elements);
 		}
 
