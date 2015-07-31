@@ -326,7 +326,7 @@ if(!window.rb.$){
 	'use strict';
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
-		var $element = dom(element);
+		var $element = rb.$(element);
 		var numbers = 0;
 		if(!Array.isArray(styles)){
 			styles = [styles];
@@ -334,6 +334,7 @@ if(!window.rb.$){
 
 		for(i = 0; i < styles.length; i++){
 			value = parseFloat($element.css(styles[i])) || 0;
+
 			if(!onlyPositive || value > 0){
 				numbers += value;
 			}
