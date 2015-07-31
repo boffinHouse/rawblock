@@ -225,21 +225,20 @@ if(!window.rb.$){
 		return this;
 	};
 })(window);
-
 /* throttle */
 (function(){
 	'use strict';
 	var setImmediate = window.setImmediate || setTimeout;
 	var requestAnimationFrame = requestAnimationFrame || setTimeout;
 
-	rb.throttle = function(fn, throttleDelay, write){
-		var running;
+	rb.throttle = function(fn, options){
+		var running, that, args;
 		var lastTime = 0;
 		var Date = window.Date;
 		var run = function(){
 			running = false;
 			lastTime = Date.now();
-			fn();
+			fn.apply(that, args);
 		};
 		var afterAF = function(){
 			setImmediate(run);
@@ -248,11 +247,15 @@ if(!window.rb.$){
 			requestAnimationFrame(afterAF);
 		};
 
-		if(!throttleDelay){
-			throttleDelay = 99;
+		if(!options){
+			options = {};
 		}
 
-		if(write){
+		if(!options.delay){
+			options.delay = 99;
+		}
+
+		if(options.write){
 			afterAF = run;
 		}
 
@@ -260,13 +263,14 @@ if(!window.rb.$){
 			if(running){
 				return;
 			}
-			var delay = throttleDelay - (Date.now() - lastTime);
+			var delay = options.delay - (Date.now() - lastTime);
 			running =  true;
 
 			if(delay < 6){
 				delay = 6;
 			}
-
+			that = options.that || this;
+			args = arguments;
 			setTimeout(getAF, delay);
 		};
 	};
@@ -276,13 +280,65 @@ if(!window.rb.$){
 (function(){
 	'use strict';
 
+	var iWidth, cHeight, installed;
+	var docElem = document.documentElement;
 	rb.resize = {
 		fns: [],
-		on: function(fn){
-
+		setup: function(){
+			if(!installed){
+				installed = true;
+				setTimeout(function(){
+					iWidth = innerWidth;
+					cHeight = docElem.clientHeight;
+				});
+				window.addEventListener('resize', this.run);
+			}
+		},
+		teardown: function(){
+			if(installed && !this.fns.length){
+				installed = false;
+				window.removeEventListener('resize', this.run);
+			}
+		},
+		on: function(fn, thisArg){
+			this.fns.push(fn);
+			this.setup();
 		},
 		off: function(fn){
 
 		},
+	};
+
+	rb.resize.run = rb.throttle(function(){
+		var i, len;
+		if(iWidth != innerWidth || cHeight != docElem.clientHeight){
+			iWidth = innerWidth;
+			cHeight = docElem.clientHeight;
+
+			for(i = 0, len = this.fns.length; i < len; i++){
+				this.fns[i]();
+			}
+		}
+	}, {that:rb.resize});
+})();
+
+(function(){
+	'use strict';
+	rb.getCSSNumbers = function(element, styles, onlyPositive){
+		var i, value;
+		var $element = dom(element);
+		var numbers = 0;
+		if(!Array.isArray(styles)){
+			styles = [styles];
+		}
+
+		for(i = 0; i < styles.length; i++){
+			value = parseFloat($element.css(styles[i])) || 0;
+			if(!onlyPositive || value > 0){
+				numbers += value;
+			}
+		}
+
+		return numbers;
 	};
 })();
