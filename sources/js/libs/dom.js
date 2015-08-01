@@ -358,6 +358,16 @@
 		return this;
 	};
 
+	fn.remove = function(){
+		this.elements.forEach(function(elem){
+			var parent = elem.parentNode;
+			if(parent && parent.removeChild){
+				parent.removeChild(elem);
+			}
+		});
+		return this;
+	};
+
 	fn.trigger = function(type, options){
 		var firstEvent;
 

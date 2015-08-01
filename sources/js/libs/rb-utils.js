@@ -253,7 +253,7 @@ if(!window.rb.$){
 		}
 
 		if(!options.delay){
-			options.delay = 99;
+			options.delay = 200;
 		}
 
 		if(options.write){
@@ -329,6 +329,62 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
+	var $ = rb.$;
+	$.fn.elementResize = function(action, fn, options){
+		if(!options){
+			options = {};
+		}
+		var add = function(){
+			var width, height;
+			var iframe = $(document.createElement('iframe'))
+					.addClass('js-element-resize')
+					.css({
+						position: 'absolute',
+						top: '0px',
+						left: '0px',
+						bottom: '0px',
+						right: '0px',
+						visibility: 'visible',
+						'min-width': '100%',
+						'min-height': '100%',
+						'z-index': '-1',
+						border: 'none',
+						background: 'transparent',
+						opacity: 0
+					})
+					.attr({
+						role: 'presentation',
+						tabindex: '-1',
+						frameborder: '0',
+					})
+					.get(0)
+				;
+
+			$(this).css({position: 'relative'});
+			this.appendChild(iframe);
+
+			setTimeout(function(){
+				width = iframe.offsetWidth;
+				height = iframe.offsetHeight;
+				iframe.contentWindow.addEventListener('resize', function(){
+					if( (!options.noWidth && width != iframe.offsetWidth)  || (!options.noHeight && height != iframe.offsetHeight)){
+						width = iframe.offsetWidth;
+						height = iframe.offsetHeight;
+						fn();
+					}
+				});
+			});
+		};
+		var remove = function(){
+			$(this).find('iframe.js-element-resize').remove();
+		};
+
+		return this.each(action == 'remove' ? remove : add);
+	};
+})();
+
+(function(){
+	'use strict';
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
 		var $element = rb.$(element);
@@ -370,14 +426,13 @@ if(!window.rb.$){
 (function(undefined){
 	'use strict';
 	var $ = rb.$;
-	var life = rb.life;
 
 	$.fn.rbWidget = function(name, args){
 		var ret;
 
 		this.each(function(){
 			if(ret === undefined){
-				ret = life.getWidget(this, name, args);
+				ret = rb.life.getWidget(this, name, args);
 			}
 		});
 
