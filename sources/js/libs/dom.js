@@ -422,5 +422,13 @@
 		};
 	});
 
+	if(!window.rb){
+		window.rb = {};
+	}
+
+	if(!window.rb.$){
+		window.rb.$ = window.dom;
+	}
+
 	return dom;
 }));

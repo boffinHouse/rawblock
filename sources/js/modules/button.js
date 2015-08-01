@@ -6,9 +6,9 @@
 	}
 }(typeof window != 'undefined' ? window : this, function (window, document) {
 	'use strict';
-	var dom = window.jQuery || window.dom;
+	//var $ = rb.$;
 
-	return rbLife.Widget.extend('button', {
+	return rb.life.Widget.extend('button', {
 		defaults: {
 			target: ''
 		},
@@ -17,7 +17,6 @@
 			this._super(element);
 
 			this.regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
-			this.$element = dom(element);
 
 			this.setupEvents();
 		},

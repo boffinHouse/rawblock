@@ -18,6 +18,8 @@
 	window.rb = window.rb || {};
 	window.rbModules = window.rbModules || {};
 
+	window.rb.life = life;
+
 	life.init = function(options){
 		if (elements) {throw('only once');}
 		clearTimeout(timer);
@@ -115,7 +117,9 @@
 			instance = new lifeClass( element );
 		}
 
-		element.classList.add( attachedClass );
+		requestAnimationFrame(function(){
+			element.classList.add( attachedClass );
+		});
 
 		if (instance && (instance.attached || instance.detached || instance.attachedOnce)) {
 			life._attached.push(element);
@@ -340,15 +344,27 @@
 	};
 })();
 
-(function(window, document, life){
+(function(window, document, life, undefined){
 	'use strict';
 
 	var idIndex = 0;
 	var regData = /^data-/;
 	var dom = window.rb.$;
 
-	life.getWidget = function(element){
-		return element && element._rbWidget;
+	life.getWidget = function(element, key, args){
+		var widget = element && element._rbWidget;
+		var ret = widget;
+		if(widget && key){
+			ret = widget[key];
+
+			if(typeof ret == 'function'){
+				ret = ret.apply(widget, args || []);
+			} else if(args !== undefined){
+				widget[key] = args;
+				ret = undefined;
+			}
+		}
+		return ret;
 	};
 
 	life.Widget = window.rbLife.Class.extend({

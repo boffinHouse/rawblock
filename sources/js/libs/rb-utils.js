@@ -99,9 +99,9 @@ if(!window.rb.$){
 /* rbSlideUp / rbSlideDown */
 (function(){
 	'use strict';
-	var dom = rb.$;
+	var $ = rb.$;
 
-	dom.fn.rbSlideUp = function(options){
+	$.fn.rbSlideUp = function(options){
 		if(!options){
 			options = {};
 		}
@@ -124,14 +124,14 @@ if(!window.rb.$){
 		;
 	};
 
-	dom.fn.rbSlideDown = function(options){
+	$.fn.rbSlideDown = function(options){
 		if(!options){
 			options = {};
 		}
 
 		return this.each(function(){
 			var endValue;
-			var $panel = dom(this);
+			var $panel = $(this);
 			var startHeight = this.clientHeight + 'px';
 
 			$panel.css({overflow: 'hidden', display: 'block', height: 'auto', visibility: 'visible'});
@@ -161,7 +161,7 @@ if(!window.rb.$){
 (function(window){
 	'use strict';
 	var document = window.document;
-	var dom = rb.$;
+	var $ = rb.$;
 
 	var getScrollingElement = function(){
 		var bH, dH, isCompat;
@@ -183,7 +183,7 @@ if(!window.rb.$){
 		return scrollingElement;
 	};
 
-	dom.fn.scrollIntoView = function(options){
+	$.fn.scrollIntoView = function(options){
 		var bbox, distance, scrollingElement;
 		var elem = this.get(0);
 
@@ -193,7 +193,7 @@ if(!window.rb.$){
 			distance = Math.max(Math.abs(bbox.top), Math.abs(bbox.left));
 			scrollingElement = getScrollingElement();
 
-			dom(scrollingElement).animate(
+			$(scrollingElement).animate(
 				{
 					scrollTop: scrollingElement.scrollTop + bbox.top + (options.offsetTop || 0),
 					scrollLeft: scrollingElement.scrollLeft + bbox.left + (options.offsetLeft || 0),
@@ -225,6 +225,7 @@ if(!window.rb.$){
 		return this;
 	};
 })(window);
+
 /* throttle */
 (function(){
 	'use strict';
@@ -305,7 +306,11 @@ if(!window.rb.$){
 			this.setup();
 		},
 		off: function(fn){
-
+			var index = this.fns.indexOf(fn);
+			if(index != -1){
+				this.fns.splice(index, 1);
+				this.teardown();
+			}
 		},
 	};
 
@@ -359,4 +364,27 @@ if(!window.rb.$){
 			}
 		};
 	};
+})();
+
+/* rbWidget */
+(function(undefined){
+	'use strict';
+	var $ = rb.$;
+	var life = rb.life;
+
+	$.fn.rbWidget = function(name, args){
+		var ret;
+
+		this.each(function(){
+			if(ret === undefined){
+				ret = life.getWidget(this, name, args);
+			}
+		});
+
+		return ret === undefined ?
+			this :
+			ret
+		;
+	};
+
 })();
