@@ -343,3 +343,20 @@ if(!window.rb.$){
 		return numbers;
 	};
 })();
+
+(function(){
+	'use strict';
+	rb.rAf = function(fn, thisArg){
+		var running, args;
+		var run = function(){
+			fn.apply(thisArg || window, args);
+		};
+		return function(){
+			args = arguments;
+			if(!running){
+				running = true;
+				window.requestAnimationFrame(run);
+			}
+		};
+	};
+})();
