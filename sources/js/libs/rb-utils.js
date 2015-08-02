@@ -360,6 +360,10 @@ if(!window.rb.$){
 					.get(0)
 				;
 
+			if($(this).find('iframe.js-element-resize').length){
+				console.error('only one element resize handler allowed');
+			}
+
 			$(this).css({position: 'relative'});
 			this.appendChild(iframe);
 
@@ -407,7 +411,7 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
-	rb.rAf = function(fn, thisArg){
+	rb.rAF = function(fn, thisArg){
 		var running, args;
 		var run = function(){
 			fn.apply(thisArg || window, args);
