@@ -121,7 +121,7 @@
 			element.classList.add( attachedClass );
 		});
 
-		if (instance && (instance.attached || instance.detached || instance.attachedOnce)) {
+		if (!element._rbCreated && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
 			life._attached.push(element);
 
 			if(instance.attached){
@@ -136,7 +136,7 @@
 			}
 			life.batch.timedRun();
 		}
-
+		element._rbCreated = true;
 		return instance;
 	};
 
@@ -147,6 +147,9 @@
 
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
+
+			if(module._rbCreated){continue;}
+
 			modulePath = module.getAttribute( 'data-module' ) || '';
 			moduleId = modulePath.split( '/' );
 			moduleId = moduleId[ moduleId.length - 1 ];
@@ -176,23 +179,32 @@
 			}
 		}
 
-		while (removeElements.length) {
-			removeElements.shift().classList.remove(initClass);
-		}
+		life.removeInitClass();
+
 		life.batch.run();
 	};
 
+	life.removeInitClass = rb.rAF(function(){
+		while (removeElements.length) {
+			removeElements.shift().classList.remove(initClass);
+		}
+	});
+
 	life.throttledFindElements = (function() {
-		var setTimeout = window.setTimeout;
+		var setImmediate = window.setImmediate || window.setTimeout;
+		var requestAnimationFrame = window.requestAnimationFrame;
 		var runs = false;
-		var run = function() {
+		var runImmediate = function() {
 			runs = false;
 			life.findElements();
+		};
+		var rAFRun = function() {
+			setImmediate(runImmediate);
 		};
 		return function () {
 			if ( !runs ) {
 				runs = true;
-				setTimeout( run );
+				requestAnimationFrame( rAFRun );
 			}
 		};
 	})();
@@ -208,6 +220,10 @@
 
 					element.classList.remove( attachedClass );
 					element.classList.add( initClass );
+
+					if(element._rbCreated){
+						delete element._rbCreated;
+					}
 					if ( instance.detached ) {
 						instance.detached( element, instance );
 					}
