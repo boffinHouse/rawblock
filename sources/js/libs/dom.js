@@ -179,6 +179,10 @@
 		return arguments.length ? this.elements[number] : this.elements;
 	};
 
+	fn.eq = function(number){
+		return new dom(this.elements[number] ? [this.elements[number]] : []);
+	};
+
 	[['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function(action){
 		dom.fn[action[0]] = function(type, sel, fn, capture){
 			var useFn;
@@ -262,13 +266,17 @@
 		return this;
 	};
 
-	['add', 'remove'].forEach(function(action){
+	['add', 'remove', 'has', 'toggle'].forEach(function(action){
 		fn[action + 'Class'] =  function(cl){
 			this.elements.forEach(function(elem){
 				elem.classList[action](cl);
 			});
 			return this;
 		};
+
+		if(action == 'has'){
+			action = 'contains';
+		}
 	});
 
 	fn.is = function(sel){
