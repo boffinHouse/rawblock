@@ -432,6 +432,13 @@
 		};
 	});
 
+	fn.index = function(elem){
+		if(!elem.nodeName && elem.get){
+			elem = elem.get(0);
+		}
+		return this.elements.indexOf(elem);
+	};
+
 	if(!window.rb){
 		window.rb = {};
 	}
