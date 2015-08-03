@@ -191,8 +191,8 @@
 			if(sel){
 				if(!fn[sel]){
 					fn[sel] = function(e){
-						e.delegateTarget = e.target.closest(sel);
-						if(!e.delegateTarget){return;}
+						e.delegatedTarget = e.target.closest(sel);
+						if(!e.delegatedTarget){return;}
 						return fn.apply(this, arguments);
 					};
 				}
