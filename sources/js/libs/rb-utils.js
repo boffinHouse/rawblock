@@ -6,6 +6,12 @@ if(!window.rb.$){
 	window.rb.$ = window.jQuery || window.dom;
 }
 
+(function(docElem){
+	'use strict';
+	docElem.classList.remove('no-js');
+	docElem.classList.add('js');
+})(document.documentElement);
+
 /*! focus-within polyfill */
 (function(window, document){
 	'use strict';
@@ -334,7 +340,7 @@ if(!window.rb.$){
 		if(!options){
 			options = {};
 		}
-		var add = function(){
+		var add = rb.rAF(function(){
 			var width, height;
 			var iframe = $(document.createElement('iframe'))
 					.addClass('js-element-resize')
@@ -378,10 +384,10 @@ if(!window.rb.$){
 					}
 				});
 			});
-		};
-		var remove = function(){
+		});
+		var remove = rb.rAF(function(){
 			$(this).find('iframe.js-element-resize').remove();
-		};
+		});
 
 		return this.each(action == 'remove' ? remove : add);
 	};
@@ -412,12 +418,14 @@ if(!window.rb.$){
 (function(){
 	'use strict';
 	rb.rAF = function(fn, thisArg){
-		var running, args;
+		var running, args, that;
 		var run = function(){
-			fn.apply(thisArg || window, args);
+			running = false;
+			fn.apply(that, args);
 		};
 		return function(){
 			args = arguments;
+			that = thisArg || this || window;
 			if(!running){
 				running = true;
 				window.requestAnimationFrame(run);

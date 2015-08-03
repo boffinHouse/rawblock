@@ -71,6 +71,10 @@
 		return loadPackage.promises[src];
 	};
 
+	if(!window.rb){
+		window.rb = {};
+	}
+	window.rb.loadPackage = loadPackage;
 	window.loadPackage = loadPackage;
 	return loadPackage;
 }));

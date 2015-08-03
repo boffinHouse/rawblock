@@ -16,7 +16,6 @@
 	var attachedClass = 'js-rb-attached';
 
 	window.rb = window.rb || {};
-	window.rbModules = window.rbModules || {};
 
 	window.rb.life = life;
 
@@ -112,9 +111,10 @@
 	};
 
 	life.create = function(element, lifeClass) {
-		var instance;
+		var instance, trigger;
 		if ( !element._rbWidget ) {
 			instance = new lifeClass( element );
+			trigger = true;
 		}
 
 		requestAnimationFrame(function(){
@@ -137,6 +137,12 @@
 			life.batch.timedRun();
 		}
 		element._rbCreated = true;
+
+		if(trigger){
+			life.batch.add(function() {
+				$(element).trigger(lifeClass.prototype.name +'created');
+			});
+		}
 		return instance;
 	};
 
@@ -293,10 +299,10 @@
 	var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
 	// The base Class implementation (does nothing)
-	window.rbLife.Class = function(){};
+	window.rb.life.Class = function(){};
 
 	// Create a new Class that inherits from this class
-	window.rbLife.Class.extend = function(prop) {
+	window.rb.life.Class.extend = function(prop) {
 		var name, prototype, origDescriptor, copyDescriptor, descProp, superDescriptor;
 		var _super = this.prototype;
 
@@ -354,7 +360,7 @@
 		Class.prototype.constructor = Class;
 
 		// And make this class extendable
-		Class.extend = this.extend || window.rbLife.Class.extend;
+		Class.extend = this.extend || window.rb.life.Class.extend;
 
 		return Class;
 	};
@@ -365,7 +371,7 @@
 
 	var idIndex = 0;
 	var regData = /^data-/;
-	var dom = window.rb.$;
+	var $ = window.rb.$;
 
 	life.getWidget = function(element, key, args){
 		var widget = element && element._rbWidget;
@@ -383,18 +389,18 @@
 		return ret;
 	};
 
-	life.Widget = window.rbLife.Class.extend({
+	life.Widget = life.Class.extend({
 		defaults: {},
 		init: function(element){
 			this.element = element;
-			this.$element = dom(element);
+			this.$element = $(element);
 			this.options = {};
 
-			element._rbWidget = this;
-
-			this.parseOptions();
+			this.parseOptions(this.options, this.constructor.defaults);
 
 			this.setupLifeOptions();
+
+			element._rbWidget = this;
 		},
 		widget: life.getWidget,
 		setupLifeOptions: function(){
@@ -446,14 +452,14 @@
 		setFocus: function(elem){
 			try {
 				setTimeout(function(){
-					dom(elem).trigger('rbscriptfocus');
+					$(elem).trigger('rbscriptfocus');
 					elem.focus()
 				}, 0);
 			} catch(e){}
 		},
 
-		parseOptions: function(){
-			var options = Object.assign(this.options, this.constructor.defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
+		parseOptions: function(opts, defaults){
+			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
 			this.setOptions(options);
 		},
 
@@ -510,7 +516,7 @@
 		}
 		Class = life.Class.extend.call(this, prop);
 		Class.defaults = prop.defaults || {};
-		rbLife.register(name, Class);
+		life.register(name, Class);
 		return Class;
 	};
-})(window, document, rbLife);
+})(window, document, rb.life);
