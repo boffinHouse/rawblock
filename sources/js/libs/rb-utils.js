@@ -251,7 +251,7 @@ if(!window.rb.$){
 			setImmediate(run);
 		};
 		var getAF = function(){
-			requestAnimationFrame(afterAF);
+			rb.rAFQueue(afterAF);
 		};
 
 		if(!options){
@@ -417,6 +417,21 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
+	rb.rAFQueue = (function(){
+		var fns = [];
+		var run = function(){
+			while(fns.length){
+				fns.shift()();
+			}
+		};
+		return function(fn){
+			fns.push(fn);
+			if(fns.length == 1){
+				requestAnimationFrame(run);
+			}
+		};
+	})();
+
 	rb.rAF = function(fn, thisArg){
 		var running, args, that;
 		var run = function(){
@@ -428,7 +443,7 @@ if(!window.rb.$){
 			that = thisArg || this || window;
 			if(!running){
 				running = true;
-				window.requestAnimationFrame(run);
+				rb.rAFQueue(run);
 			}
 		};
 	};
