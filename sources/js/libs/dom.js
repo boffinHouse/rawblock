@@ -7,13 +7,13 @@
 }(typeof window != 'undefined' ? window : this , function(window, document) {
 	'use strict';
 	var slice = [].slice;
-	var dom = function(elements){
+	var Dom = function(elements){
 
 		if(typeof elements == 'string'){
-			return dom.q(elements);
+			return Dom.q(elements);
 		}
-		if(!(this instanceof dom)){
-			return new dom(elements);
+		if(!(this instanceof Dom)){
+			return new Dom(elements);
 		}
 
 		if(!Array.isArray(elements)){
@@ -29,7 +29,7 @@
 		this.elements = elements;
 		this.length = this.elements.length || 0;
 	};
-	var fn = dom.prototype;
+	var fn = Dom.prototype;
 	var defaultEasing = {
 		get: function(pos){
 			return pos;
@@ -126,13 +126,13 @@
 		}
 	};
 
-	dom.fn = dom.prototype;
+	Dom.fn = Dom.prototype;
 
-	dom.q = function(sel, context){
-		return new dom( (context || document).querySelectorAll(sel) );
+	Dom.q = function(sel, context){
+		return new Dom( (context || document).querySelectorAll(sel) );
 	};
 
-	dom.Event = function(type, options){
+	Dom.Event = function(type, options){
 		var event;
 		if(!options){
 			options = {};
@@ -164,7 +164,7 @@
 			}
 		});
 
-		return new dom( array );
+		return new Dom( array );
 	};
 
 	fn.closest = function(sel){
@@ -175,7 +175,7 @@
 				array.push(element);
 			}
 		});
-		return new dom( array );
+		return new Dom( array );
 	};
 
 	fn.get = function(number){
@@ -183,11 +183,11 @@
 	};
 
 	fn.eq = function(number){
-		return new dom(this.elements[number] ? [this.elements[number]] : []);
+		return new Dom(this.elements[number] ? [this.elements[number]] : []);
 	};
 
 	[['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function(action){
-		dom.fn[action[0]] = function(type, sel, fn, capture){
+		Dom.fn[action[0]] = function(type, sel, fn, capture){
 			var useFn;
 			if(typeof sel == 'function'){
 				capture = fn;
@@ -431,7 +431,7 @@
 					return this.matches(sel);
 				};
 			}
-			return new dom(this.elements[name](function(elem, index){
+			return new Dom(this.elements[name](function(elem, index){
 				return fn.call(elem, index, elem);
 			}));
 		};
@@ -458,5 +458,5 @@
 		window.rb.$ = window.dom;
 	}
 
-	return dom;
+	return Dom;
 }));

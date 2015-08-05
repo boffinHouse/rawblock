@@ -27,7 +27,7 @@
 				var widget = that.widget(target);
 
 				if (!widget) {
-					return
+					return;
 				}
 
 				if(widget[that.options.type]){

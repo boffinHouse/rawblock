@@ -1,6 +1,6 @@
 module.exports = {
 	options: {
-
+		jshintrc: true
 	},
 	js: {
 		files: {

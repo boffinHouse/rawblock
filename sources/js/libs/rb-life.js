@@ -91,16 +91,16 @@
 					setTimeout( run );
 				}
 			}
-		}
+		};
 	};
 
 	life._failed = {};
 	life._behaviors = {};
 	life._attached = [];
 
-	life.register = function(name, lifeClass, noCheck) {
+	life.register = function(name, LifeClass, noCheck) {
 
-		life._behaviors[ name ] = lifeClass;
+		life._behaviors[ name ] = LifeClass;
 
 		if ( !noCheck ) {
 			if(!elements && !timer){
@@ -110,10 +110,10 @@
 		}
 	};
 
-	life.create = function(element, lifeClass) {
+	life.create = function(element, LifeClass) {
 		var instance, trigger;
 		if ( !element._rbWidget ) {
-			instance = new lifeClass( element );
+			instance = new LifeClass( element );
 			trigger = true;
 		}
 
@@ -140,7 +140,7 @@
 
 		if(trigger){
 			life.batch.add(function() {
-				$(element).trigger(lifeClass.prototype.name +'created');
+				$(element).trigger(LifeClass.prototype.name +'created');
 			});
 		}
 		return instance;
@@ -168,6 +168,7 @@
 				removeElements.push( module );
 			}
 			else if ( modulePath && window.loadPackage ) {
+				/* jshint loopfunc: true */
 				(function (module, modulePath, moduleId) {
 					setTimeout(function(){
 						loadPackage(modulePath).then(function () {
@@ -296,7 +297,11 @@
  */
 // Inspired by base2 and Prototype
 (function(){
-	var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+	var initializing = false;
+	var fnTest = (/xyz/.test(function(){var a = xyz;})) ?
+		/\b_super\b/ :
+		/.*/
+	;
 
 	// The base Class implementation (does nothing)
 	window.rb.life.Class = function(){};
@@ -323,6 +328,7 @@
 				// Check if we're overwriting an existing function and using super keyword
 				origDescriptor[descProp] = superDescriptor && typeof origDescriptor[descProp] == "function" &&
 					typeof superDescriptor[descProp] == "function" && fnTest.test(origDescriptor[descProp]) ?
+					/* jshint loopfunc: true */
 					(function(_superFn, fn){
 						return function() {
 							var tmp = this._super;
@@ -453,7 +459,7 @@
 			try {
 				setTimeout(function(){
 					$(elem).trigger('rbscriptfocus');
-					elem.focus()
+					elem.focus();
 				}, 0);
 			} catch(e){}
 		},
