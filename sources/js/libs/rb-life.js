@@ -118,7 +118,7 @@
 			trigger = true;
 		}
 
-		requestAnimationFrame(function(){
+		life.batch.add(function(){
 			element.classList.add( attachedClass );
 		});
 
