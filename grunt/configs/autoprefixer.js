@@ -16,4 +16,4 @@ module.exports = {
 	dist: {
 		src: '<%= paths.dist %>/css/*.css'
 	}
-}
+};
