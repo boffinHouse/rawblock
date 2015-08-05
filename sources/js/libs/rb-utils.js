@@ -251,7 +251,7 @@ if(!window.rb.$){
 			setImmediate(run);
 		};
 		var getAF = function(){
-			rb.rAFQueue(afterAF);
+			rb.rAFQueue.add(afterAF);
 		};
 
 		if(!options){
@@ -419,30 +419,32 @@ if(!window.rb.$){
 	'use strict';
 	rb.rAFQueue = (function(){
 
-		var fns = [];
-		var run = function(){
-			var i, len;
-			var fns2 = fns;
+		var fns1 = [];
+		var fns2 = [];
+		var curFns = fns1;
 
-			fns = [];
-			for(i = 0, len = fns2.length; i < len; i++){
-				if(fns2[i]){
-					fns2[i]();
-				}
+		var run = function(){
+			var emptyStack = curFns;
+
+			curFns = fns1.length ? fns2 : fns1;
+			while(emptyStack.length){
+				emptyStack.shift()();
 			}
 		};
 		var add = function(fn){
-			fns.push(fn);
-			if(fns.length == 1){
+			curFns.push(fn);
+			if(curFns.length == 1){
 				requestAnimationFrame(run);
 			}
 		};
 
-		add.clear = function(fn){
-			var index = fns.indexOf(fn);
+		add.add = add;
+
+		add.remove = function(fn){
+			var index = curFns.indexOf(fn);
 
 			if(index != -1){
-				fns.splice(index, 1);
+				curFns.splice(index, 1);
 			}
 		};
 
@@ -460,7 +462,7 @@ if(!window.rb.$){
 			that = thisArg || this || window;
 			if(!running){
 				running = true;
-				rb.rAFQueue(run);
+				rb.rAFQueue.add(run);
 			}
 		};
 	};

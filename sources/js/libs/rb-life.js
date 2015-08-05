@@ -14,9 +14,8 @@
 	var removeElements = [];
 	var initClass = 'js-rb-life';
 	var attachedClass = 'js-rb-attached';
-	var $ = window.rb.$;
-
-	window.rb = window.rb || {};
+	var rb = window.rb;
+	var $ = rb.$;
 
 	window.rb.life = life;
 
@@ -118,7 +117,7 @@
 			trigger = true;
 		}
 
-		rb.rAFQueue(function(){
+		rb.rAFQueue.add(function(){
 			element.classList.add( attachedClass );
 		});
 

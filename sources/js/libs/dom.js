@@ -49,7 +49,7 @@
 				isJumpToEnd = true;
 			}
 			step();
-			hardStop = true;
+			rAF.remove(step);
 		};
 
 		var step = function() {
@@ -77,7 +77,7 @@
 
 			if(pos < 1){
 				if(!isStopped){
-					rAF(step);
+					rAF.add(step);
 				} else if(options.always){
 					options.always.call(element);
 				}
@@ -109,7 +109,7 @@
 
 		element._rbTweenStop = stop;
 
-		rAF(step);
+		rAF.add(step);
 	};
 
 	tween.getStartValues = function(element, elementStyle, startProps, endProps){
