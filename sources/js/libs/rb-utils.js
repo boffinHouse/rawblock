@@ -437,10 +437,7 @@ if(!window.rb.$){
 				requestAnimationFrame(run);
 			}
 		};
-
-		add.add = add;
-
-		add.remove = function(fn){
+		var remove = function(fn){
 			var index = curFns.indexOf(fn);
 
 			if(index != -1){
@@ -448,7 +445,10 @@ if(!window.rb.$){
 			}
 		};
 
-		return add;
+		return {
+			add: add,
+			remove: remove,
+		};
 	})();
 
 	rb.rAF = function(fn, thisArg){
