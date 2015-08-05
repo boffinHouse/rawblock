@@ -421,8 +421,14 @@ if(!window.rb.$){
 
 		var fns = [];
 		var run = function(){
-			while(fns.length){
-				fns.shift()();
+			var i, len;
+			var fns2 = fns;
+
+			fns = [];
+			for(i = 0, len = fns2.length; i < len; i++){
+				if(fns2[i]){
+					fns2[i]();
+				}
 			}
 		};
 		var add = function(fn){
