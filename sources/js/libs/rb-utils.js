@@ -418,18 +418,29 @@ if(!window.rb.$){
 (function(){
 	'use strict';
 	rb.rAFQueue = (function(){
+
 		var fns = [];
 		var run = function(){
 			while(fns.length){
 				fns.shift()();
 			}
 		};
-		return function(fn){
+		var add = function(fn){
 			fns.push(fn);
 			if(fns.length == 1){
 				requestAnimationFrame(run);
 			}
 		};
+
+		add.clear = function(fn){
+			var index = fns.indexOf(fn);
+
+			if(index != -1){
+				fns.splice(index, 1);
+			}
+		};
+
+		return add;
 	})();
 
 	rb.rAF = function(fn, thisArg){
