@@ -118,7 +118,7 @@
 			trigger = true;
 		}
 
-		life.batch.add(function(){
+		rb.rAFQueue(function(){
 			element.classList.add( attachedClass );
 		});
 
