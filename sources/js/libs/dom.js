@@ -37,20 +37,23 @@
 	};
 	var tween = function(element, endProps, options){
 
-		var easing, isStopped, isJumpToEnd, bezierArgs, requestID;
+		var easing, isStopped, isJumpToEnd, bezierArgs;
+		var hardStop = false;
 		var start = Date.now();
 		var elementStyle = element.style;
 		var startProps = {};
+		var rAF = rb.rAFQueue;
 		var stop = function(clearQueue, jumpToEnd){
 			isStopped = true;
 			if(jumpToEnd){
 				isJumpToEnd = true;
 			}
 			step();
-			cancelAnimationFrame(requestID);
+			hardStop = true;
 		};
 
 		var step = function() {
+			if(hardStop){return;}
 			var prop, value, eased;
 			var pos = (Date.now() - start) / options.duration;
 
@@ -74,7 +77,7 @@
 
 			if(pos < 1){
 				if(!isStopped){
-					requestID = requestAnimationFrame(step);
+					rAF(step);
 				} else if(options.always){
 					options.always.call(element);
 				}
@@ -106,7 +109,7 @@
 
 		element._rbTweenStop = stop;
 
-		requestID = requestAnimationFrame(step);
+		rAF(step);
 	};
 
 	tween.getStartValues = function(element, elementStyle, startProps, endProps){
