@@ -6,6 +6,7 @@
 	}
 }(typeof window != 'undefined' ? window : this, function (window, document) {
 	'use strict';
+	var rb = window.rb;
 	//var $ = rb.$;
 
 	return rb.life.Widget.extend('button', {
