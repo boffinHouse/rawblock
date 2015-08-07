@@ -189,6 +189,8 @@ if(!window.rb.$){
 		return scrollingElement;
 	};
 
+	rb.getScrollingElement = getScrollingElement;
+
 	$.fn.scrollIntoView = function(options){
 		var bbox, distance, scrollingElement;
 		var elem = this.get(0);
