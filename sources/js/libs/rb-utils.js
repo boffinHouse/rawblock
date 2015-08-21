@@ -309,7 +309,7 @@ if(!window.rb.$){
 				window.removeEventListener('resize', this.run);
 			}
 		},
-		on: function(fn, thisArg){
+		on: function(fn){
 			this.fns.push(fn);
 			this.setup();
 		},

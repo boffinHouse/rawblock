@@ -152,6 +152,35 @@
 		return event;
 	};
 
+	Dom.Callbacks = function(flags){
+		if(flags){
+			console.error('not supported: '+ flags);
+		}
+		var list = [];
+
+		return {
+			add: function(fn){
+				list.push(fn);
+			},
+			remove: function(fn){
+				var index = list.indexOf(fn);
+
+				if(index != -1){
+					list.splice(index, 1);
+				}
+			},
+			fire: function(){
+				this.fireWith(this, arguments);
+			},
+			fireWith: function(that, args){
+				var i, len;
+				for(i = 0, len = list.length; i < len; i++){
+					list[i].apply(that, args);
+				}
+			}
+		};
+	};
+
 	fn.find = function(sel){
 		var array = [];
 		this.elements.forEach(function(elem){
