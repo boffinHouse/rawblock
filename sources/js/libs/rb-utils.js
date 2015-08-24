@@ -52,6 +52,7 @@ if(!window.rb.$){
 
 	document.addEventListener('focus', update, true);
 	document.addEventListener('blur', update, true);
+	update();
 
 })(window, document);
 

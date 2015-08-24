@@ -222,7 +222,7 @@
 
 			for(i = 0, len = life._attached.length; i < len; i++){
 				element = life._attached[i];
-				if( !document.contains(element) ){
+				if( !docElem.contains(element) ){
 					instance = element._rbWidget;
 
 					element.classList.remove( attachedClass );
