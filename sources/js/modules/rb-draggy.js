@@ -8,7 +8,9 @@
 		this.element = element;
 		this.options = Object.assign({}, Draggy._defaults, options);
 
-		this._velDelay = 400;
+		this._velDelay = 333;
+
+		this.velocitySnapShot = this.velocitySnapShot.bind(this);
 
 		this.reset();
 
@@ -41,24 +43,40 @@
 			this.lastPos = {};
 			this.relPos = {};
 			this.curPos = {};
+			this.velTime = null;
+			this.horizontalVel = 0;
+			this.verticalVel = 0;
+		},
+		velocitySnapShot: function(){
+			var velTiming;
+			this.velPos = this.curPos;
+			this.velTime = Date.now();
+
+			if(this.velTime){
+				velTiming = (Date.now() - this.velTime);
+
+				if(velTiming > 80 || (!this.horizontalVel && !this.verticalVel)){
+					velTiming = (velTiming / this._velDelay) || 1;
+					this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x) || 1;
+					this.verticalVel = Math.abs(this.velPos.y - this.curPos.y) || 1;
+
+					this.verticalVel /= velTiming;
+					this.horizontalVel /= velTiming;
+				}
+			}
 		},
 		start: function(pos, evt){
-			var that = this;
 
-			var runVelSnapshot = function(){
-				that.velPos = that.curPos;
-				that.velTime = Date.now();
-			};
 			this.startPos = {
 				x: pos.pageX,
 				y: pos.pageY,
 			};
 			this.curPos = this.startPos;
 
-
 			clearInterval(this._velocityTimer);
-			this._velocityTimer = setInterval(runVelSnapshot, this._velDelay);
-			runVelSnapshot();
+			this._velocityTimer = setInterval(this.velocitySnapShot, this._velDelay);
+			this.velocitySnapShot();
+
 			this.options.start(this);
 		},
 		move: function(pos, evt){
@@ -82,19 +100,13 @@
 			this.options.move(this);
 		},
 		end: function(pos, evt){
-			var velTiming = (Date.now() - this.velTime) / this._velDelay;
+
 			if(this.options.preventClick && (Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
 				this.preventClick(evt);
 			}
 
-			this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x);
-			this.verticalVel = Math.abs(this.velPos.y - this.curPos.y);
-
-			this.verticalVel *= velTiming;
-
-			console.log(this.horizontalVel)
-
 			clearInterval(this._velocityTimer);
+			this.velocitySnapShot();
 
 			this.options.end(this);
 
