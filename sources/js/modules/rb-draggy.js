@@ -8,6 +8,8 @@
 		this.element = element;
 		this.options = Object.assign({}, Draggy._defaults, options);
 
+		this._velDelay = 400;
+
 		this.reset();
 
 		this.setupEvents();
@@ -41,14 +43,22 @@
 			this.curPos = {};
 		},
 		start: function(pos, evt){
+			var that = this;
+
+			var runVelSnapshot = function(){
+				that.velPos = that.curPos;
+				that.velTime = Date.now();
+			};
 			this.startPos = {
 				x: pos.pageX,
 				y: pos.pageY,
 			};
-			this.curPos = {
-				x: pos.pageX,
-				y: pos.pageY,
-			};
+			this.curPos = this.startPos;
+
+
+			clearInterval(this._velocityTimer);
+			this._velocityTimer = setInterval(runVelSnapshot, this._velDelay);
+			runVelSnapshot();
 			this.options.start(this);
 		},
 		move: function(pos, evt){
@@ -72,9 +82,20 @@
 			this.options.move(this);
 		},
 		end: function(pos, evt){
+			var velTiming = (Date.now() - this.velTime) / this._velDelay;
 			if(this.options.preventClick && (Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
 				this.preventClick(evt);
 			}
+
+			this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x);
+			this.verticalVel = Math.abs(this.velPos.y - this.curPos.y);
+
+			this.verticalVel *= velTiming;
+
+			console.log(this.horizontalVel)
+
+			clearInterval(this._velocityTimer);
+
 			this.options.end(this);
 
 			this.reset();
@@ -177,6 +198,7 @@
 			this.element.addEventListener('touchstart', this._ontouchstart);
 		},
 		destroy: function(){
+			clearInterval(this._velocityTimer);
 			this.element.removeEventListener('touchstart', this._ontouchstart);
 			this.element.removeEventListener('mousedown', this._onmousedown);
 			this.element.removeEventListener('click', this._onclick, true);
