@@ -128,6 +128,8 @@
 
 	Dom.fn = Dom.prototype;
 
+	Dom.noop = function(){};
+
 	Dom.q = function(sel, context){
 		return new Dom( (context || document).querySelectorAll(sel) );
 	};
