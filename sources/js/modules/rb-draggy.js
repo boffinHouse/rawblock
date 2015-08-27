@@ -72,22 +72,23 @@
 			this.options.move(this);
 		},
 		end: function(pos, evt){
-
 			if(this.options.preventClick && (Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
-				this.preventClick();
-				evt.preventDefault();
+				this.preventClick(evt);
 			}
 			this.options.end(this);
 
 			this.reset();
 		},
-		preventClick: function(){
+		preventClick: function(evt){
 			var that = this;
 			that.isClickPrevented = true;
 			clearTimeout(this._preventClickTimer);
 			this._preventClickTimer = setTimeout(function(){
 				that.isClickPrevented = false;
-			});
+			}, 333);
+			if(evt && evt.preventDefault){
+				evt.preventDefault();
+			}
 		},
 		setupEvents: function(){
 			var that = this;
@@ -178,6 +179,7 @@
 		destroy: function(){
 			this.element.removeEventListener('touchstart', this._ontouchstart);
 			this.element.removeEventListener('mousedown', this._onmousedown);
+			this.element.removeEventListener('click', this._onclick, true);
 		},
 	});
 
