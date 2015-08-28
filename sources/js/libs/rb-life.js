@@ -119,10 +119,6 @@
 
 		rb.rAFQueue.add(function(){
 			element.classList.add( attachedClass );
-
-			if(trigger && instance.initWrite){
-				instance.initWrite();
-			}
 		});
 
 		if (!element._rbCreated && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
