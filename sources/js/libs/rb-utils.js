@@ -239,8 +239,16 @@ if(!window.rb.$){
 (function(){
 	'use strict';
 	var setImmediate = window.setImmediate || setTimeout;
-	var requestAnimationFrame = requestAnimationFrame || setTimeout;
 
+	/**
+	 *
+	 * @param {Function} fn - The function to be throttled
+	 * @param {Object} options - options for the throttle
+	 *  @param {Object} options.that -  the context in which fn should be called
+	 *  @param {Boolean} options.write -  wether fn is used to write layout (default is read)
+	 *  @param {Number} options.delay = 200 -  the throttle delay
+	 * @returns {Function} the throttled function
+	 */
 	rb.throttle = function(fn, options){
 		var running, that, args;
 		var lastTime = 0;
@@ -301,6 +309,7 @@ if(!window.rb.$){
 					iWidth = innerWidth;
 					cHeight = docElem.clientHeight;
 				});
+				window.removeEventListener('resize', this.run);
 				window.addEventListener('resize', this.run);
 			}
 		},
