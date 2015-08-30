@@ -502,10 +502,10 @@
 			this.options[name] = value;
 		},
 
-		parseHTMLOptions: function(){
+		parseHTMLOptions: function(element){
 			var i, name;
 			var options = {};
-			var attributes = this.element.attributes;
+			var attributes = (element || this.element).attributes;
 			var len = attributes.length;
 
 			for ( i = 0; i < len; i++ ) {
@@ -518,8 +518,8 @@
 			return options;
 		},
 
-		parseCSSOptions: function(){
-			var style = getComputedStyle(this.element, '::after').getPropertyValue('content') || '';
+		parseCSSOptions: function(element){
+			var style = getComputedStyle(element || this.element, '::after').getPropertyValue('content') || '';
 			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
 				this._styleOptsStr = style;
 				try {
