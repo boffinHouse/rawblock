@@ -6,6 +6,7 @@ require('string.prototype.includes');
 require('string.prototype.repeat');
 require('string.prototype.startswith');
 require('whatwg-fetch');
+//require('lazysizes/plugins/respimg/ls.respimg');
 
 
 if(window.cancelAnimationFrame){

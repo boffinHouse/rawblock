@@ -300,8 +300,9 @@ if(!window.rb.$){
 
 	var iWidth, cHeight, installed;
 	var docElem = document.documentElement;
-	rb.resize = {
-		fns: [],
+
+	rb.resize = Object.assign(rb.$.Callbacks(), {
+
 		setup: function(){
 			if(!installed){
 				installed = true;
@@ -314,33 +315,27 @@ if(!window.rb.$){
 			}
 		},
 		teardown: function(){
-			if(installed && !this.fns.length){
+			if(installed && !this.has()){
 				installed = false;
 				window.removeEventListener('resize', this.run);
 			}
 		},
 		on: function(fn){
-			this.fns.push(fn);
+			this.add(fn);
 			this.setup();
 		},
 		off: function(fn){
-			var index = this.fns.indexOf(fn);
-			if(index != -1){
-				this.fns.splice(index, 1);
-				this.teardown();
-			}
+			this.remove(fn);
+			this.teardown();
 		},
-	};
+	});
 
 	rb.resize.run = rb.throttle(function(){
-		var i, len;
 		if(iWidth != innerWidth || cHeight != docElem.clientHeight){
 			iWidth = innerWidth;
 			cHeight = docElem.clientHeight;
 
-			for(i = 0, len = this.fns.length; i < len; i++){
-				this.fns[i]();
-			}
+			this.fire();
 		}
 	}, {that:rb.resize});
 })();
@@ -409,14 +404,13 @@ if(!window.rb.$){
 	'use strict';
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
-		var $element = rb.$(element);
 		var numbers = 0;
 		if(!Array.isArray(styles)){
 			styles = [styles];
 		}
 
 		for(i = 0; i < styles.length; i++){
-			value = parseFloat($element.css(styles[i])) || 0;
+			value = DOM.css(element, styles[i], true);
 
 			if(!onlyPositive || value > 0){
 				numbers += value;

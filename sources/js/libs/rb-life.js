@@ -216,6 +216,24 @@
 		};
 	})();
 
+	life.destroyWidget = function(instance, index){
+		var element = widget.element;
+
+		if(index == null){
+			index = life._attached.indexOf(element);
+		}
+		element.classList.remove( attachedClass );
+
+		if(element._rbCreated){
+			delete element._rbCreated;
+		}
+		if ( instance.detached ) {
+			instance.detached( element, instance );
+		}
+
+		life._attached.splice(index, 1);
+	};
+
 	life.initObserver = function() {
 		var removeWidgets = function() {
 			var i, len, instance, element;
@@ -225,17 +243,9 @@
 				if( !docElem.contains(element) ){
 					instance = element._rbWidget;
 
-					element.classList.remove( attachedClass );
 					element.classList.add( initClass );
+					life.destroyWidget(instance, i);
 
-					if(element._rbCreated){
-						delete element._rbCreated;
-					}
-					if ( instance.detached ) {
-						instance.detached( element, instance );
-					}
-
-					life._attached.splice(i, 1);
 					i--;
 					len--;
 				}
@@ -380,8 +390,19 @@
 	var $ = window.rb.$;
 
 	life.getWidget = function(element, key, args){
+		var ret, moduleId;
 		var widget = element && element._rbWidget;
-		var ret = widget;
+
+		if(!widget){
+			moduleId = (module.getAttribute( 'data-module' ) || '').split( '/' );
+			moduleId = moduleId[ moduleId.length - 1 ];
+
+			if(life._behaviors[ moduleId ]){
+				widget = life.create(element, life._behaviors[ moduleId ]);
+			}
+		}
+
+		ret = widget;
 		if(widget && key){
 			ret = widget[key];
 
@@ -512,6 +533,10 @@
 
 			return style;
 		},
+
+		destroy: function(){
+			life.destroyWidget(this);
+		}
 	});
 
 	life.Widget.extend = function(name, prop){

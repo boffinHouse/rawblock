@@ -247,11 +247,22 @@
 		};
 	});
 
-	fn.css = function(style, pseudo){
-		var elem;
+	DOM.css = function( elem, name, extra, styles ) {
+		var ret;
+		styles = styles || getComputedStyle(elem, null);
+		ret = name in styles ? styles[name] : styles.getPropertyValue(name);
+
+		if(extra){
+			ret = parseFloat(ret) || 0;
+		}
+		return ret;
+	};
+
+	fn.css = function(style){
+		var elem, styles, ret;
 		if(typeof style == 'string'){
-			elem = this.elements[0];
-			return elem && getComputedStyle(elem, pseudo).getPropertyValue(style);
+			elem = this.elements[0]
+			return elem && DOM.css(elem, style);
 		}
 		this.elements.forEach(function(elem){
 			var prop;
