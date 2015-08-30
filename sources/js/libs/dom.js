@@ -16,6 +16,17 @@
 			return new Dom(elements);
 		}
 
+		/*
+		if(typeof elements == 'function'){
+			if(Dom.isReady){
+				elements(Dom);
+			} else {
+				document.addEventListener('DOMContentLoaded', function(){
+					elements(Dom);
+				});
+			}
+		}
+		*/
 		if(!Array.isArray(elements)){
 			if(!elements){
 				elements = [];
@@ -126,96 +137,322 @@
 		}
 	};
 
-	Dom.fn = Dom.prototype;
+	Object.assign(Dom, {
+		fn: Dom.prototype,
+		//isReady: document.readyState != 'loading',
+		noop: function(){},
+		q: function(sel, context){
+			return new Dom( (context || document).querySelectorAll(sel) );
+		},
+		Event: function(type, options){
+			var event;
+			if(!options){
+				options = {};
+			}
 
-	Dom.noop = function(){};
+			if(options.bubbles == null){
+				options.bubbles = true;
+			}
+			event = new CustomEvent(type, options);
 
-	Dom.q = function(sel, context){
-		return new Dom( (context || document).querySelectorAll(sel) );
-	};
+			if(!event.isDefaultPrevented){
+				event.isDefaultPrevented = function(){
+					return event.defaultPrevented;
+				};
+			}
 
-	Dom.Event = function(type, options){
-		var event;
-		if(!options){
-			options = {};
-		}
+			return event;
+		},
+		Callbacks: function(flags){
+			if(flags){
+				console.error('not supported: '+ flags);
+			}
+			var list = [];
 
-		if(options.bubbles == null){
-			options.bubbles = true;
-		}
-		event = new CustomEvent(type, options);
+			return {
+				add: function(fn){
+					list.push(fn);
+				},
+				remove: function(fn){
+					var index = list.indexOf(fn);
 
-		if(!event.isDefaultPrevented){
-			event.isDefaultPrevented = function(){
-				return event.defaultPrevented;
+					if(index != -1){
+						list.splice(index, 1);
+					}
+				},
+				fire: function(){
+					this.fireWith(this, arguments);
+				},
+				fireWith: function(that, args){
+					var i, len;
+					for(i = 0, len = list.length; i < len; i++){
+						list[i].apply(that, args);
+					}
+				}
 			};
-		}
+		},
+		css: function( elem, name, extra, styles ) {
+			var ret;
+			styles = styles || getComputedStyle(elem, null);
+			ret = name in styles ? styles[name] : styles.getPropertyValue(name);
 
-		return event;
-	};
+			if(extra){
+				ret = parseFloat(ret) || 0;
+			}
+			return ret;
+		},
+	});
 
-	Dom.Callbacks = function(flags){
-		if(flags){
-			console.error('not supported: '+ flags);
-		}
-		var list = [];
-
-		return {
-			add: function(fn){
-				list.push(fn);
-			},
-			remove: function(fn){
-				var index = list.indexOf(fn);
-
-				if(index != -1){
-					list.splice(index, 1);
-				}
-			},
-			fire: function(){
-				this.fireWith(this, arguments);
-			},
-			fireWith: function(that, args){
+	Object.assign(fn, {
+		find: function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
 				var i, len;
-				for(i = 0, len = list.length; i < len; i++){
-					list[i].apply(that, args);
+				var elements = elem.querySelectorAll(sel);
+				for(i = 0, len = elements.length; i < len; i++){
+					if(array.indexOf(elements[i]) == -1){
+						array.push(elements[i]);
+					}
 				}
+			});
+
+			return new Dom( array );
+		},
+		closest: function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
+				var element = elem.closest(sel);
+				if(array.indexOf(element) == -1){
+					array.push(element);
+				}
+			});
+			return new Dom( array );
+		},
+		get: function(number){
+			return arguments.length ? this.elements[number] : this.elements;
+		},
+		eq: function(number){
+			return new Dom(this.elements[number] ? [this.elements[number]] : []);
+		},
+		css: function(style){
+			var elem;
+			if(typeof style == 'string'){
+				elem = this.elements[0]
+				return elem && DOM.css(elem, style);
 			}
+			this.elements.forEach(function(elem){
+				var prop;
+				var eStyle = elem.style;
+				for(prop in style){
+					eStyle[prop] = style[prop];
+				}
+			});
+			return this;
+		},
+		prop: function(props){
+			var elem;
+			if(typeof props == 'string'){
+				elem = this.elements[0];
+				return elem && elem[props];
+			}
+			this.elements.forEach(function(elem){
+				var prop;
+				for(prop in props){
+					elem[prop] = props[prop];
+				}
+			});
+			return this;
+		},
+		attr: function(attrs){
+			var elem;
+			if(typeof attrs == 'string'){
+				elem = this.elements[0];
+				return elem && elem.getAttribute(attrs);
+			}
+			this.elements.forEach(function(elem){
+				var attr;
+				for(attr in attrs){
+					elem.setAttribute(attr, attrs[attr]);
+				}
+			});
+			return this;
+		},
+		removeAttr: function(attr){
+			this.elements.forEach(function(elem){
+				elem.removeAttribute(attr);
+			});
+			return this;
+		},
+		is: function(sel){
+			return this.elements.some(function(elem){
+				return elem.matches(sel);
+			});
+		},
+		html: function(html){
+			var elem;
+			var isString = typeof html == 'string';
+			if(!arguments.length){
+				elem = this.elements[0];
+				return elem && elem.innerHTML || '';
+			}
+			this.elements.forEach(function(elem){
+				if(isString){
+					elem.innerHTML = html;
+				} else {
+					elem.innerHTML = '';
+					elem.appendChild(html);
+				}
+			});
+			return this;
+		},
+		before: function(html){
+			var isString = typeof html == 'string';
+			this.elements.forEach(function(elem){
+				var parentElement;
+				if (isString){
+					elem.insertAdjacentHTML('beforebegin', html);
+				} else {
+					parentElement = elem.parentNode;
+					if(parentElement){
+						parentElement.insertBefore(html, elem);
+					}
+				}
+			});
+			return this;
+		},
+		prepend: function(html){
+			var isString = typeof html == 'string';
+			this.elements.forEach(function(elem){
+				if (isString){
+					elem.insertAdjacentHTML('afterbegin', html);
+				} else {
+					elem.insertBefore(html, elem.firstChild);
+				}
+			});
+			return this;
+		},
+		append: function(html){
+			var isString = typeof html == 'string';
+			this.elements.forEach(function(elem){
+				if (isString){
+					elem.insertAdjacentHTML('beforeend', html);
+				} else {
+					elem.insertBefore(html, null);
+				}
+			});
+			return this;
+		},
+		after: function(html){
+			var isString = typeof html == 'string';
+			this.elements.forEach(function(elem){
+				var parentElement;
+				if (isString){
+					elem.insertAdjacentHTML('afterend', html);
+				} else {
+					parentElement = elem.parentNode;
+					if(parentElement){
+						parentElement.insertBefore(html, elem.nextElementSibling);
+					}
+				}
+			});
+			return this;
+		},
+		each: function(cb){
+			this.elements.forEach(function(elem, index){
+				cb.call(elem, index, elem);
+			});
+			return this;
+		},
+		remove: function(){
+			this.elements.forEach(function(elem){
+				var parent = elem.parentNode;
+				if(parent && parent.removeChild){
+					parent.removeChild(elem);
+				}
+			});
+			return this;
+		},
+		trigger: function(type, options){
+			var firstEvent;
+
+			if(typeof type == 'object'){
+				firstEvent = type;
+				type = firstEvent.type;
+			}
+
+			if(!options){
+				options = {};
+			}
+
+			if(options.bubbles == null){
+				options.bubbles = true;
+			}
+
+			this.elements.forEach(function(elem){
+				var event = firstEvent || new CustomEvent(type, options);
+				firstEvent = null;
+				elem.dispatchEvent(event);
+			});
+
+			return this;
+		},
+		animate: function(endProps, options){
+			this.elements.forEach(function(elem){
+				tween(elem, endProps, options);
+			});
+			return this;
+		},
+		stop: function(clearQueue, jumpToEnd){
+			this.elements.forEach(function(elem) {
+				if (elem._rbTweenStop) {
+					elem._rbTweenStop(clearQueue, jumpToEnd);
+				}
+			});
+			return this;
+		},
+		index: function(elem){
+			if(!elem.nodeName && elem.get){
+				elem = elem.get(0);
+			}
+			return this.elements.indexOf(elem);
+		},
+	});
+
+	['add', 'remove', 'has', 'toggle'].forEach(function(action){
+		fn[action + 'Class'] =  function(cl){
+			this.elements.forEach(function(elem){
+				elem.classList[action](cl);
+			});
+			return this;
 		};
-	};
 
-	fn.find = function(sel){
-		var array = [];
-		this.elements.forEach(function(elem){
-			var i, len;
-			var elements = elem.querySelectorAll(sel);
-			for(i = 0, len = elements.length; i < len; i++){
-				if(array.indexOf(elements[i]) == -1){
-					array.push(elements[i]);
-				}
+		if(action == 'has'){
+			action = 'contains';
+		}
+	});
+
+	//new array or returns array
+	['map', 'filter'].forEach(function(name){
+		fn[name] = function(fn){
+			var sel;
+
+			if(typeof fn == 'string'){
+				sel = fn;
+				fn = function(){
+					return this.matches(sel);
+				};
 			}
-		});
+			return new Dom(this.elements[name](function(elem, index){
+				return fn.call(elem, index, elem);
+			}));
+		};
+	});
 
-		return new Dom( array );
-	};
-
-	fn.closest = function(sel){
-		var array = [];
-		this.elements.forEach(function(elem){
-			var element = elem.closest(sel);
-			if(array.indexOf(element) == -1){
-				array.push(element);
-			}
-		});
-		return new Dom( array );
-	};
-
-	fn.get = function(number){
-		return arguments.length ? this.elements[number] : this.elements;
-	};
-
-	fn.eq = function(number){
-		return new Dom(this.elements[number] ? [this.elements[number]] : []);
-	};
+	['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
+		fn[name] = function(){
+			return this.elements[name].apply(this.elements, arguments);
+		};
+	});
 
 	[['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function(action){
 		Dom.fn[action[0]] = function(type, sel, fn, capture){
@@ -246,251 +483,6 @@
 			return this;
 		};
 	});
-
-	DOM.css = function( elem, name, extra, styles ) {
-		var ret;
-		styles = styles || getComputedStyle(elem, null);
-		ret = name in styles ? styles[name] : styles.getPropertyValue(name);
-
-		if(extra){
-			ret = parseFloat(ret) || 0;
-		}
-		return ret;
-	};
-
-	fn.css = function(style){
-		var elem, styles, ret;
-		if(typeof style == 'string'){
-			elem = this.elements[0]
-			return elem && DOM.css(elem, style);
-		}
-		this.elements.forEach(function(elem){
-			var prop;
-			var eStyle = elem.style;
-			for(prop in style){
-				eStyle[prop] = style[prop];
-			}
-		});
-		return this;
-	};
-
-	fn.prop = function(props){
-		var elem;
-		if(typeof props == 'string'){
-			elem = this.elements[0];
-			return elem && elem[props];
-		}
-		this.elements.forEach(function(elem){
-			var prop;
-			for(prop in props){
-				elem[prop] = props[prop];
-			}
-		});
-		return this;
-	};
-
-	fn.attr = function(attrs){
-		var elem;
-		if(typeof attrs == 'string'){
-			elem = this.elements[0];
-			return elem && elem.getAttribute(attrs);
-		}
-		this.elements.forEach(function(elem){
-			var attr;
-			for(attr in attrs){
-				elem.setAttribute(attr, attrs[attr]);
-			}
-		});
-		return this;
-	};
-
-	fn.removeAttr = function(attr){
-		this.elements.forEach(function(elem){
-			elem.removeAttribute(attr);
-		});
-		return this;
-	};
-
-	['add', 'remove', 'has', 'toggle'].forEach(function(action){
-		fn[action + 'Class'] =  function(cl){
-			this.elements.forEach(function(elem){
-				elem.classList[action](cl);
-			});
-			return this;
-		};
-
-		if(action == 'has'){
-			action = 'contains';
-		}
-	});
-
-	fn.is = function(sel){
-		return this.elements.some(function(elem){
-			return elem.matches(sel);
-		});
-	};
-
-	fn.html = function(html){
-		var elem;
-		var isString = typeof html == 'string';
-		if(!arguments.length){
-			elem = this.elements[0];
-			return elem && elem.innerHTML || '';
-		}
-		this.elements.forEach(function(elem){
-			if(isString){
-				elem.innerHTML = html;
-			} else {
-				elem.innerHTML = '';
-				elem.appendChild(html);
-			}
-		});
-		return this;
-	};
-
-	fn.before = function(html){
-		var isString = typeof html == 'string';
-		this.elements.forEach(function(elem){
-			var parentElement;
-			if (isString){
-				elem.insertAdjacentHTML('beforebegin', html);
-			} else {
-				parentElement = elem.parentNode;
-				if(parentElement){
-					parentElement.insertBefore(html, elem);
-				}
-			}
-		});
-		return this;
-	};
-
-	fn.prepend = function(html){
-		var isString = typeof html == 'string';
-		this.elements.forEach(function(elem){
-			if (isString){
-				elem.insertAdjacentHTML('afterbegin', html);
-			} else {
-				elem.insertBefore(html, elem.firstChild);
-			}
-		});
-		return this;
-	};
-
-	fn.append = function(html){
-		var isString = typeof html == 'string';
-		this.elements.forEach(function(elem){
-			if (isString){
-				elem.insertAdjacentHTML('beforeend', html);
-			} else {
-				elem.insertBefore(html, null);
-			}
-		});
-		return this;
-	};
-
-	fn.after = function(html){
-		var isString = typeof html == 'string';
-		this.elements.forEach(function(elem){
-			var parentElement;
-			if (isString){
-				elem.insertAdjacentHTML('afterend', html);
-			} else {
-				parentElement = elem.parentNode;
-				if(parentElement){
-					parentElement.insertBefore(html, elem.nextElementSibling);
-				}
-			}
-		});
-		return this;
-	};
-
-	fn.each = function(cb){
-		this.elements.forEach(function(elem, index){
-			cb.call(elem, index, elem);
-		});
-		return this;
-	};
-
-	fn.remove = function(){
-		this.elements.forEach(function(elem){
-			var parent = elem.parentNode;
-			if(parent && parent.removeChild){
-				parent.removeChild(elem);
-			}
-		});
-		return this;
-	};
-
-	fn.trigger = function(type, options){
-		var firstEvent;
-
-		if(typeof type == 'object'){
-			firstEvent = type;
-			type = firstEvent.type;
-		}
-
-		if(!options){
-			options = {};
-		}
-
-		if(options.bubbles == null){
-			options.bubbles = true;
-		}
-
-		this.elements.forEach(function(elem){
-			var event = firstEvent || new CustomEvent(type, options);
-			firstEvent = null;
-			elem.dispatchEvent(event);
-		});
-
-		return this;
-	};
-
-	fn.animate = function(endProps, options){
-		this.elements.forEach(function(elem){
-			tween(elem, endProps, options);
-		});
-		return this;
-	};
-
-	fn.stop = function(clearQueue, jumpToEnd){
-		this.elements.forEach(function(elem) {
-			if (elem._rbTweenStop) {
-				elem._rbTweenStop(clearQueue, jumpToEnd);
-			}
-		});
-		return this;
-	};
-
-	//new array or returns array
-	['map', 'filter'].forEach(function(name){
-		fn[name] = function(fn){
-			var sel;
-
-			if(typeof fn == 'string'){
-				sel = fn;
-				fn = function(){
-					return this.matches(sel);
-				};
-			}
-			return new Dom(this.elements[name](function(elem, index){
-				return fn.call(elem, index, elem);
-			}));
-		};
-	});
-
-	['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
-		fn[name] = function(){
-			return this.elements[name].apply(this.elements, arguments);
-		};
-	});
-
-	fn.index = function(elem){
-		if(!elem.nodeName && elem.get){
-			elem = elem.get(0);
-		}
-		return this.elements.indexOf(elem);
-	};
 
 	if(!window.rb){
 		window.rb = {};

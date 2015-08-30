@@ -394,7 +394,7 @@
 		var widget = element && element._rbWidget;
 
 		if(!widget){
-			moduleId = (module.getAttribute( 'data-module' ) || '').split( '/' );
+			moduleId = (element.getAttribute( 'data-module' ) || '').split( '/' );
 			moduleId = moduleId[ moduleId.length - 1 ];
 
 			if(life._behaviors[ moduleId ]){
