@@ -217,7 +217,7 @@
 	})();
 
 	life.destroyWidget = function(instance, index){
-		var element = widget.element;
+		var element = instance.element;
 
 		if(index == null){
 			index = life._attached.indexOf(element);
