@@ -188,6 +188,9 @@
 					for(i = 0, len = list.length; i < len; i++){
 						list[i].apply(that, args);
 					}
+				},
+				has: function(){
+					return !!list.length;
 				}
 			};
 		},
