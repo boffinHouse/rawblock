@@ -79,7 +79,10 @@
 					value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
 
 					if(prop in elementStyle){
-						elementStyle[prop] = value +'px';
+						if(!Dom.cssNumber[prop]){
+							value += 'px';
+						}
+						elementStyle[prop] = value;
 					} else {
 						element[prop] = value;
 					}
@@ -139,6 +142,20 @@
 
 	Object.assign(Dom, {
 		fn: Dom.prototype,
+		cssNumber: {
+			"columnCount": true,
+			"fillOpacity": true,
+			"flexGrow": true,
+			"flexShrink": true,
+			"fontWeight": true,
+			"lineHeight": true,
+			"opacity": true,
+			"order": true,
+			"orphans": true,
+			"widows": true,
+			"zIndex": true,
+			"zoom": true
+		},
 		//isReady: document.readyState != 'loading',
 		noop: function(){},
 		q: function(sel, context){
