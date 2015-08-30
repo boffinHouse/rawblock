@@ -424,23 +424,30 @@ if(!window.rb.$){
 (function(){
 	'use strict';
 	rb.rAFQueue = (function(){
-
+		var isInProgress, inProgressStack;
 		var fns1 = [];
 		var fns2 = [];
 		var curFns = fns1;
 
 		var run = function(){
-			var emptyStack = curFns;
-
+			inProgressStack = curFns;
 			curFns = fns1.length ? fns2 : fns1;
-			while(emptyStack.length){
-				emptyStack.shift()();
+
+			isInProgress = true;
+			while(inProgressStack.length){
+				inProgressStack.shift()();
 			}
+			isInProgress = false;
 		};
-		var add = function(fn){
-			curFns.push(fn);
-			if(curFns.length == 1){
-				requestAnimationFrame(run);
+		var add = function(fn, inProgress){
+
+			if(inProgress && isInProgress){
+				inProgressStack.push(fn);
+			} else {
+				curFns.push(fn);
+				if(curFns.length == 1){
+					requestAnimationFrame(run);
+				}
 			}
 		};
 		var remove = function(fn){
@@ -457,18 +464,23 @@ if(!window.rb.$){
 		};
 	})();
 
-	rb.rAF = function(fn, thisArg){
+	rb.rAF = function(fn, thisArg, inProgress){
 		var running, args, that;
 		var run = function(){
 			running = false;
 			fn.apply(that, args);
 		};
+
+		if(typeof thisArg == 'boolean'){
+			inProgress = thisArg;
+			thisArg = false;
+		}
 		return function(){
 			args = arguments;
 			that = thisArg || this || window;
 			if(!running){
 				running = true;
-				rb.rAFQueue.add(run);
+				rb.rAFQueue.add(run, inProgress);
 			}
 		};
 	};
