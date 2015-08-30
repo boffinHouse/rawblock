@@ -41,14 +41,10 @@
 		this.length = this.elements.length || 0;
 	};
 	var fn = Dom.prototype;
-	var defaultEasing = {
-		get: function(pos){
-			return pos;
-		}
-	};
+
 	var tween = function(element, endProps, options){
 
-		var easing, isStopped, isJumpToEnd, bezierArgs;
+		var easing, isStopped, isJumpToEnd;
 		var hardStop = false;
 		var start = Date.now();
 		var elementStyle = element.style;
@@ -73,7 +69,7 @@
 			}
 
 			if(!isStopped){
-				eased = easing.get(pos);
+				eased = easing(pos);
 
 				for(prop in startProps){
 					value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
@@ -112,15 +108,7 @@
 
 		options = Object.assign({duration: 400, easing: 'ease'}, options || {});
 
-		if(window.BezierEasing && !BezierEasing.css[options.easing] && (bezierArgs = options.easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
-			bezierArgs = bezierArgs.map(function(str){
-				return parseFloat(str);
-			});
-			BezierEasing.css[options.easing] = BezierEasing.apply(this, bezierArgs);
-		}
-
-		easing = window.BezierEasing && (BezierEasing.css[options.easing] || BezierEasing.css.ease) || defaultEasing;
-
+		easing = Dom.easing[options.easing] || Dom.easing.ease || Dom.easing.swing;
 		element._rbTweenStop = stop;
 
 		rAF.add(step);
@@ -141,6 +129,14 @@
 	};
 
 	Object.assign(Dom, {
+		easing: {
+			linear: function(pos) {
+				return pos;
+			},
+			swing: function(p) {
+				return 0.5 - Math.cos( p * Math.PI ) / 2;
+			}
+		},
 		fn: Dom.prototype,
 		cssNumber: {
 			"columnCount": true,

@@ -507,3 +507,39 @@ if(!window.rb.$){
 	};
 
 })();
+
+(function(){
+	'use strict';
+	var $ = rb.$;
+	var isExtended;
+	var copyEasing = function(easing){
+		var easObj = BezierEasing.css[easing];
+		$.easing[easing] = function(number){
+			return easObj.get(number)
+		};
+	};
+	var extendEasing = function(){
+		var easing;
+		if(!isExtended && window.BezierEasing && $){
+			isExtended = true;
+			for(easing in BezierEasing.css){
+				copyEasing(easing);
+			}
+		}
+	};
+
+	rb.addEasing = function(easing){
+		var bezierArgs;
+		if(window.BezierEasing && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
+			extendEasing();
+			bezierArgs = bezierArgs.map(function(str){
+				return parseFloat(str);
+			});
+			BezierEasing.css[easing] = BezierEasing.apply(this, bezierArgs);
+			copyEasing(easing);
+		}
+		return $.easing[easing] || $.easing.ease || $.easing.swing;
+	};
+	extendEasing();
+	setTimeout(extendEasing);
+})();
