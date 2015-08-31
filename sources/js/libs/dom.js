@@ -139,18 +139,10 @@
 		},
 		fn: Dom.prototype,
 		cssNumber: {
-			"columnCount": true,
-			"fillOpacity": true,
-			"flexGrow": true,
-			"flexShrink": true,
-			"fontWeight": true,
-			"lineHeight": true,
 			"opacity": true,
-			"order": true,
-			"orphans": true,
-			"widows": true,
-			"zIndex": true,
-			"zoom": true
+		},
+		isNumeric: function( obj ) {
+			return !Array.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
 		},
 		//isReady: document.readyState != 'loading',
 		noop: function(){},
@@ -210,9 +202,9 @@
 		css: function( elem, name, extra, styles ) {
 			var ret;
 			styles = styles || getComputedStyle(elem, null);
-			ret = name in styles ? styles[name] : styles.getPropertyValue(name);
+			ret = styles.getPropertyValue(name) || styles[name];
 
-			if(extra){
+			if(extra === true || (extra && Dom.isNumeric(ret))){
 				ret = parseFloat(ret) || 0;
 			}
 			return ret;
