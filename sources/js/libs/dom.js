@@ -141,9 +141,6 @@
 		cssNumber: {
 			"opacity": true,
 		},
-		isNumeric: function( obj ) {
-			return !Array.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
-		},
 		//isReady: document.readyState != 'loading',
 		noop: function(){},
 		q: function(sel, context){
@@ -200,12 +197,15 @@
 			};
 		},
 		css: function( elem, name, extra, styles ) {
-			var ret;
+			var ret, num;
 			styles = styles || getComputedStyle(elem, null);
 			ret = styles.getPropertyValue(name) || styles[name];
 
-			if(extra === true || (extra && Dom.isNumeric(ret))){
-				ret = parseFloat(ret) || 0;
+			if(extra){
+				num = parseFloat(ret);
+				if(extra === true || !isNaN(num)){
+					ret = num;
+				}
 			}
 			return ret;
 		},
