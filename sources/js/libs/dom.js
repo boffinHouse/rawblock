@@ -426,6 +426,8 @@
 		},
 	});
 
+	fn.detach = fn.remove;
+
 	['add', 'remove', 'has', 'toggle'].forEach(function(action){
 		fn[action + 'Class'] =  function(cl){
 			this.elements.forEach(function(elem){
