@@ -204,7 +204,7 @@
 			if(extra){
 				num = parseFloat(ret);
 				if(extra === true || !isNaN(num)){
-					ret = num;
+					ret = num || 0;
 				}
 			}
 			return ret;
