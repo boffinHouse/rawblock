@@ -543,3 +543,16 @@ if(!window.rb.$){
 	extendEasing();
 	setTimeout(extendEasing);
 })();
+
+
+(function(){
+	'use strict';
+	rb.getStyles = function(elem, pseudo){
+		var view = elem.ownerDocument.defaultView;
+
+		if(!view.opener){
+			view = window;
+		}
+		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$.noop};
+	};
+})();

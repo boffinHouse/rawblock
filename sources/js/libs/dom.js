@@ -198,7 +198,7 @@
 		},
 		css: function( elem, name, extra, styles ) {
 			var ret, num;
-			styles = styles || getComputedStyle(elem, null);
+			styles = styles || rb.getStyles(elem, null);
 			ret = styles.getPropertyValue(name) || styles[name];
 
 			if(extra){
