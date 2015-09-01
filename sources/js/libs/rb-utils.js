@@ -402,15 +402,17 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
+	var $ = rb.$;
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
 		var numbers = 0;
+		var cStyles = rb.getStyles(element);
 		if(!Array.isArray(styles)){
 			styles = [styles];
 		}
 
 		for(i = 0; i < styles.length; i++){
-			value = DOM.css(element, styles[i], true);
+			value = $.css(element, styles[i], true, cStyles);
 
 			if(!onlyPositive || value > 0){
 				numbers += value;
