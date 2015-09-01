@@ -230,7 +230,7 @@
 			var array = [];
 			this.elements.forEach(function(elem){
 				var element = elem.closest(sel);
-				if(array.indexOf(element) == -1){
+				if(element && array.indexOf(element) == -1){
 					array.push(element);
 				}
 			});
