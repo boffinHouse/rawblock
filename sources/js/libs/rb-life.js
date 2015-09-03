@@ -29,6 +29,8 @@
 			useMutationEvents = options.useMutationEvents || false;
 		}
 
+		life.initClass = initClass;
+
 		elements = document.getElementsByClassName(initClass);
 
 		life.batch = life.createBatch();
