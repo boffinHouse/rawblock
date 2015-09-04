@@ -54,7 +54,7 @@
 			if(this.velTime){
 				velTiming = (Date.now() - this.velTime);
 
-				if(velTiming > 80 || (!this.horizontalVel && !this.verticalVel)){
+				if(velTiming > 99 || (!this.horizontalVel && !this.verticalVel)){
 					velTiming = (velTiming / this._velDelay) || 1;
 
 					this.velPos = this._velPos;
