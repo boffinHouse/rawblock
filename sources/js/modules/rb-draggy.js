@@ -46,17 +46,18 @@
 			this.velTime = null;
 			this.horizontalVel = 0;
 			this.verticalVel = 0;
+			this.allowClick = $.noop;
 		},
 		velocitySnapShot: function(){
 			var velTiming;
-			this.velPos = this.curPos;
-			this.velTime = Date.now();
 
 			if(this.velTime){
 				velTiming = (Date.now() - this.velTime);
 
 				if(velTiming > 80 || (!this.horizontalVel && !this.verticalVel)){
 					velTiming = (velTiming / this._velDelay) || 1;
+
+					this.velPos = this._velPos;
 					this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x) || 1;
 					this.verticalVel = Math.abs(this.velPos.y - this.curPos.y) || 1;
 
@@ -64,6 +65,9 @@
 					this.horizontalVel /= velTiming;
 				}
 			}
+
+			this._velPos = this.curPos;
+			this.velTime = Date.now();
 		},
 		start: function(pos, evt){
 
@@ -100,16 +104,18 @@
 			this.options.move(this);
 		},
 		end: function(pos, evt){
-
-			if(this.options.preventClick && (Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
-				this.preventClick(evt);
-			}
-
+			var preventClick = this.options.preventClick;
 			clearInterval(this._velocityTimer);
 			this.velocitySnapShot();
 
+			this.allowClick = function(){
+				preventClick = false;
+			};
 			this.options.end(this);
 
+			if(preventClick && (Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
+				this.preventClick(evt);
+			}
 			this.reset();
 		},
 		preventClick: function(evt){
