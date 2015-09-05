@@ -532,7 +532,7 @@ if(!window.rb.$){
 
 	rb.addEasing = function(easing){
 		var bezierArgs;
-		if(window.BezierEasing && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
+		if(window.BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
 			extendEasing();
 			bezierArgs = bezierArgs.map(function(str){
 				return parseFloat(str);
@@ -540,7 +540,14 @@ if(!window.rb.$){
 			BezierEasing.css[easing] = BezierEasing.apply(this, bezierArgs);
 			copyEasing(easing);
 		}
-		return $.easing[easing] || $.easing.ease || $.easing.swing;
+		if(!$.easing[easing]) {
+			if(window.BezierEasing && BezierEasing.css[easing]){
+				copyEasing(easing);
+			} else {
+				$.easing[easing] =  $.easing.ease || $.easing.swing;
+			}
+		}
+		return $.easing[easing];
 	};
 	extendEasing();
 	setTimeout(extendEasing);

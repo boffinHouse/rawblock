@@ -58,7 +58,7 @@
 			step();
 			rAF.remove(step);
 		};
-
+		var tweenObj = {};
 		var step = function() {
 			if(hardStop){return;}
 			var prop, value, eased;
@@ -83,6 +83,10 @@
 						element[prop] = value;
 					}
 				}
+
+				if(options.progress){
+					options.progress(tweenObj, pos);
+				}
 			}
 
 			if(pos < 1){
@@ -104,12 +108,15 @@
 			}
 		};
 
+
 		tween.getStartValues(element, elementStyle, startProps, endProps);
 
 		options = Object.assign({duration: 400, easing: 'ease'}, options || {});
 
 		easing = Dom.easing[options.easing] || Dom.easing.ease || Dom.easing.swing;
 		element._rbTweenStop = stop;
+		tweenObj.opts = options;
+		tweenObj.props = endProps;
 
 		rAF.add(step);
 	};
