@@ -1,0 +1,31 @@
+@mixin rb-export-globaljs($mainconfig, $asidebreakpoints...){
+	$rbExportMqMap: ();
+	$mainbreakpoints: map-get($mainconfig, 'mqs');
+
+	@each $bp in $asidebreakpoints {
+		@each $name, $mq in $bp {
+			$rbExportMqMap: map-merge($rbExportMqMap, ($name: $mq));
+		}
+	}
+
+	@each $name, $mq in $mainbreakpoints {
+		@if map-has-key($mq, 'media') {
+
+			$rbExportMqMap: map-merge($rbExportMqMap, ($name: map-get($mq, 'media')));
+
+			head {
+				@media #{map-get($mq, 'media')}{
+					&::before {
+						content: '#{$name}';
+						display: none !important;
+					}
+				}
+			}
+
+		}
+	}
+
+	head {
+		@include exportToJS(map-merge($mainconfig, (mqs: $rbExportMqMap)));
+	}
+}

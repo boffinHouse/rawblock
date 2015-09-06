@@ -386,6 +386,9 @@
 
 	var idIndex = 0;
 	var regData = /^data-/;
+	var regStartQuote = /^"*'*"*/;
+	var regEndQuote = /"*'*"*$/;
+	var regEscapedQuote = /\\"/g;
 	var $ = window.rb.$;
 
 	life.getWidget = function(element, key, args){
@@ -522,7 +525,7 @@
 			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
 				this._styleOptsStr = style;
 				try {
-					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, '').replace(/\\"/g, '"'));
+					style = JSON.parse(style.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"'));
 				} catch(e){
 					style = false;
 				}

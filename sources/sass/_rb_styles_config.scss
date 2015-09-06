@@ -22,6 +22,8 @@ Main Stylesheet
 @import "../sources/sass/rb_basics";
 @include rb-generate-layout-styles($breakpointConfigs);
 
+@include rb-export-globaljs((mqs: $breakpointConfigs));
+
 // All Components
 @import "_blocks/**/*.scss";
 

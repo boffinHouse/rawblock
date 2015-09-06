@@ -252,7 +252,7 @@
 		css: function(style){
 			var elem;
 			if(typeof style == 'string'){
-				elem = this.elements[0]
+				elem = this.elements[0];
 				return elem && Dom.css(elem, style);
 			}
 			this.elements.forEach(function(elem){

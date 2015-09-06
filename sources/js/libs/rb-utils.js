@@ -517,7 +517,7 @@ if(!window.rb.$){
 	var copyEasing = function(easing){
 		var easObj = BezierEasing.css[easing];
 		$.easing[easing] = function(number){
-			return easObj.get(number)
+			return easObj.get(number);
 		};
 	};
 	var extendEasing = function(){
@@ -564,4 +564,38 @@ if(!window.rb.$){
 		}
 		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$.noop};
 	};
+})();
+
+(function(){
+	'use strict';
+	var styles = {};
+	var head = document.getElementsByTagName('head')[0];
+	var beforeStyle = rb.getStyles(head, '::before');
+	var currentStyle = '';
+	var regStartQuote = /^"*'*"*/;
+	var regEndQuote = /"*'*"*$/;
+	var regEscapedQuote = /\\"/g;
+	var removeQuotes = function(str){
+		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
+	};
+	var detectMQChange = function(){
+		var nowStyle = beforeStyle.content;
+		if(currentStyle != nowStyle){
+			currentStyle = nowStyle;
+			rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
+			rb.cssConfig.currentMQ = removeQuotes(currentStyle);
+			rb.cssConfig.mqChange.fireWith(rb.cssConfig);
+		}
+	};
+
+	try {
+		styles = JSON.parse(removeQuotes(rb.getStyles(head, '::after').content));
+	} catch(e){}
+
+	rb.cssConfig = Object.assign({mqs: {}, currentMQ: '', beforeMQ: ''}, styles, {mqChange: rb.$.Callbacks()});
+
+	rb.resize.on(detectMQChange);
+
+	detectMQChange();
+
 })();
