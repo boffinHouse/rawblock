@@ -4,7 +4,11 @@
 
 	@each $bp in $asidebreakpoints {
 		@each $name, $mq in $bp {
-			$rbExportMqMap: map-merge($rbExportMqMap, ($name: $mq));
+			@if(type-of($mq) == string){
+				$rbExportMqMap: map-merge($rbExportMqMap, ($name: $mq));
+			} @else if(type-of($mq) == map and map-has-key($mq, 'media')){
+				$rbExportMqMap: map-merge($rbExportMqMap, ($name: map-get($mq, 'media')));
+			}
 		}
 	}
 
