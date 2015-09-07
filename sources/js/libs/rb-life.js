@@ -29,6 +29,8 @@
 			useMutationEvents = options.useMutationEvents || false;
 		}
 
+		life.initClass = initClass;
+
 		elements = document.getElementsByClassName(initClass);
 
 		life.batch = life.createBatch();
@@ -151,6 +153,8 @@
 
 		var len = elements.length;
 
+		life.removeInitClass();
+
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
 
@@ -170,13 +174,10 @@
 			else if ( modulePath && window.loadPackage ) {
 				/* jshint loopfunc: true */
 				(function (module, modulePath, moduleId) {
-					setTimeout(function(){
-						loadPackage(modulePath).then(function () {
-							if (!life._behaviors[ moduleId ]) {
-								module.classList.remove(initClass);
-								life._failed[ moduleId ] = true;
-							}
-						});
+					loadPackage(modulePath).then(function () {
+						if (!life._behaviors[ moduleId ]) {
+							life._failed[ moduleId ] = true;
+						}
 					});
 				})(module, modulePath, moduleId);
 			}
@@ -185,8 +186,6 @@
 				removeElements.push(module);
 			}
 		}
-
-		life.removeInitClass();
 
 		life.batch.run();
 	};
@@ -387,6 +386,9 @@
 
 	var idIndex = 0;
 	var regData = /^data-/;
+	var regStartQuote = /^"*'*"*/;
+	var regEndQuote = /"*'*"*$/;
+	var regEscapedQuote = /\\"/g;
 	var $ = window.rb.$;
 
 	life.getWidget = function(element, key, args){
@@ -523,7 +525,7 @@
 			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
 				this._styleOptsStr = style;
 				try {
-					style = JSON.parse(style.replace(/^"*'*"*/, '').replace(/"*'*"*$/, '').replace(/\\"/g, '"'));
+					style = JSON.parse(style.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"'));
 				} catch(e){
 					style = false;
 				}
