@@ -147,6 +147,7 @@
 				if(!e.buttons && !e.which){
 					up(e);
 					destroy();
+					return;
 				}
 				that.move(e, e);
 			};
