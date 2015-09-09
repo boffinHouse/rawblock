@@ -1,0 +1,54 @@
+//
+// rb-triangle-icon mixin
+// --------------
+//
+// This mixin is used for generating arrow-like triangles.
+//
+//  Options:
+//  $height: height triangle
+//  $width: width triangle
+//  $color: color triangle  (use border-left-color to change color on hover/focus)
+//  $direction: right/left/up/down
+//
+// Sample input:
+// .element {
+//      &::after {
+//			@include rb-triangle-icon(10px, 10px, #fff, left);
+//		}
+//
+// }
+
+@mixin rb-triangle-icon($height, $width, $color, $direction) {
+
+	content: '';
+	position: absolute;
+	height: $height;
+	pointer-events: none;
+
+    @if $direction == "right" {
+        border-top: $height solid rgba(255,255,255,0);
+        border-bottom: $height solid rgba(255,255,255,0);
+        border-left: $width solid $color;
+    }
+
+	@if $direction == "down" {
+        border-right: $height solid rgba(255,255,255,0);
+        border-top: $width solid $color;
+        border-left: $height solid rgba(255,255,255,0);
+	}
+
+	@if $direction == "up" {
+        border-right: $height solid rgba(255,255,255,0);
+        border-bottom: $width solid $color;
+        border-left: $height solid rgba(255,255,255,0);
+	}
+
+	@if $direction == "left" {
+        border-top: $height solid rgba(255,255,255,0);
+        border-bottom: $height solid rgba(255,255,255,0);
+        border-right: $width solid $color;
+	}
+
+}
+
+
