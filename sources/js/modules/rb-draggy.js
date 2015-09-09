@@ -145,6 +145,7 @@
 
 			var move = function(e){
 				if(!e.buttons && !e.which){
+					up(e);
 					destroy();
 				}
 				that.move(e, e);
