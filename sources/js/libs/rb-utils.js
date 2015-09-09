@@ -556,6 +556,25 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
+	var regStartQuote = /^"*'*"*/;
+	var regEndQuote = /"*'*"*$/;
+	var regEscapedQuote = /\\"/g;
+	rb.removeLeadingQuotes = function(str){
+		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
+	};
+
+	rb.parsePseudo = function(element, pseudo){
+		var ret;
+		var value = typeof element != 'object' ?
+			element :
+			rb.getStyles(element, pseudo || '::after').content
+		;
+		try {
+			ret = JSON.parse(rb.removeLeadingQuotes(value));
+		} catch(e){}
+		return ret;
+	};
+
 	rb.getStyles = function(elem, pseudo){
 		var view = elem.ownerDocument.defaultView;
 
@@ -568,29 +587,20 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
-	var styles = {};
 	var head = document.getElementsByTagName('head')[0];
+	var styles = styles = rb.parsePseudo(head) || {};
 	var beforeStyle = rb.getStyles(head, '::before');
 	var currentStyle = '';
-	var regStartQuote = /^"*'*"*/;
-	var regEndQuote = /"*'*"*$/;
-	var regEscapedQuote = /\\"/g;
-	var removeQuotes = function(str){
-		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
-	};
+
 	var detectMQChange = function(){
 		var nowStyle = beforeStyle.content;
 		if(currentStyle != nowStyle){
 			currentStyle = nowStyle;
 			rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
-			rb.cssConfig.currentMQ = removeQuotes(currentStyle);
+			rb.cssConfig.currentMQ = rb.removeLeadingQuotes(currentStyle);
 			rb.cssConfig.mqChange.fireWith(rb.cssConfig);
 		}
 	};
-
-	try {
-		styles = JSON.parse(removeQuotes(rb.getStyles(head, '::after').content));
-	} catch(e){}
 
 	rb.cssConfig = Object.assign({mqs: {}, currentMQ: '', beforeMQ: ''}, styles, {mqChange: rb.$.Callbacks()});
 

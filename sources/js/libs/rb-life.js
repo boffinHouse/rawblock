@@ -433,15 +433,16 @@
 		},
 		widget: life.getWidget,
 		setupLifeOptions: function(){
-			var runs, runner, onResize;
+			var runs, runner, onResize, styles;
 			var old = {};
 			var that = this;
 			if (this.options.watchCSS) {
+				styles = rb.getStyles(that.element, '::after');
 				old.attached = this.attached;
 				old.detached = this.detached;
 				runner = function() {
 					runs = false;
-					if(that._styleOptsStr != (getComputedStyle(that.element, '::after').getPropertyValue('content') || '')){
+					if(that._styleOptsStr != (styles.getPropertyValue('content') || '')){
 						that.parseOptions();
 					}
 				};
@@ -521,19 +522,14 @@
 		},
 
 		parseCSSOptions: function(element){
-			var style = getComputedStyle(element || this.element, '::after').getPropertyValue('content') || '';
-			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
-				this._styleOptsStr = style;
-				try {
-					style = JSON.parse(style.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"'));
-				} catch(e){
-					style = false;
+			var style = rb.getStyles(element || this.element, '::after').content || '';
+			if(style && (element || !this._styleOptsStr || style != this._styleOptsStr )){
+				if(!element){
+					this._styleOptsStr = style;
 				}
-			} else {
-				style = false;
+				style = rb.parsePseudo(style);
 			}
-
-			return style;
+			return style || false;
 		},
 
 		destroy: function(){
