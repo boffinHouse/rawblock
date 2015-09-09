@@ -588,7 +588,7 @@ if(!window.rb.$){
 (function(){
 	'use strict';
 	var head = document.getElementsByTagName('head')[0];
-	var styles = styles = rb.parsePseudo(head) || {};
+	var styles = rb.parsePseudo(head) || {};
 	var beforeStyle = rb.getStyles(head, '::before');
 	var currentStyle = '';
 
