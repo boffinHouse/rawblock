@@ -144,16 +144,19 @@
 			var that = this;
 
 			var move = function(e){
+				if(!e.buttons && !e.which){
+					destroy();
+				}
 				that.move(e, e);
 			};
 
 			var up = function(e){
-				that.allowTouch = true;
 				destroy();
 				that.end(e, e);
 			};
 
 			var destroy = function(){
+				that.allowTouch = true;
 				clearTimeout(timer);
 				document.removeEventListener('mousemove', move);
 				document.removeEventListener('mousedown', destroy);
