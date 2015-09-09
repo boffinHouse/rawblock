@@ -547,8 +547,9 @@
 		if(!prop.name){
 			prop.name = name;
 		}
+
 		Class = life.Class.extend.call(this, prop);
-		Class.defaults = prop.defaults || {};
+		Class.defaults = Object.assign({}, this.defaults || {}, prop.defaults || {});
 		life.register(name, Class);
 		return Class;
 	};
