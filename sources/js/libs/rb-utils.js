@@ -609,3 +609,31 @@ if(!window.rb.$){
 	detectMQChange();
 
 })();
+
+(function(){
+	'use strict';
+	var console = window.console || {};
+	var log = console.log && console.log.bind ? console.log : rb.$.noop;
+
+	rb.addLog = function(obj, initial){
+		var realLog = log.bind(console);
+		var fakeLog = rb.$.noop;
+
+		obj.__isDebug = initial;
+		obj.log = obj.__isDebug ? realLog : fakeLog;
+
+		Object.defineProperty(obj, 'isDebug', {
+			configurable: true,
+			enumerable: true,
+			get: function(){
+				return this.__isDebug;
+			},
+			set: function(value){
+				this.__isDebug = !!value;
+				this.log = (this.__isDebug) ? realLog : fakeLog;
+			}
+		});
+	};
+
+	rb.addLog(rb, true);
+})();

@@ -429,6 +429,8 @@
 
 			this.setupLifeOptions();
 
+			this.setOption('debug', this.options.debug);
+
 			element._rbWidget = this;
 		},
 		widget: life.getWidget,
@@ -503,6 +505,9 @@
 
 		setOption: function(name, value){
 			this.options[name] = value;
+			if(name == 'debug' && value){
+				this.isDebug = true;
+			}
 		},
 
 		parseHTMLOptions: function(element){
@@ -536,6 +541,8 @@
 			life.destroyWidget(this);
 		}
 	});
+
+	rb.addLog(life.Widget.prototype, false);
 
 	life.Widget.extend = function(name, prop){
 		var Class;
