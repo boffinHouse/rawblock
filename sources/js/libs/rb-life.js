@@ -124,13 +124,16 @@
 		});
 
 		if (!element._rbCreated && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
-			life._attached.push(element);
 
-			if(instance.attached){
-				life.batch.add(function() {
-					instance.attached();
-				});
+			if(instance.attached || instance.detached){
+				life._attached.push(element);
+				if(instance.attached){
+					life.batch.add(function() {
+						instance.attached();
+					});
+				}
 			}
+
 			if(instance.onceAttached){
 				life.batch.add(function() {
 					instance.onceAttached();
@@ -239,9 +242,7 @@
 
 			for(i = 0, len = life._attached.length; i < len; i++){
 				element = life._attached[i];
-				if( !docElem.contains(element) ){
-					instance = element._rbWidget;
-
+				if( element && (instance = element._rbWidget) && !docElem.contains(element) ){
 					element.classList.add( initClass );
 					life.destroyWidget(instance, i);
 
@@ -261,7 +262,7 @@
 					life.throttledFindElements();
 				}
 				if ( mutation.removedNodes.length ) {
-					removeWidgets( mutation.removedNodes );
+					removeWidgets();
 				}
 			}
 		};
@@ -386,9 +387,6 @@
 
 	var idIndex = 0;
 	var regData = /^data-/;
-	var regStartQuote = /^"*'*"*/;
-	var regEndQuote = /"*'*"*$/;
-	var regEscapedQuote = /\\"/g;
 	var $ = window.rb.$;
 
 	life.getWidget = function(element, key, args){
@@ -435,7 +433,7 @@
 		},
 		widget: life.getWidget,
 		setupLifeOptions: function(){
-			var runs, runner, onResize, styles;
+			var runner, styles;
 			var old = {};
 			var that = this;
 			if (this.options.watchCSS) {
@@ -443,30 +441,27 @@
 				old.attached = this.attached;
 				old.detached = this.detached;
 				runner = function() {
-					runs = false;
-					if(that._styleOptsStr != (styles.getPropertyValue('content') || '')){
-						that.parseOptions();
-					}
-				};
-				onResize = function() {
-					if(!runs){
-						runs = true;
-						setTimeout(runner, 33);
+					if(that._styleOptsStr != (styles.content || '')){
+						that.parseOptions(null, that.constructor.defaults);
 					}
 				};
 
 				this.attached = function(){
-					window.addEventListener('resize', onResize);
+					rb.resize.on(runner);
 					if(old.attached){
 						return old.attached.apply(this, arguments);
 					}
 				};
 				this.detached = function(){
-					window.removeEventListener('resize', onResize);
+					rb.resize.off(runner);
 					if(old.detached){
 						return old.detached.apply(this, arguments);
 					}
 				};
+
+				if(!old.attached && !old.detached && life._attached.indexOf(this.element) == -1){
+					life._attached.push(this.element);
+				}
 			}
 
 		},

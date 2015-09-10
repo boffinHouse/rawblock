@@ -181,7 +181,6 @@
 				that.allowTouch = true;
 				clearTimeout(timer);
 				document.removeEventListener('mousemove', move);
-				document.removeEventListener('mousedown', that.destroyMouse);
 				document.removeEventListener('mouseup', up);
 			};
 
@@ -190,11 +189,6 @@
 				if(e.defaultPrevented || !that.options.useMouse || !that.allowMouse){return;}
 				that.allowTouch = false;
 				that.isType = 'mouse';
-
-
-				timer = setTimeout(function(){
-					document.addEventListener('mousedown', that.destroyMouse);
-				});
 
 				document.addEventListener('mousemove', move);
 				document.addEventListener('mouseup', up);
@@ -205,7 +199,6 @@
 			this.element.addEventListener('mousedown', this._onmousedown);
 		},
 		setupTouch: function(){
-			var timer;
 			var that = this;
 
 			var move = function(e){
@@ -219,7 +212,6 @@
 			};
 
 			this._destroyTouch = function(){
-				clearTimeout(timer);
 				document.removeEventListener('touchmove', move);
 				document.removeEventListener('touchend', end);
 			};
