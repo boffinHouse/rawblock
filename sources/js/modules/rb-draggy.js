@@ -33,7 +33,15 @@
 
 	Object.assign(Draggy.prototype, {
 		hasRelevantChange: function(){
-			return (this.options.horizontal && this.lastPos.x != this.curPos.x) || (this.options.vertical && this.lastPos.y != this.curPos.y);
+			var horizontalDif, verticalDif;
+			var options = this.options;
+			var ret = true;
+			if(options.horizontal != options.vertical){
+				horizontalDif = Math.abs(this.lastPos.x - this.curPos.x);
+				verticalDif = Math.abs(this.lastPos.y - this.curPos.y);
+				ret = (options.horizontal && horizontalDif > verticalDif) || (options.vertical && verticalDif > horizontalDif);
+			}
+			return ret;
 		},
 		reset: function(){
 			this.isType = '';
@@ -75,7 +83,13 @@
 				x: pos.pageX,
 				y: pos.pageY,
 			};
+			this.movedPos = {
+				x: 0,
+				y: 0,
+			};
 			this.curPos = this.startPos;
+
+			this.relevantChange = false;
 
 			clearInterval(this._velocityTimer);
 			this._velocityTimer = setInterval(this.velocitySnapShot, this._velDelay);
@@ -90,14 +104,16 @@
 				y: pos.pageY,
 			};
 
-			if(!this.hasRelevantChange()){
+			if(!this.relevantChange && !(this.relevantChange = this.hasRelevantChange())){
+				this.end(pos, evt);
 				return;
 			}
 
 			if(this.options.preventMove){
 				evt.preventDefault();
 			}
-
+			this.movedPos.x = this.startPos.x - this.curPos.x;
+			this.movedPos.y = this.startPos.y - this.curPos.y;
 			this.relPos.x = this.lastPos.x - this.curPos.x;
 			this.relPos.y = this.lastPos.y - this.curPos.y;
 
@@ -111,6 +127,10 @@
 			this.allowClick = function(){
 				preventClick = false;
 			};
+			this._destroyTouch();
+			this.destroyMouse();
+			this.movedPos.x = this.startPos.x - this.curPos.x;
+			this.movedPos.y = this.startPos.y - this.curPos.y;
 			this.options.end(this);
 
 			if(preventClick && (Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
@@ -146,34 +166,34 @@
 			var move = function(e){
 				if(!e.buttons && !e.which){
 					up(e);
-					destroy();
+					that.destroyMouse();
 					return;
 				}
 				that.move(e, e);
 			};
 
 			var up = function(e){
-				destroy();
+				that.destroyMouse();
 				that.end(e, e);
 			};
 
-			var destroy = function(){
+			this.destroyMouse = function(){
 				that.allowTouch = true;
 				clearTimeout(timer);
 				document.removeEventListener('mousemove', move);
-				document.removeEventListener('mousedown', destroy);
+				document.removeEventListener('mousedown', that.destroyMouse);
 				document.removeEventListener('mouseup', up);
 			};
 
 			this._onmousedown = function(e){
-				destroy();
+				that.destroyMouse();
 				if(e.defaultPrevented || !that.options.useMouse || !that.allowMouse){return;}
 				that.allowTouch = false;
 				that.isType = 'mouse';
 
 
 				timer = setTimeout(function(){
-					document.addEventListener('mousedown', destroy);
+					document.addEventListener('mousedown', that.destroyMouse);
 				});
 
 				document.addEventListener('mousemove', move);
@@ -194,20 +214,19 @@
 
 			var end = function(e){
 				that.allowMouse = true;
-				destroy();
+				that._destroyTouch();
 				that.end((e.changedTouches || e.touches)[0], e);
 			};
 
-			var destroy = function(){
+			this._destroyTouch = function(){
 				clearTimeout(timer);
-				document.removeEventListener('mousemove', move);
-				document.removeEventListener('mousedown', destroy);
-				document.removeEventListener('mouseup', end);
+				document.removeEventListener('touchmove', move);
+				document.removeEventListener('touchend', end);
 			};
 
 			this._ontouchstart = function(e){
 				if(e.touches.length != 1){return;}
-				destroy();
+				that._destroyTouch();
 				if(e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0]){return;}
 				that.allowMouse = false;
 				that.isType = 'touch';
