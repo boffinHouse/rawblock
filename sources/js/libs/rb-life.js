@@ -237,20 +237,42 @@
 	};
 
 	life.initObserver = function() {
-		var removeWidgets = function() {
-			var i, len, instance, element;
+		var removeWidgets = (function(){
+			var runs, timer;
+			var i = 0;
+			var main = function() {
+				var len, instance, element;
+				var start = Date.now();
+				for(len = life._attached.length; i < len && Date.now() - start < 6; i++){
+					element = life._attached[i];
 
-			for(i = 0, len = life._attached.length; i < len; i++){
-				element = life._attached[i];
-				if( element && (instance = element._rbWidget) && !docElem.contains(element) ){
-					element.classList.add( initClass );
-					life.destroyWidget(instance, i);
+					if( element && (instance = element._rbWidget) && !docElem.contains(element) ){
+						element.classList.add( initClass );
+						life.destroyWidget(instance, i);
 
-					i--;
-					len--;
+						i--;
+						len--;
+					}
 				}
-			}
-		};
+
+				if(i < len){
+					timer = setTimeout(main, 40);
+				} else {
+					timer = false;
+				}
+				runs = false;
+			};
+			return function(){
+				if(!runs){
+					runs = true;
+					i = 0;
+					if(timer){
+						clearTimeout(timer);
+					}
+					setTimeout(main , 99);
+				}
+			};
+		})();
 
 		var onMutation = function( mutations ) {
 			var i, mutation;
