@@ -3,6 +3,8 @@
 	var rb = window.rb;
 	var $ = rb.$;
 
+	var regInputs = /^(?:input|select|textarea|button)$/i
+
 	function Draggy(element, options){
 
 		this.element = element;
@@ -186,7 +188,7 @@
 
 			this._onmousedown = function(e){
 				that.destroyMouse();
-				if(e.defaultPrevented || !that.options.useMouse || !that.allowMouse){return;}
+				if(e.defaultPrevented || !that.options.useMouse || !that.allowMouse || regInputs.test(e.target.nodeName || '') ){return;}
 				that.allowTouch = false;
 				that.isType = 'mouse';
 
@@ -219,7 +221,7 @@
 			this._ontouchstart = function(e){
 				if(e.touches.length != 1){return;}
 				that._destroyTouch();
-				if(e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0]){return;}
+				if(e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0] || regInputs.test(e.touches[0].target.nodeName || '')){return;}
 				that.allowMouse = false;
 				that.isType = 'touch';
 

@@ -369,12 +369,13 @@ if(!window.rb.$){
 						role: 'presentation',
 						tabindex: '-1',
 						frameborder: '0',
+						src: 'javascript:false',
 					})
 					.get(0)
 				;
 
 			if($(this).find('iframe.js-element-resize').length){
-				console.error('only one element resize handler allowed');
+				rb.log('only one element resize handler allowed');
 			}
 
 			$(this).css({position: 'relative'});
@@ -383,6 +384,7 @@ if(!window.rb.$){
 			setTimeout(function(){
 				width = iframe.offsetWidth;
 				height = iframe.offsetHeight;
+
 				iframe.contentWindow.addEventListener('resize', function(){
 					if( (!options.noWidth && width != iframe.offsetWidth)  || (!options.noHeight && height != iframe.offsetHeight)){
 						width = iframe.offsetWidth;

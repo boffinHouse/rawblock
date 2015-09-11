@@ -161,7 +161,7 @@
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
 
-			if(module._rbCreated){continue;}
+			if(!module || module._rbCreated){continue;}
 
 			modulePath = module.getAttribute( 'data-module' ) || '';
 			moduleId = modulePath.split( '/' );
