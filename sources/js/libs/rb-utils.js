@@ -423,10 +423,41 @@ if(!window.rb.$){
 
 		return numbers;
 	};
-})();
 
-(function(){
-	'use strict';
+	rb.camelCase = (function() {
+		var reg = /-([\da-z])/gi;
+		var camelCase = function(all, found) {
+			return found.toUpperCase();
+		};
+
+		return function(str) {
+			return str.replace(reg, camelCase);
+		};
+	})();
+
+	rb.parseValue = (function() {
+		var regNumber = /^\-*\+*\d+\.*\d*$/;
+		var regObj = /^\[.*\]|\{.*\}$/;
+		return function( attrVal ) {
+
+			if(attrVal == 'true'){
+				attrVal = true;
+			}
+			else if(attrVal == 'false'){
+				attrVal = false;
+			}
+			else if(regNumber.test(attrVal)){
+				attrVal = parseFloat(attrVal);
+			}
+			else if(regObj.test(attrVal)){
+				try {
+					attrVal = JSON.parse( attrVal );
+				} catch(e){}
+			}
+			return attrVal;
+		};
+	})();
+
 	rb.rAFQueue = (function(){
 		var isInProgress, inProgressStack;
 		var fns1 = [];
@@ -643,3 +674,5 @@ if(!window.rb.$){
 
 	rb.addLog(rb, true);
 })();
+
+

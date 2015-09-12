@@ -39,40 +39,6 @@
 		life.throttledFindElements();
 	};
 
-	life.camelCase = (function() {
-		var reg = /-([\da-z])/gi;
-		var camelCase = function(all, found) {
-			return found.toUpperCase();
-		};
-
-		return function(str) {
-			return str.replace(reg, camelCase);
-		};
-	})();
-
-	life.parseValue = (function() {
-		var regNumber = /^\-*\+*\d+\.*\d*$/;
-		var regObj = /^\[.*\]|\{.*\}$/;
-		return function( attrVal ) {
-
-			if(attrVal == 'true'){
-				attrVal = true;
-			}
-			else if(attrVal == 'false'){
-				attrVal = false;
-			}
-			else if(regNumber.test(attrVal)){
-				attrVal = parseFloat(attrVal);
-			}
-			else if(regObj.test(attrVal)){
-				try {
-					attrVal = JSON.parse( attrVal );
-				} catch(e){}
-			}
-			return attrVal;
-		};
-	})();
-
 	life.createBatch = function(){
 		var runs;
 		var batch = [];
@@ -461,6 +427,7 @@
 			var runner, styles;
 			var old = {};
 			var that = this;
+
 			if (this.options.watchCSS) {
 				styles = rb.getStyles(that.element, '::after');
 				old.attached = this.attached;
@@ -539,7 +506,7 @@
 			for ( i = 0; i < len; i++ ) {
 				name = attributes[ i ].nodeName;
 				if ( !name.indexOf( 'data-' ) ) {
-					options[ life.camelCase( name.replace( regData , '' ) ) ] = life.parseValue( attributes[ i ].nodeValue );
+					options[ rb.camelCase( name.replace( regData , '' ) ) ] = rb.parseValue( attributes[ i ].nodeValue );
 				}
 			}
 
