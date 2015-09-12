@@ -8,18 +8,15 @@
 		// Project settings
 		var options = {
 			config: {
-				src: "grunt/configs/*.js" //config tasks
+				src: "grunt/configs/*.js"
 			},
-			// define your path structure
 			paths: {
-				src: 'sources', // Working files assemble / js / img etc
-				dev: 'dev', // Development folder
-				dist: 'dist', // Production folder
+				src: 'sources',
+				dev: 'dev',
+				dist: 'dist',
 				tmp: 'tmp',
-				// helpers folder with grunt tasks
 				helper: 'grunt/configs'
 			},
-			// define your ports for grunt-contrib-connect
 			ports: {
 				app: '8000',
 				test: '9001',
@@ -29,14 +26,11 @@
 
 		grunt._rbOptions = options;
 
-		// Load grunt configurations automatically
 		var configs = require('load-grunt-configs')(grunt, options);
 		grunt.initConfig(configs);
 
 		grunt.task.loadTasks('grunt/tasks');
 
-
-		// Default standard build Task
 		grunt.registerTask('default', [
 			'build'
 		]);
@@ -45,7 +39,13 @@
 
 		]);
 
-		// Development task
+		// Build task
+		grunt.registerTask('build', [
+			'dev',
+			'connect:livereload',
+			'watch'
+		]);
+
 		grunt.registerTask('dev', [
 			'clean:dev',
 			//'svgmin:dev_bg',
@@ -64,14 +64,6 @@
 			'prettify:dev'
 		]);
 
-		// Build task
-		grunt.registerTask('build', [
-			'dev',
-			'connect:livereload',
-			'watch'
-		]);
-
-		// Distributing task
 		grunt.registerTask('dist', [
 			'clean:dist',
 			//'clean:tmp',
