@@ -161,7 +161,10 @@
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
 
-			if(!module || module._rbCreated){continue;}
+			if(module._rbCreated){
+				removeElements.push( module );
+				continue;
+			}
 
 			modulePath = module.getAttribute( 'data-module' ) || '';
 			moduleId = modulePath.split( '/' );
@@ -174,10 +177,10 @@
 			else if ( life._failed[ moduleId ] ) {
 				removeElements.push( module );
 			}
-			else if ( modulePath && window.loadPackage ) {
+			else if ( modulePath && rb.loadPackage ) {
 				/* jshint loopfunc: true */
 				(function (module, modulePath, moduleId) {
-					loadPackage(modulePath).then(function () {
+					rb.loadPackage(modulePath).then(function () {
 						if (!life._behaviors[ moduleId ]) {
 							life._failed[ moduleId ] = true;
 						}

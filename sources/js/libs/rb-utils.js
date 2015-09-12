@@ -474,12 +474,7 @@ if(!window.rb.$){
 			running = false;
 			fn.apply(that, args);
 		};
-
-		if(typeof thisArg == 'boolean'){
-			inProgress = thisArg;
-			thisArg = false;
-		}
-		return function(){
+		var rafedFn = function(){
 			args = arguments;
 			that = thisArg || this || window;
 			if(!running){
@@ -487,6 +482,15 @@ if(!window.rb.$){
 				rb.rAFQueue.add(run, inProgress);
 			}
 		};
+
+		if(typeof thisArg == 'boolean'){
+			inProgress = thisArg;
+			thisArg = false;
+		}
+
+		rafedFn._rbUnrafedFn = fn;
+
+		return rafedFn;
 	};
 })();
 
