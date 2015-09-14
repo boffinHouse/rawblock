@@ -35,8 +35,8 @@
 			'build'
 		]);
 
-		grunt.registerTask('css', [
-
+		grunt.registerTask('svg', [
+			'svgmin:svgLogo'
 		]);
 
 		// Build task
@@ -48,14 +48,10 @@
 
 		grunt.registerTask('dev', [
 			'clean:dev',
-			//'svgmin:dev_bg',
-			//'svgmin:dev_file',
-			//'svgmin:dev_ico',
 			//'svgstore:dev',
 			//'string-replace',
 			'generate-tmp-styles-scss',
 			'concurrent:dev2',
-			//'concat:dev',
 			'handlebars:dev',
 			'browserify:dev',
 			'autoprefixer:dev',
@@ -79,13 +75,11 @@
 			'autoprefixer:dist',
 			//'group_css_media_queries',
 			'cssmin',
-			//'concat:dist',
 			'copy:favicon',
 			'handlebars:dist',
 			'browserify:dist',
 			//'copy:fonts',
 			//'copy:icon_sprite',
-			//'uglify',
 			'prettify:dist'
 		]);
 
