@@ -607,6 +607,34 @@ if(!window.rb.$){
 	}
 })();
 
+( function() {
+	'use strict';
+	var getSelection = window.getSelection || function(){return {};};
+	var regInputs = /^(?:input|select|textarea|button)$/i;
+
+	document.addEventListener('click', function(e){
+
+		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches('a[href], a[href] *') || !e.target.matches('.is-teaser, .is-teaser *')){return;}
+		var event, selection;
+		var item = e.target.closest('.is-teaser');
+		var link = item.querySelector('.is-teaser-link');
+
+		if(link){
+			selection = getSelection();
+			if(selection.anchorNode && !selection.isCollapsed && item.contains(selection.anchorNode)){
+				return;
+			}
+			if(window.MouseEvent && link.dispatchEvent){
+				event = new MouseEvent('click', {shiftKey: e.shiftKey, altKey: e.altKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey});
+				event.stopImmediatePropagation();
+				link.dispatchEvent(event);
+			} else if(link.click) {
+				link.click();
+			}
+		}
+	});
+})();
+
 
 (function(){
 	'use strict';
