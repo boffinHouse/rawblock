@@ -12,97 +12,6 @@ if(!window.rb.$){
 	docElem.classList.add('js');
 })(document.documentElement);
 
-/*! focus-within polyfill */
-(function(window, document){
-	'use strict';
-
-	var requestAnimationFrame = window.requestAnimationFrame || setTimeout;
-	var running = false;
-	var isClass = 'is-focus-within';
-	var isClassSelector = '.' + isClass;
-
-	function updateFocus(){
-		var oldFocusParents, i, len;
-
-		var parent = document.activeElement;
-		var newFocusParents = [];
-
-		while((parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)){
-			newFocusParents.push(parent);
-		}
-
-		if((oldFocusParents = parent.querySelectorAll && parent.querySelectorAll(isClassSelector))){
-			for(i = 0, len = oldFocusParents.length; i < len; i++){
-				oldFocusParents[i].classList.remove(isClass);
-			}
-		}
-		for(i = 0, len = newFocusParents.length; i < len; i++){
-			newFocusParents[i].classList.add(isClass);
-		}
-
-		running = false;
-	}
-
-	function update(){
-		if(!running){
-			running = true;
-			requestAnimationFrame(updateFocus);
-		}
-	}
-
-	document.addEventListener('focus', update, true);
-	document.addEventListener('blur', update, true);
-	update();
-
-})(window, document);
-
-/* keyboard-focus */
-(function(window, document){
-	'use strict';
-	var keyboardBlocktimer;
-	var isKeyboardBlocked = false;
-	var root = document.documentElement;
-	var dom = rb.$;
-
-	var unblockKeyboardFocus = function(){
-		isKeyboardBlocked = false;
-	};
-	var blockKeyboadFocus = function(){
-		isKeyboardBlocked = true;
-		clearTimeout(keyboardBlocktimer);
-		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 66);
-	};
-	var removeKeyBoadFocus = function(){
-		root.classList.remove('is-keyboardfocus');
-		blockKeyboadFocus();
-	};
-	var setKeyboardFocus = function(){
-		if(!isKeyboardBlocked){
-			root.classList.add('is-keyboardfocus');
-		}
-	};
-	var pointerEvents = (window.PointerEvent) ?
-			['pointerdown', 'pointerup'] :
-			['mousedown', 'mouseup', 'touchstart', 'touchend']
-		;
-
-	root.addEventListener('focus', setKeyboardFocus, true);
-
-	pointerEvents.forEach(function(eventName){
-		document.addEventListener(eventName, removeKeyBoadFocus, true);
-	});
-
-	document.addEventListener('click', blockKeyboadFocus, true);
-
-	window.addEventListener('focus', blockKeyboadFocus);
-	document.addEventListener('focus', blockKeyboadFocus);
-
-	if(dom){
-		dom(document).on('rbscriptfocus', blockKeyboadFocus);
-	}
-
-})(window, document);
-
 /* rbSlideUp / rbSlideDown */
 (function(){
 	'use strict';
@@ -174,7 +83,7 @@ if(!window.rb.$){
 		var bH, dH, isCompat;
 		var scrollingElement = document.scrollingElement;
 
-		if(!scrollingElement){
+		if(!scrollingElement && document.body){
 			bH = document.body.scrollHeight;
 			dH = document.documentElement.scrollHeight;
 			isCompat = document.compatMode == 'BackCompat';
@@ -183,12 +92,12 @@ if(!window.rb.$){
 				document.body :
 				document.documentElement;
 
-			if(scrollingElement && (dH != bH || isCompat)){
+			if(dH != bH || isCompat){
 				document.scrollingElement = scrollingElement;
 			}
 		}
 
-		return scrollingElement;
+		return scrollingElement || document.documentElement;
 	};
 
 	rb.getScrollingElement = getScrollingElement;
@@ -532,9 +441,10 @@ if(!window.rb.$){
 
 	$.fn.rbWidget = function(name, args){
 		var ret;
+		var onlyCreate = arguments.length == 1 && Array.isArray(name);
 
 		this.each(function(){
-			if(ret === undefined){
+			if(!onlyCreate && ret === undefined){
 				ret = rb.life.getWidget(this, name, args);
 			}
 		});
@@ -593,7 +503,7 @@ if(!window.rb.$){
 (function(){
 	'use strict';
 	rb.Symbol = window.Symbol;
-	var id = Date.now();
+	var id = Math.round(Date.now() * Math.random());
 	rb.getID = function(){
 		id++;
 		return id;
@@ -635,6 +545,99 @@ if(!window.rb.$){
 	});
 })();
 
+/*! focus-within polyfill */
+(function(window, document){
+	'use strict';
+
+	var running = false;
+	var isClass = 'is-focus-within';
+	var isClassSelector = '.' + isClass;
+
+	function updateFocus(){
+		var oldFocusParents, i, len;
+
+		var parent = document.activeElement;
+		var newFocusParents = [];
+
+		while((parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)){
+			newFocusParents.push(parent);
+		}
+
+		if((oldFocusParents = parent.querySelectorAll && parent.querySelectorAll(isClassSelector))){
+			for(i = 0, len = oldFocusParents.length; i < len; i++){
+				oldFocusParents[i].classList.remove(isClass);
+			}
+		}
+		for(i = 0, len = newFocusParents.length; i < len; i++){
+			newFocusParents[i].classList.add(isClass);
+		}
+
+		running = false;
+	}
+
+	function update(){
+		if(!running){
+			running = true;
+			rb.rAFQueue.add(updateFocus, true);
+		}
+	}
+
+	document.addEventListener('focus', update, true);
+	document.addEventListener('blur', update, true);
+	update();
+
+})(window, document);
+
+/* keyboard-focus */
+(function(window, document){
+	'use strict';
+	var keyboardBlocktimer;
+	var isKeyboardBlocked = false;
+	var root = document.documentElement;
+	var dom = rb.$;
+
+	var unblockKeyboardFocus = function(){
+		isKeyboardBlocked = false;
+	};
+	var blockKeyboadFocus = function(){
+		isKeyboardBlocked = true;
+		clearTimeout(keyboardBlocktimer);
+		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 66);
+	};
+	var _removeKeyBoadFocus = rb.rAF(function(){
+		root.classList.remove('is-keyboardfocus');
+	}, null, true);
+	var removeKeyBoadFocus = function(){
+		_removeKeyBoadFocus();
+		blockKeyboadFocus();
+	};
+	var setKeyboardFocus = rb.rAF(function(){
+		if(!isKeyboardBlocked){
+			root.classList.add('is-keyboardfocus');
+		}
+	}, null, true);
+	var pointerEvents = (window.PointerEvent) ?
+			['pointerdown', 'pointerup'] :
+			['mousedown', 'mouseup', 'touchstart', 'touchend']
+		;
+
+	root.addEventListener('focus', setKeyboardFocus, true);
+
+	pointerEvents.forEach(function(eventName){
+		document.addEventListener(eventName, removeKeyBoadFocus, true);
+	});
+
+	document.addEventListener('click', blockKeyboadFocus, true);
+
+	window.addEventListener('focus', blockKeyboadFocus);
+	document.addEventListener('focus', blockKeyboadFocus);
+
+	if(dom){
+		dom(document).on('rbscriptfocus', blockKeyboadFocus);
+	}
+
+})(window, document);
+
 
 (function(){
 	'use strict';
@@ -647,7 +650,7 @@ if(!window.rb.$){
 
 	rb.parsePseudo = function(element, pseudo){
 		var ret;
-		var value = typeof element != 'object' ?
+		var value = typeof element == 'string' ?
 				element :
 				rb.getStyles(element, pseudo || '::after').content
 			;
@@ -723,7 +726,7 @@ if(!window.rb.$){
 (function(window, document) {
 	'use strict';
 
-	var elements, useMutationEvents, timer;
+	var elements, useMutationEvents;
 	var docElem = document.documentElement;
 
 	var life = {};
@@ -739,7 +742,6 @@ if(!window.rb.$){
 
 	life.init = function(options){
 		if (elements) {throw('only once');}
-		clearTimeout(timer);
 
 		if (options) {
 			initClass = options.initClass || initClass;
@@ -792,10 +794,19 @@ if(!window.rb.$){
 		life._behaviors[ name ] = LifeClass;
 
 		if ( !noCheck ) {
-			if(!elements && !timer){
-				timer = setTimeout(life.init);
+			if(!elements){
+				setTimeout(function(){
+					if(!elements){
+						$(function(){
+							if(!elements) {
+								life.init();
+							}
+						});
+					}
+				});
+			} else if(elements) {
+				life.throttledFindElements();
 			}
-			setTimeout(life.throttledFindElements);
 		}
 	};
 
@@ -1142,16 +1153,16 @@ if(!window.rb.$){
 			this.options = {};
 			this._instOptions = options;
 
-			this.parseOptions(this.options, this.constructor.defaults, options);
-
-			this.setupLifeOptions();
-
-			this.setOption('debug', this.options.debug);
-
 			this._evtName = this.name + 'changed';
 			this._beforeEvtName = this.name + 'change';
 
 			element[widgetExpando] = this;
+
+			this.parseOptions(this.options, this.constructor.defaults, options);
+
+			this.setupLifeOptions();
+
+			this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
 		},
 		widget: life.getWidget,
 		setupLifeOptions: function(){
@@ -1289,4 +1300,3 @@ if(!window.rb.$){
 		return Class;
 	};
 })(window, document, rb.life);
-

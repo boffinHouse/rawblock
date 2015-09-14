@@ -11,13 +11,7 @@
 
 		if(typeof elements == 'string'){
 			return Dom.q(elements);
-		}
-		if(!(this instanceof Dom)){
-			return new Dom(elements);
-		}
-
-		/*
-		if(typeof elements == 'function'){
+		} else if(typeof elements == 'function'){
 			if(Dom.isReady){
 				elements(Dom);
 			} else {
@@ -25,8 +19,14 @@
 					elements(Dom);
 				});
 			}
+
+			return;
 		}
-		*/
+
+		if(!(this instanceof Dom)){
+			return new Dom(elements);
+		}
+
 		if(!Array.isArray(elements)){
 			if(!elements){
 				elements = [];
@@ -167,7 +167,7 @@
 		cssNumber: {
 			"opacity": true,
 		},
-		//isReady: document.readyState != 'loading',
+		isReady: document.readyState != 'loading',
 		noop: function(){},
 		q: function(sel, context){
 			return new Dom( (context || document).querySelectorAll(sel) );

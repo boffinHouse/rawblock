@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "animation-frame": "^0.2.5",
+    "array.from": "^0.2.0",
+    "array.prototype.find": "^1.0.0",
     "bezier-easing": "^1.1.1",
     "dom4": "^1.4.6",
     "es6-promise": "^3.0.2",
