@@ -8,18 +8,15 @@
 		// Project settings
 		var options = {
 			config: {
-				src: "grunt/configs/*.js" //config tasks
+				src: "grunt/configs/*.js"
 			},
-			// define your path structure
 			paths: {
-				src: 'sources', // Working files assemble / js / img etc
-				dev: 'dev', // Development folder
-				dist: 'dist', // Production folder
+				src: 'sources',
+				dev: 'dev',
+				dist: 'dist',
 				tmp: 'tmp',
-				// helpers folder with grunt tasks
 				helper: 'grunt/configs'
 			},
-			// define your ports for grunt-contrib-connect
 			ports: {
 				app: '8000',
 				test: '9001',
@@ -29,39 +26,17 @@
 
 		grunt._rbOptions = options;
 
-		// Load grunt configurations automatically
 		var configs = require('load-grunt-configs')(grunt, options);
 		grunt.initConfig(configs);
 
 		grunt.task.loadTasks('grunt/tasks');
 
-
-		// Default standard build Task
 		grunt.registerTask('default', [
 			'build'
 		]);
 
-		grunt.registerTask('css', [
-
-		]);
-
-		// Development task
-		grunt.registerTask('dev', [
-			'clean:dev',
-			//'svgmin:dev_bg',
-			//'svgmin:dev_file',
-			//'svgmin:dev_ico',
-			//'svgstore:dev',
-			//'string-replace',
-			'generate-tmp-styles-scss',
-			'concurrent:dev2',
-			//'concat:dev',
-			'handlebars:dev',
-			'browserify:dev',
-			'autoprefixer:dev',
-			'clean:tmp',
-			'sync',
-			'prettify:dev'
+		grunt.registerTask('svg', [
+			'svgmin:svgLogo'
 		]);
 
 		// Build task
@@ -71,7 +46,20 @@
 			'watch'
 		]);
 
-		// Distributing task
+		grunt.registerTask('dev', [
+			'clean:dev',
+			//'svgstore:dev',
+			//'string-replace',
+			'generate-tmp-styles-scss',
+			'concurrent:dev2',
+			'handlebars:dev',
+			'browserify:dev',
+			'autoprefixer:dev',
+			'clean:tmp',
+			'sync',
+			'prettify:dev'
+		]);
+
 		grunt.registerTask('dist', [
 			'clean:dist',
 			//'clean:tmp',
@@ -87,13 +75,11 @@
 			'autoprefixer:dist',
 			//'group_css_media_queries',
 			'cssmin',
-			//'concat:dist',
 			'copy:favicon',
 			'handlebars:dist',
 			'browserify:dist',
 			//'copy:fonts',
 			//'copy:icon_sprite',
-			//'uglify',
 			'prettify:dist'
 		]);
 
