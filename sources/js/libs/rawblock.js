@@ -370,7 +370,6 @@ if(!window.rb.$){
 						role: 'presentation',
 						tabindex: '-1',
 						frameborder: '0',
-						src: 'javascript:false',
 					})
 					.get(0)
 				;
@@ -591,6 +590,23 @@ if(!window.rb.$){
 	setTimeout(extendEasing);
 })();
 
+(function(){
+	'use strict';
+	rb.Symbol = window.Symbol;
+	var id = Date.now();
+	rb.getID = function(){
+		id++;
+		return id;
+	};
+
+	if(!rb.Symbol){
+		rb.Symbol = function(name){
+			name = name || '_';
+			return name + rb.getID();
+		};
+	}
+})();
+
 
 (function(){
 	'use strict';
@@ -688,8 +704,8 @@ if(!window.rb.$){
 	var attachedClass = 'js-rb-attached';
 	var rb = window.rb;
 	var $ = rb.$;
-	var widgetExpando = window.Symbol && Symbol('_rbCreated') || '_rbCreated' + Date.now();
-	var expando = window.Symbol && Symbol('_rbCreated') || '_rbCreated' + Date.now();
+	var widgetExpando = rb.Symbol('_rbWidget');
+	var expando = rb.Symbol('_rbCreated');
 
 	window.rb.life = life;
 
@@ -1053,7 +1069,6 @@ if(!window.rb.$){
 (function(window, document, life, undefined){
 	'use strict';
 
-	var idIndex = 0;
 	var regData = /^data-/;
 	var $ = window.rb.$;
 	var widgetExpando = life.widgetExpando;
@@ -1148,8 +1163,7 @@ if(!window.rb.$){
 		getId: function(element){
 			var id = (element || this.element).id;
 			if (!id) {
-				idIndex++;
-				id = 'rbjsid-' + idIndex;
+				id = 'rbjsid-' + rb.getID();
 				(element || this.element).id = id;
 			}
 			return id;
