@@ -520,6 +520,12 @@
 		};
 	});
 
+	if(!Dom.isReady){
+		document.addEventListener("DOMContentLoaded", function() {
+			Dom.isReady = true;
+		});
+	}
+
 	if(!window.rb){
 		window.rb = {};
 	}

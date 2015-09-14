@@ -726,7 +726,7 @@ if(!window.rb.$){
 (function(window, document) {
 	'use strict';
 
-	var elements, useMutationEvents;
+	var elements, useMutationEvents, implicitlyStarted;
 	var docElem = document.documentElement;
 
 	var life = {};
@@ -794,7 +794,8 @@ if(!window.rb.$){
 		life._behaviors[ name ] = LifeClass;
 
 		if ( !noCheck ) {
-			if(!elements){
+			if(!elements && !implicitlyStarted){
+				implicitlyStarted = true;
 				setTimeout(function(){
 					if(!elements){
 						$(function(){
