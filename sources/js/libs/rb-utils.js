@@ -369,12 +369,13 @@ if(!window.rb.$){
 						role: 'presentation',
 						tabindex: '-1',
 						frameborder: '0',
+						src: 'javascript:false',
 					})
 					.get(0)
 				;
 
 			if($(this).find('iframe.js-element-resize').length){
-				console.error('only one element resize handler allowed');
+				rb.log('only one element resize handler allowed');
 			}
 
 			$(this).css({position: 'relative'});
@@ -383,6 +384,7 @@ if(!window.rb.$){
 			setTimeout(function(){
 				width = iframe.offsetWidth;
 				height = iframe.offsetHeight;
+
 				iframe.contentWindow.addEventListener('resize', function(){
 					if( (!options.noWidth && width != iframe.offsetWidth)  || (!options.noHeight && height != iframe.offsetHeight)){
 						width = iframe.offsetWidth;
@@ -421,10 +423,41 @@ if(!window.rb.$){
 
 		return numbers;
 	};
-})();
 
-(function(){
-	'use strict';
+	rb.camelCase = (function() {
+		var reg = /-([\da-z])/gi;
+		var camelCase = function(all, found) {
+			return found.toUpperCase();
+		};
+
+		return function(str) {
+			return str.replace(reg, camelCase);
+		};
+	})();
+
+	rb.parseValue = (function() {
+		var regNumber = /^\-*\+*\d+\.*\d*$/;
+		var regObj = /^\[.*\]|\{.*\}$/;
+		return function( attrVal ) {
+
+			if(attrVal == 'true'){
+				attrVal = true;
+			}
+			else if(attrVal == 'false'){
+				attrVal = false;
+			}
+			else if(regNumber.test(attrVal)){
+				attrVal = parseFloat(attrVal);
+			}
+			else if(regObj.test(attrVal)){
+				try {
+					attrVal = JSON.parse( attrVal );
+				} catch(e){}
+			}
+			return attrVal;
+		};
+	})();
+
 	rb.rAFQueue = (function(){
 		var isInProgress, inProgressStack;
 		var fns1 = [];
@@ -472,12 +505,7 @@ if(!window.rb.$){
 			running = false;
 			fn.apply(that, args);
 		};
-
-		if(typeof thisArg == 'boolean'){
-			inProgress = thisArg;
-			thisArg = false;
-		}
-		return function(){
+		var rafedFn = function(){
 			args = arguments;
 			that = thisArg || this || window;
 			if(!running){
@@ -485,6 +513,15 @@ if(!window.rb.$){
 				rb.rAFQueue.add(run, inProgress);
 			}
 		};
+
+		if(typeof thisArg == 'boolean'){
+			inProgress = thisArg;
+			thisArg = false;
+		}
+
+		rafedFn._rbUnrafedFn = fn;
+
+		return rafedFn;
 	};
 })();
 
@@ -556,6 +593,25 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
+	var regStartQuote = /^"*'*"*/;
+	var regEndQuote = /"*'*"*$/;
+	var regEscapedQuote = /\\"/g;
+	rb.removeLeadingQuotes = function(str){
+		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
+	};
+
+	rb.parsePseudo = function(element, pseudo){
+		var ret;
+		var value = typeof element != 'object' ?
+			element :
+			rb.getStyles(element, pseudo || '::after').content
+		;
+		try {
+			ret = JSON.parse(rb.removeLeadingQuotes(value));
+		} catch(e){}
+		return ret;
+	};
+
 	rb.getStyles = function(elem, pseudo){
 		var view = elem.ownerDocument.defaultView;
 
@@ -568,29 +624,20 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
-	var styles = {};
 	var head = document.getElementsByTagName('head')[0];
+	var styles = rb.parsePseudo(head) || {};
 	var beforeStyle = rb.getStyles(head, '::before');
 	var currentStyle = '';
-	var regStartQuote = /^"*'*"*/;
-	var regEndQuote = /"*'*"*$/;
-	var regEscapedQuote = /\\"/g;
-	var removeQuotes = function(str){
-		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
-	};
+
 	var detectMQChange = function(){
 		var nowStyle = beforeStyle.content;
 		if(currentStyle != nowStyle){
 			currentStyle = nowStyle;
 			rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
-			rb.cssConfig.currentMQ = removeQuotes(currentStyle);
+			rb.cssConfig.currentMQ = rb.removeLeadingQuotes(currentStyle);
 			rb.cssConfig.mqChange.fireWith(rb.cssConfig);
 		}
 	};
-
-	try {
-		styles = JSON.parse(removeQuotes(rb.getStyles(head, '::after').content));
-	} catch(e){}
 
 	rb.cssConfig = Object.assign({mqs: {}, currentMQ: '', beforeMQ: ''}, styles, {mqChange: rb.$.Callbacks()});
 
@@ -599,3 +646,33 @@ if(!window.rb.$){
 	detectMQChange();
 
 })();
+
+(function(){
+	'use strict';
+	var console = window.console || {};
+	var log = console.log && console.log.bind ? console.log : rb.$.noop;
+
+	rb.addLog = function(obj, initial){
+		var realLog = log.bind(console);
+		var fakeLog = rb.$.noop;
+
+		obj.__isDebug = initial;
+		obj.log = obj.__isDebug ? realLog : fakeLog;
+
+		Object.defineProperty(obj, 'isDebug', {
+			configurable: true,
+			enumerable: true,
+			get: function(){
+				return this.__isDebug;
+			},
+			set: function(value){
+				this.__isDebug = !!value;
+				this.log = (this.__isDebug) ? realLog : fakeLog;
+			}
+		});
+	};
+
+	rb.addLog(rb, true);
+})();
+
+

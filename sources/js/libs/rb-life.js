@@ -39,40 +39,6 @@
 		life.throttledFindElements();
 	};
 
-	life.camelCase = (function() {
-		var reg = /-([\da-z])/gi;
-		var camelCase = function(all, found) {
-			return found.toUpperCase();
-		};
-
-		return function(str) {
-			return str.replace(reg, camelCase);
-		};
-	})();
-
-	life.parseValue = (function() {
-		var regNumber = /^\-*\+*\d+\.*\d*$/;
-		var regObj = /^\[.*\]|\{.*\}$/;
-		return function( attrVal ) {
-
-			if(attrVal == 'true'){
-				attrVal = true;
-			}
-			else if(attrVal == 'false'){
-				attrVal = false;
-			}
-			else if(regNumber.test(attrVal)){
-				attrVal = parseFloat(attrVal);
-			}
-			else if(regObj.test(attrVal)){
-				try {
-					attrVal = JSON.parse( attrVal );
-				} catch(e){}
-			}
-			return attrVal;
-		};
-	})();
-
 	life.createBatch = function(){
 		var runs;
 		var batch = [];
@@ -124,13 +90,16 @@
 		});
 
 		if (!element._rbCreated && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
-			life._attached.push(element);
 
-			if(instance.attached){
-				life.batch.add(function() {
-					instance.attached();
-				});
+			if(instance.attached || instance.detached){
+				life._attached.push(element);
+				if(instance.attached){
+					life.batch.add(function() {
+						instance.attached();
+					});
+				}
 			}
+
 			if(instance.onceAttached){
 				life.batch.add(function() {
 					instance.onceAttached();
@@ -158,7 +127,10 @@
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
 
-			if(module._rbCreated){continue;}
+			if(module._rbCreated){
+				removeElements.push( module );
+				continue;
+			}
 
 			modulePath = module.getAttribute( 'data-module' ) || '';
 			moduleId = modulePath.split( '/' );
@@ -171,10 +143,10 @@
 			else if ( life._failed[ moduleId ] ) {
 				removeElements.push( module );
 			}
-			else if ( modulePath && window.loadPackage ) {
+			else if ( modulePath && rb.loadPackage ) {
 				/* jshint loopfunc: true */
 				(function (module, modulePath, moduleId) {
-					loadPackage(modulePath).then(function () {
+					rb.loadPackage(modulePath).then(function () {
 						if (!life._behaviors[ moduleId ]) {
 							life._failed[ moduleId ] = true;
 						}
@@ -234,22 +206,42 @@
 	};
 
 	life.initObserver = function() {
-		var removeWidgets = function() {
-			var i, len, instance, element;
+		var removeWidgets = (function(){
+			var runs, timer;
+			var i = 0;
+			var main = function() {
+				var len, instance, element;
+				var start = Date.now();
+				for(len = life._attached.length; i < len && Date.now() - start < 6; i++){
+					element = life._attached[i];
 
-			for(i = 0, len = life._attached.length; i < len; i++){
-				element = life._attached[i];
-				if( !docElem.contains(element) ){
-					instance = element._rbWidget;
+					if( element && (instance = element._rbWidget) && !docElem.contains(element) ){
+						element.classList.add( initClass );
+						life.destroyWidget(instance, i);
 
-					element.classList.add( initClass );
-					life.destroyWidget(instance, i);
-
-					i--;
-					len--;
+						i--;
+						len--;
+					}
 				}
-			}
-		};
+
+				if(i < len){
+					timer = setTimeout(main, 40);
+				} else {
+					timer = false;
+				}
+				runs = false;
+			};
+			return function(){
+				if(!runs){
+					runs = true;
+					i = 0;
+					if(timer){
+						clearTimeout(timer);
+					}
+					setTimeout(main , 99);
+				}
+			};
+		})();
 
 		var onMutation = function( mutations ) {
 			var i, mutation;
@@ -261,7 +253,7 @@
 					life.throttledFindElements();
 				}
 				if ( mutation.removedNodes.length ) {
-					removeWidgets( mutation.removedNodes );
+					removeWidgets();
 				}
 			}
 		};
@@ -386,9 +378,6 @@
 
 	var idIndex = 0;
 	var regData = /^data-/;
-	var regStartQuote = /^"*'*"*/;
-	var regEndQuote = /"*'*"*$/;
-	var regEscapedQuote = /\\"/g;
 	var $ = window.rb.$;
 
 	life.getWidget = function(element, key, args){
@@ -429,41 +418,42 @@
 
 			this.setupLifeOptions();
 
+			this.setOption('debug', this.options.debug);
+
 			element._rbWidget = this;
 		},
 		widget: life.getWidget,
 		setupLifeOptions: function(){
-			var runs, runner, onResize;
+			var runner, styles;
 			var old = {};
 			var that = this;
+
 			if (this.options.watchCSS) {
+				styles = rb.getStyles(that.element, '::after');
 				old.attached = this.attached;
 				old.detached = this.detached;
 				runner = function() {
-					runs = false;
-					if(that._styleOptsStr != (getComputedStyle(that.element, '::after').getPropertyValue('content') || '')){
-						that.parseOptions();
-					}
-				};
-				onResize = function() {
-					if(!runs){
-						runs = true;
-						setTimeout(runner, 33);
+					if(that._styleOptsStr != (styles.content || '')){
+						that.parseOptions(null, that.constructor.defaults);
 					}
 				};
 
 				this.attached = function(){
-					window.addEventListener('resize', onResize);
+					rb.resize.on(runner);
 					if(old.attached){
 						return old.attached.apply(this, arguments);
 					}
 				};
 				this.detached = function(){
-					window.removeEventListener('resize', onResize);
+					rb.resize.off(runner);
 					if(old.detached){
 						return old.detached.apply(this, arguments);
 					}
 				};
+
+				if(!old.attached && !old.detached && life._attached.indexOf(this.element) == -1){
+					life._attached.push(this.element);
+				}
 			}
 
 		},
@@ -502,6 +492,9 @@
 
 		setOption: function(name, value){
 			this.options[name] = value;
+			if(name == 'debug' && value){
+				this.isDebug = true;
+			}
 		},
 
 		parseHTMLOptions: function(element){
@@ -513,7 +506,7 @@
 			for ( i = 0; i < len; i++ ) {
 				name = attributes[ i ].nodeName;
 				if ( !name.indexOf( 'data-' ) ) {
-					options[ life.camelCase( name.replace( regData , '' ) ) ] = life.parseValue( attributes[ i ].nodeValue );
+					options[ rb.camelCase( name.replace( regData , '' ) ) ] = rb.parseValue( attributes[ i ].nodeValue );
 				}
 			}
 
@@ -521,19 +514,14 @@
 		},
 
 		parseCSSOptions: function(element){
-			var style = getComputedStyle(element || this.element, '::after').getPropertyValue('content') || '';
-			if(style && (!this._styleOptsStr || style != this._styleOptsStr )){
-				this._styleOptsStr = style;
-				try {
-					style = JSON.parse(style.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"'));
-				} catch(e){
-					style = false;
+			var style = rb.getStyles(element || this.element, '::after').content || '';
+			if(style && (element || !this._styleOptsStr || style != this._styleOptsStr )){
+				if(!element){
+					this._styleOptsStr = style;
 				}
-			} else {
-				style = false;
+				style = rb.parsePseudo(style);
 			}
-
-			return style;
+			return style || false;
 		},
 
 		destroy: function(){
@@ -541,14 +529,17 @@
 		}
 	});
 
+	rb.addLog(life.Widget.prototype, false);
+
 	life.Widget.extend = function(name, prop){
 		var Class;
 
 		if(!prop.name){
 			prop.name = name;
 		}
+
 		Class = life.Class.extend.call(this, prop);
-		Class.defaults = prop.defaults || {};
+		Class.defaults = Object.assign({}, this.defaults || {}, prop.defaults || {});
 		life.register(name, Class);
 		return Class;
 	};
