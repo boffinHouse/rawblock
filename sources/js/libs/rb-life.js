@@ -16,6 +16,8 @@
 	var attachedClass = 'js-rb-attached';
 	var rb = window.rb;
 	var $ = rb.$;
+	var widgetExpando = window.Symbol && Symbol('_rbCreated') || '_rbCreated' + Date.now();
+	var expando = window.Symbol && Symbol('_rbCreated') || '_rbCreated' + Date.now();
 
 	window.rb.life = life;
 
@@ -38,6 +40,9 @@
 		life.initObserver();
 		life.throttledFindElements();
 	};
+
+	life.expando = expando;
+	life.widgetExpando = widgetExpando;
 
 	life.createBatch = function(){
 		var runs;
@@ -74,14 +79,14 @@
 			if(!elements && !timer){
 				timer = setTimeout(life.init);
 			}
-			life.throttledFindElements();
+			setTimeout(life.throttledFindElements);
 		}
 	};
 
-	life.create = function(element, LifeClass) {
+	life.create = function(element, LifeClass, options) {
 		var instance, trigger;
-		if ( !element._rbWidget ) {
-			instance = new LifeClass( element );
+		if ( !element[widgetExpando] ) {
+			instance = new LifeClass( element, options );
 			trigger = true;
 		}
 
@@ -89,7 +94,7 @@
 			element.classList.add( attachedClass );
 		});
 
-		if (!element._rbCreated && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
+		if (!element[expando] && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
 
 			if(instance.attached || instance.detached){
 				life._attached.push(element);
@@ -107,7 +112,7 @@
 			}
 			life.batch.timedRun();
 		}
-		element._rbCreated = true;
+		element[expando] = true;
 
 		if(trigger){
 			life.batch.add(function() {
@@ -127,7 +132,7 @@
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
 
-			if(module._rbCreated){
+			if(module[expando]){
 				removeElements.push( module );
 				continue;
 			}
@@ -195,8 +200,8 @@
 		}
 		element.classList.remove( attachedClass );
 
-		if(element._rbCreated){
-			delete element._rbCreated;
+		if(element[expando]){
+			delete element[expando];
 		}
 		if ( instance.detached ) {
 			instance.detached( element, instance );
@@ -215,7 +220,7 @@
 				for(len = life._attached.length; i < len && Date.now() - start < 6; i++){
 					element = life._attached[i];
 
-					if( element && (instance = element._rbWidget) && !docElem.contains(element) ){
+					if( element && (instance = element[widgetExpando]) && !docElem.contains(element) ){
 						element.classList.add( initClass );
 						life.destroyWidget(instance, i);
 
@@ -379,17 +384,24 @@
 	var idIndex = 0;
 	var regData = /^data-/;
 	var $ = window.rb.$;
+	var widgetExpando = life.widgetExpando;
 
 	life.getWidget = function(element, key, args){
-		var ret, moduleId;
-		var widget = element && element._rbWidget;
+		var ret, moduleId, options;
+		var widget = element && element[widgetExpando];
 
 		if(!widget){
-			moduleId = (element.getAttribute( 'data-module' ) || '').split( '/' );
-			moduleId = moduleId[ moduleId.length - 1 ];
+
+			if(Array.isArray(key)){
+				moduleId = key[0];
+				options = key[1];
+			} else {
+				moduleId = (element.getAttribute( 'data-module' ) || '').split( '/' );
+				moduleId = moduleId[ moduleId.length - 1 ];
+			}
 
 			if(life._behaviors[ moduleId ]){
-				widget = life.create(element, life._behaviors[ moduleId ]);
+				widget = life.create(element, life._behaviors[ moduleId ], options);
 			}
 		}
 
@@ -409,18 +421,19 @@
 
 	life.Widget = life.Class.extend({
 		defaults: {},
-		init: function(element){
+		init: function(element, options){
 			this.element = element;
 			this.$element = $(element);
 			this.options = {};
+			this._instOptions = options;
 
-			this.parseOptions(this.options, this.constructor.defaults);
+			this.parseOptions(this.options, this.constructor.defaults, options);
 
 			this.setupLifeOptions();
 
 			this.setOption('debug', this.options.debug);
 
-			element._rbWidget = this;
+			element[widgetExpando] = this;
 		},
 		widget: life.getWidget,
 		setupLifeOptions: function(){
@@ -434,7 +447,7 @@
 				old.detached = this.detached;
 				runner = function() {
 					if(that._styleOptsStr != (styles.content || '')){
-						that.parseOptions(null, that.constructor.defaults);
+						that.parseOptions(null, that.constructor.defaults, this._instOptions);
 					}
 				};
 
@@ -455,7 +468,6 @@
 					life._attached.push(this.element);
 				}
 			}
-
 		},
 
 		getId: function(element){
@@ -477,14 +489,14 @@
 			} catch(e){}
 		},
 
-		parseOptions: function(opts, defaults){
-			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
+		parseOptions: function(opts, defaults, instOpts){
+			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions(), instOpts);
 			this.setOptions(options);
 		},
 
 		setOptions: function(opts){
 			for(var prop in opts){
-				if(opts[prop] != this.options[prop]){
+				if(opts[prop] !== this.options[prop]){
 					this.setOption(prop, opts[prop]);
 				}
 			}
@@ -540,6 +552,11 @@
 
 		Class = life.Class.extend.call(this, prop);
 		Class.defaults = Object.assign({}, this.defaults || {}, prop.defaults || {});
+
+		if(prop.statics || this.statics){
+			Object.assign(Class, this.statics || {}, prop.statics || {});
+		}
+
 		life.register(name, Class);
 		return Class;
 	};

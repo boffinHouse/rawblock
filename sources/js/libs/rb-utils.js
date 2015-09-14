@@ -178,6 +178,7 @@ if(!window.rb.$){
 			bH = document.body.scrollHeight;
 			dH = document.documentElement.scrollHeight;
 			isCompat = document.compatMode == 'BackCompat';
+
 			scrollingElement = (dH <= bH || isCompat) ?
 				document.body :
 				document.documentElement;
