@@ -49,8 +49,13 @@
 	};
 
 	loadPackage.createPath = function(moduleId, index, packageIds){
+		var key = 'basePath';
 		if(!regPath.test(moduleId)){
-			moduleId = loadPackage[packageIds.isModule ? 'modulePath' : 'basePath'] + moduleId;
+			if(packageIds.isModule){
+				key = 'modulePath';
+				moduleId = 'rb_' + moduleId;
+			}
+			moduleId = loadPackage[key] + moduleId;
 		}
 		if(!rgJS.test(moduleId)){
 			moduleId += '.js';

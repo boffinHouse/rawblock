@@ -4,7 +4,7 @@ import Handlebars from '../../node_modules/handlebars/dist/handlebars.runtime';
 import templates from './templates';
 templates.call(window, Handlebars);
 */
-var loadPackage = require('./libs/packageloader');
+var loadPackage = require('./libs/rb_packageloader');
 
 window.BezierEasing = require('bezier-easing');
 //load dom or jQuery
@@ -29,7 +29,7 @@ loadPackage.modulePath = window.ASSETBASEPATH + 'js/modules/';
 
 
 /* require crucial or small/often used behaviors directly */
-require('./modules/button');
+require('./modules/rb_button');
 
 /* init after all modules are loaded or package loader is configured */
 rb.life.init();

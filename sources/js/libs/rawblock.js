@@ -787,11 +787,12 @@ if(!window.rb.$){
 
 	life._failed = {};
 	life._behaviors = {};
+	rb.widgets = life._behaviors;
 	life._attached = [];
 
 	life.register = function(name, LifeClass, noCheck) {
 
-		life._behaviors[ name ] = LifeClass;
+		rb.widgets[ name ] = LifeClass;
 
 		if ( !noCheck ) {
 			if(!elements && !implicitlyStarted){
@@ -869,8 +870,8 @@ if(!window.rb.$){
 			moduleId = modulePath.split( '/' );
 			moduleId = moduleId[ moduleId.length - 1 ];
 
-			if ( life._behaviors[ moduleId ] ) {
-				life.create( module, life._behaviors[ moduleId ] );
+			if ( rb.widgets[ moduleId ] ) {
+				life.create( module, rb.widgets[ moduleId ] );
 				removeElements.push( module );
 			}
 			else if ( life._failed[ moduleId ] ) {
@@ -880,7 +881,7 @@ if(!window.rb.$){
 				/* jshint loopfunc: true */
 				(function (module, modulePath, moduleId) {
 					rb.loadPackage(modulePath).then(function () {
-						if (!life._behaviors[ moduleId ]) {
+						if (!rb.widgets[ moduleId ]) {
 							life._failed[ moduleId ] = true;
 						}
 					});
@@ -1042,7 +1043,7 @@ if(!window.rb.$){
 
 	// Create a new Class that inherits from this class
 	window.rb.life.Class.extend = function(prop) {
-		var name, prototype, origDescriptor, copyDescriptor, descProp, superDescriptor;
+		var name, prototype, origDescriptor, descProp, superDescriptor;
 		var _super = this.prototype;
 
 		// Instantiate a base class (but only create the instance,
@@ -1127,8 +1128,8 @@ if(!window.rb.$){
 				moduleId = moduleId[ moduleId.length - 1 ];
 			}
 
-			if(life._behaviors[ moduleId ]){
-				widget = life.create(element, life._behaviors[ moduleId ], options);
+			if(rb.widgets[ moduleId ]){
+				widget = life.create(element, rb.widgets[ moduleId ], options);
 			}
 		}
 
@@ -1300,4 +1301,6 @@ if(!window.rb.$){
 		life.register(name, Class);
 		return Class;
 	};
+
+	rb.Widget = life.Widget;
 })(window, document, rb.life);
