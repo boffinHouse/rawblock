@@ -15,12 +15,20 @@
 	var regPath = /^[\.\/]|:\//;
 	var rgJS = /\.js/;
 
-	var loadPackage = function(moduleId){
+	var rejectedPromise = new Promise(function(resolve, reject){
+		reject();
+	});
+
+	var loadPackage = function(moduleId, onlyKnown){
 		var packagePaths;
 		var packages = loadPackage.packages[moduleId];
 		if(!packages){
-			packages = [moduleId];
-			packages.isModule = true;
+			if(!onlyKnown){
+				packages = [moduleId];
+				packages.isModule = true;
+			} else {
+				return rejectedPromise;
+			}
 		}
 
 		packagePaths = packages.map(loadPackage.createPath);

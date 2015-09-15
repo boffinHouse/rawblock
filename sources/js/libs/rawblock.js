@@ -85,20 +85,22 @@ if(!window.rb.$){
 
 		if(!scrollingElement && document.body){
 			bH = document.body.scrollHeight;
-			dH = document.documentElement.scrollHeight;
+			dH = rb.root.scrollHeight;
 			isCompat = document.compatMode == 'BackCompat';
 
 			scrollingElement = (dH <= bH || isCompat) ?
 				document.body :
-				document.documentElement;
+				rb.root;
 
 			if(dH != bH || isCompat){
 				document.scrollingElement = scrollingElement;
 			}
 		}
 
-		return scrollingElement || document.documentElement;
+		return scrollingElement || rb.root;
 	};
+
+	rb.root = document.documentElement;
 
 	rb.getScrollingElement = getScrollingElement;
 
