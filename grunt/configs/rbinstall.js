@@ -1,8 +1,7 @@
 /**
- * Configuration hbs
+ * Install RawBLock components to your project (grunt rbinstall --rbm=yourComponentName)
  *
- * {@link} https://github.com/wycats/handlebars.js
- * {@link} https://github.com/gruntjs/grunt-contrib-handlebars
+ *
  */
 module.exports = {
     install: {
