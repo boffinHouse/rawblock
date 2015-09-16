@@ -725,6 +725,42 @@ if(!window.rb.$){
 	rb.addLog(rb, true);
 })();
 
+(function(){
+	'use strict';
+	var rb = window.rb;
+
+	var cbs = [];
+	document.addEventListener('click', function(e){
+		var i, len, attr, found;
+		var clickElem = e.target.closest('.js-click');
+		if(!clickElem){return;}
+
+		for(i = 0, len = cbs.length; i < len;i++){
+			attr = clickElem.getAttribute(cbs[i].attr);
+
+			if(attr != null){
+				found = true;
+				cbs[i].fn(clickElem, e, attr);
+				break;
+			}
+		}
+
+		if(!found){
+			clickElem.classList.remove('js-click');
+		}
+	}, true);
+
+	rb.click = {
+		cbs: cbs,
+		add: function(name, fn){
+			cbs.push({
+				attr: 'data-'+name,
+				fn: fn,
+			});
+		}
+	};
+})();
+
 (function(window, document) {
 	'use strict';
 
@@ -758,6 +794,7 @@ if(!window.rb.$){
 		life.batch = life.createBatch();
 
 		life.initObserver();
+		life.initClickCreate();
 		life.throttledFindElements();
 	};
 
@@ -939,6 +976,16 @@ if(!window.rb.$){
 		}
 
 		life._attached.splice(index, 1);
+	};
+
+	life.initClickCreate = function(){
+		rb.click.add('module', function(elem){
+			life.create(elem);
+			rb.rAFQueue.add(function(){
+				elem.classList.remove('js-click');
+			}, true);
+			life.batch.run();
+		});
 	};
 
 	life.initObserver = function() {
