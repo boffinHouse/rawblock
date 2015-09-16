@@ -730,25 +730,28 @@ if(!window.rb.$){
 	var rb = window.rb;
 
 	var cbs = [];
-	document.addEventListener('click', function(e){
-		var i, len, attr, found;
-		var clickElem = e.target.closest('.js-click');
-		if(!clickElem){return;}
+	var setup = function(){
+		setup = rb.$;
+		document.addEventListener('click', function(e){
+			var i, len, attr, found;
+			var clickElem = e.target.closest('.js-click');
+			if(!clickElem){return;}
 
-		for(i = 0, len = cbs.length; i < len;i++){
-			attr = clickElem.getAttribute(cbs[i].attr);
+			for(i = 0, len = cbs.length; i < len;i++){
+				attr = clickElem.getAttribute(cbs[i].attr);
 
-			if(attr != null){
-				found = true;
-				cbs[i].fn(clickElem, e, attr);
-				break;
+				if(attr != null){
+					found = true;
+					cbs[i].fn(clickElem, e, attr);
+					break;
+				}
 			}
-		}
 
-		if(!found){
-			clickElem.classList.remove('js-click');
-		}
-	}, true);
+			if(!found){
+				clickElem.classList.remove('js-click');
+			}
+		}, true);
+	};
 
 	rb.click = {
 		cbs: cbs,
@@ -757,6 +760,9 @@ if(!window.rb.$){
 				attr: 'data-'+name,
 				fn: fn,
 			});
+			if(cbs.length == 1){
+				setup();
+			}
 		}
 	};
 })();
@@ -794,8 +800,11 @@ if(!window.rb.$){
 		life.batch = life.createBatch();
 
 		life.initObserver();
-		life.initClickCreate();
 		life.throttledFindElements();
+
+		if(options && options.clickCreate){
+			life.initClickCreate();
+		}
 	};
 
 	life.expando = expando;
@@ -895,8 +904,6 @@ if(!window.rb.$){
 
 		var len = elements.length;
 
-		life.removeInitClass();
-
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
 
@@ -932,6 +939,7 @@ if(!window.rb.$){
 			}
 		}
 
+		life.removeInitClass();
 		life.batch.run();
 	};
 
@@ -939,7 +947,7 @@ if(!window.rb.$){
 		while (removeElements.length) {
 			removeElements.shift().classList.remove(initClass);
 		}
-	});
+	}, null, true);
 
 	life.throttledFindElements = (function() {
 		var setImmediate = window.setImmediate || window.setTimeout;
