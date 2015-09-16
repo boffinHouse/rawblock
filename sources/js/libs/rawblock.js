@@ -980,7 +980,7 @@ if(!window.rb.$){
 
 	life.initClickCreate = function(){
 		rb.click.add('module', function(elem){
-			life.create(elem);
+			life.getWidget(elem);
 			rb.rAFQueue.add(function(){
 				elem.classList.remove('js-click');
 			}, true);
