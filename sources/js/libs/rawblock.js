@@ -1216,7 +1216,10 @@ if(!window.rb.$){
 			var evt;
 			if(typeof name == 'object'){
 				detail = name;
-				name = detaily.type || this._evtName;
+				name = detail.type;
+			}
+			if(name == null){
+				name = this._evtName;
 			}
 			evt = $.Event(name, {detail: detail || {}});
 			this.$element.trigger(evt);
