@@ -9,15 +9,30 @@
 	var rb = window.rb;
 	var $ = rb.$;
 
-	return rb.life.Widget.extend('button', {
+	var Button = rb.Widget.extend('button', {
 		defaults: {
 			target: ''
+		},
+		statics: {
+			regTarget: /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i,
+			getTarget: function(targetStr){
+				var target = null;
+				if (targetStr.match(Button.regTarget)) {
+					if (RegExp.$1 == 'closest') {
+						target = this.element.closest(RegExp.$2);
+					} else if (RegExp.$1 == 'sel') {
+						target = document.querySelector(RegExp.$2);
+					}
+				} else if (targetStr) {
+					target = document.getElementById(targetStr);
+				}
+
+				return target;
+			}
 		},
 		init: function(element) {
 
 			this._super(element);
-
-			this.regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
 
 			this.setupEvents();
 		},
@@ -40,27 +55,21 @@
 		},
 
 		setTarget: function(dom) {
+			var id = this.getId(dom);
 			this.element.removeAttribute('data-target');
 			this.$element.attr({
-				'aria-controls': this.getId(dom)
+				'aria-controls': id
 			});
+			this.targetAttr = id;
+			this.target = dom;
 		},
 
 		getTarget: function() {
 			var target = this.$element.attr('data-target') || this.$element.attr('aria-controls') || '';
+
 			if (!this.target || target != this.targetAttr) {
 				this.targetAttr = target;
-				this.target = null;
-
-				if (target.match(this.regTarget)) {
-					if (RegExp.$1 == 'closest') {
-						this.target = this.element.closest(RegExp.$2);
-					} else if (RegExp.$1 == 'sel') {
-						this.target = document.querySelector(RegExp.$2);
-					}
-				} else if (target) {
-					this.target = document.getElementById(target);
-				}
+				this.target = Button.getTarget(target);
 			}
 
 			return this.target;
