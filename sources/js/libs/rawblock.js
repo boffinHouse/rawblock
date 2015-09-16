@@ -836,9 +836,9 @@ if(!window.rb.$){
 				}
 			}
 
-			if(instance.onceAttached){
+			if(instance.attachedOnce){
 				life.batch.add(function() {
-					instance.onceAttached();
+					instance.attachedOnce();
 				});
 			}
 			life.batch.timedRun();
