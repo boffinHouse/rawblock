@@ -20,7 +20,7 @@
 				if (targetStr.match(Button.regTarget)) {
 					if (RegExp.$1 == 'closest') {
 						target = this.element.closest(RegExp.$2);
-					} else if (RegExp.$1 == 'sel') {
+					} else if ( !((RegExp.$1 || '').indexOf('sel')) ) {
 						target = document.querySelector(RegExp.$2);
 					}
 				} else if (targetStr) {
