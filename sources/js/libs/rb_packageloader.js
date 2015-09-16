@@ -15,12 +15,20 @@
 	var regPath = /^[\.\/]|:\//;
 	var rgJS = /\.js/;
 
-	var loadPackage = function(moduleId){
+	var rejectedPromise = new Promise(function(resolve, reject){
+		reject();
+	});
+
+	var loadPackage = function(moduleId, onlyKnown){
 		var packagePaths;
 		var packages = loadPackage.packages[moduleId];
 		if(!packages){
-			packages = [moduleId];
-			packages.isModule = true;
+			if(!onlyKnown){
+				packages = [moduleId];
+				packages.isModule = true;
+			} else {
+				return rejectedPromise;
+			}
 		}
 
 		packagePaths = packages.map(loadPackage.createPath);
@@ -49,8 +57,13 @@
 	};
 
 	loadPackage.createPath = function(moduleId, index, packageIds){
+		var key = 'basePath';
 		if(!regPath.test(moduleId)){
-			moduleId = loadPackage[packageIds.isModule ? 'modulePath' : 'basePath'] + moduleId;
+			if(packageIds.isModule){
+				key = 'modulePath';
+				moduleId = 'rb_' + moduleId;
+			}
+			moduleId = loadPackage[key] + moduleId;
 		}
 		if(!rgJS.test(moduleId)){
 			moduleId += '.js';

@@ -4,28 +4,35 @@ import Handlebars from '../../node_modules/handlebars/dist/handlebars.runtime';
 import templates from './templates';
 templates.call(window, Handlebars);
 */
+var loadPackage = require('./libs/rb_packageloader');
 
-var loadPackage = require('./libs/packageloader');
-
-require('./polyfills/object-assign');
-//used by dom for dom.fn.animate
-//window.BezierEasing = require('bezier-easing');
+window.BezierEasing = require('bezier-easing');
+//load dom or jQuery
 require('./libs/dom');
 
-require('./libs/rb-utils');
-require('./libs/rb-life');
+require('./libs/rawblock');
 
-loadPackage.basePath = 'js/';
-loadPackage.modulePath = 'js/modules/';
+/* configuration */
+rb.isDebug = true;
 
+if(!('ASSETBASEPATH' in window)){
+	window.ASSETBASEPATH = '';
+	rb.log('set ASSETBASEPATH to "". Please configure!');
+}
+loadPackage.basePath = window.ASSETBASEPATH + 'js/';
+loadPackage.modulePath = window.ASSETBASEPATH + 'js/modules/';
+
+
+/* define loading packages for non-crucial behaviors */
 /* either require modules or configure package loader */
-
 //loadPackage.addPackage('moduleId', ['dependecy-source.js', 'source.js'])
 
-require('./modules/button');
 
+/* require crucial or small/often used behaviors directly */
+require('./modules/rb_button');
 
-//rbLife.init();
+/* init after all modules are loaded or package loader is configured */
+rb.life.init();
 
 
 

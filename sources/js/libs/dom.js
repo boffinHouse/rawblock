@@ -11,13 +11,7 @@
 
 		if(typeof elements == 'string'){
 			return Dom.q(elements);
-		}
-		if(!(this instanceof Dom)){
-			return new Dom(elements);
-		}
-
-		/*
-		if(typeof elements == 'function'){
+		} else if(typeof elements == 'function'){
 			if(Dom.isReady){
 				elements(Dom);
 			} else {
@@ -25,8 +19,14 @@
 					elements(Dom);
 				});
 			}
+
+			return;
 		}
-		*/
+
+		if(!(this instanceof Dom)){
+			return new Dom(elements);
+		}
+
 		if(!Array.isArray(elements)){
 			if(!elements){
 				elements = [];
@@ -41,7 +41,7 @@
 		this.length = this.elements.length || 0;
 	};
 	var fn = Dom.prototype;
-
+	var steps = {};
 	var tween = function(element, endProps, options){
 
 		var easing, isStopped, isJumpToEnd;
@@ -59,6 +59,7 @@
 			rAF.remove(step);
 		};
 		var tweenObj = {};
+		var stepObj = {};
 		var step = function() {
 			if(hardStop){return;}
 			var prop, value, eased;
@@ -74,7 +75,22 @@
 				for(prop in startProps){
 					value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
 
-					if(prop in elementStyle){
+					if(prop in steps){
+
+						if(!stepObj[prop]) {
+							stepObj[prop] = {
+								elem: element,
+								start: startProps[prop],
+								end: endProps[prop],
+								options: options,
+							};
+						}
+
+						stepObj[prop].pos = eased;
+						stepObj[prop].now = value;
+						steps[prop](stepObj[prop]);
+
+					} else if(prop in elementStyle){
 						if(!Dom.cssNumber[prop]){
 							value += 'px';
 						}
@@ -130,7 +146,7 @@
 			if(prop in elementStyle){
 				startProps[prop] = parseFloat(getComputedStyle(element).getPropertyValue(prop)) || 0;
 			} else {
-				startProps[prop] = element[prop];
+				startProps[prop] = element[prop] || 0;
 			}
 		}
 	};
@@ -144,11 +160,14 @@
 				return 0.5 - Math.cos( p * Math.PI ) / 2;
 			}
 		},
+		fx: {
+			step: steps
+		},
 		fn: Dom.prototype,
 		cssNumber: {
 			"opacity": true,
 		},
-		//isReady: document.readyState != 'loading',
+		isReady: document.readyState != 'loading',
 		noop: function(){},
 		q: function(sel, context){
 			return new Dom( (context || document).querySelectorAll(sel) );
@@ -500,6 +519,12 @@
 			return this;
 		};
 	});
+
+	if(!Dom.isReady){
+		document.addEventListener("DOMContentLoaded", function() {
+			Dom.isReady = true;
+		});
+	}
 
 	if(!window.rb){
 		window.rb = {};

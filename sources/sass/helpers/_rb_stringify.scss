@@ -1,3 +1,19 @@
+@function rbEscapeQuotes($string, $prepend: '') {
+	$newstring: $string;
+	$length: str_length($string);
+	$index: str_index($string, '"');
+
+	@if $index and $index > 0 {
+		@if $prepend == '' {
+			@warn 'doubble quote found in "' + $string + '" will convert to single quote.';
+		}
+		$prepend: str_slice($string, 0, $index - 1) + "'";
+		$newstring: rbEscapeQuotes((str_slice($string, $index + 1, $length + 1)), $prepend);
+	}
+
+	@return $prepend + $newstring;
+}
+
 @function rbToJSON($data) {
 	$string: "";
 
@@ -23,7 +39,7 @@
 		$string: $string + $data;
 	}
 	@else if type-of($data) == "string" {
-		$string: $string + ' "' + $data + '"';
+		$string: $string + ' "' + rbEscapeQuotes($data) + '"';
 	} @else if type-of($data) == "bool" {
 		$string: $string + $data;
 	} @else {

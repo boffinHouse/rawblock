@@ -3,7 +3,7 @@
 	var rb = window.rb;
 	var $ = rb.$;
 
-	var regInputs = /^(?:input|select|textarea|button)$/i
+	var regInputs = /^(?:input|select|textarea|button)$/i;
 
 	function Draggy(element, options){
 
