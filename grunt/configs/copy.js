@@ -16,11 +16,11 @@ module.exports = {
 		dest: '<%= paths.dist %>/js/modules/',
 		expand: true,
 		src: ['**/*.js']
-	}
-	//fonts: {
-	//	cwd: '<%= paths.src %>/fonts/',
-	//	dest: '<%= paths.dist %>/fonts/',
-	//	expand: true,
-	//	src: ['**/*']
-	//},
+	},
+	fonts: {
+		cwd: '<%= paths.src %>/fonts/',
+		dest: '<%= paths.dist %>/fonts/',
+		expand: true,
+		src: ['**/*']
+	},
 };
