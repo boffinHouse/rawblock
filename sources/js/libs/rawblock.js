@@ -1294,12 +1294,37 @@ if(!window.rb.$){
 		setFocus: function(elem){
 			try {
 				setTimeout(function(){
-					$(elem).trigger('rbscriptfocus');
 					elem.focus();
 				}, 0);
 			} catch(e){}
 		},
+		setWidgetFocus: function(element){
+			this._activeElement = document.activeElement;
+			var focusElement;
 
+			if(element && element !== true){
+				if(element.nodeType == 1){
+					focusElement = element;
+				} else if(typeof element == 'string'){
+					focusElement = this.element.querySelector(element);
+				}
+			} else {
+				focusElement = this.element.querySelector('.js-autofocus');
+			}
+			if(!focusElement && element === true){
+				focusElement = this.element;
+			}
+			this.setFocus(focusElement);
+		},
+		restoreFocus: function(checkInside){
+			var activeElem = this._activeElement;
+			if(!activeElem){return;}
+
+			this._activeElement = null;
+			if(!checkInside || this.element.contains(document.activeElement)){
+				this.setFocus(activeElem);
+			}
+		},
 		parseOptions: function(opts, defaults, instOpts){
 			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions(), instOpts);
 			this.setOptions(options);
