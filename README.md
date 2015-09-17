@@ -65,11 +65,12 @@ Which modules are included:
 - [JS-Hint](https://github.com/gruntjs/grunt-contrib-jshint): Validate files with JSHint
 
 ##2. Layout Grid
-RawBlock provides a layout grid system that is flexible, responsive and uses a human readable syntax. Our grid is
+RawBlock provides a layout grid system that is flexible, responsive and uses a human readable syntax. 
 
 
 ### Basic principles
-The layout grid targeting several screen sizes. To accomplish this, we use percentages as our base units and @media queries to allow you to decide what width an element should take when viewed in a specific screen sizes.
+The layout grid targeting several screen sizes. We accomplish this by using percentages as our base units and @media
+queries to allow you to decide what width an element should take when viewed in a specific screen sizes.
 
 Inside `sources/sass/variables/_layout.scss` you can find the variable `$breakpointConfig` where you can declare your breakpoints and give the specific breakpoint-class. To share styles in all screen sizes the property `all` must be used.
 
