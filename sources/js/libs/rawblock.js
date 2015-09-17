@@ -1314,7 +1314,9 @@ if(!window.rb.$){
 			if(!focusElement && element === true){
 				focusElement = this.element;
 			}
-			this.setFocus(focusElement);
+			if(focusElement){
+				this.setFocus(focusElement);
+			}
 		},
 		restoreFocus: function(checkInside){
 			var activeElem = this._activeElement;
