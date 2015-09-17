@@ -594,6 +594,7 @@ if(!window.rb.$){
 (function(window, document){
 	'use strict';
 	var keyboardBlocktimer;
+	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
 	var root = document.documentElement;
 	var dom = rb.$;
@@ -601,23 +602,32 @@ if(!window.rb.$){
 	var unblockKeyboardFocus = function(){
 		isKeyboardBlocked = false;
 	};
-	var blockKeyboadFocus = function(){
+
+	var blockKeyboardFocus = function(){
 		isKeyboardBlocked = true;
 		clearTimeout(keyboardBlocktimer);
 		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 66);
 	};
-	var _removeKeyBoadFocus = rb.rAF(function(){
+
+	var _removeKeyBoardFocus = rb.rAF(function(){
+		hasKeyboardFocus = false;
 		root.classList.remove('is-keyboardfocus');
 	}, null, true);
-	var removeKeyBoadFocus = function(){
-		_removeKeyBoadFocus();
-		blockKeyboadFocus();
+
+	var removeKeyBoardFocus = function(){
+		if(hasKeyboardFocus){
+			_removeKeyBoardFocus();
+		}
+		blockKeyboardFocus();
 	};
+
 	var setKeyboardFocus = rb.rAF(function(){
 		if(!isKeyboardBlocked){
+			hasKeyboardFocus = true;
 			root.classList.add('is-keyboardfocus');
 		}
 	}, null, true);
+
 	var pointerEvents = (window.PointerEvent) ?
 			['pointerdown', 'pointerup'] :
 			['mousedown', 'mouseup', 'touchstart', 'touchend']
@@ -626,16 +636,16 @@ if(!window.rb.$){
 	root.addEventListener('focus', setKeyboardFocus, true);
 
 	pointerEvents.forEach(function(eventName){
-		document.addEventListener(eventName, removeKeyBoadFocus, true);
+		document.addEventListener(eventName, removeKeyBoardFocus, true);
 	});
 
-	document.addEventListener('click', blockKeyboadFocus, true);
+	document.addEventListener('click', blockKeyboardFocus, true);
 
-	window.addEventListener('focus', blockKeyboadFocus);
-	document.addEventListener('focus', blockKeyboadFocus);
+	window.addEventListener('focus', blockKeyboardFocus);
+	document.addEventListener('focus', blockKeyboardFocus);
 
 	if(dom){
-		dom(document).on('rbscriptfocus', blockKeyboadFocus);
+		dom(document).on('rbscriptfocus', blockKeyboardFocus);
 	}
 
 })(window, document);
