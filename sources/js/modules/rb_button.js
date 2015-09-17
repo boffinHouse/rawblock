@@ -11,7 +11,8 @@
 
 	var Button = rb.Widget.extend('button', {
 		defaults: {
-			target: ''
+			target: '',
+			type: 'toggle',
 		},
 		statics: {
 			regTarget: /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i,
@@ -34,26 +35,25 @@
 
 			this._super(element);
 
+			this.clickAction = this.clickAction.bind(this);
 			this.setupEvents();
 		},
 		setupEvents: function(){
-			var that = this;
-			this.$element.on('click', function() {
-				var target = that.getTarget() || {};
-				var widget = that.widget(target);
-
-				if (!widget) {
-					return;
-				}
-
-				if(widget[that.options.type]){
-					widget[that.options.type]();
-				} else if(widget.toggle) {
-					widget.toggle();
-				}
-			});
+			this.$element.on('click', this.clickAction);
 		},
+		clickAction: function(){
+			var target = this.getTarget() || {};
+			var widget = this.widget(target);
 
+			if (!widget) {
+				return;
+			}
+
+			if(widget[this.options.type]){
+				widget.activeButtonWidget = this;
+				widget[this.options.type]();
+			}
+		},
 		setTarget: function(dom) {
 			var id = this.getId(dom);
 			this.element.removeAttribute('data-target');
