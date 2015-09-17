@@ -49,9 +49,15 @@ module.exports = {
 				{ removeTitle: true },
 			]
 		},
-		files: {
-			'<%= paths.tmp %>/svgmin/logo.svg': ['<%= paths.src %>/img/logo/*.svg']
-		},
+		files: [
+			{
+				cwd: '<%= paths.src %>/img/logo',
+				dest: '<%= paths.tmp %>/svgmin/logo',
+				expand: true,
+				ext: '.svg',
+				src: ['*.svg']
+			}
+		]
 	},
 	svgIcons: {
 		files: [

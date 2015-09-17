@@ -49,33 +49,30 @@
 
 		grunt.registerTask('dev', [
 			'clean:dev',
-			'svg',
-			//'string-replace',
+			//'svg',
 			'generate-tmp-styles-scss',
 			'concurrent:dev2',
 			'handlebars:dev',
-			'browserify:dev',
+			'browserify',
 			'autoprefixer:dev',
-			'clean:tmp',
 			'sync',
-			'prettify:dev'
+			'prettify:dev',
+			'clean:tmp',
 		]);
 
 		grunt.registerTask('dist', [
 			'clean:dist',
-			'clean:tmp',
-			//'string-replace',
 			'generate-tmp-styles-scss',
 			'sass:dist',
 			'assemble:dist',
 			'autoprefixer:dist',
-			//'group_css_media_queries',
 			'cssmin',
 			'copy:favicon',
 			'handlebars:dist',
-			'browserify:dist',
-			//'copy:fonts',
-			'prettify:dist'
+			'browserify',
+			'copy:fonts',
+			'prettify:dist',
+			'clean:tmp'
 		]);
 
 	};

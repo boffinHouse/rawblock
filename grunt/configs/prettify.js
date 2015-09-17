@@ -1,4 +1,8 @@
-
+/**
+ * Plugin for beautifying HTML
+ *
+ * {@link} https://github.com/jonschlinkert/grunt-prettify
+ */
 module.exports = {
 	options: {
 		condense: false,
@@ -24,8 +28,8 @@ module.exports = {
 		},
 		files: [
 			{
-				cwd: 'build/',
-				dest: 'build/',
+				cwd: '<%= paths.dev %>/',
+				dest: '<%= paths.dev %>/',
 				expand: true,
 				ext: '.html',
 				src: ['*.html']
@@ -38,8 +42,8 @@ module.exports = {
 		},
 		files: [
 			{
-				cwd: 'dist/',
-				dest: 'dist/',
+				cwd: '<%= paths.dist %>/',
+				dest: '<%= paths.dist %>/',
 				expand: true,
 				ext: '.html',
 				src: ['*.html']
