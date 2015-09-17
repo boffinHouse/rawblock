@@ -32,7 +32,7 @@ loadPackage.modulePath = window.ASSETBASEPATH + 'js/modules/';
 require('./modules/rb_button');
 
 /* init after all modules are loaded or package loader is configured */
-rb.life.init();
+rb.life.init(); //rb.life.init({clickCreate: true});
 
 
 

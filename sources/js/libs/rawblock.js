@@ -594,6 +594,7 @@ if(!window.rb.$){
 (function(window, document){
 	'use strict';
 	var keyboardBlocktimer;
+	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
 	var root = document.documentElement;
 	var dom = rb.$;
@@ -601,23 +602,32 @@ if(!window.rb.$){
 	var unblockKeyboardFocus = function(){
 		isKeyboardBlocked = false;
 	};
-	var blockKeyboadFocus = function(){
+
+	var blockKeyboardFocus = function(){
 		isKeyboardBlocked = true;
 		clearTimeout(keyboardBlocktimer);
 		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 66);
 	};
-	var _removeKeyBoadFocus = rb.rAF(function(){
+
+	var _removeKeyBoardFocus = rb.rAF(function(){
+		hasKeyboardFocus = false;
 		root.classList.remove('is-keyboardfocus');
 	}, null, true);
-	var removeKeyBoadFocus = function(){
-		_removeKeyBoadFocus();
-		blockKeyboadFocus();
+
+	var removeKeyBoardFocus = function(){
+		if(hasKeyboardFocus){
+			_removeKeyBoardFocus();
+		}
+		blockKeyboardFocus();
 	};
+
 	var setKeyboardFocus = rb.rAF(function(){
 		if(!isKeyboardBlocked){
+			hasKeyboardFocus = true;
 			root.classList.add('is-keyboardfocus');
 		}
 	}, null, true);
+
 	var pointerEvents = (window.PointerEvent) ?
 			['pointerdown', 'pointerup'] :
 			['mousedown', 'mouseup', 'touchstart', 'touchend']
@@ -626,16 +636,16 @@ if(!window.rb.$){
 	root.addEventListener('focus', setKeyboardFocus, true);
 
 	pointerEvents.forEach(function(eventName){
-		document.addEventListener(eventName, removeKeyBoadFocus, true);
+		document.addEventListener(eventName, removeKeyBoardFocus, true);
 	});
 
-	document.addEventListener('click', blockKeyboadFocus, true);
+	document.addEventListener('click', blockKeyboardFocus, true);
 
-	window.addEventListener('focus', blockKeyboadFocus);
-	document.addEventListener('focus', blockKeyboadFocus);
+	window.addEventListener('focus', blockKeyboardFocus);
+	document.addEventListener('focus', blockKeyboardFocus);
 
 	if(dom){
-		dom(document).on('rbscriptfocus', blockKeyboadFocus);
+		dom(document).on('rbscriptfocus', blockKeyboardFocus);
 	}
 
 })(window, document);
@@ -725,6 +735,48 @@ if(!window.rb.$){
 	rb.addLog(rb, true);
 })();
 
+(function(){
+	'use strict';
+	var rb = window.rb;
+
+	var cbs = [];
+	var setup = function(){
+		setup = rb.$;
+		document.addEventListener('click', function(e){
+			var i, len, attr, found;
+			var clickElem = e.target.closest('.js-click');
+			if(!clickElem){return;}
+
+			for(i = 0, len = cbs.length; i < len;i++){
+				attr = clickElem.getAttribute(cbs[i].attr);
+
+				if(attr != null){
+					found = true;
+					cbs[i].fn(clickElem, e, attr);
+					break;
+				}
+			}
+
+			if(!found){
+				clickElem.classList.remove('js-click');
+			}
+		}, true);
+	};
+
+	rb.click = {
+		cbs: cbs,
+		add: function(name, fn){
+			cbs.push({
+				attr: 'data-'+name,
+				fn: fn,
+			});
+			if(cbs.length == 1){
+				setup();
+			}
+		}
+	};
+})();
+
 (function(window, document) {
 	'use strict';
 
@@ -759,6 +811,10 @@ if(!window.rb.$){
 
 		life.initObserver();
 		life.throttledFindElements();
+
+		if(options && options.clickCreate){
+			life.initClickCreate();
+		}
 	};
 
 	life.expando = expando;
@@ -858,8 +914,6 @@ if(!window.rb.$){
 
 		var len = elements.length;
 
-		life.removeInitClass();
-
 		for ( i = 0; i < len; i++ ) {
 			module = elements[ i ];
 
@@ -895,6 +949,7 @@ if(!window.rb.$){
 			}
 		}
 
+		life.removeInitClass();
 		life.batch.run();
 	};
 
@@ -902,7 +957,7 @@ if(!window.rb.$){
 		while (removeElements.length) {
 			removeElements.shift().classList.remove(initClass);
 		}
-	});
+	}, null, true);
 
 	life.throttledFindElements = (function() {
 		var setImmediate = window.setImmediate || window.setTimeout;
@@ -939,6 +994,16 @@ if(!window.rb.$){
 		}
 
 		life._attached.splice(index, 1);
+	};
+
+	life.initClickCreate = function(){
+		rb.click.add('module', function(elem){
+			life.getWidget(elem);
+			rb.rAFQueue.add(function(){
+				elem.classList.remove('js-click');
+			}, true);
+			life.batch.run();
+		});
 	};
 
 	life.initObserver = function() {
@@ -1216,7 +1281,10 @@ if(!window.rb.$){
 			var evt;
 			if(typeof name == 'object'){
 				detail = name;
-				name = detaily.type || this._evtName;
+				name = detail.type;
+			}
+			if(name == null){
+				name = this._evtName;
 			}
 			evt = $.Event(name, {detail: detail || {}});
 			this.$element.trigger(evt);
@@ -1226,12 +1294,39 @@ if(!window.rb.$){
 		setFocus: function(elem){
 			try {
 				setTimeout(function(){
-					$(elem).trigger('rbscriptfocus');
 					elem.focus();
 				}, 0);
 			} catch(e){}
 		},
+		setWidgetFocus: function(element){
+			this._activeElement = document.activeElement;
+			var focusElement;
 
+			if(element && element !== true){
+				if(element.nodeType == 1){
+					focusElement = element;
+				} else if(typeof element == 'string'){
+					focusElement = this.element.querySelector(element);
+				}
+			} else {
+				focusElement = this.element.querySelector('.js-autofocus');
+			}
+			if(!focusElement && element === true){
+				focusElement = this.element;
+			}
+			if(focusElement){
+				this.setFocus(focusElement);
+			}
+		},
+		restoreFocus: function(checkInside){
+			var activeElem = this._activeElement;
+			if(!activeElem){return;}
+
+			this._activeElement = null;
+			if(!checkInside || this.element.contains(document.activeElement)){
+				this.setFocus(activeElem);
+			}
+		},
 		parseOptions: function(opts, defaults, instOpts){
 			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions(), instOpts);
 			this.setOptions(options);
