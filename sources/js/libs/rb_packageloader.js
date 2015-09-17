@@ -16,8 +16,8 @@
 	var rgJS = /\.js/;
 
 	var rejectedPromise = new Promise(function(resolve, reject){
-		reject();
-	});
+		setTimeout(reject);
+	}).catch(function(){});
 
 	var loadPackage = function(moduleId, onlyKnown){
 		var packagePaths;

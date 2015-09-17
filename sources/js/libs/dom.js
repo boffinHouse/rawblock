@@ -193,7 +193,7 @@
 		},
 		Callbacks: function(flags){
 			if(flags){
-				console.error('not supported: '+ flags);
+				rb.log('not supported: '+ flags);
 			}
 			var list = [];
 
