@@ -57,12 +57,13 @@ Which modules are included:
 - [HTML Prettify](https://github.com/jonschlinkert/grunt-prettify): plugin for beautifying HTML
 
 #####JavaScript Tasks
-- [Browserify](https://github.com/substack/node-browserify): browserify will recursively analyze all the require() calls in your app in order to build a bundle you can serve up to the browser in a single <script> tag.
+- [Browserify](https://github.com/substack/node-browserify): browserify will recursively analyze all the require() calls in your app in order to build a bundle you can serve up to the browser in a single `<script>` tag.
 - [UglifyJS](https://github.com/gruntjs/grunt-contrib-uglify): Minify files with UglifyJS
 
 #####Testing Tasks
 - [HTML-Hint](https://github.com/yaniswang/grunt-htmlhint): Validate html files with htmlhint.
 - [JS-Hint](https://github.com/gruntjs/grunt-contrib-jshint): Validate files with JSHint
+
 
 ##2. Layout Grid
 RawBlock provides a layout grid system that is flexible, responsive and uses a human readable syntax.
