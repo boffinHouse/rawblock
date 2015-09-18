@@ -51,11 +51,7 @@ module.exports = {
 		},
 		files: [
 			{
-				cwd: '<%= paths.src %>/img/logo',
-				dest: '<%= paths.tmp %>/svgmin/logo',
-				expand: true,
-				ext: '.svg',
-				src: ['*.svg']
+				'<%= paths.tmp %>/svgmin/logo/logo.svg': ['<%= paths.src %>/img/logo/*.svg']
 			}
 		]
 	},
