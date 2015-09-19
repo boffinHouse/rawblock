@@ -49,6 +49,7 @@
 
 		grunt.registerTask('dev', [
 			'clean:dev',
+			'clean:tmp',
 			//'svg',
 			'generate-tmp-styles-scss',
 			'concurrent:dev2',
@@ -57,11 +58,11 @@
 			'autoprefixer:dev',
 			'sync',
 			'prettify:dev',
-			'clean:tmp',
 		]);
 
 		grunt.registerTask('dist', [
 			'clean:dist',
+			'clean:tmp',
 			'generate-tmp-styles-scss',
 			'sass:dist',
 			'assemble:dist',
@@ -72,7 +73,7 @@
 			'browserify',
 			'copy:fonts',
 			'prettify:dist',
-			'clean:tmp'
+
 		]);
 
 	};
