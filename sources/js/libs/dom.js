@@ -531,7 +531,7 @@
 	}
 
 	if(!window.rb.$){
-		window.rb.$ = window.dom;
+		window.rb.$ = Dom;
 	}
 
 	return Dom;

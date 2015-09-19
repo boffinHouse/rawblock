@@ -41,14 +41,21 @@
 <script>
 	(function(){
 		var src = '../sources/js/libs/dom.js';
+		var extra = ' data-cover=""';
 		if(location.search.indexOf('jqueryinsteadrb') != -1){
 			src = 'http://code.jquery.com/jquery-2.1.4.js';
+			extra = '';
 		}
-		document.write('<script src="' + src +'"><\/script>');
+		document.write('<script src="' + src +'"' + extra + '><\/script>');
 	})();
 </script>
-<script src="../sources/js/libs/dom.js"></script>
-<script src="../sources/js/libs/rawblock.js"></script>
+<script src="../sources/js/libs/rawblock.js" data-cover=""></script>
+<script>
+	rb.life.autoStart = false;
+</script>
+
+<script src="../sources/js/modules/rb_draggy.js" data-cover=""></script>
+<script src="../sources/js/modules/rb_button.js" data-cover=""></script>
 
 
 <script src="tests/dom-tests.js"></script>

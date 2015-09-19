@@ -35,6 +35,8 @@
 
 			this._super(element);
 
+			this._setTarget = rb.rAF(this._setTarget, null, true);
+
 			this.clickAction = this.clickAction.bind(this);
 			this.setupEvents();
 		},
@@ -54,20 +56,25 @@
 				widget[this.options.type]();
 			}
 		},
-		setTarget: function(dom) {
-			var id = this.getId(dom);
+		_setTarget: function(){
+			var id = this.getId(this.target);
+			this.isTargeting = false;
 			this.element.removeAttribute('data-target');
 			this.$element.attr({
 				'aria-controls': id
 			});
 			this.targetAttr = id;
+		},
+		setTarget: function(dom) {
 			this.target = dom;
+			this.isTargeting = true;
+			this._setTarget();
 		},
 
 		getTarget: function() {
 			var target = this.$element.attr('data-target') || this.$element.attr('aria-controls') || '';
 
-			if (!this.target || target != this.targetAttr) {
+			if (!this.target || (!this.isTargeting && target != this.targetAttr)) {
 				this.targetAttr = target;
 				this.target = Button.getTarget(target);
 			}

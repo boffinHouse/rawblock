@@ -467,10 +467,8 @@ if(!window.rb.$){
 
 	$.fn.rbWidget = function(name, args){
 		var ret;
-		var onlyCreate = arguments.length == 1 && Array.isArray(name);
-
 		this.each(function(){
-			if(!onlyCreate && ret === undefined){
+			if(ret === undefined){
 				ret = rb.life.getWidget(this, name, args);
 			}
 		});
@@ -532,7 +530,7 @@ if(!window.rb.$){
 	var id = Math.round(Date.now() * Math.random());
 	rb.getID = function(){
 		id++;
-		return id;
+		return id + '-' + Math.round(Math.random() * 1000000000000000000);
 	};
 
 	if(!rb.Symbol){
@@ -708,27 +706,34 @@ if(!window.rb.$){
 
 (function(){
 	'use strict';
-	var head = document.getElementsByTagName('head')[0];
-	var styles = rb.parsePseudo(head) || {};
-	var beforeStyle = rb.getStyles(head, '::before');
-	var currentStyle = '';
-
-	var detectMQChange = function(){
-		var nowStyle = beforeStyle.content;
-		if(currentStyle != nowStyle){
-			currentStyle = nowStyle;
-			rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
-			rb.cssConfig.currentMQ = rb.removeLeadingQuotes(currentStyle);
-			rb.cssConfig.mqChange.fireWith(rb.cssConfig);
+	var i = 0;
+	var parseCSS = function(){
+		var head = document.getElementsByTagName('head')[0];
+		if(!head && i < 999){
+			setTimeout(parseCSS);
+			return;
 		}
+		var styles = rb.parsePseudo(head) || {};
+		var beforeStyle = rb.getStyles(head, '::before');
+		var currentStyle = '';
+
+		var detectMQChange = function(){
+			var nowStyle = beforeStyle.content;
+			if(currentStyle != nowStyle){
+				currentStyle = nowStyle;
+				rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
+				rb.cssConfig.currentMQ = rb.removeLeadingQuotes(currentStyle);
+				rb.cssConfig.mqChange.fireWith(rb.cssConfig);
+			}
+		};
+
+		rb.cssConfig = Object.assign({mqs: {}, currentMQ: '', beforeMQ: ''}, styles, {mqChange: rb.$.Callbacks()});
+
+		rb.resize.on(detectMQChange);
+
+		detectMQChange();
 	};
-
-	rb.cssConfig = Object.assign({mqs: {}, currentMQ: '', beforeMQ: ''}, styles, {mqChange: rb.$.Callbacks()});
-
-	rb.resize.on(detectMQChange);
-
-	detectMQChange();
-
+	parseCSS();
 })();
 
 (function(){
@@ -818,16 +823,14 @@ if(!window.rb.$){
 
 	window.rb.life = life;
 
+	life.autoStart = true;
+
 	life.init = function(options){
-		if (elements) {throw('only once');}
+		if (elements) {rb.log('only once');return;}
 
 		if (options) {
-			initClass = options.initClass || initClass;
-			attachedClass = options.attachedClass || attachedClass;
 			useMutationEvents = options.useMutationEvents || false;
 		}
-
-		life.initClass = initClass;
 
 		elements = document.getElementsByClassName(initClass);
 
@@ -880,7 +883,7 @@ if(!window.rb.$){
 			if(!elements && !implicitlyStarted){
 				implicitlyStarted = true;
 				setTimeout(function(){
-					if(!elements){
+					if(!elements && life.autoStart){
 						$(function(){
 							if(!elements) {
 								life.init();
@@ -894,10 +897,10 @@ if(!window.rb.$){
 		}
 	};
 
-	life.create = function(element, LifeClass, options) {
+	life.create = function(element, LifeClass) {
 		var instance, trigger;
-		if ( !element[widgetExpando] ) {
-			instance = new LifeClass( element, options );
+		if ( !(instance = element[widgetExpando]) ) {
+			instance = new LifeClass( element );
 			trigger = true;
 		}
 
@@ -916,7 +919,7 @@ if(!window.rb.$){
 				}
 			}
 
-			if(instance.attachedOnce){
+			if(instance.attachedOnce && trigger){
 				life.batch.add(function() {
 					instance.attachedOnce();
 				});
@@ -927,7 +930,7 @@ if(!window.rb.$){
 
 		if(trigger){
 			life.batch.add(function() {
-				$(element).trigger(LifeClass.prototype.name +'created');
+				instance._trigger('created');
 			});
 		}
 		return instance;
@@ -1021,6 +1024,7 @@ if(!window.rb.$){
 	};
 
 	life.initClickCreate = function(){
+		life.initClickCreate = $.noop;
 		rb.click.add('module', function(elem){
 			life.getWidget(elem);
 			rb.rAFQueue.add(function(){
@@ -1206,21 +1210,19 @@ if(!window.rb.$){
 	var widgetExpando = life.widgetExpando;
 
 	life.getWidget = function(element, key, args){
-		var ret, moduleId, options;
+		var ret, moduleId;
 		var widget = element && element[widgetExpando];
 
 		if(!widget){
 
-			if(Array.isArray(key)){
-				moduleId = key[0];
-				options = key[1];
-			} else {
-				moduleId = (element.getAttribute( 'data-module' ) || '').split( '/' );
-				moduleId = moduleId[ moduleId.length - 1 ];
+			moduleId = (element.getAttribute( 'data-module' ) || '').split( '/' );
+			moduleId = moduleId[ moduleId.length - 1 ];
+			if(typeof key == 'object'){
+				options = key;
 			}
 
 			if(rb.widgets[ moduleId ]){
-				widget = life.create(element, rb.widgets[ moduleId ], options);
+				widget = life.create(element, rb.widgets[ moduleId ]);
 			}
 		}
 
@@ -1240,18 +1242,17 @@ if(!window.rb.$){
 
 	life.Widget = life.Class.extend({
 		defaults: {},
-		init: function(element, options){
+		init: function(element){
 			this.element = element;
 			this.$element = $(element);
 			this.options = {};
-			this._instOptions = options;
 
 			this._evtName = this.name + 'changed';
 			this._beforeEvtName = this.name + 'change';
 
 			element[widgetExpando] = this;
 
-			this.parseOptions(this.options, this.constructor.defaults, options);
+			this.parseOptions(this.options, this.constructor.defaults);
 
 			this.setupLifeOptions();
 
@@ -1269,7 +1270,7 @@ if(!window.rb.$){
 				old.detached = this.detached;
 				runner = function() {
 					if(that._styleOptsStr != (styles.content || '')){
-						that.parseOptions(null, that.constructor.defaults, this._instOptions);
+						that.parseOptions(null, that.constructor.defaults);
 					}
 				};
 
@@ -1309,6 +1310,8 @@ if(!window.rb.$){
 			}
 			if(name == null){
 				name = this._evtName;
+			} else if(!name.includes(this.name)){
+				name = this.name + name;
 			}
 			evt = $.Event(name, {detail: detail || {}});
 			this.$element.trigger(evt);
@@ -1351,8 +1354,8 @@ if(!window.rb.$){
 				this.setFocus(activeElem);
 			}
 		},
-		parseOptions: function(opts, defaults, instOpts){
-			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions(), instOpts);
+		parseOptions: function(opts, defaults){
+			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
 			this.setOptions(options);
 		},
 

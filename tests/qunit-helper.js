@@ -21,6 +21,9 @@
 			var that = this;
 			if(!this._iframe){
 				this._iframe = document.createElement('iframe');
+				this._iframe.style.position = 'absolute';
+				this._iframe.style.top = '-99999999px';
+				this._iframe.style.left = '-99999999px';
 				document.body.appendChild(this._iframe);
 			}
 			this.resize();
