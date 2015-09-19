@@ -102,6 +102,8 @@ if(!window.rb.$){
 
 	rb.root = document.documentElement;
 
+	rb.$root = $(rb.root);
+
 	rb.getScrollingElement = getScrollingElement;
 
 	$.fn.scrollIntoView = function(options){
@@ -146,6 +148,16 @@ if(!window.rb.$){
 		return this;
 	};
 })(window);
+
+(function(rb){
+	'use strict';
+	rb.contains = function(elements, needle){
+		return elements.find(rb.contains._contains, needle);
+	};
+	rb.contains._contains = function(element){
+		return element == this || element.contains(this);
+	};
+})(rb);
 
 /* throttle */
 (function(){
@@ -410,24 +422,36 @@ if(!window.rb.$){
 		};
 	})();
 
-	rb.rAF = function(fn, thisArg, inProgress){
+	rb.rAF = function(fn, thisArg, inProgress, isBatched){
 		var running, args, that;
+		var batchStack = [];
 		var run = function(){
 			running = false;
-			fn.apply(that, args);
+			if(isBatched){
+				while(batchStack.length){
+					args = batchStack.shift();
+					fn.apply(args[0], args[1]);
+				}
+			} else {
+				fn.apply(that, args);
+			}
 		};
 		var rafedFn = function(){
 			args = arguments;
 			that = thisArg || this || window;
+			if(isBatched){
+				batchStack.push([that, args]);
+			}
 			if(!running){
 				running = true;
 				rb.rAFQueue.add(run, inProgress);
 			}
 		};
 
-		if(typeof thisArg == 'boolean'){
+		if(typeof thisArg == 'boolean' && arguments.length < 4){
 			inProgress = thisArg;
-			thisArg = false;
+			isBatched = inProgress;
+			thisArg = null;
 		}
 
 		rafedFn._rbUnrafedFn = fn;

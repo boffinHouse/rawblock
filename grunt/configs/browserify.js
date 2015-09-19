@@ -10,10 +10,11 @@ module.exports = {
 		transform: []
 	},
 	dev: {
-		files: {
-			'<%= paths.dev %>/js/head.js': ['<%= paths.src %>/js/head.js'],
-			'<%= paths.dev %>/js/polyfills.js': ['<%= paths.src %>/js/polyfills.js'],
-			'<%= paths.dev %>/js/body-async.js': ['<%= paths.src %>/js/body-async.js']
-		}
+		files: [{
+			expand: true,
+			cwd: '<%= paths.src %>/js/',
+			src: ['*.js'],
+			dest: '<%= paths.dev %>/js/',
+		}],
 	}
 };

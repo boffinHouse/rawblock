@@ -41,6 +41,9 @@
 			if(options.horizontal != options.vertical){
 				horizontalDif = Math.abs(this.lastPos.x - this.curPos.x);
 				verticalDif = Math.abs(this.lastPos.y - this.curPos.y);
+				if(!horizontalDif && !verticalDif){
+					return true;
+				}
 				ret = (options.horizontal && horizontalDif > verticalDif) || (options.vertical && verticalDif > horizontalDif);
 			}
 			return ret;
