@@ -61,12 +61,9 @@
 		rb.$('#qunit-fixture').append(div);
 		instance = rb.life.create(div, Dummy);
 
-		assert.ok(instance === rb.$(div).rbWidget(), 'test');
+		assert.ok(instance === rb.$(div).rbWidget());
 
 		assert.ok(Dummy.prototype.init.calledOnce);
-
-		assert.notOk(Dummy.prototype.attached.calledOnce);
-		assert.notOk(Dummy.prototype.detached.calledOnce);
 
 		assert.ok(div.className == 'js-rb-life');
 

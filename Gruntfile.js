@@ -35,6 +35,11 @@
 			'build'
 		]);
 
+		grunt.registerTask('test', [
+			'jshint',
+			'qunit'
+		]);
+
 		grunt.registerTask('svg', [
 			'svgmin:svgLogo',
 			'svgstore:svgLogo'
@@ -71,9 +76,10 @@
 			'copy:favicon',
 			'handlebars:dist',
 			'browserify',
+			'test',
+			'uglify',
 			'copy:fonts',
 			'prettify:dist',
-
 		]);
 
 	};

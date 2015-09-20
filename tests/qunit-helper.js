@@ -102,6 +102,92 @@
 	});
 
 
+	(function(){
+		var getElementPos = function(elem){
+			var pos = elem.getBoundingClientRect();
+
+			return {
+				clientX: pos.left + ((pos.width || 1) / 2),
+				clientY: pos.left + ((pos.height || 1) / 2)
+			};
+		};
+		var actions = {
+			mouse: {
+				dispatch: function(elem, type, props){
+					var event = new MouseEvent(type,
+						Object.assign(
+							getElementPos(elem),
+							{bubbles: true},
+							props
+						)
+					);
+					elem.dispatchEvent(event);
+				},
+				reg: /^mouse|click$/
+			},
+			//drag: {
+			//	dispatch: function(){
+			//
+			//	},
+			//	reg: /^drag/
+			//},
+			flick: {
+				dispatch: function(elem, type, props, options){
+					var interval, startProps;
+					var now = Date.now();
+					var elemPos = getElementPos(elem);
+					options = Object.assign({duration: 200, x: 0, y: 0}, options);
+
+					props = Object.assign(elemPos, props);
+					startProps = Object.assign({}, props);
+					actions.mouse.dispatch(elem, 'mousedown', props);
+
+					interval = setInterval(function(){
+						var pos = (Date.now() - now) / options.duration;
+
+						if(pos > 1){
+							pos = 1;
+						}
+
+						props.clientX = Math.round(startProps.clientX + (options.x * pos));
+						props.clientY = Math.round(startProps.clientY + (options.y * pos));
+
+						actions.mouse.dispatch(elem, 'mousemove', props);
+
+						if(pos >= 1){
+							clearInterval(interval);
+							setTimeout(function(){
+								actions.mouse.dispatch(elem, 'mouseup', props);
+							});
+						}
+					}, 17);
+
+				},
+				reg: /^flick/
+			},
+
+			'': {
+				dispatch: function(elem, type, props, options){
+
+				},
+				reg: /.*/
+			}
+		};
+
+		rbTest.simulate = function(elem, type, props, options){
+			var action;
+			var actionType = type;
+			if(!actions[actionType]){
+				for(action in actions){
+					if(actions[action].reg.test(actionType)){
+						actionType = action;
+						break;
+					}
+				}
+			}
+			actions[actionType].dispatch(elem, type, props, options);
+		};
+	})();
 
 	window.rbTest = rbTest;
 })();

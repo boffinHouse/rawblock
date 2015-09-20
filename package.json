@@ -70,7 +70,6 @@
     "npm": "^2.14.3",
     "qunitjs": "^1.19.0",
     "sinon": "^1.16.1",
-    "syn": "^0.1.2",
     "time-grunt": "*"
   },
   "keywords": [
