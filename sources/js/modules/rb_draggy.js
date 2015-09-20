@@ -42,7 +42,7 @@
 				horizontalDif = Math.abs(this.lastPos.x - this.curPos.x);
 				verticalDif = Math.abs(this.lastPos.y - this.curPos.y);
 
-				ret = (options.horizontal && horizontalDif * 0.6 > verticalDif) || (options.vertical && verticalDif * 0.6 > horizontalDif);
+				ret = (options.horizontal && horizontalDif * 0.8 > verticalDif) || (options.vertical && verticalDif * 0.8 > horizontalDif);
 
 				if(!ret && ((horizontalDif < 2 && verticalDif < 2))){
 					ret = 'undecided';

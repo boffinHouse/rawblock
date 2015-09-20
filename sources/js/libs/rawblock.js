@@ -2,9 +2,7 @@ if(!window.rb){
 	window.rb = {};
 }
 
-if(!window.rb.$){
-	window.rb.$ = window.jQuery || window.dom;
-}
+window.rb.$ = window.jQuery || window.dom;
 
 (function(docElem){
 	'use strict';

@@ -1,3 +1,4 @@
+var bind = require("function-bind")
 require('dom4');
 require('es6-promise');
 require('./polyfills/object-assign');
@@ -13,4 +14,8 @@ require('string.prototype.startswith');
 //require('whatwg-fetch');
 
 //require('lazysizes/plugins/respimg/ls.respimg');
+
+if(!Function.prototype.bind){
+	Function.prototype.bind = bind;
+}
 
