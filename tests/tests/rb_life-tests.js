@@ -3,10 +3,6 @@
 
 	QUnit.module('rb.life');
 
-	QUnit.begin(function(){
-		rb.life.init();
-	});
-
 	QUnit.testStart(function(){
 		var fn;
 		var Dummy = rb.Widget.extend('dummy', {
@@ -92,14 +88,18 @@
 
 		QUnit.afterAF(5)
 			.then(function(){
-				assert.equal(rb.$('.js-rb-life').length, 0);
-				assert.equal(rb.$('.js-rb-attached').length, 3);
-
 				assert.equal(Dummy.prototype.init.callCount, 3);
 				assert.equal(Dummy.prototype.attached.callCount, 3);
 
 				assert.ok(Dummy.prototype.init.calledBefore(Dummy.prototype.attached));
 				assert.notOk(Dummy.prototype.detached.calledOnce);
+
+				return QUnit.afterAF()
+					.then(function(){
+						assert.equal(rb.$('.js-rb-life').length, 0);
+						assert.equal(rb.$('.js-rb-attached').length, 3);
+					})
+				;
 			})
 			.then(done)
 		;

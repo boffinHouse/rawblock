@@ -6,8 +6,11 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 
 	window.lazySizesConfig = window.lazySizesConfig || {};
 	//set expand to a higher value on larger displays
-	window.lazySizesConfig.expand = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight) > 700 ? 700 : 359;
-	window.lazySizesConfig.expFactor = 3;
+	window.lazySizesConfig.expand = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight) > 650 ? 650 : 359;
+
+	var addLifeClass = function(elem){
+		elem.classList.add('js-rb-life');
+	};
 
 	addEventListener('lazybeforeunveil', function(e){
 		if(!e.target.getAttribute('data-optimumx') && e.target.getAttribute('data-sizes') == 'auto'){
@@ -15,6 +18,12 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 		} else
 		if(e.target.getAttribute('data-module') && e.target.matches('.lazymodule, .lazypreload')){
 			e.target.classList.add('js-rb-life');
+			if(window.rb && rb.life){
+				rb.life.throttledFindElements();
+			}
+		} else
+		if(e.target.classList.contains('lazymodules')){
+			Array.from(e.target.querySelectorAll('.lazymodule')).forEach(addLifeClass);
 			if(window.rb && rb.life){
 				rb.life.throttledFindElements();
 			}

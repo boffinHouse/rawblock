@@ -22,7 +22,10 @@
 					if (RegExp.$1 == 'closest') {
 						target = this.element.closest(RegExp.$2);
 					} else if ( !((RegExp.$1 || '').indexOf('sel')) ) {
-						target = document.querySelector(RegExp.$2);
+						target = document.querySelectorAll(RegExp.$2);
+						if(target.length < 2){
+							target = target[0];
+						}
 					}
 				} else if (targetStr) {
 					target = document.getElementById(targetStr);

@@ -837,9 +837,7 @@ window.rb.$ = window.jQuery || window.dom;
 		life.initObserver();
 		life.throttledFindElements();
 
-		if(options && options.clickCreate){
-			life.initClickCreate();
-		}
+		life.initClickCreate();
 	};
 
 	life.expando = expando;
