@@ -20,8 +20,6 @@
 				@include rb-layout-styles($className, $gutter, $flexOrderSize);
 			}
 		}
-
-
 	}
 }
 
@@ -56,16 +54,24 @@
 			flex: 1;
 		}
 
-		//Only add flex behaviour to is-size element if in is-column-group
-		> [class*=is-size-] {
+	}
+
+	.is-equal-heights {
+		> [class*=is-size-]  {
 			display: flex;
 			flex-wrap: wrap;
 		}
 	}
 
-
-	.is-unequal-height {
+	.is-unequal-height,
+	[class*=is-size-].is-unequal-height {
 		display: block;
+	}
+
+	.is-equal-height,
+	[class*=is-size-].is-equal-height {
+		display: flex;
+		flex-wrap: wrap;
 	}
 
 }
@@ -87,41 +93,16 @@
 		margin-right: auto;
 	}
 
-	.is-offset-middle#{$offsetType} {
+	.is-offset-center#{$offsetType} {
 		margin: auto;
 	}
+
 }
 
 // ====================================================================
 //  Generate Gutters Columns
 //
 //=====================================================================
-@mixin rb-colgroup-gutter-equalizer($gutterHorizontal, $gutterVertical) {
-	.is-column-group {
-		padding-right: 0;
-		padding-left: 0;
-
-		&.is-gutter {
-			margin-right: (-$gutterHorizontal / 2);
-			margin-left: (-$gutterHorizontal / 2);
-			margin-top: (-$gutterVertical / 2);
-			margin-bottom: (-$gutterVertical / 2);
-		}
-
-		&.is-gutter-vertical {
-			margin-top: (-$gutterVertical / 2);
-			margin-bottom: (-$gutterVertical / 2);
-		}
-
-		&.is-gutter-horizontal {
-			margin-right: (-$gutterHorizontal / 2);
-			margin-left: (-$gutterHorizontal / 2);
-			padding-right: 0;
-			padding-left: 0;
-		}
-	}
-}
-
 @mixin rb-size-gutter-generator($className, $gutter) {
 
 	@if type-of($gutter) == 'map' {
@@ -135,78 +116,31 @@
 
 		.is-column-group {
 
-			&.is-gutter {
-				padding-right: ($gutterHorizontal / 2);
-				padding-left: ($gutterHorizontal / 2);
+			&.is-gutters {
+				margin-right: (-$gutterHorizontal / 2);
+				margin-left: (-$gutterHorizontal / 2);
 
-				 > [class*=is-size-] {
-					margin-top: ($gutterVertical / 2);
-					margin-bottom: ($gutterVertical / 2);
+				> [class*=is-size-] {
+					margin-bottom: $gutterVertical;
 					padding-right: ($gutterHorizontal / 2);
 					padding-left: ($gutterHorizontal / 2);
-				 }
-
-				.is-column-group {
-					padding-right: 0;
-					padding-left: 0;
-
-					&.is-gutter {
-						margin-right: (-$gutterHorizontal / 2);
-						margin-left: (-$gutterHorizontal / 2);
-						margin-top: (-$gutterVertical / 2);
-						margin-bottom: (-$gutterVertical / 2);
-					}
-
-					&.is-gutter-vertical {
-						margin-top: (-$gutterVertical / 2);
-						margin-bottom: (-$gutterVertical / 2);
-					}
-
-					&.is-gutter-horizontal {
-						margin-right: (-$gutterHorizontal / 2);
-						margin-left: (-$gutterHorizontal / 2);
-					}
 				}
 			}
 
-			&.is-gutter-vertical {
+			&.is-gutters-vertical {
 
 				> [class*=is-size-]  {
-					margin-top: ($gutterVertical / 2);
-					margin-bottom: ($gutterVertical / 2);
-				}
-
-				.is-column-group {
-					padding-right: 0;
-					padding-left: 0;
-
-					&.is-gutter,
-					&.is-gutter-vertical {
-						margin-top: (-$gutterVertical / 2);
-						margin-bottom: (-$gutterVertical / 2);
-					}
-
+					margin-bottom: $gutterVertical;
 				}
 			}
 
-			&.is-gutter-horizontal {
-				padding-right: ($gutterHorizontal / 2);
-				padding-left: ($gutterHorizontal / 2);
+			&.is-gutters-horizontal {
+				margin-right: (-$gutterHorizontal / 2);
+				margin-left: (-$gutterHorizontal / 2);
 
 				> [class*=is-size-]  {
 					padding-right: ($gutterHorizontal / 2);
 					padding-left: ($gutterHorizontal / 2);
-				}
-
-				.is-column-group {
-					padding-right: 0;
-					padding-left: 0;
-
-					&.is-gutter,
-					&.is-gutter-horizontal {
-						margin-right: (-$gutterHorizontal / 2);
-						margin-left: (-$gutterHorizontal / 2);
-					}
 				}
 			}
 
@@ -274,7 +208,7 @@
 			}
 
 			//Element will take twice the available space
-			.is-size-flex-twice {
+			.is-size-flex-double {
 				flex: 2;
 				width: auto;
 			}
@@ -310,7 +244,3 @@
 		$i: $i + $steps;
 	}
 }
-
-
-
-
