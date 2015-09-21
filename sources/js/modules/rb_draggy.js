@@ -41,7 +41,12 @@
 			if(options.horizontal != options.vertical){
 				horizontalDif = Math.abs(this.lastPos.x - this.curPos.x);
 				verticalDif = Math.abs(this.lastPos.y - this.curPos.y);
-				ret = (options.horizontal && horizontalDif > verticalDif) || (options.vertical && verticalDif > horizontalDif);
+
+				ret = (options.horizontal && horizontalDif * 0.8 > verticalDif) || (options.vertical && verticalDif * 0.8 > horizontalDif);
+
+				if(!ret && ((horizontalDif < 2 && verticalDif < 2))){
+					ret = 'undecided';
+				}
 			}
 			return ret;
 		},
@@ -106,12 +111,12 @@
 				y: pos.pageY,
 			};
 
-			if(!this.relevantChange && !(this.relevantChange = this.hasRelevantChange())){
+			if(this.relevantChange !== true && !(this.relevantChange = this.hasRelevantChange())){
 				this.end(pos, evt);
 				return;
 			}
 
-			if(this.options.preventMove){
+			if(this.options.preventMove && this.relevantChange != 'undecided'){
 				evt.preventDefault();
 			}
 			this.movedPos.x = this.startPos.x - this.curPos.x;
@@ -130,7 +135,7 @@
 				preventClick = false;
 			};
 			this._destroyTouch();
-			this.destroyMouse();
+			this._destroyMouse();
 			this.movedPos.x = this.startPos.x - this.curPos.x;
 			this.movedPos.y = this.startPos.y - this.curPos.y;
 			this.options.end(this);
@@ -168,18 +173,18 @@
 			var move = function(e){
 				if(!e.buttons && !e.which){
 					up(e);
-					that.destroyMouse();
+					that._destroyMouse();
 					return;
 				}
 				that.move(e, e);
 			};
 
 			var up = function(e){
-				that.destroyMouse();
+				that._destroyMouse();
 				that.end(e, e);
 			};
 
-			this.destroyMouse = function(){
+			this._destroyMouse = function(){
 				that.allowTouch = true;
 				clearTimeout(timer);
 				document.removeEventListener('mousemove', move);
@@ -187,7 +192,7 @@
 			};
 
 			this._onmousedown = function(e){
-				that.destroyMouse();
+				that._destroyMouse();
 				if(e.defaultPrevented || !that.options.useMouse || !that.allowMouse || regInputs.test(e.target.nodeName || '') ){return;}
 				that.allowTouch = false;
 				that.isType = 'mouse';
@@ -214,8 +219,8 @@
 			};
 
 			this._destroyTouch = function(){
-				document.removeEventListener('touchmove', move);
-				document.removeEventListener('touchend', end);
+				that.element.removeEventListener('touchmove', move);
+				that.element.removeEventListener('touchend', end);
 			};
 
 			this._ontouchstart = function(e){
@@ -225,8 +230,8 @@
 				that.allowMouse = false;
 				that.isType = 'touch';
 
-				e.target.addEventListener('touchmove', move);
-				e.target.addEventListener('touchend', end);
+				that.element.addEventListener('touchmove', move);
+				that.element.addEventListener('touchend', end);
 
 				that.start(e.touches[0], e);
 			};

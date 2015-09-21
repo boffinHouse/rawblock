@@ -7,10 +7,13 @@
 }(typeof window != 'undefined' ? window : this , function(window, document) {
 	'use strict';
 	var slice = [].slice;
-	var Dom = function(elements){
+	var Dom = function(elements, context){
 
+		if(!(this instanceof Dom)){
+			return new Dom(elements);
+		}
 		if(typeof elements == 'string'){
-			return Dom.q(elements);
+			elements = slice.call((context || document).querySelectorAll(elements));
 		} else if(typeof elements == 'function'){
 			if(Dom.isReady){
 				elements(Dom);
@@ -20,10 +23,6 @@
 				});
 			}
 			return;
-		}
-
-		if(!(this instanceof Dom)){
-			return new Dom(elements);
 		}
 
 		if(!Array.isArray(elements)){
@@ -192,7 +191,7 @@
 		},
 		Callbacks: function(flags){
 			if(flags){
-				console.error('not supported: '+ flags);
+				rb.log('not supported: '+ flags);
 			}
 			var list = [];
 
@@ -530,7 +529,7 @@
 	}
 
 	if(!window.rb.$){
-		window.rb.$ = window.dom;
+		window.rb.$ = Dom;
 	}
 
 	return Dom;

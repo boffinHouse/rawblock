@@ -1,14 +1,14 @@
 <script>
 	(function(docElem){
 		//polyfills
-		if(!Object.assign || !window.fetch || !docElem.closest || !String.prototype.includes || !window.cancelAnimationFrame || !Array.from || !Array.prototype.find || !('sizes' in document.createElement('img'))){ //  || !docElem.before || !docElem.queryAll || !Array.prototype.find
-			document.write('<script src="js/polyfills.js"><\/script>');
+		if(!Object.assign || !window.fetch || !docElem.closest || !String.prototype.includes || !window.cancelAnimationFrame || !Array.from || !Array.prototype.find || !('sizes' in document.createElement('img'))){ //  || !docElem.before || !docElem.queryAll
+			document.write('<script src="js/rb_polyfills.js"><\/script>');
 		}
 	})(document.documentElement);
 </script>
 
 <script>
-	/** IMPORTANT CONFIGURATION */
+	/** IMPORTANT CONFIGURATION! */
 	window.ASSETBASEPATH = '';
 
 	(function(docElem){

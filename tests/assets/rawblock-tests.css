@@ -1,0 +1,11 @@
+html {
+	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: subpixel-antialiased;
+	box-sizing: border-box;
+	height: 100%;
+	width: 100%; }
+
+*,
+*::before,
+*::after {
+	box-sizing: inherit; }
