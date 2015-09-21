@@ -1,7 +1,5 @@
 #RawBlock
-The worlds most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces.
-
-
+The worlds most flexible and efficient responsive component library to build modular HTML5 web interfaces.
 
 ##What is RawBlock
 RawBlock gives you a way to build modular interfaces which are easy to maintain for future optimizations. It combines modern best practices, new technologies and solution to optimize the frontend development process.
