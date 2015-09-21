@@ -804,6 +804,38 @@ window.rb.$ = window.jQuery || window.dom;
 	};
 })();
 
+(function(){
+	'use strict';
+	var regSplit = /\s*,\s*/g;
+	var regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
+
+	rb.elementFromStr = function(targetStr, element){
+		var i, len, target, temp;
+		if (targetStr.match(regTarget)) {
+			if (RegExp.$1 == 'closest') {
+				target = element.closest(RegExp.$2);
+			} else if ( !((RegExp.$1 || '').indexOf('sel')) ) {
+				target = document.querySelectorAll(RegExp.$2);
+			} else if(!((RegExp.$1 || '').indexOf('child'))){
+				target = element.querySelectorAll(RegExp.$2);
+			}
+		} else if (targetStr) {
+			targetStr = targetStr.split(regSplit);
+			target = [];
+			for(i = 0, len = targetStr.length; i < len; i++){
+				temp = document.getElementById(targetStr[i]);
+				if(temp){
+					target.push(temp);
+				}
+			}
+		}
+		if(target && target.nodeType != 1 && 'length' in target && target.length < 2){
+			target = target[0];
+		}
+		return target || null;
+	}
+})();
+
 (function(window, document) {
 	'use strict';
 
