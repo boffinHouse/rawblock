@@ -236,30 +236,6 @@
 	});
 
 	Object.assign(fn, {
-		find: function(sel){
-			var array = [];
-			this.elements.forEach(function(elem){
-				var i, len;
-				var elements = elem.querySelectorAll(sel);
-				for(i = 0, len = elements.length; i < len; i++){
-					if(array.indexOf(elements[i]) == -1){
-						array.push(elements[i]);
-					}
-				}
-			});
-
-			return new Dom( array );
-		},
-		closest: function(sel){
-			var array = [];
-			this.elements.forEach(function(elem){
-				var element = elem.closest(sel);
-				if(element && array.indexOf(element) == -1){
-					array.push(element);
-				}
-			});
-			return new Dom( array );
-		},
 		get: function(number){
 			return arguments.length ? this.elements[number] : this.elements;
 		},
@@ -450,6 +426,38 @@
 		},
 	});
 
+	[['find', 'querySelectorAll'], ['children', 'children']].forEach(function(action, test){
+		test = !!test;
+		fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
+				var i, len;
+				var elements = test ? elem[action[1]] : elem[action[1]](sel);
+				for(i = 0, len = elements.length; i < len; i++){
+					if((!test || !sel || elements[i].matches(sel)) && array.indexOf(elements[i]) == -1){
+						array.push(elements[i]);
+					}
+				}
+			});
+
+			return new Dom( array );
+		};
+	});
+
+	[['closest', 'closest'], ['next', 'nextElementSibling'], ['prev', 'previousElementSibling'], ['parent', 'parentNode']].forEach(function(action, test){
+		test = !!test;
+		fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
+				var element = elem[action[1]];
+				if(element && (!test || !sel || element.matches(sel)) && array.indexOf(element) == -1){
+					array.push(element);
+				}
+			});
+			return new Dom( array );
+		};
+	});
+
 	fn.detach = fn.remove;
 
 	['add', 'remove', 'has', 'toggle'].forEach(function(action){
@@ -482,11 +490,11 @@
 		};
 	});
 
-	['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
-		fn[name] = function(){
-			return this.elements[name].apply(this.elements, arguments);
-		};
-	});
+	//['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
+	//	fn[name] = function(){
+	//		return this.elements[name].apply(this.elements, arguments);
+	//	};
+	//});
 
 	[['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function(action){
 		Dom.fn[action[0]] = function(type, sel, fn, capture){

@@ -14,26 +14,6 @@
 			target: '',
 			type: 'toggle',
 		},
-		statics: {
-			regTarget: /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i,
-			getTarget: function(targetStr){
-				var target = null;
-				if (targetStr.match(Button.regTarget)) {
-					if (RegExp.$1 == 'closest') {
-						target = this.element.closest(RegExp.$2);
-					} else if ( !((RegExp.$1 || '').indexOf('sel')) ) {
-						target = document.querySelectorAll(RegExp.$2);
-						if(target.length < 2){
-							target = target[0];
-						}
-					}
-				} else if (targetStr) {
-					target = document.getElementById(targetStr);
-				}
-
-				return target;
-			}
-		},
 		init: function(element) {
 
 			this._super(element);
@@ -79,7 +59,7 @@
 
 			if (!this.target || (!this.isTargeting && target != this.targetAttr)) {
 				this.targetAttr = target;
-				this.target = Button.getTarget(target);
+				this.target = rb.elementFromStr(target, this.element)[0];
 			}
 
 			return this.target;

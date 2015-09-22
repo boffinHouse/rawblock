@@ -804,6 +804,59 @@ window.rb.$ = window.jQuery || window.dom;
 	};
 })();
 
+(function(){
+	'use strict';
+	var $ = rb.$;
+	var regSplit = /\s*,\s*/g;
+	var regNum = /:(\d)+\s*$/;
+	var regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
+
+	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
+		$.fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
+				var found = false;
+				var element = elem[action[0]];
+				if(!found && element && (!sel || element.matches(sel))){
+					found = true;
+					array.push(element);
+				}
+			});
+			return new Dom( array );
+		};
+	});
+
+	rb.elementFromStr = function(targetStr, element){
+		var i, len, target, temp, num, match;
+		if((num = targetStr.match(regNum))){
+			targetStr = targetStr.replace(num[0], '');
+			num = num[1];
+		}
+		if ((match = targetStr.match(regTarget))) {
+			if(match[1] == '$' || match[1] == 'sel'){
+				target = Array.from(document.querySelectorAll(RegExp.$2));
+			} else if($.fn[match[1]]){
+				target = $(element)[match[1]](match[2]).get();
+			}
+		} else if (targetStr) {
+			targetStr = targetStr.split(regSplit);
+			target = [];
+			for(i = 0, len = targetStr.length; i < len; i++){
+				temp = document.getElementById(targetStr[i]);
+				if(temp){
+					target.push(temp);
+				}
+			}
+		}
+
+		if(num && target){
+			target = target[num] ? [target[num]] : [];
+		}
+
+		return target || [];
+	}
+})();
+
 (function(window, document) {
 	'use strict';
 
