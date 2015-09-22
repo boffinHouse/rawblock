@@ -443,7 +443,7 @@
 		fn[action[0]] = function(sel){
 			var array = [];
 			this.elements.forEach(function(elem){
-				var element = elem[action[0]];
+				var element = elem[action[1]];
 				if(element && (!sel || element.matches(sel)) && array.indexOf(element) == -1){
 					array.push(element);
 				}
