@@ -976,7 +976,7 @@ window.rb.$ = window.jQuery || window.dom;
 			life.batch.timedRun();
 		}
 		element[expando] = true;
-
+		instance._created = true;
 		if(trigger){
 			life.batch.add(function() {
 				instance._trigger('created');

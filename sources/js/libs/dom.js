@@ -426,15 +426,15 @@
 		},
 	});
 
-	[['find', 'querySelectorAll'], ['children', 'children']].forEach(function(action, test){
-		test = !!test;
+	[['find', 'querySelectorAll', true], ['children', 'children']].forEach(function(action, test){
+		var isMatched = !!action[2];
 		fn[action[0]] = function(sel){
 			var array = [];
 			this.elements.forEach(function(elem){
 				var i, len;
 				var elements = test ? elem[action[1]] : elem[action[1]](sel);
 				for(i = 0, len = elements.length; i < len; i++){
-					if((!test || !sel || elements[i].matches(sel)) && array.indexOf(elements[i]) == -1){
+					if((isMatched || !sel || elements[i].matches(sel)) && array.indexOf(elements[i]) == -1){
 						array.push(elements[i]);
 					}
 				}
@@ -444,13 +444,14 @@
 		};
 	});
 
-	[['closest', 'closest'], ['next', 'nextElementSibling'], ['prev', 'previousElementSibling'], ['parent', 'parentNode']].forEach(function(action, test){
-		test = !!test;
+	[['closest', 'closest', true], ['next', 'nextElementSibling', false, true], ['prev', 'previousElementSibling', false, true], ['parent', 'parentNode']].forEach(function(action){
+		var isMatched = !!action[2];
+		var isUnique = !!action[3];
 		fn[action[0]] = function(sel){
 			var array = [];
 			this.elements.forEach(function(elem){
 				var element = elem[action[1]];
-				if(element && (!test || !sel || element.matches(sel)) && array.indexOf(element) == -1){
+				if(element && (isMatched || !sel || element.matches(sel)) && (isUnique || array.indexOf(element) == -1)){
 					array.push(element);
 				}
 			});

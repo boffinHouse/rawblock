@@ -249,14 +249,19 @@
 	rb.Draggy = Draggy;
 
 	$.fn.draggy = function(options){
-		return this.each(function(){
+		var draggy;
+		this.each(function(){
 			if(options == 'destroy'){
 				if(this._rbDraggy){
 					this._rbDraggy.destroy();
 				}
-			} else {
+			} else if(!this._rbDraggy) {
 				this._rbDraggy = new Draggy(this, options || {});
 			}
+			if(!draggy){
+				draggy = this._rbDraggy;
+			}
 		});
+		return draggy || this;
 	};
 })();
