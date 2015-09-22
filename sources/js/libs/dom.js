@@ -426,25 +426,31 @@
 		},
 	});
 
-	[['closest', 'closest'], ['find', 'querySelectorAll']].forEach(function(action){
+	[['find', 'querySelectorAll'], ['children', 'children']].forEach(function(action, test){
+		test = !!test;
 		fn[action[0]] = function(sel){
 			var array = [];
 			this.elements.forEach(function(elem){
-				var element = elem[action[1]](sel);
-				if(element && array.indexOf(element) == -1){
-					array.push(element);
+				var i, len;
+				var elements = test ? elem[action[1]] : elem[action[1]](sel);
+				for(i = 0, len = elements.length; i < len; i++){
+					if((!test || !sel || elements[i].matches(sel)) && array.indexOf(elements[i]) == -1){
+						array.push(elements[i]);
+					}
 				}
 			});
+
 			return new Dom( array );
 		};
 	});
 
-	[['children', 'children'], ['next', 'nextElementSibling'], ['prev', 'previousElementSibling']].forEach(function(action){
+	[['closest', 'closest'], ['next', 'nextElementSibling'], ['prev', 'previousElementSibling']].forEach(function(action, test){
+		test = !!test;
 		fn[action[0]] = function(sel){
 			var array = [];
 			this.elements.forEach(function(elem){
 				var element = elem[action[1]];
-				if(element && (!sel || element.matches(sel)) && array.indexOf(element) == -1){
+				if(element && (!test || !sel || element.matches(sel)) && array.indexOf(element) == -1){
 					array.push(element);
 				}
 			});

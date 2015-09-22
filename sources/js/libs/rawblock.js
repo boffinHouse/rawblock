@@ -826,12 +826,12 @@ window.rb.$ = window.jQuery || window.dom;
 	});
 
 	rb.elementFromStr = function(targetStr, element){
-		var i, len, target, temp;
-		if (targetStr.match(regTarget)) {
-			if(RegExp.$1 == '$' || RegExp.$1 == 'sel'){
+		var i, len, target, temp, match;
+		if ((match = targetStr.match(regTarget))) {
+			if(match[1] == '$' || match[1] == 'sel'){
 				target = Array.from(document.querySelectorAll(RegExp.$2));
-			} else if($.fn[RegExp.$1]){
-				target = $(element)[RegExp.$1](RegExp.$2).get();
+			} else if($.fn[match[1]]){
+				target = $(element)[match[1]](match[2]).get();
 			}
 		} else if (targetStr) {
 			targetStr = targetStr.split(regSplit);
@@ -844,7 +844,7 @@ window.rb.$ = window.jQuery || window.dom;
 			}
 		}
 
-		return target;
+		return target || [];
 	}
 })();
 
