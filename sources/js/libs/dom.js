@@ -430,7 +430,7 @@
 		fn[action[0]] = function(sel){
 			var array = [];
 			this.elements.forEach(function(elem){
-				var element = elem[action[0]](sel);
+				var element = elem[action[1]](sel);
 				if(element && array.indexOf(element) == -1){
 					array.push(element);
 				}
@@ -484,11 +484,11 @@
 		};
 	});
 
-	['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
-		fn[name] = function(){
-			return this.elements[name].apply(this.elements, arguments);
-		};
-	});
+	//['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
+	//	fn[name] = function(){
+	//		return this.elements[name].apply(this.elements, arguments);
+	//	};
+	//});
 
 	[['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function(action){
 		Dom.fn[action[0]] = function(type, sel, fn, capture){
