@@ -444,7 +444,7 @@
 		};
 	});
 
-	[['closest', 'closest'], ['next', 'nextElementSibling'], ['prev', 'previousElementSibling']].forEach(function(action, test){
+	[['closest', 'closest'], ['next', 'nextElementSibling'], ['prev', 'previousElementSibling'], ['parent', 'parentNode']].forEach(function(action, test){
 		test = !!test;
 		fn[action[0]] = function(sel){
 			var array = [];

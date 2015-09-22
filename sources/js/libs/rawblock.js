@@ -808,6 +808,7 @@ window.rb.$ = window.jQuery || window.dom;
 	'use strict';
 	var $ = rb.$;
 	var regSplit = /\s*,\s*/g;
+	var regNum = /:(\d)+\s*$/;
 	var regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
 
 	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
@@ -826,7 +827,11 @@ window.rb.$ = window.jQuery || window.dom;
 	});
 
 	rb.elementFromStr = function(targetStr, element){
-		var i, len, target, temp, match;
+		var i, len, target, temp, num, match;
+		if((num = targetStr.match(regNum))){
+			targetStr = targetStr.replace(num[0], '');
+			num = num[1];
+		}
 		if ((match = targetStr.match(regTarget))) {
 			if(match[1] == '$' || match[1] == 'sel'){
 				target = Array.from(document.querySelectorAll(RegExp.$2));
@@ -842,6 +847,10 @@ window.rb.$ = window.jQuery || window.dom;
 					target.push(temp);
 				}
 			}
+		}
+
+		if(num && target){
+			target = target[num] ? [target[num]] : [];
 		}
 
 		return target || [];
