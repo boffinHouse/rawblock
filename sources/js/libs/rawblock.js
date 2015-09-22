@@ -806,18 +806,32 @@ window.rb.$ = window.jQuery || window.dom;
 
 (function(){
 	'use strict';
+	var $ = rb.$;
 	var regSplit = /\s*,\s*/g;
 	var regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
+
+	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
+		$.fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
+				var found = false;
+				var element = elem[action[0]];
+				if(!found && element && (!sel || element.matches(sel))){
+					found = true;
+					array.push(element);
+				}
+			});
+			return new Dom( array );
+		};
+	});
 
 	rb.elementFromStr = function(targetStr, element){
 		var i, len, target, temp;
 		if (targetStr.match(regTarget)) {
-			if (RegExp.$1 == 'closest') {
-				target = element.closest(RegExp.$2);
-			} else if ( !((RegExp.$1 || '').indexOf('sel')) ) {
-				target = document.querySelectorAll(RegExp.$2);
-			} else if(!((RegExp.$1 || '').indexOf('child'))){
-				target = element.querySelectorAll(RegExp.$2);
+			if(RegExp.$1 == '$' || RegExp.$1 == 'sel'){
+				target = Array.from(document.querySelectorAll(RegExp.$2));
+			} else if($.fn[RegExp.$1]){
+				target = $(element)[RegExp.$1](RegExp.$2).get();
 			}
 		} else if (targetStr) {
 			targetStr = targetStr.split(regSplit);
@@ -829,10 +843,8 @@ window.rb.$ = window.jQuery || window.dom;
 				}
 			}
 		}
-		if(target && target.nodeType != 1 && 'length' in target && target.length < 2){
-			target = target[0];
-		}
-		return target || null;
+
+		return target;
 	}
 })();
 

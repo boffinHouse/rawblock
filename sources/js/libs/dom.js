@@ -236,30 +236,6 @@
 	});
 
 	Object.assign(fn, {
-		find: function(sel){
-			var array = [];
-			this.elements.forEach(function(elem){
-				var i, len;
-				var elements = elem.querySelectorAll(sel);
-				for(i = 0, len = elements.length; i < len; i++){
-					if(array.indexOf(elements[i]) == -1){
-						array.push(elements[i]);
-					}
-				}
-			});
-
-			return new Dom( array );
-		},
-		closest: function(sel){
-			var array = [];
-			this.elements.forEach(function(elem){
-				var element = elem.closest(sel);
-				if(element && array.indexOf(element) == -1){
-					array.push(element);
-				}
-			});
-			return new Dom( array );
-		},
 		get: function(number){
 			return arguments.length ? this.elements[number] : this.elements;
 		},
@@ -448,6 +424,32 @@
 			}
 			return this.elements.indexOf(elem);
 		},
+	});
+
+	[['closest', 'closest'], ['find', 'querySelectorAll']].forEach(function(action){
+		fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
+				var element = elem[action[0]](sel);
+				if(element && array.indexOf(element) == -1){
+					array.push(element);
+				}
+			});
+			return new Dom( array );
+		};
+	});
+
+	[['children', 'children'], ['next', 'nextElementSibling'], ['prev', 'previousElementSibling']].forEach(function(action){
+		fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem){
+				var element = elem[action[0]];
+				if(element && (!sel || element.matches(sel)) && array.indexOf(element) == -1){
+					array.push(element);
+				}
+			});
+			return new Dom( array );
+		};
 	});
 
 	fn.detach = fn.remove;

@@ -59,7 +59,7 @@
 
 			if (!this.target || (!this.isTargeting && target != this.targetAttr)) {
 				this.targetAttr = target;
-				this.target = rb.elementFromStr(target, this.element);
+				this.target = rb.elementFromStr(target, this.element)[0];
 			}
 
 			return this.target;
