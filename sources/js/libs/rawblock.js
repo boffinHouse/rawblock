@@ -4,12 +4,6 @@ if(!window.rb){
 
 window.rb.$ = window.jQuery || window.dom;
 
-(function(docElem){
-	'use strict';
-	docElem.classList.remove('no-js');
-	docElem.classList.add('js');
-})(document.documentElement);
-
 /* rbSlideUp / rbSlideDown */
 (function(){
 	'use strict';
@@ -710,6 +704,7 @@ window.rb.$ = window.jQuery || window.dom;
 (function(){
 	'use strict';
 	var i = 0;
+	var cssConfig = {mqs: {}, currentMQ: '', beforeMQ: '', mqChange: rb.$.Callbacks()};
 	var parseCSS = function(){
 		var head = document.getElementsByTagName('head')[0];
 		if(!head && i < 999){
@@ -730,13 +725,26 @@ window.rb.$ = window.jQuery || window.dom;
 			}
 		};
 
-		rb.cssConfig = Object.assign({mqs: {}, currentMQ: '', beforeMQ: ''}, styles, {mqChange: rb.$.Callbacks()});
+		Object.defineProperty(rb, 'cssConfig', {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+			value: Object.assign(cssConfig, styles)
+		});
 
 		rb.resize.on(detectMQChange);
 
 		detectMQChange();
 	};
-	parseCSS();
+
+	Object.defineProperty(rb, 'cssConfig', {
+		configurable: true,
+		enumerable: true,
+		get: function(){
+			parseCSS();
+			return cssConfig;
+		}
+	});
 })();
 
 (function(){
