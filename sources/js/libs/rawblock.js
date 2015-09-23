@@ -814,7 +814,7 @@ window.rb.$ = window.jQuery || window.dom;
 	var $ = rb.$;
 	var regSplit = /\s*,\s*/g;
 	var regNum = /:(\d)+\s*$/;
-	var regTarget = /^\s*([a-z0-9-_]+)\((.+)\)\s*$/i;
+	var regTarget = /^\s*([a-z0-9-_]+)\((.*)\)\s*$/i;
 
 	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
 		$.fn[action[0]] = function(sel){
@@ -838,9 +838,13 @@ window.rb.$ = window.jQuery || window.dom;
 			num = num[1];
 		}
 		if ((match = targetStr.match(regTarget))) {
+
 			if(match[1] == '$' || match[1] == 'sel'){
-				target = Array.from(document.querySelectorAll(RegExp.$2));
+				target = Array.from(document.querySelectorAll(match[2]));
 			} else if($.fn[match[1]]){
+				if(!match[2]){
+					match[2] = null;
+				}
 				target = $(element)[match[1]](match[2]).get();
 			}
 		} else if (targetStr) {
