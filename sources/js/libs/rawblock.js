@@ -177,7 +177,7 @@ window.rb.$ = window.jQuery || window.dom;
 		var Date = window.Date;
 		var run = function(){
 			running = false;
-			lastTime = Date.now();
+			lastTime = options.simple || Date.now();
 			fn.apply(that, args);
 		};
 		var afterAF = function(){
@@ -195,7 +195,9 @@ window.rb.$ = window.jQuery || window.dom;
 			options.delay = 200;
 		}
 
-		if(options.write){
+		if(options.simple){
+			getAF = run;
+		} else if(options.write){
 			afterAF = run;
 		}
 
@@ -203,11 +205,14 @@ window.rb.$ = window.jQuery || window.dom;
 			if(running){
 				return;
 			}
-			var delay = options.delay - (Date.now() - lastTime);
+			var delay = options.delay;
 			running =  true;
 
-			if(delay < 6){
-				delay = 6;
+			if(!options.simple){
+				delay -= (Date.now() - lastTime);
+				if(delay < 0){
+					delay = 0;
+				}
 			}
 			that = options.that || this;
 			args = arguments;
