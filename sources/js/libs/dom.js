@@ -444,13 +444,14 @@
 		};
 	});
 
-	[['closest', 'closest', true], ['next', 'nextElementSibling', false, true], ['prev', 'previousElementSibling', false, true], ['parent', 'parentNode']].forEach(function(action){
+	[['closest', 'closest', true, false, true], ['next', 'nextElementSibling', false, true], ['prev', 'previousElementSibling', false, true], ['parent', 'parentNode']].forEach(function(action){
 		var isMatched = !!action[2];
 		var isUnique = !!action[3];
+		var isMethod = !!action[4];
 		fn[action[0]] = function(sel){
 			var array = [];
 			this.elements.forEach(function(elem){
-				var element = elem[action[1]];
+				var element = isMethod ? elem[action[1]](sel) : elem[action[1]];
 				if(element && (isMatched || !sel || element.matches(sel)) && (isUnique || array.indexOf(element) == -1)){
 					array.push(element);
 				}
