@@ -616,7 +616,7 @@ window.rb.$ = window.jQuery || window.dom;
 	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
 	var root = document.documentElement;
-	var dom = rb.$;
+	var $ = rb.$;
 
 	var unblockKeyboardFocus = function(){
 		isKeyboardBlocked = false;
@@ -663,8 +663,8 @@ window.rb.$ = window.jQuery || window.dom;
 	window.addEventListener('focus', blockKeyboardFocus);
 	document.addEventListener('focus', blockKeyboardFocus);
 
-	if(dom){
-		dom(document).on('rbscriptfocus', blockKeyboardFocus);
+	if($){
+		$(document).on('rbscriptfocus', blockKeyboardFocus);
 	}
 
 })(window, document);
@@ -889,6 +889,36 @@ window.rb.$ = window.jQuery || window.dom;
 	var widgetExpando = rb.Symbol('_rbWidget');
 	var expando = rb.Symbol('_rbCreated');
 
+	var registerElement = function(name, LifeClass){
+		var proto = Object.create(HTMLElement.prototype);
+		var protoClass = LifeClass.prototype;
+
+		proto.createdCallback = function(){
+			this[life.widgetExpando] = new LifeClass(this);
+			if(!protoClass.attached){
+				rb.rAFQueue.add(function(){
+					this.classList.add( attachedClass );
+				}, true);
+			}
+		};
+
+		['attached', 'detached'].forEach(function(action){
+			var cb = action + 'Callback';
+
+			if(protoClass[action]){
+				proto[cb] = function(){
+					if(this[life.widgetExpando]){
+						return this[life.widgetExpando][action]();
+					}
+				};
+			}
+		});
+
+		document.registerElement('rb-' + name, {
+			prototype: proto
+		});
+	};
+
 	window.rb.life = life;
 
 	life.autoStart = true;
@@ -940,8 +970,36 @@ window.rb.$ = window.jQuery || window.dom;
 	life._behaviors = {};
 	rb.widgets = life._behaviors;
 	life._attached = [];
+	life.customElements = false;
 
 	life.register = function(name, LifeClass, noCheck) {
+		var prop, statics;
+		var proto = LifeClass.prototype;
+		var superClass = Object.getPrototypeOf(LifeClass);
+		var superProto = Object.getPrototypeOf(LifeClass);
+
+		LifeClass.defaults = Object.assign({}, superClass.defaults || {}, LifeClass.defaults || proto.defaults || {});
+
+		if(!proto.name){
+			proto.name = name;
+		}
+
+		if(proto.statics || superProto.statics){
+			statics = Object.assign({}, superProto.statics || {}, proto.statics || {});
+			for(prop in statics){
+				if(!(prop in LifeClass)){
+					LifeClass[prop] = statics[prop];
+				}
+			}
+		}
+
+		if(!LifeClass.name){
+			LifeClass.name = name;
+		}
+
+		if(rb.widgets[ name ]){
+			rb.log(name +' already exists.');
+		}
 
 		rb.widgets[ name ] = LifeClass;
 
@@ -961,12 +1019,19 @@ window.rb.$ = window.jQuery || window.dom;
 				life.throttledFindElements();
 			}
 		}
+
+		if(life.customElements && document.registerElement){
+			registerElement(name, LifeClass);
+		}
+
 	};
 
 	life.create = function(element, LifeClass) {
 		var instance, trigger;
+
 		if ( !(instance = element[widgetExpando]) ) {
 			instance = new LifeClass( element );
+			element[widgetExpando] = instance;
 			trigger = true;
 		}
 
@@ -994,11 +1059,7 @@ window.rb.$ = window.jQuery || window.dom;
 		}
 		element[expando] = true;
 		instance._created = true;
-		if(trigger){
-			life.batch.add(function() {
-				instance._trigger('created');
-			});
-		}
+
 		return instance;
 	};
 
@@ -1477,16 +1538,9 @@ window.rb.$ = window.jQuery || window.dom;
 	life.Widget.extend = function(name, prop){
 		var Class;
 
-		if(!prop.name){
-			prop.name = name;
-		}
+
 
 		Class = life.Class.extend.call(this, prop);
-		Class.defaults = Object.assign({}, this.defaults || {}, prop.defaults || {});
-
-		if(prop.statics || this.statics){
-			Object.assign(Class, this.statics || {}, prop.statics || {});
-		}
 
 		life.register(name, Class);
 		return Class;

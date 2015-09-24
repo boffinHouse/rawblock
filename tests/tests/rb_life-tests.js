@@ -164,6 +164,4 @@
 	QUnit.test("getWidget", function( assert ){
 		assert.ok('todo');
 	});
-
-	QUnit.module('rb.Widget');
 })();

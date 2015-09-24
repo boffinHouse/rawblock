@@ -14,6 +14,7 @@ require('./libs/rawblock');
 
 /* configuration */
 rb.isDebug = true;
+//rb.life.customElements = true;
 
 if(!('ASSETBASEPATH' in window)){
 	window.ASSETBASEPATH = '';
