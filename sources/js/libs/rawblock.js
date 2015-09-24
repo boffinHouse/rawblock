@@ -894,12 +894,15 @@ window.rb.$ = window.jQuery || window.dom;
 		var protoClass = LifeClass.prototype;
 
 		proto.createdCallback = function(){
-			this[life.widgetExpando] = new LifeClass(this);
+			var inst = new LifeClass(this);
+			this[life.widgetExpando] = inst;
 			if(!protoClass.attached){
 				rb.rAFQueue.add(function(){
 					this.classList.add( attachedClass );
 				}, true);
 			}
+			this[expando] = true;
+			inst._created = true;
 		};
 
 		['attached', 'detached'].forEach(function(action){
@@ -975,8 +978,8 @@ window.rb.$ = window.jQuery || window.dom;
 	life.register = function(name, LifeClass, noCheck) {
 		var prop, statics;
 		var proto = LifeClass.prototype;
-		var superClass = Object.getPrototypeOf(LifeClass);
-		var superProto = Object.getPrototypeOf(LifeClass);
+		var superProto = Object.getPrototypeOf(proto);
+		var superClass = superProto.constructor;
 
 		LifeClass.defaults = Object.assign({}, superClass.defaults || {}, LifeClass.defaults || proto.defaults || {});
 
