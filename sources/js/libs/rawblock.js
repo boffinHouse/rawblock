@@ -874,6 +874,18 @@ window.rb.$ = window.jQuery || window.dom;
 	}
 })();
 
+(function(){
+	'use strict';
+	var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+	rb.getPropertyDescriptor = function getPropertyDescriptor(o, name) {
+		var proto = o, descriptor;
+		while (proto && !(descriptor = getOwnPropertyDescriptor(proto, name))){
+			proto = Object.getPrototypeOf(proto);
+		}
+		return descriptor;
+	};
+})();
+
 (function(window, document) {
 	'use strict';
 
@@ -1266,7 +1278,7 @@ window.rb.$ = window.jQuery || window.dom;
 			origDescriptor = Object.getOwnPropertyDescriptor(prop, name);
 			if(!origDescriptor){continue;}
 
-			superDescriptor = (name in _super && Object.getOwnPropertyDescriptor(_super, name));
+			superDescriptor = (name in _super && rb.getPropertyDescriptor(_super, name));
 
 			for(descProp in origDescriptor){
 				// Check if we're overwriting an existing function and using super keyword
