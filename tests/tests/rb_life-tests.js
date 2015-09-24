@@ -40,17 +40,12 @@
 	});
 
 	QUnit.test("create", function( assert ){
-		var instance, target;
-		var events = 0;
+		var instance;
 		var done = assert.async();
 		var Dummy = rb.widgets.dummy;
 		var div = document.createElement('div');
-		var onDummy = function(e){
-			events++;
-			target = e.target;
-		};
 
-		rb.$(document).on('dummycreated', onDummy);
+
 
 		div.className = 'js-rb-life';
 
@@ -65,11 +60,8 @@
 
 		QUnit.afterAF()
 			.then(function(){
-				rb.$(document).off('dummycreated', onDummy);
 				assert.ok(div.classList.contains('js-rb-attached'));
 				assert.ok(Dummy.prototype.attached.calledOnce);
-				assert.strictEqual(events, 1);
-				assert.equal(target, div);
 				assert.notOk(Dummy.prototype.detached.calledOnce);
 			})
 			.then(done)

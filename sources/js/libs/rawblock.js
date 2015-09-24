@@ -894,21 +894,13 @@ window.rb.$ = window.jQuery || window.dom;
 		var protoClass = LifeClass.prototype;
 
 		proto.createdCallback = function(){
-			var inst = new LifeClass(this);
-			this[life.widgetExpando] = inst;
-			if(!protoClass.attached){
-				rb.rAFQueue.add(function(){
-					this.classList.add( attachedClass );
-				}, true);
-			}
-			this[expando] = true;
-			inst._created = true;
+			life.create(this, LifeClass, true);
 		};
 
 		['attached', 'detached'].forEach(function(action){
-			var cb = action + 'Callback';
-
+			var cb;
 			if(protoClass[action]){
+				cb = action + 'Callback';
 				proto[cb] = function(){
 					if(this[life.widgetExpando]){
 						return this[life.widgetExpando][action]();
@@ -976,24 +968,14 @@ window.rb.$ = window.jQuery || window.dom;
 	life.customElements = false;
 
 	life.register = function(name, LifeClass, noCheck) {
-		var prop, statics;
 		var proto = LifeClass.prototype;
 		var superProto = Object.getPrototypeOf(proto);
 		var superClass = superProto.constructor;
 
-		LifeClass.defaults = Object.assign({}, superClass.defaults || {}, LifeClass.defaults || proto.defaults || {});
+		LifeClass.defaults = Object.assign({}, superClass.defaults || {}, LifeClass.defaults || {});
 
 		if(!proto.name){
 			proto.name = name;
-		}
-
-		if(proto.statics || superProto.statics){
-			statics = Object.assign({}, superProto.statics || {}, proto.statics || {});
-			for(prop in statics){
-				if(!(prop in LifeClass)){
-					LifeClass[prop] = statics[prop];
-				}
-			}
 		}
 
 		if(!LifeClass.name){
@@ -1023,13 +1005,15 @@ window.rb.$ = window.jQuery || window.dom;
 			}
 		}
 
-		if(life.customElements && document.registerElement){
-			registerElement(name, LifeClass);
-		}
+		setTimeout(function(){
+			if(life.customElements && document.registerElement){
+				registerElement(name, LifeClass);
+			}
+		});
 
 	};
 
-	life.create = function(element, LifeClass) {
+	life.create = function(element, LifeClass, _fromWebComponent) {
 		var instance, trigger;
 
 		if ( !(instance = element[widgetExpando]) ) {
@@ -1044,7 +1028,7 @@ window.rb.$ = window.jQuery || window.dom;
 
 		if (!element[expando] && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
 
-			if(instance.attached || instance.detached){
+			if(!_fromWebComponent && (instance.attached || instance.detached)){
 				life._attached.push(element);
 				if(instance.attached){
 					life.batch.add(function() {
@@ -1257,6 +1241,7 @@ window.rb.$ = window.jQuery || window.dom;
  */
 // Inspired by base2 and Prototype
 (function(){
+	var rb = window.rb;
 	var initializing = false;
 	var fnTest = (/xyz/.test(function(){var a = xyz;})) ?
 			/\b_super\b/ :
@@ -1264,18 +1249,15 @@ window.rb.$ = window.jQuery || window.dom;
 		;
 
 	// The base Class implementation (does nothing)
-	window.rb.life.Class = function(){};
+	var ES5Class = function(){};
 
-	// Create a new Class that inherits from this class
-	window.rb.life.Class.extend = function(prop) {
-		var name, prototype, origDescriptor, descProp, superDescriptor;
-		var _super = this.prototype;
+	ES5Class.mixin = function(prototype, _super, prop){
+		var name, origDescriptor, descProp, superDescriptor;
 
-		// Instantiate a base class (but only create the instance,
-		// don't run the init constructor)
-		initializing = true;
-		prototype = new this();
-		initializing = false;
+		if(arguments.length < 3){
+			prop = _super;
+			_super = prototype;
+		}
 
 		// Copy the properties over onto the new prototype
 		for (name in prop) {
@@ -1311,6 +1293,20 @@ window.rb.$ = window.jQuery || window.dom;
 
 			Object.defineProperty(prototype, name, origDescriptor);
 		}
+	};
+
+	// Create a new Class that inherits from this class
+	ES5Class.extend = function(prop) {
+		var prototype;
+		var _super = this.prototype;
+
+		// Instantiate a base class (but only create the instance,
+		// don't run the init constructor)
+		initializing = true;
+		prototype = new this();
+		initializing = false;
+
+		ES5Class.mixin(prototype, _super, prop);
 
 		// The dummy class constructor
 		function Class() {
@@ -1326,17 +1322,19 @@ window.rb.$ = window.jQuery || window.dom;
 		Class.prototype.constructor = Class;
 
 		// And make this class extendable
-		Class.extend = this.extend || window.rb.life.Class.extend;
+		Class.extend = this.extend || ES5Class.extend;
 
 		return Class;
 	};
+	rb.Class = ES5Class;
 })();
 
 (function(window, document, life, undefined){
 	'use strict';
 
 	var regData = /^data-/;
-	var $ = window.rb.$;
+	var rb = window.rb;
+	var $ = rb.$;
 	var widgetExpando = life.widgetExpando;
 
 	life.getWidget = function(element, key, args){
@@ -1345,11 +1343,13 @@ window.rb.$ = window.jQuery || window.dom;
 
 		if(!widget){
 
-			moduleId = (element.getAttribute( 'data-module' ) || '').split( '/' );
-			moduleId = moduleId[ moduleId.length - 1 ];
-			if(typeof key == 'object'){
-				options = key;
+			moduleId = (element.getAttribute( 'data-module' ) || '').split('/');
+
+			if(!moduleId.length){
+				moduleId = (element.localeName || '').split('-');
 			}
+
+			moduleId = moduleId[ moduleId.length - 1 ];
 
 			if(rb.widgets[ moduleId ]){
 				widget = life.create(element, rb.widgets[ moduleId ]);
@@ -1370,7 +1370,7 @@ window.rb.$ = window.jQuery || window.dom;
 		return ret;
 	};
 
-	life.Widget = life.Class.extend({
+	life.Widget = rb.Class.extend({
 		defaults: {},
 		init: function(element){
 			this.element = element;
@@ -1539,13 +1539,31 @@ window.rb.$ = window.jQuery || window.dom;
 	rb.addLog(life.Widget.prototype, false);
 
 	life.Widget.extend = function(name, prop){
-		var Class;
+		var Class = rb.Class.extend.call(this, prop);
 
+		if(prop.defaults){
+			Class.defaults = prop.defaults;
+			Class.prototype.defaults = null;
+		}
 
-
-		Class = life.Class.extend.call(this, prop);
+		if(prop.statics){
+			Object.assign(Class, prop.statics);
+			Class.prototype.statics = null;
+		}
 
 		life.register(name, Class);
+		return Class;
+	};
+
+	life.Widget.mixin = function(Class, prop){
+		if(prop.defaults){
+			Class.defaults = Object.assign(Class.defaults || {}, prop.defaults);
+		}
+		if(prop.statics){
+			Object.assign(Class, prop.statics);
+		}
+		rb.Class.mixin(Class.prototype, prop);
+
 		return Class;
 	};
 
