@@ -59,6 +59,20 @@
 
 
 <!-- TESTS -->
+<script>
+	(function(){
+		'use strict';
+		var supportsClass = true;
+		try { eval('"use strict"; class F{}'); }
+		catch (e) {
+			supportsClass = false;
+		}
+
+		if(supportsClass){
+			document.write('<script src="tests\/rb_widget-tests.es6"><\/script>');
+		}
+	})();
+</script>
 <script src="tests/dom-tests.js"></script>
 <script src="tests/rb_life-tests.js"></script>
 <script src="tests/rb_utils-tests.js"></script>

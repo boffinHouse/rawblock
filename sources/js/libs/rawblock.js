@@ -988,6 +988,8 @@ window.rb.$ = window.jQuery || window.dom;
 
 		rb.widgets[ name ] = LifeClass;
 
+		if(name.charAt(0) != '_'){return;}
+
 		if ( !noCheck ) {
 			if(!elements && !implicitlyStarted){
 				implicitlyStarted = true;
