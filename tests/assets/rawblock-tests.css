@@ -9,3 +9,8 @@ html {
 *::before,
 *::after {
 	box-sizing: inherit; }
+
+
+.css-options::after {
+	content: '{"watchCSS":false,"animate":true,"axis": "auto","inputs": "find(input)","values":50,"step":1,"max":100,"min":0}' !important;
+	display: none !important; }

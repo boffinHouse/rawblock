@@ -365,6 +365,8 @@ window.rb.$ = window.jQuery || window.dom;
 			}
 			else if(attrVal == 'false'){
 				attrVal = false;
+			} else if(attrVal == 'null'){
+				attrVal = null;
 			}
 			else if(regNumber.test(attrVal)){
 				attrVal = parseFloat(attrVal);
@@ -1366,13 +1368,18 @@ window.rb.$ = window.jQuery || window.dom;
 
 		if(!widget){
 
-			moduleId = (element.getAttribute( 'data-module' ) || '').split('/');
+			if(rb.widgets[key]){
+				moduleId = key;
+				key = false;
+			} else {
+				moduleId = (element.getAttribute( 'data-module' ) || '').split('/');
 
-			if(!moduleId.length){
-				moduleId = (element.localeName || '').split('-');
+				if(!moduleId.length){
+					moduleId = (element.localeName || '').split('-');
+				}
+
+				moduleId = moduleId[ moduleId.length - 1 ];
 			}
-
-			moduleId = moduleId[ moduleId.length - 1 ];
 
 			if(rb.widgets[ moduleId ]){
 				widget = life.create(element, rb.widgets[ moduleId ]);

@@ -2,39 +2,52 @@
 	'use strict';
 
 	QUnit.module('rb.life');
-
-	QUnit.testStart(function(){
+	var modules = {};
+	QUnit.testStart(function(obj){
+		if(obj.module != 'rb.life'){return;}
 		var fn;
-		var Dummy = rb.Widget.extend('dummy', {
-			init: function(element){
-				this._super(element);
-			},
-			attached: function(){
+		var id = rb.getID();
+		var name = 'dummy' + id;
+		modules.dummy = {
+			name: name,
+			module: rb.Widget.extend(name, {
+				init: function(element){
+					this._super(element);
+				},
+				attached: function(){
 
-			},
-			detached: function(){
+				},
+				detached: function(){
 
-			},
-			attachedOnce: function(){
+				},
+				attachedOnce: function(){
 
-			}
-		});
+				}
+			})
+		};
 
-		var SimpleDummy = rb.Widget.extend('simpledummy', {
-			init: function(element){
-				this._super(element);
-			}
-		});
+		id = rb.getID();
+		name = 'simplydummy' + id;
 
-		for(fn in Dummy.prototype){
-			if(typeof Dummy.prototype[fn] == 'function'){
-				sinon.spy(Dummy.prototype, fn);
+		modules.simpledummy = {
+			name: name,
+			module: rb.Widget.extend(name, {
+				init: function(element){
+					this._super(element);
+				}
+			})
+		};
+
+
+		for(fn in modules.dummy.module.prototype){
+			if(typeof modules.dummy.module.prototype[fn] == 'function'){
+				sinon.spy(modules.dummy.module.prototype, fn);
 			}
 		}
 
-		for(fn in SimpleDummy.prototype){
-			if(typeof SimpleDummy.prototype[fn] == 'function'){
-				sinon.spy(SimpleDummy.prototype, fn);
+		for(fn in modules.simpledummy.module.prototype){
+			if(typeof modules.simpledummy.module.prototype[fn] == 'function'){
+				sinon.spy(modules.simpledummy.module.prototype, fn);
 			}
 		}
 	});
@@ -42,10 +55,8 @@
 	QUnit.test("create", function( assert ){
 		var instance;
 		var done = assert.async();
-		var Dummy = rb.widgets.dummy;
+		var Dummy = modules.dummy.module;
 		var div = document.createElement('div');
-
-
 
 		div.className = 'js-rb-life';
 
@@ -70,10 +81,11 @@
 
 	QUnit.test("findElements", function( assert ){
 		var done = assert.async();
-		var Dummy = rb.widgets.dummy;
-		rb.$('#qunit-fixture').html('<div class="js-rb-life" data-module="dummy"></div>' +
-			'<div class="js-rb-life" data-module="dummy"></div>' +
-			'<div class="js-rb-life" id="failed-module" data-module="unknown"><div class="js-rb-life" data-module="dummy"></div></div>');
+		var dummyName = modules.dummy.name;
+		var Dummy = modules.dummy.module;
+		rb.$('#qunit-fixture').html('<div class="js-rb-life" data-module="'+ dummyName +'"></div>' +
+			'<div class="js-rb-life" data-module="'+ dummyName +'"></div>' +
+			'<div class="js-rb-life" id="failed-module" data-module="unknown"><div class="js-rb-life" data-module="'+ dummyName +'"></div></div>');
 
 		assert.equal(rb.$('.js-rb-life').length, 4);
 		assert.equal(rb.$('.js-rb-attached').length, 0);
@@ -91,7 +103,7 @@
 						assert.equal(rb.$('.js-rb-life').length, 0);
 						assert.equal(rb.$('.js-rb-attached').length, 3);
 					})
-				;
+					;
 			})
 			.then(done)
 		;
@@ -100,9 +112,10 @@
 	QUnit.test("destroyWidget", function( assert ){
 		var explicitDestroyed, implicitDestroyed;
 		var done = assert.async();
-		var Dummy = rb.widgets.dummy;
-		rb.$('#qunit-fixture').html('<div class="js-rb-life" data-module="dummy"></div>' +
-			'<div class="js-rb-life" data-module="dummy"></div>');
+		var dummyName = modules.dummy.name;
+		var Dummy = modules.dummy.module;
+		rb.$('#qunit-fixture').html('<div class="js-rb-life" data-module="'+ dummyName +'"></div>' +
+			'<div class="js-rb-life" data-module="'+ dummyName +'"></div>');
 
 		explicitDestroyed = rb.$('#qunit-fixture .js-rb-life').get(0);
 		implicitDestroyed = rb.$('#qunit-fixture .js-rb-life').get(1);
@@ -110,7 +123,7 @@
 		assert.equal(rb.$('.js-rb-life').length, 2);
 		assert.equal(rb.$('.js-rb-attached').length, 0);
 
-		QUnit.afterAF(9)
+		QUnit.afterAF(19)
 			.then(function(){
 				assert.equal(rb.$('.js-rb-life').length, 0);
 				assert.equal(rb.$('.js-rb-attached').length, 2);
@@ -154,6 +167,32 @@
 	});
 
 	QUnit.test("getWidget", function( assert ){
-		assert.ok('todo');
+		var dummyName = modules.dummy.name;
+		var Dummy = modules.dummy.module;
+		var simpledummyName = modules.simpledummy.name;
+		var simpledummy = modules.simpledummy.module;
+
+		rb.$('#qunit-fixture').html('<div id="m1" class="js-rb-life" data-module="'+ dummyName +'"></div>' +
+			'<div id="m2" class="js-rb-life" data-module="'+ simpledummyName +'"></div><div  id="m3" class="js-rb-life" data-module="unknown"></div>');
+
+		assert.equal(rb.$('.js-rb-life').length, 3);
+		assert.equal(rb.$('.js-rb-attached').length, 0);
+
+		assert.equal(Dummy.prototype.init.callCount, 0);
+
+		rb.$('#m1').rbWidget();
+		assert.equal(Dummy.prototype.init.callCount, 1);
+		assert.equal(simpledummy.prototype.init.callCount, 0);
+		assert.ok(rb.$('#m1').rbWidget().init);
+
+		rb.$('#m2').rbWidget();
+		assert.equal(simpledummy.prototype.init.callCount, 1);
+		assert.equal(Dummy.prototype.init.callCount, 1);
+		assert.ok(rb.$('#m2').rbWidget().init);
+
+		rb.$('#m3').rbWidget();
+		assert.notOk(rb.life.getWidget(rb.$('#m3').get(0)));
+		assert.equal(simpledummy.prototype.init.callCount, 1);
+		assert.equal(Dummy.prototype.init.callCount, 1);
 	});
 })();
