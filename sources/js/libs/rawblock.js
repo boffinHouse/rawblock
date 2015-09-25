@@ -822,7 +822,7 @@ window.rb.$ = window.jQuery || window.dom;
 	var $ = rb.$;
 	var regSplit = /\s*,\s*/g;
 	var regNum = /:(\d)+\s*$/;
-	var regTarget = /^\s*([a-z0-9-_]+)\((.*)\)\s*$/i;
+	var regTarget = /^\s*\.*([a-z0-9-_]+)\((.*?)\)\s*/i;
 
 	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
 		$.fn[action[0]] = function(sel){
@@ -877,10 +877,13 @@ window.rb.$ = window.jQuery || window.dom;
 (function(){
 	'use strict';
 	var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
 	rb.getPropertyDescriptor = function getPropertyDescriptor(o, name) {
 		var proto = o, descriptor;
-		while (proto && !(descriptor = getOwnPropertyDescriptor(proto, name))){
-			proto = Object.getPrototypeOf(proto);
+		if(name in proto){
+			while (proto && !(descriptor = getOwnPropertyDescriptor(proto, name))){
+				proto = Object.getPrototypeOf(proto);
+			}
 		}
 		return descriptor;
 	};
@@ -1281,28 +1284,34 @@ window.rb.$ = window.jQuery || window.dom;
 			superDescriptor = (name in _super && rb.getPropertyDescriptor(_super, name));
 
 			for(descProp in origDescriptor){
-				// Check if we're overwriting an existing function and using super keyword
-				origDescriptor[descProp] = superDescriptor && typeof origDescriptor[descProp] == "function" &&
-				typeof superDescriptor[descProp] == "function" && fnTest.test(origDescriptor[descProp]) ?
-					/* jshint loopfunc: true */
-					(function(_superFn, fn){
-						return function() {
-							var tmp = this._super;
+				// Check if we're overwriting an existing function...
+				if(superDescriptor && typeof origDescriptor[descProp] == "function" && typeof superDescriptor[descProp] == "function"){
 
-							// Add a new ._super() method that is the same method
-							// but on the super-class
-							this._super = _superFn;
+					//...and using super keyword
+					if(fnTest.test(origDescriptor[descProp])){
+						/* jshint loopfunc: true */
+						origDescriptor[descProp] = (function(_superFn, fn){
+								return function() {
+									var tmp = this._super;
 
-							// The method only need to be bound temporarily, so we
-							// remove it when we're done executing
-							var ret = fn.apply(this, arguments);
-							this._super = tmp;
+									// Add a new ._super() method that is the same method
+									// but on the super-class
+									this._super = _superFn;
 
-							return ret;
-						};
-					})(superDescriptor[descProp], origDescriptor[descProp]) :
-					origDescriptor[descProp]
-				;
+									// The method only need to be bound temporarily, so we
+									// remove it when we're done executing
+									var ret = fn.apply(this, arguments);
+									this._super = tmp;
+
+									return ret;
+								};
+							})(superDescriptor[descProp], origDescriptor[descProp]);
+					}
+
+					//always allow NFE call for frequently called methods without this._super, but functionName._super
+					//see http://techblog.netflix.com/2014/05/improving-performance-of-our-javascript.html
+					origDescriptor[descProp]._super = superDescriptor[descProp];
+				}
 			}
 
 			Object.defineProperty(prototype, name, origDescriptor);

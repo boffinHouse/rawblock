@@ -122,7 +122,6 @@
 			}
 		};
 
-
 		tween.getStartValues(element, elementStyle, startProps, endProps);
 
 		options = Object.assign({duration: 400, easing: 'ease'}, options || {});
