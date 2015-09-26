@@ -40,12 +40,10 @@
 <script>
 	(function(){
 		var src = '../sources/js/libs/dom.js';
-		var extra = ' data-cover=""';
 		if(location.search.indexOf('jqueryinsteadrb') != -1){
 			src = 'http://code.jquery.com/jquery-2.1.4.js';
-			extra = '';
 		}
-		document.write('<script src="' + src +'"' + extra + '><\/script>');
+		document.write('<script src="' + src +'"><\/script>');
 	})();
 </script>
 

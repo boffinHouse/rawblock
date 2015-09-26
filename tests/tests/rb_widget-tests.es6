@@ -29,9 +29,13 @@
 					initial: 'ext1',
 					inherit: 'ext1',
 				},
+				events: {
+					initial: 'ext1',
+					inherit: 'ext1',
+					override: 'ext1'
+				},
 				init: function(element){
 					this._super(element);
-					console.log('run')
 				},
 				baseMethod: function(){
 				},
@@ -99,6 +103,20 @@
 				super(element);
 			}
 
+			static get defaults(){
+				return {
+					initial: 'ext3',
+				};
+			}
+
+			static get events(){
+				return {
+					initial: 'ext3',
+					override: 'ext3',
+					newone: 'ext3'
+				};
+			}
+
 			static ext3(){
 
 			}
@@ -111,10 +129,6 @@
 				super.nfeMethod();
 			}
 		}
-
-		Ext3.defaults = {
-			initial: 'ext3',
-		};
 
 		rb.life.register(tmpName, Ext3);
 
@@ -156,13 +170,23 @@
 		assert.equal(ext3._setterSet, 'test3ext2');
 	});
 
-	QUnit.test("rb.Widget - statics + defaults", function( assert ){
+	QUnit.test("rb.Widget - inheritance - statics + defaults + events", function( assert ){
 		var ext1 = rb.$(document.createElement('div')).rbWidget(modules.ext1.name);
 		var ext2 = rb.$(document.createElement('div')).rbWidget(modules.ext2.name);
 		var ext3 = rb.$(document.createElement('div')).rbWidget(modules.ext3.name);
 
 		assert.equal(typeof modules.ext1.module.ext1, 'function');
 		assert.equal(typeof modules.ext3.module.ext3, 'function');
+
+		assert.equal(modules.ext3.module.events.inherit, 'ext1');
+		assert.equal(modules.ext3.module.events.override, 'ext3');
+		assert.equal(modules.ext3.module.events.initial, 'ext3');
+		assert.equal(modules.ext3.module.events.newone, 'ext3');
+
+		assert.equal(modules.ext2.module.events.inherit, 'ext1');
+		assert.equal(modules.ext2.module.events.override, 'ext1');
+
+		assert.equal(modules.ext1.module.events.initial, 'ext1');
 
 		assert.equal(ext3.options.initial, 'ext3', 's');
 		assert.equal(ext3.options.inherit, 'ext1');

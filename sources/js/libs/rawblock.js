@@ -2,13 +2,26 @@ if(!window.rb){
 	window.rb = {};
 }
 
-window.rb.$ = window.jQuery || window.dom;
 
-/* rbSlideUp / rbSlideDown */
-(function(){
+
+
+(function(window, document, undefined){
 	'use strict';
+	window.rb.$ = window.rb.$ || window.jQuery || window.dom;
+
+	var rb = window.rb;
 	var $ = rb.$;
 
+	rb.root = document.documentElement;
+
+	rb.$root = $(rb.root);
+
+	rb.$win = $(window);
+	rb.$doc = $(document);
+
+	/* global vars end */
+
+	/* rbSlideUp / rbSlideDown */
 	$.fn.rbSlideUp = function(options){
 		if(!options){
 			options = {};
@@ -63,13 +76,8 @@ window.rb.$ = window.jQuery || window.dom;
 			;
 		});
 	};
-})();
 
-/* scrollIntoView */
-(function(window){
-	'use strict';
-	var document = window.document;
-	var $ = rb.$;
+	/* scrollIntoView */
 
 	var getScrollingElement = function(){
 		var bH, dH, isCompat;
@@ -91,10 +99,6 @@ window.rb.$ = window.jQuery || window.dom;
 
 		return scrollingElement || rb.root;
 	};
-
-	rb.root = document.documentElement;
-
-	rb.$root = $(rb.root);
 
 	rb.getScrollingElement = getScrollingElement;
 
@@ -139,21 +143,16 @@ window.rb.$ = window.jQuery || window.dom;
 		}
 		return this;
 	};
-})(window);
 
-(function(rb){
-	'use strict';
+	/* contains */
 	rb.contains = function(elements, needle){
 		return elements.find(rb.contains._contains, needle);
 	};
 	rb.contains._contains = function(element){
 		return element == this || element.contains(this);
 	};
-})(rb);
 
-/* throttle */
-(function(){
-	'use strict';
+	/* throttle */
 	var setImmediate = window.setImmediate || setTimeout;
 
 	/**
@@ -213,14 +212,10 @@ window.rb.$ = window.jQuery || window.dom;
 			setTimeout(getAF, delay);
 		};
 	};
-})();
 
-/* resize */
-(function(){
-	'use strict';
-
+	/* resize */
 	var iWidth, cHeight, installed;
-	var docElem = document.documentElement;
+	var docElem = rb.root;
 
 	rb.resize = Object.assign(rb.$.Callbacks(), {
 
@@ -259,11 +254,9 @@ window.rb.$ = window.jQuery || window.dom;
 			this.fire();
 		}
 	}, {that:rb.resize});
-})();
 
-(function(){
-	'use strict';
-	var $ = rb.$;
+	/* elementResize */
+
 	$.fn.elementResize = function(action, fn, options){
 		if(!options){
 			options = {};
@@ -320,11 +313,7 @@ window.rb.$ = window.jQuery || window.dom;
 
 		return this.each(action == 'remove' ? remove : add);
 	};
-})();
 
-(function(){
-	'use strict';
-	var $ = rb.$;
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
 		var numbers = 0;
@@ -457,13 +446,8 @@ window.rb.$ = window.jQuery || window.dom;
 
 		return rafedFn;
 	};
-})();
 
-/* rbWidget */
-(function(undefined){
-	'use strict';
-	var $ = rb.$;
-
+	/* rbWidget */
 	$.fn.rbWidget = function(name, args){
 		var ret;
 		this.each(function(){
@@ -478,11 +462,6 @@ window.rb.$ = window.jQuery || window.dom;
 			;
 	};
 
-})();
-
-(function(){
-	'use strict';
-	var $ = rb.$;
 	var isExtended;
 	var copyEasing = function(easing){
 		var easObj = BezierEasing.css[easing];
@@ -521,10 +500,8 @@ window.rb.$ = window.jQuery || window.dom;
 	};
 	extendEasing();
 	setTimeout(extendEasing);
-})();
 
-(function(){
-	'use strict';
+	/* Symbol */
 	rb.Symbol = window.Symbol;
 	var id = Math.round(Date.now() * Math.random());
 	rb.getID = function(){
@@ -538,10 +515,8 @@ window.rb.$ = window.jQuery || window.dom;
 			return name + rb.getID();
 		};
 	}
-})();
 
-( function() {
-	'use strict';
+	/* is-teaser delegate */
 	var getSelection = window.getSelection || function(){return {};};
 	var regInputs = /^(?:input|select|textarea|button)$/i;
 
@@ -566,11 +541,7 @@ window.rb.$ = window.jQuery || window.dom;
 			}
 		}
 	});
-})();
-
-/*! focus-within polyfill */
-(function(window, document){
-	'use strict';
+	/*! focus-within polyfill */
 
 	var running = false;
 	var isClass = 'is-focus-within';
@@ -609,16 +580,12 @@ window.rb.$ = window.jQuery || window.dom;
 	document.addEventListener('blur', update, true);
 	update();
 
-})(window, document);
 
-/* keyboard-focus */
-(function(window, document){
-	'use strict';
+	/* keyboard-focus */
 	var keyboardBlocktimer;
 	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
-	var root = document.documentElement;
-	var $ = rb.$;
+	var root = rb.root;
 
 	var unblockKeyboardFocus = function(){
 		isKeyboardBlocked = false;
@@ -665,15 +632,9 @@ window.rb.$ = window.jQuery || window.dom;
 	window.addEventListener('focus', blockKeyboardFocus);
 	document.addEventListener('focus', blockKeyboardFocus);
 
-	if($){
-		$(document).on('rbscriptfocus', blockKeyboardFocus);
-	}
-
-})(window, document);
+	$(document).on('rbscriptfocus', blockKeyboardFocus);
 
 
-(function(){
-	'use strict';
 	var regStartQuote = /^"*'*"*/;
 	var regEndQuote = /"*'*"*$/;
 	var regEscapedQuote = /\\"/g;
@@ -701,15 +662,13 @@ window.rb.$ = window.jQuery || window.dom;
 		}
 		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$.noop};
 	};
-})();
 
-(function(){
-	'use strict';
-	var i = 0;
+
+	var headTryIndex = 0;
 	var cssConfig = {mqs: {}, currentMQ: '', beforeMQ: '', mqChange: rb.$.Callbacks()};
 	var parseCSS = function(){
 		var head = document.getElementsByTagName('head')[0];
-		if(!head && i < 999){
+		if(!head && headTryIndex < 999){
 			setTimeout(parseCSS);
 			return;
 		}
@@ -747,10 +706,8 @@ window.rb.$ = window.jQuery || window.dom;
 			return cssConfig;
 		}
 	});
-})();
 
-(function(){
-	'use strict';
+
 	var console = window.console || {};
 	var log = console.log && console.log.bind ? console.log : rb.$.noop;
 
@@ -775,11 +732,6 @@ window.rb.$ = window.jQuery || window.dom;
 	};
 
 	rb.addLog(rb, true);
-})();
-
-(function(){
-	'use strict';
-	var rb = window.rb;
 
 	var cbs = [];
 	var setup = function(){
@@ -817,27 +769,32 @@ window.rb.$ = window.jQuery || window.dom;
 			}
 		}
 	};
-})();
 
-(function(){
-	'use strict';
-	var $ = rb.$;
-	var regSplit = /\s*,\s*/g;
+
+	var regSplit = /\s*,\s*|\s+/g;
 	var regNum = /:(\d)+\s*$/;
 	var regTarget = /^\s*\.*([a-z0-9-_]+)\((.*?)\)\s*/i;
 
 	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
 		$.fn[action[0]] = function(sel){
 			var array = [];
-			this.elements.forEach(function(elem){
-				var found = false;
-				var element = elem[action[0]];
-				if(!found && element && (!sel || element.matches(sel))){
-					found = true;
-					array.push(element);
+			var found = false;
+
+			this.each(function(i, elem){
+				var element = elem[action[1]];
+				while(!found && element){
+					if((!sel || element.matches(sel))){
+						found = true;
+						array.push(element);
+						break;
+					} else {
+						element = element[action[1]];
+					}
 				}
+
+
 			});
-			return new Dom( array );
+			return $( array );
 		};
 	});
 
@@ -861,7 +818,7 @@ window.rb.$ = window.jQuery || window.dom;
 			targetStr = targetStr.split(regSplit);
 			target = [];
 			for(i = 0, len = targetStr.length; i < len; i++){
-				temp = document.getElementById(targetStr[i]);
+				temp = targetStr[i] && document.getElementById(targetStr[i]);
 				if(temp){
 					target.push(temp);
 				}
@@ -873,11 +830,8 @@ window.rb.$ = window.jQuery || window.dom;
 		}
 
 		return target || [];
-	}
-})();
+	};
 
-(function(){
-	'use strict';
 	var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 	rb.getPropertyDescriptor = function getPropertyDescriptor(o, name) {
@@ -889,13 +843,12 @@ window.rb.$ = window.jQuery || window.dom;
 		}
 		return descriptor;
 	};
-})();
+})(window, document);
 
 (function(window, document) {
 	'use strict';
 
 	var elements, useMutationEvents, implicitlyStarted;
-	var docElem = document.documentElement;
 
 	var life = {};
 	var removeElements = [];
@@ -905,6 +858,7 @@ window.rb.$ = window.jQuery || window.dom;
 	var $ = rb.$;
 	var widgetExpando = rb.Symbol('_rbWidget');
 	var expando = rb.Symbol('_rbCreated');
+	var docElem = rb.root;
 
 	var registerElement = function(name, LifeClass){
 		var proto = Object.create(HTMLElement.prototype);
@@ -929,6 +883,20 @@ window.rb.$ = window.jQuery || window.dom;
 		document.registerElement('rb-' + name, {
 			prototype: proto
 		});
+	};
+
+	var extendStatics = function(Class, proto, SuperClasss, prop){
+
+		Object.defineProperty(Class, prop, {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+			value: Object.assign({}, SuperClasss[prop], proto[prop], Class[prop])
+		});
+
+		if(proto[prop]){
+			proto[prop] = null;
+		}
 	};
 
 	window.rb.life = life;
@@ -989,9 +957,10 @@ window.rb.$ = window.jQuery || window.dom;
 		var superProto = Object.getPrototypeOf(proto);
 		var superClass = superProto.constructor;
 
-		LifeClass.defaults = Object.assign({}, superClass.defaults || {}, LifeClass.defaults || {});
+		extendStatics(LifeClass, proto, superClass, 'defaults');
+		extendStatics(LifeClass, proto, superClass, 'events');
 
-		if(!proto.name){
+		if(!proto.hasOwnProperty('name')){
 			proto.name = name;
 		}
 
@@ -1401,7 +1370,9 @@ window.rb.$ = window.jQuery || window.dom;
 	};
 
 	life.Widget = rb.Class.extend({
+
 		defaults: {},
+
 		init: function(element){
 			this.element = element;
 			this.$element = $(element);
@@ -1414,12 +1385,45 @@ window.rb.$ = window.jQuery || window.dom;
 
 			this.parseOptions(this.options, this.constructor.defaults);
 
-			this.setupLifeOptions();
+			this._setupLifeOptions();
 
 			this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
+			this._setupEventsByEvtObj();
 		},
+
 		widget: life.getWidget,
-		setupLifeOptions: function(){
+
+		_setupEventsByEvtObj: function(){
+			var evt, evtName, selector;
+			var evts = this.constructor.events;
+			var that = this;
+
+			for(evt in evts){
+				selector = evt.split(' ');
+				evtName = selector.shift();
+
+				/* jshint loopfunc: true */
+				(function(evtName, selector, method){
+					var args = [evtName];
+
+					if(selector){
+						args.push(selector);
+					}
+
+					args.push((typeof method == 'string') ? function(e){
+						return that[method].apply(that, arguments);
+					} :
+					function(){
+						return method.apply(that, arguments);
+					});
+
+					that.$element.on.apply(that.$element, args);
+
+				})(evtName, selector.join(' '), evts[evt]);
+			}
+		},
+
+		_setupLifeOptions: function(){
 			var runner, styles;
 			var old = {};
 			var that = this;
@@ -1482,9 +1486,11 @@ window.rb.$ = window.jQuery || window.dom;
 			try {
 				setTimeout(function(){
 					elem.focus();
+					rb.$doc.trigger('rbscriptfocus');
 				}, 0);
 			} catch(e){}
 		},
+
 		setWidgetFocus: function(element){
 			this._activeElement = document.activeElement;
 			var focusElement;
@@ -1493,7 +1499,7 @@ window.rb.$ = window.jQuery || window.dom;
 				if(element.nodeType == 1){
 					focusElement = element;
 				} else if(typeof element == 'string'){
-					focusElement = this.element.querySelector(element);
+					focusElement = rb.elementFromStr(element, this.element)[0];
 				}
 			} else {
 				focusElement = this.element.querySelector('.js-autofocus');
@@ -1505,17 +1511,19 @@ window.rb.$ = window.jQuery || window.dom;
 				this.setFocus(focusElement);
 			}
 		},
+
 		restoreFocus: function(checkInside){
 			var activeElem = this._activeElement;
 			if(!activeElem){return;}
 
 			this._activeElement = null;
-			if(!checkInside || this.element.contains(document.activeElement)){
+			if(!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)){
 				this.setFocus(activeElem);
 			}
 		},
+
 		parseOptions: function(opts, defaults){
-			var options = Object.assign(opts || {}, defaults || {}, this.parseCSSOptions() || {}, this.parseHTMLOptions());
+			var options = Object.assign(opts || {}, defaults, this.parseCSSOptions(), this.parseHTMLOptions());
 			this.setOptions(options);
 		},
 
@@ -1570,11 +1578,6 @@ window.rb.$ = window.jQuery || window.dom;
 
 	life.Widget.extend = function(name, prop){
 		var Class = rb.Class.extend.call(this, prop);
-
-		if(prop.defaults){
-			Class.defaults = prop.defaults;
-			Class.prototype.defaults = null;
-		}
 
 		if(prop.statics){
 			Object.assign(Class, prop.statics);
