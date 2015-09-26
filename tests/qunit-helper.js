@@ -6,7 +6,7 @@
 	};
 	var rbTest = {
 		_iframe: null,
-		resize: function(width, height){
+		_resize: function(width, height){
 			if(!width){
 				width = size.width;
 			}
@@ -17,6 +17,14 @@
 			this._iframe.style.height = height + 'px';
 			return this;
 		},
+		resize: function(){
+			var that = this;
+			var args = arguments;
+			this.promise.then(function(){
+				that._resize.apply(that, args);
+			});
+			return this.wait();
+		},
 		load: function(src){
 			var that = this;
 			if(!this._iframe){
@@ -26,7 +34,7 @@
 				this._iframe.style.left = '-99999999px';
 				document.body.appendChild(this._iframe);
 			}
-			this.resize();
+			this._resize();
 
 			this.promise = new Promise(function(resolve){
 				var complete = function(){
