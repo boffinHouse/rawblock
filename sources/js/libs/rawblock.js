@@ -1326,10 +1326,11 @@ if(!window.rb){
 (function(window, document, life, undefined){
 	'use strict';
 
-	var regData = /^data-/;
 	var rb = window.rb;
 	var $ = rb.$;
 	var widgetExpando = life.widgetExpando;
+	var regData = /^data-/;
+	var regName = /\{name}/g
 
 	life.getWidget = function(element, key, args){
 		var ret, moduleId;
@@ -1407,7 +1408,7 @@ if(!window.rb){
 					var args = [evtName];
 
 					if(selector){
-						args.push(selector);
+						args.push(selector.replace(regName, that.name));
 					}
 
 					args.push((typeof method == 'string') ? function(e){
