@@ -1002,22 +1002,23 @@ if(!window.rb){
 	};
 
 	life.create = function(element, LifeClass, _fromWebComponent) {
-		var instance, trigger;
+		var instance;
 
 		if ( !(instance = element[widgetExpando]) ) {
 			instance = new LifeClass( element );
 			element[widgetExpando] = instance;
-			trigger = true;
 		}
 
 		rb.rAFQueue.add(function(){
 			element.classList.add( attachedClass );
 		});
 
-		if (!element[expando] && instance && (instance.attached || instance.detached || instance.attachedOnce)) {
+		if (!_fromWebComponent && !element[expando] && instance && (instance.attached || instance.detached)) {
 
-			if(!_fromWebComponent && (instance.attached || instance.detached)){
-				life._attached.push(element);
+			if((instance.attached || instance.detached)){
+				if(life._attached.indexOf(element) == -1){
+					life._attached.push(element);
+				}
 				if(instance.attached){
 					life.batch.add(function() {
 						instance.attached();
@@ -1025,11 +1026,6 @@ if(!window.rb){
 				}
 			}
 
-			if(instance.attachedOnce && trigger){
-				life.batch.add(function() {
-					instance.attachedOnce();
-				});
-			}
 			life.batch.timedRun();
 		}
 		element[expando] = true;
@@ -1281,7 +1277,7 @@ if(!window.rb){
 
 					//always allow NFE call for frequently called methods without this._super, but functionName._super
 					//see http://techblog.netflix.com/2014/05/improving-performance-of-our-javascript.html
-					origDescriptor[descProp]._super = superDescriptor[descProp];
+					origDescriptor[descProp]._supbase = superDescriptor[descProp];
 				}
 			}
 

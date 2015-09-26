@@ -20,9 +20,6 @@
 				detached: function(){
 
 				},
-				attachedOnce: function(){
-
-				}
 			})
 		};
 
@@ -130,7 +127,6 @@
 
 				assert.equal(Dummy.prototype.init.callCount, 2);
 				assert.equal(Dummy.prototype.attached.callCount, 2);
-				assert.equal(Dummy.prototype.attachedOnce.callCount, 2);
 
 				assert.ok(Dummy.prototype.init.calledBefore(Dummy.prototype.attached));
 				assert.notOk(Dummy.prototype.detached.calledOnce);
@@ -160,7 +156,6 @@
 				assert.equal(Dummy.prototype.init.callCount, 2);
 				assert.equal(Dummy.prototype.attached.callCount, 3);
 				assert.equal(Dummy.prototype.detached.callCount, 2);
-				assert.equal(Dummy.prototype.attachedOnce.callCount, 2);
 			})
 			.then(done)
 		;

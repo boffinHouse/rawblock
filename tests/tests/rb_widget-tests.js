@@ -119,8 +119,8 @@
 				baseMethod: function (){
 					this._super();
 				},
-				nfeMethod: function (){
-					this.nfeMethod._super.apply(this, arguments);
+				nfeMethod: function nfeMethod(){
+					nfeMethod._supbase.apply(this, arguments);
 				},
 			})
 		};
