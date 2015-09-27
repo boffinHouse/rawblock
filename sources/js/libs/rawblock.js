@@ -265,7 +265,7 @@ if(!window.rb){
 
 			this.fire();
 		}
-	}, {that:rb.resize});
+	}, {that: rb.resize});
 
 	/* elementResize */
 
@@ -423,11 +423,11 @@ if(!window.rb){
 	})();
 
 	rb.rAF = function(fn, thisArg, inProgress, isBatched){
-		var running, args, that;
+		var running, args, that, options;
 		var batchStack = [];
 		var run = function(){
 			running = false;
-			if(isBatched){
+			if(options.batch){
 				while(batchStack.length){
 					args = batchStack.shift();
 					fn.apply(args[0], args[1]);
@@ -438,20 +438,35 @@ if(!window.rb){
 		};
 		var rafedFn = function(){
 			args = arguments;
-			that = thisArg || this || window;
-			if(isBatched){
+			that = options.that || this;
+			if(options.batch){
 				batchStack.push([that, args]);
 			}
 			if(!running){
 				running = true;
-				rb.rAFQueue.add(run, inProgress);
+				rb.rAFQueue.add(run, options.inProgress);
 			}
 		};
 
-		if(typeof thisArg == 'boolean' && arguments.length < 4){
-			inProgress = thisArg;
-			isBatched = inProgress;
-			thisArg = null;
+		if(thisArg && typeof thisArg == 'object' && (('that' in thisArg) || ('batch' in thisArg) || ('inProgress' in thisArg))){
+			options = thisArg;
+		} else {
+			if(typeof thisArg == 'boolean' && arguments.length < 4){
+				inProgress = thisArg;
+				isBatched = inProgress;
+				thisArg = null;
+			}
+
+			options = {};
+			if(thisArg !== undefined){
+				options.that = thisArg;
+			}
+			if(isBatched){
+				options.batch = isBatched;
+			}
+			if(inProgress){
+				options.inProgress = inProgress;
+			}
 		}
 
 		rafedFn._rbUnrafedFn = fn;
@@ -530,7 +545,7 @@ if(!window.rb){
 
 	/* is-teaser delegate */
 	var getSelection = window.getSelection || function(){return {};};
-	var regInputs = /^(?:input|select|textarea|button)$/i;
+	var regInputs = /^(?:input|select|textarea|button|a)$/i;
 
 	document.addEventListener('click', function(e){
 
@@ -612,7 +627,7 @@ if(!window.rb){
 	var _removeKeyBoardFocus = rb.rAF(function(){
 		hasKeyboardFocus = false;
 		root.classList.remove('is-keyboardfocus');
-	}, null, true);
+	}, {inProgress: true});
 
 	var removeKeyBoardFocus = function(){
 		if(hasKeyboardFocus){
@@ -626,7 +641,7 @@ if(!window.rb){
 			hasKeyboardFocus = true;
 			root.classList.add('is-keyboardfocus');
 		}
-	}, null, true);
+	}, {inProgress: true});
 
 	var pointerEvents = (window.PointerEvent) ?
 			['pointerdown', 'pointerup'] :
@@ -746,21 +761,31 @@ if(!window.rb){
 		document.addEventListener('click', function(e){
 			var i, len, attr, found;
 			var clickElem = e.target.closest('.js-click');
-			if(!clickElem){return;}
+			while(clickElem){
+				for(i = 0, len = cbs.length; i < len;i++){
+					attr = clickElem.getAttribute(cbs[i].attr);
 
-			for(i = 0, len = cbs.length; i < len;i++){
-				attr = clickElem.getAttribute(cbs[i].attr);
+					if(attr != null){
+						found = true;
+						cbs[i].fn(clickElem, e, attr);
+						break;
+					}
+				}
 
-				if(attr != null){
-					found = true;
-					cbs[i].fn(clickElem, e, attr);
-					break;
+				if(!found){
+					clickElem.classList.remove('js-click');
+				}
+
+				clickElem = clickElem.parentNode;
+				if(clickElem && clickElem.closest){
+					clickElem = clickElem.closest('.js-click');
+				}
+
+				if(clickElem && !clickElem.closest){
+					clickElem = null;
 				}
 			}
 
-			if(!found){
-				clickElem.classList.remove('js-click');
-			}
 		}, true);
 	};
 
@@ -1085,7 +1110,7 @@ if(!window.rb){
 		while (removeElements.length) {
 			removeElements.shift().classList.remove(initClass);
 		}
-	}, null, true);
+	}, {inProgress: true});
 
 	life.throttledFindElements = (function() {
 		var setImmediate = window.setImmediate || window.setTimeout;

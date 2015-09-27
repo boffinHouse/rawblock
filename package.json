@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "assemble": "~0.4.42",
+    "babelify": "^6.3.0",
     "blanket": "^1.1.7",
     "fs-extra": "^0.24.0",
     "grunt": "^0.4.5",
