@@ -1091,8 +1091,6 @@ if(!window.rb){
 		extendStatics(LifeClass, proto, superClass, 'defaults');
 		extendStatics(LifeClass, proto, superClass, 'events');
 
-		life.rafFns(proto, LifeClass.writeFns);
-
 		if(!proto.hasOwnProperty('name')){
 			proto.name = name;
 		}
@@ -1127,15 +1125,6 @@ if(!window.rb){
 				registerElement(name, LifeClass);
 			}
 		});
-	};
-
-	life.rafFns = function(proto, list){
-		var i, len;
-		for(i = 0, len = list ? list.length : 0; i < len; i++){
-			if(proto[list[i]] && !proto[list[i]]._rbUnrafedFn){
-				proto[list[i]] = rb.rAF(proto[list[i]], {inProgress: true});
-			}
-		}
 	};
 
 	life.create = function(element, LifeClass, _fromWebComponent) {
@@ -1620,11 +1609,6 @@ if(!window.rb){
 			Class.prototype.statics = null;
 		}
 
-		if(prop.writeFns){
-			Class.writeFns = prop.writeFns;
-			Class.prototype.writeFns = null;
-		}
-
 		life.register(name, Class, noCheck);
 		return Class;
 	};
@@ -1637,8 +1621,6 @@ if(!window.rb){
 			Object.assign(Class, prop.statics);
 		}
 		rb.Class.mixin(Class.prototype, prop);
-
-		life.rafFns(Class.prototype, prop.writeFns);
 
 		return Class;
 	};
