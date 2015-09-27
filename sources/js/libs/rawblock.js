@@ -2,9 +2,6 @@ if(!window.rb){
 	window.rb = {};
 }
 
-
-
-
 (function(window, document, undefined){
 	'use strict';
 	window.rb.$ = window.rb.$ || window.jQuery || window.dom;
@@ -27,12 +24,8 @@ if(!window.rb){
 			options = {};
 		}
 
-		this
-			.stop()
-			.css({overflow: 'hidden', display: 'block', visibility: 'visible'})
-			.animate({height: 0}, {
-				duration: options.duration || 400,
-				easing: options.easing,
+		if(this.length){
+			var opts = Object.assign({}, options, {
 				always: function(){
 					this.style.display = '';
 					this.style.visibility = '';
@@ -40,14 +33,35 @@ if(!window.rb){
 					if(options.always){
 						return options.always.apply(this, arguments);
 					}
-				},
-			})
-		;
+				}
+			});
+
+			this
+				.stop()
+				.css({overflow: 'hidden', display: 'block', visibility: 'inherit'})
+				.animate({height: 0}, opts)
+			;
+		}
+		return this;
 	};
 
 	$.fn.rbSlideDown = function(options){
+		var opts;
 		if(!options){
 			options = {};
+		}
+
+		if(this.length){
+			opts = Object.assign({}, options, {
+				always: function(){
+					this.style.overflow = '';
+					this.style.height = '';
+
+					if(options.always){
+						return options.always.apply(this, arguments);
+					}
+				},
+			});
 		}
 
 		return this.each(function(){
@@ -55,24 +69,13 @@ if(!window.rb){
 			var $panel = $(this);
 			var startHeight = this.clientHeight + 'px';
 
-			$panel.css({overflow: 'hidden', display: 'block', height: 'auto', visibility: 'visible'});
+			$panel.css({overflow: 'hidden', display: 'block', height: 'auto', visibility: 'inherit'});
 
 			endValue = this.clientHeight;
 
 			$panel
 				.css({height: startHeight})
-				.animate({height: endValue}, {
-					duration: options.duration || 400,
-					easing: options.easing,
-					always: function(){
-						this.style.overflow = '';
-						this.style.height = '';
-
-						if(options.always){
-							return options.always.apply(this, arguments);
-						}
-					},
-				})
+				.animate({height: endValue}, opts)
 			;
 		});
 	};
@@ -103,7 +106,7 @@ if(!window.rb){
 	rb.getScrollingElement = getScrollingElement;
 
 	$.fn.scrollIntoView = function(options){
-		var bbox, distance, scrollingElement;
+		var bbox, distance, scrollingElement, opts;
 		var elem = this.get(0);
 
 		if(elem){
@@ -112,33 +115,42 @@ if(!window.rb){
 			distance = Math.max(Math.abs(bbox.top), Math.abs(bbox.left));
 			scrollingElement = getScrollingElement();
 
+			if(options.easing){
+				rb.addEasing(options.easing);
+			}
+
+			if(!options.duration){
+				options.duration = Math.min(1700, Math.max(99, distance * 0.6));
+			}
+
+			opts = Object.assign({}, options, {
+				always: function(){
+					if(options.focus){
+						try {
+							options.focus.focus();
+							rb.$doc.trigger('rbscriptfocus');
+						} catch(e){}
+					}
+
+					if(options.hash){
+						location.hash = typeof options.hash == 'string' ?
+							options.hash :
+						elem.id || elem.name
+						;
+					}
+
+					if(options.always){
+						options.always.call(elem);
+					}
+				}
+			});
+
 			$(scrollingElement).animate(
 				{
 					scrollTop: scrollingElement.scrollTop + bbox.top + (options.offsetTop || 0),
 					scrollLeft: scrollingElement.scrollLeft + bbox.left + (options.offsetLeft || 0),
 				},
-				{
-					duration: options.duration || Math.min(1700, Math.max(99, distance * 0.6)),
-					always: function(){
-						if(options.focus){
-							try {
-								options.focus.focus();
-							} catch(e){}
-						}
-
-						if(options.hash){
-							location.hash = typeof options.hash == 'string' ?
-								options.hash :
-							elem.id || elem.name
-							;
-						}
-
-						if(options.always){
-							options.always.call(elem);
-						}
-					},
-					easing: options.easing
-				}
+				opts
 			);
 		}
 		return this;
@@ -345,8 +357,8 @@ if(!window.rb){
 	})();
 
 	rb.parseValue = (function() {
-		var regNumber = /^\-*\+*\d+\.*\d*$/;
-		var regObj = /^\[.*\]|\{.*\}$/;
+		var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
+		var regObj = /^\[.*?]|\{.*?}$/;
 		return function( attrVal ) {
 
 			if(attrVal == 'true'){
@@ -632,11 +644,11 @@ if(!window.rb){
 	window.addEventListener('focus', blockKeyboardFocus);
 	document.addEventListener('focus', blockKeyboardFocus);
 
-	$(document).on('rbscriptfocus', blockKeyboardFocus);
+	rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
 
 
-	var regStartQuote = /^"*'*"*/;
-	var regEndQuote = /"*'*"*$/;
+	var regStartQuote = /^"{0,1}'{0,2}"{0,1}/;
+	var regEndQuote = /"{0,1}'{0,1}"{0,1}$/;
 	var regEscapedQuote = /\\"/g;
 	rb.removeLeadingQuotes = function(str){
 		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
@@ -663,17 +675,12 @@ if(!window.rb){
 		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$.noop};
 	};
 
-
-	var headTryIndex = 0;
 	var cssConfig = {mqs: {}, currentMQ: '', beforeMQ: '', mqChange: rb.$.Callbacks()};
 	var parseCSS = function(){
-		var head = document.getElementsByTagName('head')[0];
-		if(!head && headTryIndex < 999){
-			setTimeout(parseCSS);
-			return;
-		}
-		var styles = rb.parsePseudo(head) || {};
-		var beforeStyle = rb.getStyles(head, '::before');
+		var root = rb.root;
+
+		var styles = rb.parsePseudo(root) || {};
+		var beforeStyle = rb.getStyles(root, '::before');
 		var currentStyle = '';
 
 		var detectMQChange = function(){
@@ -771,9 +778,9 @@ if(!window.rb){
 	};
 
 
-	var regSplit = /\s*,\s*|\s+/g;
+	var regSplit = /\s*?,\s*?|\s+?/g;
 	var regNum = /:(\d)+\s*$/;
-	var regTarget = /^\s*\.*([a-z0-9-_]+)\((.*?)\)\s*/i;
+	var regTarget = /^\s*?\.?([a-z0-9-_]+)\((.*?)\)\s*?/i;
 
 	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
 		$.fn[action[0]] = function(sel){
@@ -962,10 +969,6 @@ if(!window.rb){
 
 		if(!proto.hasOwnProperty('name')){
 			proto.name = name;
-		}
-
-		if(!LifeClass.name){
-			LifeClass.name = name;
 		}
 
 		if(rb.widgets[ name ]){
@@ -1326,7 +1329,7 @@ if(!window.rb){
 	var $ = rb.$;
 	var widgetExpando = life.widgetExpando;
 	var regData = /^data-/;
-	var regName = /\{name}/g
+	var regName = /\{name}/g;
 
 	life.getWidget = function(element, key, args){
 		var ret, moduleId;
@@ -1425,7 +1428,7 @@ if(!window.rb){
 			var old = {};
 			var that = this;
 
-			if (this.options.watchCSS) {
+			if (this.options.watchCss) {
 				styles = rb.getStyles(that.element, '::after');
 				old.attached = this.attached;
 				old.detached = this.detached;

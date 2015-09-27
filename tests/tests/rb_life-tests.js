@@ -76,6 +76,36 @@
 		;
 	});
 
+	QUnit.test("click create", function( assert ){
+		var done = assert.async();
+		var Dummy = modules.dummy.module;
+		var name = modules.dummy.name;
+		var div = document.createElement('div');
+
+		div.className = 'js-click';
+		div.setAttribute('data-module', name);
+		div.setAttribute('data-watch-css', 'true');
+
+		rb.$('#qunit-fixture').append(div);
+
+		assert.notOk(Dummy.prototype.attached.calledOnce);
+
+		if(div.click){
+			div.click();
+		} else {
+			rb.$(div).trigger('click');
+		}
+
+		QUnit.afterAF()
+			.then(function(){
+				assert.ok(div.classList.contains('js-rb-attached'));
+				assert.ok(Dummy.prototype.attached.calledOnce);
+				assert.notOk(Dummy.prototype.detached.calledOnce);
+			})
+			.then(done)
+		;
+	});
+
 	QUnit.test("findElements", function( assert ){
 		var done = assert.async();
 		var dummyName = modules.dummy.name;

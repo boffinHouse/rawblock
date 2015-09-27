@@ -17,7 +17,7 @@
 
 			$rbExportMqMap: map-merge($rbExportMqMap, ($name: map-get($mq, 'media')));
 
-			head {
+			html {
 				@media #{map-get($mq, 'media')}{
 					&::before {
 						content: '#{$name}';
@@ -29,7 +29,7 @@
 		}
 	}
 
-	head {
+	html {
 		@include exportToJS(map-merge($mainconfig, (mqs: $rbExportMqMap)));
 	}
 }

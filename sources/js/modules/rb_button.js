@@ -1,10 +1,4 @@
-(function (window, factory) {
-	var myModule = factory(window, window.document);
-
-	if (typeof module == 'object' && module.exports) {
-		module.exports = myModule;
-	}
-}(typeof window != 'undefined' ? window : this, function (window, document) {
+(function (window, document, undefined) {
 	'use strict';
 	var rb = window.rb;
 	var $ = rb.$;
@@ -19,14 +13,11 @@
 			this._super(element);
 
 			this._setTarget = rb.rAF(this._setTarget, null, true);
-
-			this.clickAction = this.clickAction.bind(this);
-			this.setupEvents();
 		},
-		setupEvents: function(){
-			this.$element.on('click', this.clickAction);
+		events: {
+			click: '_onClick',
 		},
-		clickAction: function(){
+		_onClick: function(){
 			var target = this.getTarget() || {};
 			var widget = this.widget(target);
 
@@ -66,4 +57,4 @@
 		},
 	});
 
-}));
+})(window, document);
