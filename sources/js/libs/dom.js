@@ -178,6 +178,11 @@
 			if(options.bubbles == null){
 				options.bubbles = true;
 			}
+
+			if(options.cancelable == null){
+				options.cancelable = true;
+			}
+
 			event = new CustomEvent(type, options);
 
 			if(!event.isDefaultPrevented){

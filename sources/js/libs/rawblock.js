@@ -126,10 +126,7 @@ if(!window.rb){
 			opts = Object.assign({}, options, {
 				always: function(){
 					if(options.focus){
-						try {
-							options.focus.focus();
-							rb.$doc.trigger('rbscriptfocus');
-						} catch(e){}
+						rb.setFocus(options.focus);
 					}
 
 					if(options.hash){
@@ -572,6 +569,16 @@ if(!window.rb){
 			}
 		}
 	});
+
+	rb.setFocus = function(elem){
+		try {
+			setTimeout(function(){
+				elem.focus();
+				rb.$doc.trigger('rbscriptfocus');
+			}, 9);
+		} catch(e){}
+	};
+
 	/*! focus-within polyfill */
 
 	var running = false;
@@ -1507,14 +1514,7 @@ if(!window.rb){
 			return evt;
 		},
 
-		setFocus: function(elem){
-			try {
-				setTimeout(function(){
-					elem.focus();
-					rb.$doc.trigger('rbscriptfocus');
-				}, 0);
-			} catch(e){}
-		},
+		setFocus: rb.setFocus,
 
 		setWidgetFocus: function(element){
 			this._activeElement = document.activeElement;
