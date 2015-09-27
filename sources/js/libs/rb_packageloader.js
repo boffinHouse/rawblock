@@ -1,15 +1,4 @@
-
-(function(factory) {
-	if(typeof define === 'function' && define.amd){
-		define(factory);
-	}
-	else if(typeof module == 'object' && module.exports){
-		module.exports = factory();
-	}
-	else {
-		factory();
-	}
-}(function() {
+(function(window, document) {
 	'use strict';
 
 	var regPath = /^[\.\/]|:\//;
@@ -23,7 +12,7 @@
 		var packagePaths;
 		var packages = loadPackage.packages[moduleId];
 		if(!packages){
-			if(!onlyKnown){
+			if(!onlyKnown && (!loadPackage.onlyKnown || onlyKnown === false)){
 				packages = [moduleId];
 				packages.isModule = true;
 			} else {
@@ -44,6 +33,7 @@
 
 	loadPackage.basePath = '';
 	loadPackage.modulePath = '';
+	loadPackage.onlyKnown = false;
 
 	loadPackage.packages = {};
 
@@ -88,6 +78,5 @@
 		window.rb = {};
 	}
 	window.rb.loadPackage = loadPackage;
-	window.loadPackage = loadPackage;
 	return loadPackage;
-}));
+})(window, document);

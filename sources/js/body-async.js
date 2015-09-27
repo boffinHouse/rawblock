@@ -4,9 +4,10 @@ import Handlebars from '../../node_modules/handlebars/dist/handlebars.runtime';
 import templates from './templates';
 templates.call(window, Handlebars);
 */
-var loadPackage = require('./libs/rb_packageloader');
+require('./libs/rb_packageloader');
 
 window.BezierEasing = require('bezier-easing');
+
 //load dom or jQuery
 require('./libs/dom');
 
@@ -20,17 +21,19 @@ if(!('ASSETBASEPATH' in window)){
 	window.ASSETBASEPATH = '';
 	rb.log('set ASSETBASEPATH to "". Please configure!');
 }
-loadPackage.basePath = window.ASSETBASEPATH + 'js/';
-loadPackage.modulePath = window.ASSETBASEPATH + 'js/modules/';
+rb.loadPackage.basePath = window.ASSETBASEPATH + 'js/';
+rb.loadPackage.modulePath = window.ASSETBASEPATH + 'js/modules/';
+
+//loadPackage.onlyKnown = true;
 
 
 /* define loading packages for non-crucial behaviors */
 /* either require modules or configure package loader */
-//loadPackage.addPackage('moduleId', ['dependecy-source.js', 'source.js'])
+//loadPackage.addPackage('moduleId/packageId', ['dependency-source.js', 'source.js'])
 
 
 /* require crucial or small/often used behaviors directly */
-require('./modules/rb_button');
+//require('./modules/*');
 
 /* init after all modules are loaded or package loader is configured */
 rb.life.init();

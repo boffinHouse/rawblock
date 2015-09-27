@@ -880,7 +880,7 @@ if(!window.rb){
 (function(window, document) {
 	'use strict';
 
-	var elements, useMutationEvents, implicitlyStarted;
+	var elements, useMutationEvents, implicitlyStarted, lifeBatch;
 
 	var life = {};
 	var removeElements = [];
@@ -931,236 +931,18 @@ if(!window.rb){
 		}
 	};
 
-	window.rb.life = life;
-
-	life.autoStart = true;
-
-	life.init = function(options){
-		if (elements) {rb.log('only once');return;}
-
-		if (options) {
-			useMutationEvents = options.useMutationEvents || false;
-		}
-
-		elements = document.getElementsByClassName(initClass);
-
-		life.batch = life.createBatch();
-
-		life.initObserver();
-		life.throttledFindElements();
-
-		life.initClickCreate();
-	};
-
-	life.expando = expando;
-	life.widgetExpando = widgetExpando;
-
-	life.createBatch = function(){
-		var runs;
-		var batch = [];
-		var run = function() {
-			while ( batch.length ) {
-				batch.shift()();
-			}
-			runs = false;
-		};
-		return {
-			run: run,
-			add: function( fn ) {
-				batch.push( fn );
-			},
-			timedRun: function() {
-				if ( !runs ) {
-					runs = true;
-					setTimeout( run );
-				}
-			}
-		};
-	};
-
-	life._failed = {};
-	life._behaviors = {};
-	rb.widgets = life._behaviors;
-	life._attached = [];
-	life.customElements = false;
-
-	life.register = function(name, LifeClass, noCheck) {
-		var proto = LifeClass.prototype;
-		var superProto = Object.getPrototypeOf(proto);
-		var superClass = superProto.constructor;
-
-		extendStatics(LifeClass, proto, superClass, 'defaults');
-		extendStatics(LifeClass, proto, superClass, 'events');
-
-		if(!proto.hasOwnProperty('name')){
-			proto.name = name;
-		}
-
-		if(rb.widgets[ name ]){
-			rb.log(name +' already exists.');
-		}
-
-		rb.widgets[ name ] = LifeClass;
-
-		if(name.charAt(0) == '_'){return;}
-
-		if ( !noCheck ) {
-			if(!elements && !implicitlyStarted){
-				implicitlyStarted = true;
-				setTimeout(function(){
-					if(!elements && life.autoStart){
-						$(function(){
-							if(!elements) {
-								life.init();
-							}
-						});
-					}
-				});
-			} else if(elements) {
-				life.throttledFindElements();
-			}
-		}
-
-		setTimeout(function(){
-			if(life.customElements && document.registerElement){
-				registerElement(name, LifeClass);
-			}
-		});
-
-	};
-
-	life.create = function(element, LifeClass, _fromWebComponent) {
-		var instance;
-
-		if ( !(instance = element[widgetExpando]) ) {
-			instance = new LifeClass( element );
-			element[widgetExpando] = instance;
-		}
-
-		rb.rAFQueue.add(function(){
-			element.classList.add( attachedClass );
-		});
-
-		if (!_fromWebComponent && !element[expando] && instance && (instance.attached || instance.detached)) {
-
-			if((instance.attached || instance.detached)){
-				if(life._attached.indexOf(element) == -1){
-					life._attached.push(element);
-				}
-				if(instance.attached){
-					life.batch.add(function() {
-						instance.attached();
-					});
-				}
-			}
-
-			life.batch.timedRun();
-		}
-		element[expando] = true;
-		instance._created = true;
-
-		return instance;
-	};
-
-	life.findElements = function() {
-		var module, modulePath, moduleId, i;
-
-		var len = elements.length;
-
-		for ( i = 0; i < len; i++ ) {
-			module = elements[ i ];
-
-			if(module[expando]){
-				removeElements.push( module );
-				continue;
-			}
-
-			modulePath = module.getAttribute( 'data-module' ) || '';
-			moduleId = modulePath.split( '/' );
-			moduleId = moduleId[ moduleId.length - 1 ];
-
-			if ( rb.widgets[ moduleId ] ) {
-				life.create( module, rb.widgets[ moduleId ] );
-				removeElements.push( module );
-			}
-			else if ( life._failed[ moduleId ] ) {
-				removeElements.push( module );
-			}
-			else if ( modulePath && rb.loadPackage ) {
-				/* jshint loopfunc: true */
-				(function (module, modulePath, moduleId) {
-					rb.loadPackage(modulePath).then(function () {
-						if (!rb.widgets[ moduleId ]) {
-							life._failed[ moduleId ] = true;
-						}
-					});
-				})(module, modulePath, moduleId);
-			}
-			else {
-				life._failed[ moduleId ] = true;
-				removeElements.push(module);
-			}
-		}
-
-		life.removeInitClass();
-		life.batch.run();
-	};
-
-	life.removeInitClass = rb.rAF(function(){
-		while (removeElements.length) {
-			removeElements.shift().classList.remove(initClass);
-		}
-	}, {inProgress: true});
-
-	life.throttledFindElements = (function() {
-		var setImmediate = window.setImmediate || window.setTimeout;
-		var requestAnimationFrame = window.requestAnimationFrame;
-		var runs = false;
-		var runImmediate = function() {
-			runs = false;
-			life.findElements();
-		};
-		var rAFRun = function() {
-			setImmediate(runImmediate);
-		};
-		return function () {
-			if ( !runs ) {
-				runs = true;
-				requestAnimationFrame( rAFRun );
-			}
-		};
-	})();
-
-	life.destroyWidget = function(instance, index){
-		var element = instance.element;
-
-		if(index == null){
-			index = life._attached.indexOf(element);
-		}
-		element.classList.remove( attachedClass );
-
-		if(element[expando]){
-			delete element[expando];
-		}
-		if ( instance.detached ) {
-			instance.detached( element, instance );
-		}
-
-		life._attached.splice(index, 1);
-	};
-
-	life.initClickCreate = function(){
-		life.initClickCreate = $.noop;
+	var initClickCreate = function(){
+		initClickCreate = $.noop;
 		rb.click.add('module', function(elem){
 			life.getWidget(elem);
 			rb.rAFQueue.add(function(){
 				elem.classList.remove('js-click');
 			}, true);
-			life.batch.run();
+			lifeBatch.run();
 		});
 	};
 
-	life.initObserver = function() {
+	var initObserver = function() {
 		var removeWidgets = (function(){
 			var runs, timer;
 			var i = 0;
@@ -1242,6 +1024,221 @@ if(!window.rb){
 				};
 			})());
 		}
+	};
+
+	var createBatch = function(){
+		var runs;
+		var batch = [];
+		var run = function() {
+			while ( batch.length ) {
+				batch.shift()();
+			}
+			runs = false;
+		};
+		return {
+			run: run,
+			add: function( fn ) {
+				batch.push( fn );
+			},
+			timedRun: function() {
+				if ( !runs ) {
+					runs = true;
+					setTimeout( run );
+				}
+			}
+		};
+	};
+
+	window.rb.life = life;
+
+	life.autoStart = true;
+
+	life.expando = expando;
+	life.widgetExpando = widgetExpando;
+
+	life._failed = {};
+	rb.widgets = {};
+	life._behaviors = rb.widgets;
+	life._attached = [];
+	life.customElements = false;
+
+	life.init = function(options){
+		if (elements) {rb.log('only once');return;}
+
+		if (options) {
+			useMutationEvents = options.useMutationEvents || false;
+		}
+
+		elements = document.getElementsByClassName(initClass);
+
+		lifeBatch = createBatch();
+
+		initObserver();
+		life.throttledFindElements();
+
+		initClickCreate();
+	};
+
+	life.register = function(name, LifeClass, noCheck) {
+		var proto = LifeClass.prototype;
+		var superProto = Object.getPrototypeOf(proto);
+		var superClass = superProto.constructor;
+
+		extendStatics(LifeClass, proto, superClass, 'defaults');
+		extendStatics(LifeClass, proto, superClass, 'events');
+
+		if(!proto.hasOwnProperty('name')){
+			proto.name = name;
+		}
+
+		if(rb.widgets[ name ]){
+			rb.log(name +' already exists.');
+		}
+
+		rb.widgets[ name ] = LifeClass;
+
+		if(name.charAt(0) == '_'){return;}
+
+		if ( !noCheck ) {
+			if(!elements && !implicitlyStarted){
+				implicitlyStarted = true;
+				setTimeout(function(){
+					if(!elements && life.autoStart){
+						$(function(){
+							if(!elements) {
+								life.init();
+							}
+						});
+					}
+				});
+			} else if(elements) {
+				life.throttledFindElements();
+			}
+		}
+
+		setTimeout(function(){
+			if(life.customElements && document.registerElement){
+				registerElement(name, LifeClass);
+			}
+		});
+
+	};
+
+	life.create = function(element, LifeClass, _fromWebComponent) {
+		var instance;
+
+		if ( !(instance = element[widgetExpando]) ) {
+			instance = new LifeClass( element );
+			element[widgetExpando] = instance;
+		}
+
+		rb.rAFQueue.add(function(){
+			element.classList.add( attachedClass );
+		});
+
+		if (!_fromWebComponent && !element[expando] && instance && (instance.attached || instance.detached)) {
+
+			if((instance.attached || instance.detached)){
+				if(life._attached.indexOf(element) == -1){
+					life._attached.push(element);
+				}
+				if(instance.attached){
+					lifeBatch.add(function() {
+						instance.attached();
+					});
+				}
+			}
+
+			lifeBatch.timedRun();
+		}
+		element[expando] = true;
+		instance._created = true;
+
+		return instance;
+	};
+
+	life.throttledFindElements = (function() {
+		var setImmediate = window.setImmediate || window.setTimeout;
+		var requestAnimationFrame = window.requestAnimationFrame;
+		var runs = false;
+		var removeInitClass = rb.rAF(function(){
+			while (removeElements.length) {
+				removeElements.shift().classList.remove(initClass);
+			}
+		}, {inProgress: true});
+
+		var runImmediate = function() {
+
+			var module, modulePath, moduleId, i;
+
+			var len = elements.length;
+			runs = false;
+
+			for ( i = 0; i < len; i++ ) {
+				module = elements[ i ];
+
+				if(module[expando]){
+					removeElements.push( module );
+					continue;
+				}
+
+				modulePath = module.getAttribute( 'data-module' ) || '';
+				moduleId = modulePath.split( '/' );
+				moduleId = moduleId[ moduleId.length - 1 ];
+
+				if ( rb.widgets[ moduleId ] ) {
+					life.create( module, rb.widgets[ moduleId ] );
+					removeElements.push( module );
+				}
+				else if ( life._failed[ moduleId ] ) {
+					removeElements.push( module );
+				}
+				else if ( modulePath && rb.loadPackage ) {
+					/* jshint loopfunc: true */
+					(function (module, modulePath, moduleId) {
+						rb.loadPackage(modulePath).then(function () {
+							if (!rb.widgets[ moduleId ]) {
+								life._failed[ moduleId ] = true;
+							}
+						});
+					})(module, modulePath, moduleId);
+				}
+				else {
+					life._failed[ moduleId ] = true;
+					removeElements.push(module);
+				}
+			}
+
+			removeInitClass();
+			lifeBatch.run();
+		};
+		var rAFRun = function() {
+			setImmediate(runImmediate);
+		};
+		return function () {
+			if ( !runs ) {
+				runs = true;
+				requestAnimationFrame( rAFRun );
+			}
+		};
+	})();
+
+	life.destroyWidget = function(instance, index){
+		var element = instance.element;
+
+		if(index == null){
+			index = life._attached.indexOf(element);
+		}
+		element.classList.remove( attachedClass );
+
+		if(element[expando]){
+			delete element[expando];
+		}
+		if ( instance.detached ) {
+			instance.detached( element, instance );
+		}
+
+		life._attached.splice(index, 1);
 	};
 
 	return life;
@@ -1601,7 +1598,7 @@ if(!window.rb){
 
 	rb.addLog(life.Widget.prototype, false);
 
-	life.Widget.extend = function(name, prop){
+	life.Widget.extend = function(name, prop, noCheck){
 		var Class = rb.Class.extend.call(this, prop);
 
 		if(prop.statics){
@@ -1609,7 +1606,7 @@ if(!window.rb){
 			Class.prototype.statics = null;
 		}
 
-		life.register(name, Class);
+		life.register(name, Class, noCheck);
 		return Class;
 	};
 
@@ -1627,3 +1624,65 @@ if(!window.rb){
 
 	rb.Widget = life.Widget;
 })(window, document, rb.life);
+
+(function (window, document, undefined) {
+	'use strict';
+	var rb = window.rb;
+	var $ = rb.$;
+
+	var Button = rb.Widget.extend('button', {
+		defaults: {
+			target: '',
+			type: 'toggle',
+		},
+		init: function(element) {
+
+			this._super(element);
+
+			this._setTarget = rb.rAF(this._setTarget, null, true);
+		},
+		events: {
+			click: '_onClick',
+		},
+		_onClick: function(){
+			var target = this.getTarget() || {};
+			var widget = this.widget(target);
+
+			if (!widget) {
+				return;
+			}
+
+			if(widget[this.options.type]){
+				widget.activeButtonWidget = this;
+				widget[this.options.type]();
+			}
+		},
+		_setTarget: function(){
+			var id = this.getId(this.target);
+			this.isTargeting = false;
+			this.element.removeAttribute('data-target');
+			this.$element.attr({
+				'aria-controls': id
+			});
+			this.targetAttr = id;
+		},
+		setTarget: function(dom) {
+			this.target = dom;
+			this.isTargeting = true;
+			this._setTarget();
+		},
+
+		getTarget: function() {
+			var target = this.$element.attr('data-target') || this.$element.attr('aria-controls') || '';
+
+			if (!this.target || (!this.isTargeting && target != this.targetAttr)) {
+				this.targetAttr = target;
+				this.target = rb.elementFromStr(target, this.element)[0];
+			}
+
+			return this.target;
+		},
+	}, true);
+
+})(window, document);
+
