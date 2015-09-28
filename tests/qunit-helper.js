@@ -1,4 +1,48 @@
 (function(){
+	if(!window.QUnit){return;}
+	QUnit.afterAF = function(cb, delay){
+		if(typeof cb == 'number'){
+			delay = cb;
+			cb = false;
+		}
+
+		var promise = new Promise(function(resolve){
+			var resolveIt = function(){
+				resolve();
+				if(cb){
+					cb();
+				}
+			};
+			var afterFrame = function(){
+				requestAnimationFrame(function(){
+					setTimeout(resolveIt);
+				});
+			};
+
+			if(delay){
+				setTimeout(afterFrame, delay);
+			} else {
+				afterFrame();
+			}
+		});
+
+		return promise;
+	};
+
+	Object.assign(QUnit.assert, {
+		numberClose: function (actual, expected, maxDifference, message) {
+			if(!maxDifference){
+				maxDifference = 1;
+			}
+			var actualDiff = (actual === expected) ? 0 : Math.abs(actual - expected),
+				result = actualDiff <= maxDifference;
+			message = message || (actual + " should be within " + maxDifference + " (inclusive) of " + expected + (result ? "" : ". Actual: " + actualDiff));
+			this.push(result, actual, expected, message);
+		}
+	});
+})();
+
+(function(){
 	'use strict';
 	var size = {
 		width: 300,
@@ -68,47 +112,6 @@
 		}
 	};
 
-	QUnit.afterAF = function(cb, delay){
-		if(typeof cb == 'number'){
-			delay = cb;
-			cb = false;
-		}
-
-		var promise = new Promise(function(resolve){
-			var resolveIt = function(){
-				resolve();
-				if(cb){
-					cb();
-				}
-			};
-			var afterFrame = function(){
-				requestAnimationFrame(function(){
-					setTimeout(resolveIt);
-				});
-			};
-
-			if(delay){
-				setTimeout(afterFrame, delay);
-			} else {
-				afterFrame();
-			}
-		});
-
-		return promise;
-	};
-
-	Object.assign(QUnit.assert, {
-		numberClose: function (actual, expected, maxDifference, message) {
-			if(!maxDifference){
-				maxDifference = 1;
-			}
-			var actualDiff = (actual === expected) ? 0 : Math.abs(actual - expected),
-				result = actualDiff <= maxDifference;
-			message = message || (actual + " should be within " + maxDifference + " (inclusive) of " + expected + (result ? "" : ". Actual: " + actualDiff));
-			this.push(result, actual, expected, message);
-		}
-	});
-
 
 	(function(){
 		var getElementPos = function(elem){
@@ -116,7 +119,7 @@
 
 			return {
 				clientX: pos.left + ((pos.width || 1) / 2),
-				clientY: pos.left + ((pos.height || 1) / 2)
+				clientY: pos.left + ((pos.height || 1) / 2),
 			};
 		};
 		var actions = {
@@ -130,9 +133,23 @@
 						)
 					);
 					elem.dispatchEvent(event);
+					return event;
 				},
 				reg: /^mouse|click$/
 			},
+			//key: {
+			//	dispatch: function(elem, type, props){
+			//		var event = new KeyboardEvent(type,
+			//			Object.assign(
+			//				{bubbles: true, cancelable: true,},
+			//				props
+			//			)
+			//		);
+			//		elem.dispatchEvent(event);
+			//		return event;
+			//	},
+			//	reg: /^key/
+			//},
 			//drag: {
 			//	dispatch: function(){
 			//

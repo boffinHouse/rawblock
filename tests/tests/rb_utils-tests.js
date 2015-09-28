@@ -196,6 +196,7 @@
 		$mainElement = rb.$('#test-wrapper');
 		$mainElement.find('div').elementResize('add', fn);
 		assert.equal(i, 0);
+
 		QUnit.afterAF(19)
 			.then(function(){
 				return QUnit.afterAF(9);
@@ -220,6 +221,50 @@
 			})
 			.then(done)
 		;
+	});
+
+	QUnit.test("rb. .is-teaser delegate", function( assert ){
+		var $mainElement;
+		var i = 0;
+		var ni = 0;
+		var mainI = 0;
+		var fn = function(e){
+			i++;
+		};
+		var nfn = function(e){
+			ni++;
+		};
+		var mainFn = function(){
+			mainI++;
+		};
+		var content = '<div id="test-wrapper" class="is-teaser">' +
+			'<a class="is-teaser-link">ssas</a>' +
+			'</div>';
+
+		rb.$('#qunit-fixture').html(content);
+
+		$mainElement = rb.$('#test-wrapper');
+
+		$mainElement.on('click', mainFn);
+		window.addEventListener('click', fn, true);
+		$mainElement.find('.is-teaser-link').on('click', nfn);
+
+		rbTest.simulate($mainElement.get(0), 'click');
+
+		assert.equal(i, 1);
+		assert.equal(ni, 0);
+		assert.equal(mainI, 1);
+
+		rbTest.simulate($mainElement.find('.is-teaser-link').get(0), 'click');
+
+		assert.equal(i, 2);
+		assert.equal(ni, 1);
+		assert.equal(mainI, 2);
+
+
+		$mainElement.off('click', mainFn);
+		window.removeEventListener('click', fn, true);
+		$mainElement.find('.is-teaser-link').off('click', nfn);
 	});
 
 	QUnit.test("rb. $.scrollIntoView", function( assert ){

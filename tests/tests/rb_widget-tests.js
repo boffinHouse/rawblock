@@ -329,32 +329,32 @@
 			.then(function(){
 				ext2Instance.setWidgetFocus();
 
-				return QUnit.afterAF().then(function(){
+				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, ext2elem.find('.js-autofocus').get(0));
 				});
 			})
 			.then(function(){
 				ext2Instance.restoreFocus();
-				return QUnit.afterAF().then(function(){
+				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, curActive);
 				});
 			})
 			.then(function(){
 				ext2Instance.setWidgetFocus('find(.manual-focus)');
-				return QUnit.afterAF().then(function(){
+				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, ext2elem.find('.manual-focus').get(0));
 				});
 			})
 			.then(function(){
 				ext2Instance.restoreFocus(true);
-				return QUnit.afterAF().then(function(){
+				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, curActive);
 				});
 			})
 			.then(function(){
 				ext2elem.html('');
 				ext2Instance.setWidgetFocus();
-				return QUnit.afterAF().then(function(){
+				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, curActive);
 				});
 			})
@@ -362,16 +362,16 @@
 			.then(function(){
 				ext2elem.html('');
 				ext2Instance.setWidgetFocus(true);
-				return QUnit.afterAF().then(function(){
+				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, ext2elem.get(0));
 				});
 			})
 			.then(function(){
 				outsideActice.focus();
-				return QUnit.afterAF()
+				return QUnit.afterAF(20)
 					.then(function(){
 						ext2Instance.restoreFocus(true);
-						return QUnit.afterAF();
+						return QUnit.afterAF(20);
 					})
 					.then(function(){
 						assert.equal(document.activeElement, outsideActice);

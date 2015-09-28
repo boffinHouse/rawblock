@@ -441,7 +441,7 @@ if(!window.rb){
 			}
 			if(!running){
 				running = true;
-				rb.rAFQueue.add(run, options.inProgress);
+				rb.rAFQueue.add(run, inProgress);
 			}
 		};
 
@@ -454,6 +454,10 @@ if(!window.rb){
 				thisArg = null;
 			}
 
+			if(thisArg || isBatched || inProgress){
+				rb.log('deprecated use of rAF');
+			}
+
 			options = {};
 			if(thisArg !== undefined){
 				options.that = thisArg;
@@ -462,12 +466,18 @@ if(!window.rb){
 				options.batch = isBatched;
 			}
 			if(inProgress){
-				options.inProgress = inProgress;
+				options.queue = !inProgress;
 			}
 		}
 
+		if(options.inProgress){
+			rb.log('deprecated use of rAF (inProgress)');
+		}
+
+		inProgress = !options.queue;
+
 		if(fn._rbUnrafedFn){
-			rb.log('now doubble rafed', fn);
+			rb.log('double rafed', fn);
 		}
 
 		rafedFn._rbUnrafedFn = fn;
@@ -638,7 +648,7 @@ if(!window.rb){
 	var _removeKeyBoardFocus = rb.rAF(function(){
 		hasKeyboardFocus = false;
 		root.classList.remove('is-keyboardfocus');
-	}, {inProgress: true});
+	});
 
 	var removeKeyBoardFocus = function(){
 		if(hasKeyboardFocus){
@@ -652,7 +662,7 @@ if(!window.rb){
 			hasKeyboardFocus = true;
 			root.classList.add('is-keyboardfocus');
 		}
-	}, {inProgress: true});
+	});
 
 	var pointerEvents = (window.PointerEvent) ?
 			['pointerdown', 'pointerup'] :
@@ -673,8 +683,8 @@ if(!window.rb){
 	rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
 
 
-	var regStartQuote = /^"{0,1}'{0,2}"{0,1}/;
-	var regEndQuote = /"{0,1}'{0,1}"{0,1}$/;
+	var regStartQuote = /^"?'?"?/;
+	var regEndQuote = /"?'?"?$/;
 	var regEscapedQuote = /\\"/g;
 	rb.removeLeadingQuotes = function(str){
 		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
@@ -834,8 +844,6 @@ if(!window.rb){
 						element = element[action[1]];
 					}
 				}
-
-
 			});
 			return $( array );
 		};
@@ -1175,9 +1183,9 @@ if(!window.rb){
 			while (removeElements.length) {
 				removeElements.shift().classList.remove(initClass);
 			}
-		}, {inProgress: true});
+		});
 
-		var runImmediate = function() {
+		var findElements = function() {
 
 			var module, modulePath, moduleId, i;
 
@@ -1223,7 +1231,7 @@ if(!window.rb){
 			lifeBatch.run();
 		};
 		var rAFRun = function() {
-			setImmediate(runImmediate);
+			setImmediate(findElements);
 		};
 		return function () {
 			if ( !runs ) {
@@ -1256,12 +1264,12 @@ if(!window.rb){
 
 /* Simple JavaScript Inheritance
  * By John Resig http://ejohn.org/
+ * modified for better ES5 support by alex
  * MIT Licensed.
  */
 // Inspired by base2 and Prototype
 (function(){
 	var rb = window.rb;
-	var initializing = false;
 	var fnTest = (/xyz/.test(function(){var a = xyz;})) ?
 			/\b_super\b/ :
 			/.*/
@@ -1322,22 +1330,19 @@ if(!window.rb){
 
 	// Create a new Class that inherits from this class
 	ES5Class.extend = function(prop) {
-		var prototype;
 		var _super = this.prototype;
-
 		// Instantiate a base class (but only create the instance,
 		// don't run the init constructor)
-		initializing = true;
-		prototype = new this();
-		initializing = false;
+		var prototype = Object.create(_super);
 
 		ES5Class.mixin(prototype, _super, prop);
 
 		// The dummy class constructor
 		function Class() {
 			// All construction is actually done in the init method
-			if ( !initializing && this.init )
+			if(('init' in this)){
 				this.init.apply(this, arguments);
+			}
 		}
 
 		// Populate our constructed prototype object
@@ -1638,16 +1643,18 @@ if(!window.rb){
 			target: '',
 			type: 'toggle',
 		},
+
 		init: function(element) {
 
 			this._super(element);
 
-			this._setTarget = rb.rAF(this._setTarget, null, true);
+			this._setTarget = rb.rAF(this._setTarget);
 		},
-		//writeFns: ['_setTarget'],
+
 		events: {
 			click: '_onClick',
 		},
+
 		_onClick: function(){
 			var target = this.getTarget() || {};
 			var widget = this.widget(target);
@@ -1661,6 +1668,7 @@ if(!window.rb){
 				widget[this.options.type]();
 			}
 		},
+
 		_setTarget: function(){
 			var id = this.getId(this.target);
 			this.isTargeting = false;
@@ -1670,6 +1678,7 @@ if(!window.rb){
 			});
 			this.targetAttr = id;
 		},
+
 		setTarget: function(dom) {
 			this.target = dom;
 			this.isTargeting = true;

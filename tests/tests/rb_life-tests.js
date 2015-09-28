@@ -150,7 +150,7 @@
 		assert.equal(rb.$('.js-rb-life').length, 2);
 		assert.equal(rb.$('.js-rb-attached').length, 0);
 
-		QUnit.afterAF(19)
+		QUnit.afterAF(59)
 			.then(function(){
 				assert.equal(rb.$('.js-rb-life').length, 0);
 				assert.equal(rb.$('.js-rb-attached').length, 2);
