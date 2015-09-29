@@ -187,7 +187,7 @@
 		var fn = function(){
 			i++;
 		};
-		var content = '<div id="test-wrapper" style="min-height: 200px; width: 300px;">' +
+		var content = '<div id="test-wrapper" style="position: relative; width: 300px; height: 30px;">' +
 			'<div style="height: 100%"></div>' +
 			'</div>';
 
@@ -203,19 +203,20 @@
 			})
 			.then(function(){
 				$mainElement.css({width: '350px'});
-				QUnit.afterAF(9).then(function(){
+				return QUnit.afterAF(209).then(function(){
 					assert.equal(i, 1);
 				});
 			})
 			.then(function(){
-				$mainElement.css({width: '250px'});
-				QUnit.afterAF(9).then(function(){
+
+				$mainElement.css({width: '50px'});
+				return QUnit.afterAF(209).then(function(){
 					assert.equal(i, 2);
 				});
 			})
 			.then(function(){
 				$mainElement.css({height: '250px'});
-				QUnit.afterAF(9).then(function(){
+				return QUnit.afterAF(209).then(function(){
 					assert.equal(i, 3);
 				});
 			})
