@@ -589,7 +589,7 @@ if(!window.rb){
 		} catch(e){}
 	};
 
-	/*! focus-within polyfill */
+	/* focus-within polyfill */
 
 	var running = false;
 	var isClass = 'is-focus-within';
@@ -828,13 +828,13 @@ if(!window.rb){
 	var regNum = /:(\d)+\s*$/;
 	var regTarget = /^\s*?\.?([a-z0-9-_]+)\((.*?)\)\s*?/i;
 
-	[['firstOfNext', 'nextElementSibling'], ['firstOfPrev', 'previousElementSibling']].forEach(function(action){
+	[['closestNext', 'nextElementSibling'], ['closestPrev', 'previousElementSibling']].forEach(function(action){
 		$.fn[action[0]] = function(sel){
 			var array = [];
 			var found = false;
 
 			this.each(function(i, elem){
-				var element = elem[action[1]];
+				var element = found || elem[action[1]];
 				while(!found && element){
 					if((!sel || element.matches(sel))){
 						found = true;
@@ -1006,7 +1006,7 @@ if(!window.rb){
 			for ( i = 0; i < len; i++ ) {
 				mutation = mutations[ i ];
 				if ( mutation.addedNodes.length ) {
-					life.throttledFindElements();
+					life.searchModules();
 				}
 				if ( mutation.removedNodes.length ) {
 					removeWidgets();
@@ -1019,8 +1019,8 @@ if(!window.rb){
 				.observe( docElem, { subtree: true, childList: true } )
 			;
 		} else {
-			docElem.addEventListener('DOMNodeInserted', life.throttledFindElements);
-			document.addEventListener('DOMContentLoaded', life.throttledFindElements);
+			docElem.addEventListener('DOMNodeInserted', life.searchModules);
+			document.addEventListener('DOMContentLoaded', life.searchModules);
 			docElem.addEventListener('DOMNodeRemoved', (function(){
 				var mutation = {
 					addedNodes: []
@@ -1077,6 +1077,7 @@ if(!window.rb){
 
 	life._failed = {};
 	rb.widgets = {};
+	rb.components = rb.widgets;
 	life._behaviors = rb.widgets;
 	life._attached = [];
 	life.customElements = false;
@@ -1093,7 +1094,7 @@ if(!window.rb){
 		lifeBatch = createBatch();
 
 		initObserver();
-		life.throttledFindElements();
+		life.searchModules();
 
 		initClickCreate();
 	};
@@ -1131,7 +1132,7 @@ if(!window.rb){
 					}
 				});
 			} else if(elements) {
-				life.throttledFindElements();
+				life.searchModules();
 			}
 		}
 
@@ -1175,7 +1176,7 @@ if(!window.rb){
 		return instance;
 	};
 
-	life.throttledFindElements = (function() {
+	life.searchModules = (function() {
 		var setImmediate = window.setImmediate || window.setTimeout;
 		var requestAnimationFrame = window.requestAnimationFrame;
 		var runs = false;
@@ -1406,10 +1407,14 @@ if(!window.rb){
 		return ret;
 	};
 
+
 	life.Widget = rb.Class.extend({
-
-		defaults: {},
-
+		/**
+		 * Component Base Class - all UI components should extend this class.
+		 * This Class adds some neat stuff to parse/change options, bind and trigger events as also handles the components life cycle (init, attached, detached).
+		 * @class
+		 * @exports rb#Widget
+		 */
 		init: function(element){
 			this.element = element;
 			this.$element = $(element);
@@ -1428,6 +1433,18 @@ if(!window.rb){
 			this._setupEventsByEvtObj();
 		},
 
+		/**
+		 * defaults Object, represent the default options of the component.
+		 * While an option can be of any type, it is recommended to only use immutable values as defaults.
+		 */
+		defaults: {},
+
+		/**
+		 * returns the widget instance of an element or sets/gets/invokes a property of another widget instance
+		 * @param {object} element - DOM element
+		 * œparam {string} [name] - property name or method name of the component instance
+		 * @param {string} [value] - value or in case of a method arguments {array}
+		 */
 		widget: life.getWidget,
 
 		_setupEventsByEvtObj: function(){
@@ -1495,11 +1512,16 @@ if(!window.rb){
 		},
 
 		getId: function(element){
-			var id = (element || this.element).id;
-			if (!id) {
-				id = 'rbjsid-' + rb.getID();
-				(element || this.element).id = id;
+			var id;
+			if(!element){
+				element = this.element;
 			}
+
+			if (!(id = element.id)) {
+				id = 'rbjsid-' + rb.getID();
+				element.id = id;
+			}
+
 			return id;
 		},
 
@@ -1631,6 +1653,7 @@ if(!window.rb){
 	};
 
 	rb.Widget = life.Widget;
+	rb.Component = rb.Widget;
 })(window, document, rb.life);
 
 (function (window, document, undefined) {

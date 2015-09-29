@@ -25,14 +25,14 @@
 		tmp = rb.elementFromStr('children(.children-2)', mainElement);
 		assert.equal(tmp.length, 1);
 
-		tmp = rb.elementFromStr('firstOfNext(.last)', document.querySelector('#test-id2'));
+		tmp = rb.elementFromStr('closestNext(.last)', document.querySelector('#test-id2'));
 		assert.equal(tmp[0], document.querySelector('#test-id3'));
 
-		tmp = rb.elementFromStr('firstOfPrev(.first)', document.querySelector('#test-id3'));
+		tmp = rb.elementFromStr('closestPrev(.first)', document.querySelector('#test-id3'));
 		assert.equal(tmp[0], document.querySelector('#test-id2'));
 
 		tmp = rb.elementFromStr('closest(#test-wrapper)', document.querySelector('.childrens-child'));
-		assert.equal(tmp[0], document.querySelector('#test-wrapper'));
+		assert.equal(tmp[0], document.querySelector('#test-wrapper'))
 
 		tmp = rb.elementFromStr('parent(.children-2)', document.querySelector('.childrens-child'));
 		assert.equal(tmp[0], rb.elementFromStr('parent()', document.querySelector('.childrens-child'))[0]);
