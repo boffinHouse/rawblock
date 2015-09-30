@@ -166,24 +166,24 @@ if(!window.rb){
 
 	/**
 	 *
-	 * @param {Function} fn - The function to be throttled
-	 * @param {Object} options - options for the throttle
-	 *  @param {Object} options.that -  the context in which fn should be called
-	 *  @param {Boolean} options.write -  wether fn is used to write layout (default is read)
-	 *  @param {Number} options.delay = 200 -  the throttle delay
-	 * @returns {Function} the throttled function
+	 * @param {function} fn - The function to be throttled
+	 * @param {object} options - options for the throttle
+	 *  @param {object} options.that -  the context in which fn should be called
+	 *  @param {boolean} options.write -  wether fn is used to write layout (default is read)
+	 *  @param {number} options.delay = 200 -  the throttle delay
+	 * @returns {function} the throttled function
 	 */
 	rb.throttle = function(fn, options){
 		var running, that, args;
 		var lastTime = 0;
 		var Date = window.Date;
-		var run = function(){
+		var _run = function(){
 			running = false;
 			lastTime = options.simple || Date.now();
 			fn.apply(that, args);
 		};
 		var afterAF = function(){
-			setImmediate(run);
+			setImmediate(_run);
 		};
 		var getAF = function(){
 			rb.rAFQueue.add(afterAF);
@@ -197,10 +197,10 @@ if(!window.rb){
 			options.delay = 200;
 		}
 
-		if(options.simple){
-			getAF = run;
-		} else if(options.write){
-			afterAF = run;
+		if(options.write){
+			afterAF = _run;
+		} else if(!options.read){
+			getAF = _run;
 		}
 
 		return function(){
