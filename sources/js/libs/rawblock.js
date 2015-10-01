@@ -1737,6 +1737,10 @@ if(!window.rb){
 		if(prop.statics){
 			Object.assign(Class, prop.statics);
 		}
+		if(prop.events){
+			Class.events = Object.assign(Class.events || {}, prop.events);
+			prop.events = null;
+		}
 		rb.Class.mixin(Class.prototype, prop);
 
 		return Class;
