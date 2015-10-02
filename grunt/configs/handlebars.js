@@ -1,7 +1,8 @@
 /**
  * Configuration hbs
  *
- * {@link} https://github.com/vanetix/grunt-templates-hogan
+ * {@link} https://github.com/wycats/handlebars.js
+ * {@link} https://github.com/gruntjs/grunt-contrib-handlebars
  */
 module.exports = {
 	options: {
