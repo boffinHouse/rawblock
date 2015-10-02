@@ -30,6 +30,7 @@
     "es6-promise": "^3.0.2",
     "function-bind": "^1.0.2",
     "handlebars": "^4.0.2",
+    "hogan.js": "^3.0.2",
     "is-nan": "^1.2.1",
     "lazysizes": "^1.2.2",
     "string.prototype.endswith": "^0.2.0",
