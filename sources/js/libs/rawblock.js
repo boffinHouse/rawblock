@@ -1510,12 +1510,16 @@ if(!window.rb){
 			this.$element = $(element);
 			this.options = {};
 
+			this.parseOptions(this.options, this.constructor.defaults);
+
+			if(this.options.name){
+				this.name = this.options.name;
+			}
+
 			this._evtName = this.name + 'changed';
 			this._beforeEvtName = this.name + 'change';
 
 			element[widgetExpando] = this;
-
-			this.parseOptions(this.options, this.constructor.defaults);
 
 			this._setupLifeOptions();
 
@@ -1681,6 +1685,8 @@ if(!window.rb){
 			this.options[name] = value;
 			if(name == 'debug' && value){
 				this.isDebug = true;
+			} else if(name == 'name'){
+				rb.log('don\'t change name after init.');
 			}
 		},
 
