@@ -390,26 +390,12 @@ if(!window.rb){
 		if(thisArg && typeof thisArg == 'object' && (('that' in thisArg) || ('batch' in thisArg) || ('inProgress' in thisArg))){
 			options = thisArg;
 		} else {
-			if(typeof thisArg == 'boolean' && arguments.length < 4){
-				inProgress = thisArg;
-				isBatched = inProgress;
-				thisArg = null;
-			}
 
+			//ToDo: remove deprecated warning and refactor
 			if(thisArg || isBatched || inProgress){
-				rb.log('deprecated use of rAF');
+				throw('deprecated use of rAF');
 			}
-
 			options = {};
-			if(thisArg !== undefined){
-				options.that = thisArg;
-			}
-			if(isBatched){
-				options.batch = isBatched;
-			}
-			if(inProgress){
-				options.queue = !inProgress;
-			}
 		}
 
 		if(options.inProgress){
