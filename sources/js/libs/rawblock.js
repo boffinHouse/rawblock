@@ -916,7 +916,7 @@ if(!window.rb){
 
 	var regSplit = /\s*?,\s*?|\s+?/g;
 	var regNum = /:(\d)+\s*$/;
-	var regTarget = /^\s*?\.?([a-z0-9-_]+)\((.*?)\)\s*?/i;
+	var regTarget = /^\s*?\.?([a-z0-9_]+)\((.*?)\)\s*?/i;
 
 	[['closestNext', 'nextElementSibling'], ['closestPrev', 'previousElementSibling']].forEach(function(action){
 		$.fn[action[0]] = function(sel){
