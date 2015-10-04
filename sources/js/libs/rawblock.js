@@ -712,7 +712,7 @@ if(!window.rb){
 
 
 	/* keyboard-focus */
-	var keyboardBlocktimer;
+	var keyboardBlocktimer, keyboardFocusElem;
 	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
 	var root = rb.root;
@@ -724,11 +724,25 @@ if(!window.rb){
 	var blockKeyboardFocus = function(){
 		isKeyboardBlocked = true;
 		clearTimeout(keyboardBlocktimer);
-		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 66);
+		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 99);
+	};
+
+	var _removeChildFocus = function(){
+		if(keyboardFocusElem && keyboardFocusElem != document.activeElement){
+			keyboardFocusElem.classList.remove('is-keyboardfocus');
+			keyboardFocusElem = null;
+		}
+	};
+
+	var removeChildFocus = function(){
+		if(keyboardFocusElem){
+			rb.rAFQueue.add(_removeChildFocus);
+		}
 	};
 
 	var _removeKeyBoardFocus = rb.rAF(function(){
 		hasKeyboardFocus = false;
+		_removeChildFocus();
 		root.classList.remove('is-keyboardfocus');
 	});
 
@@ -740,9 +754,22 @@ if(!window.rb){
 	};
 
 	var setKeyboardFocus = rb.rAF(function(){
-		if(!isKeyboardBlocked){
+
+		if(!isKeyboardBlocked || hasKeyboardFocus){
+
+			if(keyboardFocusElem != document.activeElement){
+				_removeChildFocus();
+				keyboardFocusElem = document.activeElement;
+
+				if(keyboardFocusElem){
+					keyboardFocusElem.classList.add('is-keyboardfocus');
+				}
+			}
+
+			if(!hasKeyboardFocus){
+				root.classList.add('is-keyboardfocus');
+			}
 			hasKeyboardFocus = true;
-			root.classList.add('is-keyboardfocus');
 		}
 	});
 
@@ -751,6 +778,7 @@ if(!window.rb){
 			['mousedown', 'mouseup', 'touchstart', 'touchend']
 		;
 
+	root.addEventListener('blur', removeChildFocus, true);
 	root.addEventListener('focus', setKeyboardFocus, true);
 
 	pointerEvents.forEach(function(eventName){
