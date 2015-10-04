@@ -107,8 +107,8 @@
 						that.current = cur;
 						that.applyRoutes(current);
 					}
-				}
-			};
+				};
+			}
 
 			this.interval = setInterval(this._listener, 999);
 

@@ -1552,7 +1552,7 @@ if(!window.rb){
 						return method.apply(that, arguments);
 					});
 
-					if(args.length == 2 && selector.startsWith('elemresize')){
+					if(args.length == 2 && evtName.startsWith('elemresize')){
 						that.$element.elementResize('add', args[1], {
 							noWidth: selector.endsWith('height'),
 							noHeight: selector.endsWith('width'),
@@ -1713,6 +1713,10 @@ if(!window.rb){
 
 		destroy: function(){
 			life.destroyWidget(this);
+		},
+
+		_super: function(){
+			this.log('no _super');
 		}
 	});
 
