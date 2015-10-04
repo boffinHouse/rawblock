@@ -1528,20 +1528,21 @@ if(!window.rb){
 		widget: life.getWidget,
 
 		_setupEventsByEvtObj: function(){
-			var evt, evtName, selector;
+			var evt, namedStr, evtName, selector;
 			var evts = this.constructor.events;
 			var that = this;
 
 			for(evt in evts){
-				selector = evt.split(' ');
-				evtName = selector.shift();
+				namedStr = evt.replace(regName, that.name);
+				selector = namedStr.split(' ');
+				evtName = namedStr.shift();
 
 				/* jshint loopfunc: true */
 				(function(evtName, selector, method){
 					var args = [evtName];
 
 					if(selector){
-						args.push(selector.replace(regName, that.name));
+						args.push(selector);
 					}
 
 					args.push((typeof method == 'string') ? function(e){
@@ -1551,7 +1552,14 @@ if(!window.rb){
 						return method.apply(that, arguments);
 					});
 
-					that.$element.on.apply(that.$element, args);
+					if(args.length == 2 && selector.startsWith('elemresize')){
+						that.$element.elementResize('add', args[1], {
+							noWidth: selector.endsWith('height'),
+							noHeight: selector.endsWith('width'),
+						});
+					} else {
+						that.$element.on.apply(that.$element, args);
+					}
 
 				})(evtName, selector.join(' '), evts[evt]);
 			}

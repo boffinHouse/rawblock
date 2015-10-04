@@ -32,7 +32,7 @@ module.exports = function(grunt) {
 				}
 				catch(e) {
 					grunt.log.error(e);
-					grunt.fail.warn("Hogan failed to compile \"" + file + "\".");
+					grunt.fail.warn('Hogan failed to compile "' + file + '".');
 				}
 
 				if(compiled){
@@ -40,18 +40,18 @@ module.exports = function(grunt) {
 
 					filename = filename[filename.length -1].replace('.hogan', '');
 
-					output.push("rb.hoganTemplates['" + module +"']" +
-						"[" + JSON.stringify(filename) + "] = new Hogan.Template(" + compiled + ");");
+					output.push('rb.hoganTemplates["' + module +'"]' +
+						'["' + filename + '"] = new Hogan.Template(' + compiled + ');');
 				}
 			});
 
 			if(output.length > 0) {
 
-				output.unshift("if(!window.rb){window.rb = {};}rb.hoganTemplates = rb.hoganTemplates || {};" +
-					"rb.hoganTemplates['" + module +"'] = rb.hoganTemplates['" + module +"'] || {};");
+				output.unshift('if(!window.rb){window.rb = {};}rb.hoganTemplates = rb.hoganTemplates || {};' +
+					'rb.hoganTemplates["' + module +'"] = rb.hoganTemplates["' + module +'"] || {};');
 
-				grunt.file.write(outputFile, output.join("\n"));
-				grunt.log.writeln("File '" + outputFile + "' created.");
+				grunt.file.write(outputFile, '/* jshint ignore:start */\n' + output.join('\n') + '\n/* jshint ignore:end */');
+				grunt.log.writeln('File ' + outputFile + ' created.');
 
 			}
 
