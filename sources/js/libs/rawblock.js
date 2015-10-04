@@ -1535,7 +1535,7 @@ if(!window.rb){
 			for(evt in evts){
 				namedStr = evt.replace(regName, that.name);
 				selector = namedStr.split(' ');
-				evtName = namedStr.shift();
+				evtName = selector.shift();
 
 				/* jshint loopfunc: true */
 				(function(evtName, selector, method){
