@@ -496,6 +496,7 @@ if(!window.rb){
 
 				this.addMarkup(element, element[elementResize.expando]);
 			}
+
 			if(options && options.noWidth){
 				element[elementResize.expando].heightCbs.add(fn);
 			} else if(options && options.noHeight){
@@ -528,14 +529,18 @@ if(!window.rb){
 
 			var runFire = rb.throttle(function(){
 
+				data.width = element.offsetWidth;
+				data.height = element.offsetHeight;
+
 				if(heightChange){
-					element[elementResize.expando].heightCbs.fire();
+					element[elementResize.expando].heightCbs.fire(data);
 				}
 				if(widthChange){
-					element[elementResize.expando].widthCbs.fire();
+					element[elementResize.expando].widthCbs.fire(data);
 				}
 
-				data.cbs.fire();
+				data.cbs.fire(data);
+
 				heightChange = false;
 				widthChange = false;
 			});
@@ -586,6 +591,7 @@ if(!window.rb){
 
 				var curWidthChange = width != data.width;
 				var curHeightChange = height != data.height;
+
 				fire = curHeightChange || curWidthChange;
 
 				if(fire){
@@ -1554,8 +1560,8 @@ if(!window.rb){
 
 					if(args.length == 2 && evtName.startsWith('elemresize')){
 						that.$element.elementResize('add', args[1], {
-							noWidth: selector.endsWith('height'),
-							noHeight: selector.endsWith('width'),
+							noWidth: evtName.endsWith('height'),
+							noHeight: evtName.endsWith('width'),
 						});
 					} else {
 						that.$element.on.apply(that.$element, args);
