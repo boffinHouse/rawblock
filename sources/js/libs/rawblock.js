@@ -431,9 +431,7 @@ if(!window.rb){
 	var isExtended;
 	var copyEasing = function(easing){
 		var easObj = BezierEasing.css[easing];
-		$.easing[easing] = function(number){
-			return easObj.get(number);
-		};
+		$.easing[easing] = easObj.get;
 	};
 	var extendEasing = function(){
 		var easing;
@@ -677,7 +675,7 @@ if(!window.rb){
 	var isClass = 'is-focus-within';
 	var isClassSelector = '.' + isClass;
 
-	function updateFocus(){
+	var updateFocus = function(){
 		var oldFocusParents, i, len;
 
 		var parent = document.activeElement;
@@ -697,14 +695,14 @@ if(!window.rb){
 		}
 
 		running = false;
-	}
+	};
 
-	function update(){
+	var update = function(){
 		if(!running){
 			running = true;
 			rb.rAFQueue.add(updateFocus, true);
 		}
-	}
+	};
 
 	document.addEventListener('focus', update, true);
 	document.addEventListener('blur', update, true);
