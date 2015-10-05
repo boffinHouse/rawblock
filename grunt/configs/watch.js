@@ -26,10 +26,10 @@ module.exports = {
 		]
 	},
 	scss: {
-		files: ['<%= paths.src %>/sass/**/*.scss'],
-		tasks: ['generate-tmp-styles-scss', 'sass:dev', 'autoprefixer:dev'],
+		files: ['<%= paths.src %>/sass/**/*.scss', '!<%= paths.src %>/sass/tmp_*.scss'],
+		tasks: ['scssglobbing', 'sass:dev', 'clean:scssglobbing', 'autoprefixer:dev'],
 		options: {
-			debounceDelay: 0,
+			debounceDelay: 100,
 			livereload: false
 		}
 	},
