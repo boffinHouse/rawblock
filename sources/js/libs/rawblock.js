@@ -1896,7 +1896,7 @@ if(!window.rb){
 					element = null;
 				}
 				var style = (element ? rb.getStyles(element, '::after') : this._afterStyle).content || '';
-				if(style && (element || !this._styleOptsStr || style != this._styleOptsStr )){
+				if(element || !this._styleOptsStr || style != this._styleOptsStr){
 					if(!element){
 						this._styleOptsStr = style;
 					}
