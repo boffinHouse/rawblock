@@ -432,7 +432,7 @@
 		assert.equal(events[name +'custom'].count, 2);
 		assert.deepEqual(events[name +'custom'].last.detail, {foo: 'bar2'});
 
-		ext2elem.rbWidget('_trigger', ['changed']);
+		ext2elem.rbWidget()._trigger('changed');
 		assert.equal(events[name +'changed'].count, 3);
 	});
 })();

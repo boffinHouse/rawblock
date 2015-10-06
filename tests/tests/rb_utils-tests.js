@@ -78,31 +78,31 @@
 	QUnit.test("rb.resize", function( assert ){
 		var fn = rb.$.noop;
 
-		sinon.spy(rb.resize, 'setup');
-		sinon.spy(rb.resize, 'teardown');
+		sinon.spy(rb.resize, '_setup');
+		sinon.spy(rb.resize, '_teardown');
 		sinon.spy(rb.resize, 'add');
 		sinon.spy(rb.resize, 'remove');
 
-		assert.equal(rb.resize.setup.callCount, 0);
+		assert.equal(rb.resize._setup.callCount, 0);
 		assert.equal(rb.resize.add.callCount, 0);
-		assert.equal(rb.resize.teardown.callCount, 0);
+		assert.equal(rb.resize._teardown.callCount, 0);
 
 		rb.resize.on(fn);
 
-		assert.equal(rb.resize.setup.callCount, 1);
+		assert.equal(rb.resize._setup.callCount, 1);
 		assert.equal(rb.resize.add.callCount, 1);
-		assert.equal(rb.resize.teardown.callCount, 0);
+		assert.equal(rb.resize._teardown.callCount, 0);
 
 		rb.resize.off(fn);
 
-		assert.equal(rb.resize.setup.callCount, 1);
+		assert.equal(rb.resize._setup.callCount, 1);
 		assert.equal(rb.resize.add.callCount, 1);
-		assert.equal(rb.resize.teardown.callCount, 1);
+		assert.equal(rb.resize._teardown.callCount, 1);
 		assert.equal(rb.resize.remove.callCount, 1);
 
-		rb.resize.setup.restore();
+		rb.resize._setup.restore();
 		rb.resize.add.restore();
-		rb.resize.teardown.restore();
+		rb.resize._teardown.restore();
 		rb.resize.remove.restore();
 	});
 

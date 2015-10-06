@@ -1,24 +1,71 @@
 if(!window.rb){
+	/**
+	 * rawblock main object holds classes and util properties and methods to work with rawblock
+	 * @namespace rb
+	 */
 	window.rb = {};
 }
 
 (function(window, document, undefined){
 	'use strict';
-	window.rb.$ = window.rb.$ || window.jQuery || window.dom;
 
+	/* Begin: global vars end */
 	var rb = window.rb;
+
+	/**
+	 * The jQuery plugin namespace.
+	 * @external "jQuery.fn"
+	 * @see {@link http://learn.jquery.com/plugins/|jQuery Plugins}
+	 */
+
+	/**
+	 * Reference to the internally used DOM or jQuery instance
+	 * @memberof rb
+	 */
+	rb.$ = rb.$ || window.jQuery || window.dom;
+
+
 	var $ = rb.$;
 
+	/**
+	 * Reference to the root element (mostly html element)
+	 * @memberof rb
+	 * @type {Element}
+	 */
 	rb.root = document.documentElement;
 
+	/**
+	 * Reference to the jQueryfied root element
+	 * @memberof rb
+	 * @type {jQueryfiedDOMList}
+	 */
 	rb.$root = $(rb.root);
 
+	/**
+	 * Reference to the jQueryfied window object
+	 * @memberof rb
+	 * @type {jQueryfiedDOMList}
+	 */
 	rb.$win = $(window);
+
+	/**
+	 * Reference to the jQueryfied document object
+	 * @memberof rb
+	 * @type {jQueryfiedDOMList}
+	 */
 	rb.$doc = $(document);
 
-	/* global vars end */
+	/* End: global vars end */
 
-	/* rbSlideUp / rbSlideDown */
+	/* Begin: rbSlideUp / rbSlideDown */
+
+	/**
+	 * A jQuery plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
+	 * Also does not animate padding, margin, borders (use child elements)
+	 * @function external:"jQuery.fn".rbSlideUp
+	 * @param options {object} All jQuery animate options
+	 * @returns {jQueryfiedDOMList}
+	 */
 	$.fn.rbSlideUp = function(options){
 		if(!options){
 			options = {};
@@ -28,7 +75,7 @@ if(!window.rb){
 			var opts = Object.assign({}, options, {
 				always: function(){
 					this.style.display = '';
-					this.style.visibility = '';
+					this.style.visibility = 'hidden';
 
 					if(options.always){
 						return options.always.apply(this, arguments);
@@ -36,6 +83,9 @@ if(!window.rb){
 				}
 			});
 
+			if(opts.easing){
+				rb.addEasing(opts.easing);
+			}
 			this
 				.stop()
 				.css({overflow: 'hidden', display: 'block', visibility: 'inherit'})
@@ -45,6 +95,13 @@ if(!window.rb){
 		return this;
 	};
 
+	/**
+	 * A jQuery plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
+	 * Also does not animate padding, margin, borders (use child elements)
+	 * @function external:"jQuery.fn".rbSlideDown
+	 * @param options {object} All jQuery animate options
+	 * @returns {jQueryfiedDOMList}
+	 */
 	$.fn.rbSlideDown = function(options){
 		var opts;
 		if(!options){
@@ -80,9 +137,16 @@ if(!window.rb){
 		});
 	};
 
-	/* scrollIntoView */
+	/* End: rbSlideUp / rbSlideDown */
 
-	var getScrollingElement = function(){
+
+	/* Begin: getScrollingElement/scrollIntoView */
+
+	/**
+	 * @memberof rb
+	 * @returns {Element} The DOM element that scrolls the viewport (either html or body)
+	 */
+	rb.getScrollingElement = function(){
 		var bH, dH, isCompat;
 		var scrollingElement = document.scrollingElement;
 
@@ -103,8 +167,15 @@ if(!window.rb){
 		return scrollingElement || rb.root;
 	};
 
-	rb.getScrollingElement = getScrollingElement;
-
+	/**
+	 * A jQuery plugin to scroll an element into the viewort
+	 * @function external:"jQuery.fn".scrollIntoView
+	 * @param options {object} All jQuery animate options and additional options
+	 * @param options.focus {Element} Element that should be focused after animation is done.
+	 * @param options.hash {String} Hash to set on the location object
+	 *
+	 * @returns {jQueryfiedDOMList}
+	 */
 	$.fn.scrollIntoView = function(options){
 		var bbox, distance, scrollingElement, opts;
 		var elem = this.get(0);
@@ -113,7 +184,7 @@ if(!window.rb){
 			options = options || {};
 			bbox = elem.getBoundingClientRect();
 			distance = Math.max(Math.abs(bbox.top), Math.abs(bbox.left));
-			scrollingElement = getScrollingElement();
+			scrollingElement = rb.getScrollingElement();
 
 			if(options.easing){
 				rb.addEasing(options.easing);
@@ -152,26 +223,37 @@ if(!window.rb){
 		}
 		return this;
 	};
+	/* End: getScrollingElement/scrollIntoView */
 
-	/* contains */
-	rb.contains = function(elements, needle){
-		return elements.find(rb.contains._contains, needle);
+	/* Begin: contains */
+
+	/**
+	 * Tests whether an element is inside or equal to a list of elements.
+	 * @memberof rb
+	 * @param containerElements {Element[]} Array of elements that might contain innerElement.
+	 * @param innerElement {Element} An element that might be inside of one of containerElements.
+	 * @returns {Element|undefined} The first element in containerElements, that contains innerElement or is the innerElement.
+	 */
+	rb.contains = function(containerElements, innerElement){
+		return containerElements.find(rb.contains._contains, innerElement);
 	};
 	rb.contains._contains = function(element){
 		return element == this || element.contains(this);
 	};
+	/* End: contains */
 
-	/* throttle */
+	/* Begin: throttle */
 	var setImmediate = window.setImmediate || setTimeout;
 
 	/**
-	 *
-	 * @param {function} fn - The function to be throttled
-	 * @param {object} options - options for the throttle
-	 *  @param {object} options.that -  the context in which fn should be called
-	 *  @param {boolean} options.write -  wether fn is used to write layout (default is read)
-	 *  @param {number} options.delay = 200 -  the throttle delay
-	 * @returns {function} the throttled function
+	 * Throttles a given function
+	 * @memberof rb
+	 * @param {function} fn - The function to be throttled.
+	 * @param {object} options - options for the throttle.
+	 *  @param {object} options.that -  the context in which fn should be called.
+	 *  @param {boolean} options.write -  wether fn is used to write layout (default is read).
+	 *  @param {number} options.delay = 200 -  the throttle delay.
+	 * @returns {function} the throttled function.
 	 */
 	rb.throttle = function(fn, options){
 		var running, that, args;
@@ -186,7 +268,7 @@ if(!window.rb){
 			setImmediate(_run);
 		};
 		var getAF = function(){
-			rb.rAFQueue.add(afterAF);
+			rb.rAFQueue(afterAF);
 		};
 
 		if(!options){
@@ -221,41 +303,60 @@ if(!window.rb){
 			setTimeout(getAF, delay);
 		};
 	};
+	/* End: throttle */
 
-	/* resize */
+	/* Begin: resize */
 	var iWidth, cHeight, installed;
 	var docElem = rb.root;
 
+	/**
+	 *
+	 * Resize uitility object to listen/unlisten (on/off) for throttled window.resize events (also see jQuery.fn.elementResize).
+	 * @namespace rb.resize
+	 * @memberof rb
+	 * @extends jQuery.Callbacks
+	 * @type {object}
+	 */
 	rb.resize = Object.assign(rb.$.Callbacks(), {
 
-		setup: function(){
+		_setup: function(){
 			if(!installed){
 				installed = true;
 				setTimeout(function(){
 					iWidth = innerWidth;
 					cHeight = docElem.clientHeight;
 				});
-				window.removeEventListener('resize', this.run);
-				window.addEventListener('resize', this.run);
+				window.removeEventListener('resize', this._run);
+				window.addEventListener('resize', this._run);
 			}
 		},
-		teardown: function(){
+		_teardown: function(){
 			if(installed && !this.has()){
 				installed = false;
-				window.removeEventListener('resize', this.run);
+				window.removeEventListener('resize', this._run);
 			}
 		},
+		/**
+		 * The function that should listen for resize events
+		 * @memberof rb.resize
+		 * @param fn
+		 */
 		on: function(fn){
 			this.add(fn);
-			this.setup();
+			this._setup();
 		},
+		/**
+		 * The function that should unlisten for resize events
+		 * @memberof rb.resize
+		 * @param fn
+		 */
 		off: function(fn){
 			this.remove(fn);
-			this.teardown();
+			this._teardown();
 		},
 	});
 
-	rb.resize.run = rb.throttle(function(){
+	rb.resize._run = rb.throttle(function(){
 		if(iWidth != innerWidth || cHeight != docElem.clientHeight){
 			iWidth = innerWidth;
 			cHeight = docElem.clientHeight;
@@ -264,7 +365,16 @@ if(!window.rb){
 		}
 	}, {that: rb.resize});
 
+	/* End: resize */
 
+
+	/**
+	 * Sums up all style values of an element (i.e. padding-left + width + padding-right)
+	 * @param element {Element}
+	 * @param styles {String[]} The names of the style properties (i.e. paddingTop, marginTop)
+	 * @param onlyPositive {Boolean} Whether only positive numbers should be considered
+	 * @returns {number} Total of all style values
+	 */
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
 		var numbers = 0;
@@ -284,20 +394,37 @@ if(!window.rb){
 		return numbers;
 	};
 
+
 	rb.camelCase = (function() {
 		var reg = /-([\da-z])/gi;
 		var camelCase = function(all, found) {
 			return found.toUpperCase();
 		};
 
+		/**
+		 * camel cases a String
+		 * @memberof rb
+		 * @name rb.camelCase
+		 * @param str {String} String to camelcase
+		 * @returns {String} the camel cased string
+		 */
 		return function(str) {
 			return str.replace(reg, camelCase);
 		};
 	})();
 
+
 	rb.parseValue = (function() {
 		var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
 		var regObj = /^\[.*?]|\{.*?}$/;
+
+		/**
+		 * Parses a String into another type using JSON.parse, if this fails returns the originall string
+		 * @memberof rb
+		 * @name rb#parseValue
+		 * @param attrVal {String} The string to be parsed
+		 * @returns {String} The parsed string.
+		 */
 		return function( attrVal ) {
 
 			if(attrVal == 'true'){
@@ -320,6 +447,8 @@ if(!window.rb){
 		};
 	})();
 
+	/* Begin: rAF helpers */
+
 	rb.rAFQueue = (function(){
 		var isInProgress, inProgressStack;
 		var fns1 = [];
@@ -336,6 +465,14 @@ if(!window.rb){
 			}
 			isInProgress = false;
 		};
+
+		/**
+		 * Invokes a function inside a rAF call
+		 * @memberof rb
+		 * @name rb#rAFQueue
+		 * @param fn {Function} the function that should be invoked
+		 * @param inProgress {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
+		 */
 		var add = function(fn, inProgress){
 
 			if(inProgress && isInProgress){
@@ -347,20 +484,24 @@ if(!window.rb){
 				}
 			}
 		};
-		var remove = function(fn){
-			var index = curFns.indexOf(fn);
-
-			if(index != -1){
-				curFns.splice(index, 1);
-			}
+		add.add = function(fn, inProgress){
+			add(fn, inProgress);
+			rb.log('old usage of rAFQueue');
 		};
 
-		return {
-			add: add,
-			remove: remove,
-		};
+		return add
 	})();
 
+	/**
+	 * Generates and returns a new, rAFed version of the passed function, so that the passed function is always called using requestAnimationFrame
+	 * @memberof rb
+	 * @param fn {Function} The function to be rAFed
+	 * @param options {Object} Options object
+	 * @param options.that {Object} The context in which the function should be invoked. If nothing is passed the context of the wrapper function is used.
+	 * @param options.queue {Object} Whether the fn should be added to an ongoing rAF or should be queued to the next rAF.
+	 * @param options.batch {boolean} Normally the passed function is also automatically throtteld by rAF. In case batch is true multiple calls to the wrapper function during one frame cycle will also lead to multiple calls to the passed function.
+	 * @returns {Function}
+	 */
 	rb.rAF = function(fn, thisArg, inProgress, isBatched){
 		var running, args, that, options;
 		var batchStack = [];
@@ -383,7 +524,7 @@ if(!window.rb){
 			}
 			if(!running){
 				running = true;
-				rb.rAFQueue.add(run, inProgress);
+				rb.rAFQueue(run, inProgress);
 			}
 		};
 
@@ -413,7 +554,19 @@ if(!window.rb){
 		return rafedFn;
 	};
 
-	/* rbWidget */
+	/* End: rAF helpers */
+
+	/* Begin: rbWidget */
+
+	/**
+	 * A jQuery plugin that returns a widget instance by using rb.life.getWidget. Or invokes a methods or sets/gets a property
+	 * @function external:"jQuery.fn".rbWidget
+	 * @see rb.life.getWidget
+	 * @param [name] {String} The name of the property or method.
+	 * @param [args] {*} The value of the property name to set or an array of arguments in case of a method.
+	 *
+	 * @returns {WidgetInstance|jQueryfiedDOMList|*}
+	 */
 	$.fn.rbWidget = function(name, args){
 		var ret;
 		this.each(function(){
@@ -427,6 +580,8 @@ if(!window.rb){
 			ret
 			;
 	};
+
+	/* End: rbWidget */
 
 	var isExtended;
 	var copyEasing = function(easing){
@@ -445,6 +600,7 @@ if(!window.rb){
 
 	rb.addEasing = function(easing){
 		var bezierArgs;
+		if(typeof easing != 'string'){return;}
 		if(window.BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
 			extendEasing();
 			bezierArgs = bezierArgs.map(function(str){
@@ -700,7 +856,7 @@ if(!window.rb){
 	var update = function(){
 		if(!running){
 			running = true;
-			rb.rAFQueue.add(updateFocus, true);
+			rb.rAFQueue(updateFocus, true);
 		}
 	};
 
@@ -734,7 +890,7 @@ if(!window.rb){
 
 	var removeChildFocus = function(){
 		if(keyboardFocusElem){
-			rb.rAFQueue.add(_removeChildFocus);
+			rb.rAFQueue(_removeChildFocus);
 		}
 	};
 
@@ -1062,7 +1218,7 @@ if(!window.rb){
 		initClickCreate = $.noop;
 		rb.click.add('module', function(elem){
 			life.getWidget(elem);
-			rb.rAFQueue.add(function(){
+			rb.rAFQueue(function(){
 				elem.classList.remove('js-click');
 			}, true);
 			lifeBatch.run();
@@ -1259,9 +1415,9 @@ if(!window.rb){
 			element[widgetExpando] = instance;
 		}
 
-		rb.rAFQueue.add(function(){
+		rb.rAFQueue(function(){
 			element.classList.add( attachedClass );
-		});
+		}, true);
 
 		if (!_fromWebComponent && !element[expando] && instance && (instance.attached || instance.detached)) {
 
@@ -1477,6 +1633,13 @@ if(!window.rb){
 	var regData = /^data-/;
 	var regName = /\{name}/g;
 
+	/**
+	 * returns the widget instance of an element or sets/gets/invokes a property/method of another widget instance
+	 * @memberof rb
+	 * @param {Element} element - DOM element
+	 * @param {String} [name] - property name or method name of the component instance
+	 * @param {*} [value] - value or in case of a method arguments {array}
+	 */
 	life.getWidget = function(element, key, args){
 		var ret, moduleId;
 		var widget = element && element[widgetExpando];
@@ -1503,6 +1666,7 @@ if(!window.rb){
 
 		ret = widget;
 		if(widget && key){
+			rb.log('deprecated use of getWidget');
 			ret = widget[key];
 
 			if(typeof ret == 'function'){
@@ -1516,13 +1680,22 @@ if(!window.rb){
 	};
 
 
-	life.Widget = rb.Class.extend({
-		/**
-		 * Component Base Class - all UI components should extend this class.
-		 * This Class adds some neat stuff to parse/change options, bind and trigger events as also handles the components life cycle (init, attached, detached).
-		 * @class
-		 * @exports rb#Widget
-		 */
+	/**
+	 * Component Base Class - all UI components should extend this class.
+	 * This Class adds some neat stuff to parse/change options, bind and trigger events as also handles the components life cycle (init, attached, detached).
+	 * @class
+	 * @name rb.Widget
+	 * @borrows rb.life.getWidget as widget
+	 */
+	rb.Widget = rb.Class.extend(
+		/** @lends rb.Widget.prototype */
+		{
+
+			/**
+			 * constructs the class
+			 * @param element
+			 * @constructs
+			 */
 		init: function(element){
 			this.element = element;
 			this.$element = $(element);
@@ -1551,12 +1724,7 @@ if(!window.rb){
 		 */
 		defaults: {},
 
-		/**
-		 * returns the widget instance of an element or sets/gets/invokes a property of another widget instance
-		 * @param {object} element - DOM element
-		 * œparam {string} [name] - property name or method name of the component instance
-		 * @param {string} [value] - value or in case of a method arguments {array}
-		 */
+
 		widget: life.getWidget,
 
 		_setupEventsByEvtObj: function(){
@@ -1631,6 +1799,11 @@ if(!window.rb){
 			}
 		},
 
+			/**
+			 * returns id of an element, if no id exist generates one for the element
+			 * @param [element] {Element} element, if no element is given. the widget element is used.
+			 * @returns {String} id
+			 */
 		getId: function(element){
 			var id;
 			if(!element){
@@ -1645,6 +1818,13 @@ if(!window.rb){
 			return id;
 		},
 
+			/**
+			 *
+			 * @param [name] {String|Object}
+			 * @param [detail] {Object}
+			 * @returns {Event}
+			 * @private
+			 */
 		_trigger: function(name, detail){
 			var evt;
 			if(typeof name == 'object'){
@@ -1752,9 +1932,9 @@ if(!window.rb){
 		}
 	});
 
-	rb.addLog(life.Widget.prototype, false);
+	rb.addLog(rb.Widget.prototype, false);
 
-	life.Widget.extend = function(name, prop, noCheck){
+	rb.Widget.extend = function(name, prop, noCheck){
 		var Class = rb.Class.extend.call(this, prop);
 
 		if(prop.statics){
@@ -1766,7 +1946,7 @@ if(!window.rb){
 		return Class;
 	};
 
-	life.Widget.mixin = function(Class, prop){
+	rb.Widget.mixin = function(Class, prop){
 		if(prop.defaults){
 			Class.defaults = Object.assign(Class.defaults || {}, prop.defaults);
 		}
@@ -1782,7 +1962,7 @@ if(!window.rb){
 		return Class;
 	};
 
-	rb.Widget = life.Widget;
+	life.Widget = rb.Widget;
 	rb.Component = rb.Widget;
 })(window, document, rb.life);
 

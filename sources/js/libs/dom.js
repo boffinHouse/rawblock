@@ -6,14 +6,14 @@
 	}
 }(typeof window != 'undefined' ? window : this , function(window, document) {
 	'use strict';
-	var slice = [].slice;
+
 	var Dom = function(elements, context){
 
 		if(!(this instanceof Dom)){
 			return new Dom(elements);
 		}
 		if(typeof elements == 'string'){
-			elements = slice.call((context || document).querySelectorAll(elements));
+			elements = Array.from((context || document).querySelectorAll(elements));
 		} else if(typeof elements == 'function'){
 			if(Dom.isReady){
 				elements(Dom);
@@ -31,7 +31,7 @@
 			} else if(elements.nodeName || !('length' in elements) || elements == window){
 				elements = [elements];
 			} else {
-				elements = slice.call(elements);
+				elements = Array.from(elements);
 			}
 		}
 
@@ -54,7 +54,7 @@
 				isJumpToEnd = true;
 			}
 			step();
-			rAF.remove(step);
+			hardStop = true;
 		};
 		var tweenObj = {};
 		var stepObj = {};
@@ -105,7 +105,7 @@
 
 			if(pos < 1){
 				if(!isStopped){
-					rAF.add(step);
+					rAF(step);
 				} else if(options.always){
 					options.always.call(element);
 				}
@@ -131,7 +131,7 @@
 		tweenObj.opts = options;
 		tweenObj.props = endProps;
 
-		rAF.add(step);
+		rAF(step);
 	};
 
 	tween.getStartValues = function(element, elementStyle, startProps, endProps){
