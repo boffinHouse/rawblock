@@ -315,7 +315,7 @@ if(!window.rb){
 	 * @namespace rb.resize
 	 * @memberof rb
 	 * @extends jQuery.Callbacks
-	 * @type {object}
+	 * @type {Object}
 	 */
 	rb.resize = Object.assign(rb.$.Callbacks(), {
 
@@ -367,13 +367,16 @@ if(!window.rb){
 
 	/* End: resize */
 
-
+	/* Begin: getCSSNumbers */
 	/**
-	 * Sums up all style values of an element (i.e. padding-left + width + padding-right)
+	 * Sums up all style values of an element
+	 * @memberof rb
 	 * @param element {Element}
 	 * @param styles {String[]} The names of the style properties (i.e. paddingTop, marginTop)
 	 * @param onlyPositive {Boolean} Whether only positive numbers should be considered
 	 * @returns {number} Total of all style values
+	 * @example
+	 * var innerWidth = rb.getCSSNumbers(domElement, ['paddingLeft', 'paddingRight', 'width'];
 	 */
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
@@ -393,7 +396,9 @@ if(!window.rb){
 
 		return numbers;
 	};
+	/* End: getCSSNumbers */
 
+	/* Begin: camelCase */
 
 	rb.camelCase = (function() {
 		var reg = /-([\da-z])/gi;
@@ -413,7 +418,9 @@ if(!window.rb){
 		};
 	})();
 
+	/* End: camelCase */
 
+	/* Begin: parseValue */
 	rb.parseValue = (function() {
 		var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
 		var regObj = /^\[.*?]|\{.*?}$/;
@@ -446,6 +453,7 @@ if(!window.rb){
 			return attrVal;
 		};
 	})();
+	/* End: parseValue */
 
 	/* Begin: rAF helpers */
 
@@ -489,7 +497,7 @@ if(!window.rb){
 			rb.log('old usage of rAFQueue');
 		};
 
-		return add
+		return add;
 	})();
 
 	/**
@@ -583,6 +591,7 @@ if(!window.rb){
 
 	/* End: rbWidget */
 
+	/* Begin: addEasing */
 	var isExtended;
 	var copyEasing = function(easing){
 		var easObj = BezierEasing.css[easing];
@@ -620,8 +629,9 @@ if(!window.rb){
 	};
 	extendEasing();
 	setTimeout(extendEasing);
+	/* End: addEasing */
 
-	/* Symbol */
+	/* Begin: ID/Symbol */
 	rb.Symbol = window.Symbol;
 	var id = Math.round(Date.now() * Math.random());
 	rb.getID = function(){
@@ -636,6 +646,9 @@ if(!window.rb){
 		};
 	}
 
+	/* End: ID/Symbol */
+
+	/* Begin: elementResize */
 	var elementResize = {
 		add: function(element, fn, options){
 			if(!element[elementResize.expando]){
@@ -789,6 +802,7 @@ if(!window.rb){
 			elementResize[action](this, fn, options);
 		});
 	};
+	/* End: elementResize */
 
 	/* is-teaser delegate */
 	var getSelection = window.getSelection || function(){return {};};
@@ -1087,31 +1101,9 @@ if(!window.rb){
 		}
 	};
 
-
 	var regSplit = /\s*?,\s*?|\s+?/g;
 	var regNum = /:(\d)+\s*$/;
 	var regTarget = /^\s*?\.?([a-z0-9_]+)\((.*?)\)\s*?/i;
-
-	[['closestNext', 'nextElementSibling'], ['closestPrev', 'previousElementSibling']].forEach(function(action){
-		$.fn[action[0]] = function(sel){
-			var array = [];
-			var found = false;
-
-			this.each(function(i, elem){
-				var element = found || elem[action[1]];
-				while(!found && element){
-					if((!sel || element.matches(sel))){
-						found = true;
-						array.push(element);
-						break;
-					} else {
-						element = element[action[1]];
-					}
-				}
-			});
-			return $( array );
-		};
-	});
 
 	rb.elementFromStr = function(targetStr, element){
 		var i, len, target, temp, num, match;
@@ -1222,6 +1214,24 @@ if(!window.rb){
 				elem.classList.remove('js-click');
 			}, true);
 			lifeBatch.run();
+		});
+	};
+
+	var initWatchCss = function(){
+		initWatchCss = $.noop;
+		var elements = document.getElementsByClassName(attachedClass);
+
+		rb.resize.on(function(){
+			var i, elem, widget;
+			var len = elements.length;
+			for(i = 0; i < len; i++){
+				elem = elements[i];
+				widget = elem && elem[widgetExpando];
+
+				if(widget && widget.parseOptions && widget._afterStyle && widget._afterStyle.content != widget._styleOptsStr){
+					widget.parseOptions();
+				}
+			}
 		});
 	};
 
@@ -1361,6 +1371,8 @@ if(!window.rb){
 		life.searchModules();
 
 		initClickCreate();
+
+		initWatchCss();
 	};
 
 	life.register = function(name, LifeClass, noCheck) {
@@ -1633,6 +1645,43 @@ if(!window.rb){
 	var regData = /^data-/;
 	var regName = /\{name}/g;
 
+	var _setupEventsByEvtObj = function(that){
+		var evt, namedStr, evtName, selector;
+		var evts = that.constructor.events;
+
+		for(evt in evts){
+			namedStr = evt.replace(regName, that.name);
+			selector = namedStr.split(' ');
+			evtName = selector.shift();
+
+			/* jshint loopfunc: true */
+			(function(evtName, selector, method){
+				var args = [evtName];
+
+				if(selector){
+					args.push(selector);
+				}
+
+				args.push((typeof method == 'string') ? function(e){
+					return that[method].apply(that, arguments);
+				} :
+					function(){
+						return method.apply(that, arguments);
+					});
+
+				if(args.length == 2 && evtName.startsWith('elemresize')){
+					that.$element.elementResize('add', args[1], {
+						noWidth: evtName.endsWith('height'),
+						noHeight: evtName.endsWith('width'),
+					});
+				} else {
+					that.$element.on.apply(that.$element, args);
+				}
+
+			})(evtName, selector.join(' '), evts[evt]);
+		}
+	};
+
 	/**
 	 * returns the widget instance of an element or sets/gets/invokes a property/method of another widget instance
 	 * @memberof rb
@@ -1696,127 +1745,57 @@ if(!window.rb){
 			 * @param element
 			 * @constructs
 			 */
-		init: function(element){
-			this.element = element;
-			this.$element = $(element);
-			this.options = {};
+			init: function(element){
 
-			this.parseOptions(this.options, this.constructor.defaults);
+				this.element = element;
+				this.$element = $(element);
+				this.options = {};
+				this._afterStyle = rb.getStyles(element, '::after');
 
-			if(this.options.name){
-				this.name = this.options.name;
-			}
+				element[widgetExpando] = this;
 
-			this._evtName = this.name + 'changed';
-			this._beforeEvtName = this.name + 'change';
+				this.parseOptions(this.options);
 
-			element[widgetExpando] = this;
-
-			this._setupLifeOptions();
-
-			this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
-			this._setupEventsByEvtObj();
-		},
-
-		/**
-		 * defaults Object, represent the default options of the component.
-		 * While an option can be of any type, it is recommended to only use immutable values as defaults.
-		 */
-		defaults: {},
-
-
-		widget: life.getWidget,
-
-		_setupEventsByEvtObj: function(){
-			var evt, namedStr, evtName, selector;
-			var evts = this.constructor.events;
-			var that = this;
-
-			for(evt in evts){
-				namedStr = evt.replace(regName, that.name);
-				selector = namedStr.split(' ');
-				evtName = selector.shift();
-
-				/* jshint loopfunc: true */
-				(function(evtName, selector, method){
-					var args = [evtName];
-
-					if(selector){
-						args.push(selector);
-					}
-
-					args.push((typeof method == 'string') ? function(e){
-						return that[method].apply(that, arguments);
-					} :
-					function(){
-						return method.apply(that, arguments);
-					});
-
-					if(args.length == 2 && evtName.startsWith('elemresize')){
-						that.$element.elementResize('add', args[1], {
-							noWidth: evtName.endsWith('height'),
-							noHeight: evtName.endsWith('width'),
-						});
-					} else {
-						that.$element.on.apply(that.$element, args);
-					}
-
-				})(evtName, selector.join(' '), evts[evt]);
-			}
-		},
-
-		_setupLifeOptions: function(){
-			var runner, styles;
-			var old = {};
-			var that = this;
-
-			if (this.options.watchCss) {
-				styles = rb.getStyles(that.element, '::after');
-				old.attached = this.attached;
-				old.detached = this.detached;
-				runner = function() {
-					if(that._styleOptsStr != (styles.content || '')){
-						that.parseOptions(null, that.constructor.defaults);
-					}
-				};
-
-				this.attached = function(){
-					rb.resize.on(runner);
-					if(old.attached){
-						return old.attached.apply(this, arguments);
-					}
-				};
-				this.detached = function(){
-					rb.resize.off(runner);
-					if(old.detached){
-						return old.detached.apply(this, arguments);
-					}
-				};
-
-				if(!old.attached && !old.detached && life._attached.indexOf(this.element) == -1){
-					life._attached.push(this.element);
+				if(this.options.name){
+					this.name = this.options.name;
 				}
-			}
-		},
+
+				this._evtName = this.name + 'changed';
+				this._beforeEvtName = this.name + 'change';
+
+
+				this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
+
+				_setupEventsByEvtObj(this);
+			},
+
+			/**
+			 * defaults Object, represent the default options of the component.
+			 * While an option can be of any type, it is recommended to only use immutable values as defaults.
+			 */
+			defaults: {},
+
+
+			widget: life.getWidget,
 
 			/**
 			 * returns id of an element, if no id exist generates one for the element
 			 * @param [element] {Element} element, if no element is given. the widget element is used.
 			 * @returns {String} id
 			 */
-		getId: function(element){
-			var id;
-			if(!element){
-				element = this.element;
-			}
+			getId: function(element){
+				var id;
+				if(!element){
+					element = this.element;
+				}
 
-			if (!(id = element.id)) {
-				id = 'rbjsid-' + rb.getID();
-				element.id = id;
-			}
+				if (!(id = element.id)) {
+					id = 'rbjsid-' + rb.getID();
+					element.id = id;
+				}
 
-			return id;
-		},
+				return id;
+			},
 
 			/**
 			 *
@@ -1825,112 +1804,116 @@ if(!window.rb){
 			 * @returns {Event}
 			 * @private
 			 */
-		_trigger: function(name, detail){
-			var evt;
-			if(typeof name == 'object'){
-				detail = name;
-				name = detail.type;
-			}
-			if(name == null){
-				name = this._evtName;
-			} else if(!name.includes(this.name)){
-				name = this.name + name;
-			}
-			evt = $.Event(name, {detail: detail || {}});
-			this.$element.trigger(evt);
-			return evt;
-		},
-
-		setFocus: rb.setFocus,
-
-		setWidgetFocus: function(element){
-			this._activeElement = document.activeElement;
-			var focusElement;
-
-			if(element && element !== true){
-				if(element.nodeType == 1){
-					focusElement = element;
-				} else if(typeof element == 'string'){
-					focusElement = rb.elementFromStr(element, this.element)[0];
+			_trigger: function(name, detail){
+				var evt;
+				if(typeof name == 'object'){
+					detail = name;
+					name = detail.type;
 				}
-			} else {
-				focusElement = this.element.querySelector('.js-autofocus');
-			}
-			if(!focusElement && element === true){
-				focusElement = this.element;
-			}
-			if(focusElement){
-				this.setFocus(focusElement);
-			}
-		},
-
-		restoreFocus: function(checkInside){
-			var activeElem = this._activeElement;
-			if(!activeElem){return;}
-
-			this._activeElement = null;
-			if(!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)){
-				this.setFocus(activeElem);
-			}
-		},
-
-		parseOptions: function(opts, defaults){
-			var options = Object.assign(opts || {}, defaults, this.parseCSSOptions(), this.parseHTMLOptions());
-			this.setOptions(options);
-		},
-
-		setOptions: function(opts){
-			for(var prop in opts){
-				if(opts[prop] !== this.options[prop]){
-					this.setOption(prop, opts[prop]);
+				if(name == null){
+					name = this._evtName;
+				} else if(!name.includes(this.name)){
+					name = this.name + name;
 				}
-			}
-		},
+				evt = $.Event(name, {detail: detail || {}});
+				this.$element.trigger(evt);
+				return evt;
+			},
 
-		setOption: function(name, value){
-			this.options[name] = value;
-			if(name == 'debug' && value){
-				this.isDebug = true;
-			} else if(name == 'name'){
-				rb.log('don\'t change name after init.');
-			}
-		},
+			setFocus: rb.setFocus,
 
-		parseHTMLOptions: function(element){
-			var i, name;
-			var options = {};
-			var attributes = (element || this.element).attributes;
-			var len = attributes.length;
+			setWidgetFocus: function(element){
+				this._activeElement = document.activeElement;
+				var focusElement;
 
-			for ( i = 0; i < len; i++ ) {
-				name = attributes[ i ].nodeName;
-				if ( !name.indexOf( 'data-' ) ) {
-					options[ rb.camelCase( name.replace( regData , '' ) ) ] = rb.parseValue( attributes[ i ].nodeValue );
+				if(element && element !== true){
+					if(element.nodeType == 1){
+						focusElement = element;
+					} else if(typeof element == 'string'){
+						focusElement = rb.elementFromStr(element, this.element)[0];
+					}
+				} else {
+					focusElement = this.element.querySelector('.js-autofocus');
 				}
-			}
-
-			return options;
-		},
-
-		parseCSSOptions: function(element){
-			var style = rb.getStyles(element || this.element, '::after').content || '';
-			if(style && (element || !this._styleOptsStr || style != this._styleOptsStr )){
-				if(!element){
-					this._styleOptsStr = style;
+				if(!focusElement && element === true){
+					focusElement = this.element;
 				}
-				style = rb.parsePseudo(style);
+				if(focusElement){
+					this.setFocus(focusElement);
+				}
+			},
+
+			restoreFocus: function(checkInside){
+				var activeElem = this._activeElement;
+				if(!activeElem){return;}
+
+				this._activeElement = null;
+				if(!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)){
+					this.setFocus(activeElem);
+				}
+			},
+
+			parseOptions: function(opts){
+				var options = Object.assign(opts || {}, this.constructor.defaults, this.parseCSSOptions(), this.parseHTMLOptions());
+				this.setOptions(options);
+			},
+
+			setOptions: function(opts){
+				for(var prop in opts){
+					if(opts[prop] !== this.options[prop]){
+						this.setOption(prop, opts[prop]);
+					}
+				}
+			},
+
+			setOption: function(name, value){
+				this.options[name] = value;
+				if(name == 'debug' && value){
+					this.isDebug = true;
+				} else if(name == 'name'){
+					rb.log('don\'t change name after init.');
+				}
+			},
+
+			parseHTMLOptions: function(element){
+				var i, name;
+				var options = {};
+				var attributes = (element || this.element).attributes;
+				var len = attributes.length;
+
+				for ( i = 0; i < len; i++ ) {
+					name = attributes[ i ].nodeName;
+					if ( !name.indexOf( 'data-' ) ) {
+						options[ rb.camelCase( name.replace( regData , '' ) ) ] = rb.parseValue( attributes[ i ].nodeValue );
+					}
+				}
+
+				return options;
+			},
+
+			parseCSSOptions: function(element){
+				if(element == this.element){
+					element = null;
+				}
+				var style = (element ? rb.getStyles(element, '::after') : this._afterStyle).content || '';
+				if(style && (element || !this._styleOptsStr || style != this._styleOptsStr )){
+					if(!element){
+						this._styleOptsStr = style;
+					}
+					style = rb.parsePseudo(style);
+				}
+				return style || false;
+			},
+
+			destroy: function(){
+				life.destroyWidget(this);
+			},
+
+			_super: function(){
+				this.log('no _super');
 			}
-			return style || false;
-		},
-
-		destroy: function(){
-			life.destroyWidget(this);
-		},
-
-		_super: function(){
-			this.log('no _super');
 		}
-	});
+	);
 
 	rb.addLog(rb.Widget.prototype, false);
 

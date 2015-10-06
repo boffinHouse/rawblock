@@ -432,13 +432,14 @@
 
 	[['find', 'querySelectorAll', true], ['children', 'children']].forEach(function(action, test){
 		var isMatched = !!action[2];
+		var isMethod = !!action[2];
 		fn[action[0]] = function(sel){
 			var array = [];
-			this.elements.forEach(function(elem){
+			this.elements.forEach(function(elem, index){
 				var i, len;
-				var elements = test ? elem[action[1]] : elem[action[1]](sel);
+				var elements = isMethod ? elem[action[1]](sel) : elem[action[1]];
 				for(i = 0, len = elements.length; i < len; i++){
-					if((isMatched || !sel || elements[i].matches(sel)) && array.indexOf(elements[i]) == -1){
+					if((isMatched || !sel || elements[i].matches(sel)) && (!index || array.indexOf(elements[i]) == -1)){
 						array.push(elements[i]);
 					}
 				}
@@ -454,12 +455,30 @@
 		var isMethod = !!action[4];
 		fn[action[0]] = function(sel){
 			var array = [];
-			this.elements.forEach(function(elem){
+			this.elements.forEach(function(elem, index){
 				var element = isMethod ? elem[action[1]](sel) : elem[action[1]];
-				if(element && (isMatched || !sel || element.matches(sel)) && (isUnique || array.indexOf(element) == -1)){
+				if(element && (isMatched || !sel || element.matches(sel)) && (isUnique || !index || array.indexOf(element) == -1)){
 					array.push(element);
 				}
 			});
+			return new Dom( array );
+		};
+	});
+
+	[['prevAll', 'previousElementSibling'], ['nextAll', 'nextElementSibling'], ['parents', 'parentNode']].forEach(function(action){
+		fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem, index){
+				var element = elem[action[1]];
+
+				while(element && element.nodeType == 1){
+					if((!sel || element.matches(sel)) && (!index || array.indexOf(element) == -1)){
+						array.push(element);
+					}
+					element = element[action[1]];
+				}
+			});
+
 			return new Dom( array );
 		};
 	});
