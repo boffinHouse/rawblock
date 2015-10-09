@@ -363,7 +363,7 @@ if(!window.rb){
 
 			this.fire();
 		}
-	}, {that: rb.resize});
+	}, {that: rb.resize, read: true,});
 
 	/* End: resize */
 
@@ -481,7 +481,7 @@ if(!window.rb){
 		 * @param fn {Function} the function that should be invoked
 		 * @param inProgress {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
 		 */
-		var add = function(fn, inProgress){
+		return function(fn, inProgress){
 
 			if(inProgress && isInProgress){
 				inProgressStack.push(fn);
@@ -492,12 +492,6 @@ if(!window.rb){
 				}
 			}
 		};
-		add.add = function(fn, inProgress){
-			add(fn, inProgress);
-			rb.log('old usage of rAFQueue');
-		};
-
-		return add;
 	})();
 
 	/**
@@ -510,8 +504,8 @@ if(!window.rb){
 	 * @param options.batch {boolean} Normally the passed function is also automatically throtteld by rAF. In case batch is true multiple calls to the wrapper function during one frame cycle will also lead to multiple calls to the passed function.
 	 * @returns {Function}
 	 */
-	rb.rAF = function(fn, thisArg, inProgress, isBatched){
-		var running, args, that, options;
+	rb.rAF = function(fn, options){
+		var running, args, that, inProgress;
 		var batchStack = [];
 		var run = function(){
 			running = false;
@@ -536,19 +530,8 @@ if(!window.rb){
 			}
 		};
 
-		if(thisArg && typeof thisArg == 'object' && (('that' in thisArg) || ('batch' in thisArg) || ('inProgress' in thisArg))){
-			options = thisArg;
-		} else {
-
-			//ToDo: remove deprecated warning and refactor
-			if(thisArg || isBatched || inProgress){
-				throw('deprecated use of rAF');
-			}
+		if(!options){
 			options = {};
-		}
-
-		if(options.inProgress){
-			rb.log('deprecated use of rAF (inProgress)');
 		}
 
 		inProgress = !options.queue;
@@ -694,10 +677,7 @@ if(!window.rb){
 				shrinkElem.addEventListener('scroll', onScroll);
 			};
 
-			var runFire = rb.throttle(function(){
-
-				data.width = element.offsetWidth;
-				data.height = element.offsetHeight;
+			var runFire = function(){
 
 				if(heightChange){
 					element[elementResize.expando].heightCbs.fire(data);
@@ -710,7 +690,7 @@ if(!window.rb){
 
 				heightChange = false;
 				widthChange = false;
-			});
+			};
 
 			var scrollWrite = function(){
 				expandElem.scrollLeft = data.exScrollLeft;
@@ -733,7 +713,7 @@ if(!window.rb){
 			var write = rb.rAF(function(){
 				expandChild.style.width = data.exChildWidth;
 				expandChild.style.height = data.exChildHeight;
-				setTimeout(scrollWrite, 8);
+				setTimeout(scrollWrite, 4);
 			});
 
 			var read = function(){
@@ -748,7 +728,7 @@ if(!window.rb){
 
 				write();
 			};
-			var onScroll = function(){
+			var onScroll = rb.throttle(function(){
 				if(block){
 					return;
 				}
@@ -770,7 +750,7 @@ if(!window.rb){
 					read();
 				}
 
-			};
+			});
 
 			wrapper.className = 'js-element-resize';
 			wrapper.setAttribute('style', wrapperStyle +'visibility:hidden;z-index: -1;');
@@ -1683,22 +1663,18 @@ if(!window.rb){
 	};
 
 	/**
-	 * returns the widget instance of an element or sets/gets/invokes a property/method of another widget instance
+	 * returns the widget instance of an element
 	 * @memberof rb
 	 * @param {Element} element - DOM element
-	 * @param {String} [name] - property name or method name of the component instance
-	 * @param {*} [value] - value or in case of a method arguments {array}
+	 * @param {String} [moduleId] - optional name of the widget
+	 * @returns {Object} A component instance
 	 */
-	life.getWidget = function(element, key, args){
-		var ret, moduleId;
+	life.getWidget = function(element, moduleId){
 		var widget = element && element[widgetExpando];
 
 		if(!widget){
 
-			if(rb.widgets[key]){
-				moduleId = key;
-				key = false;
-			} else {
+			if(!rb.widgets[moduleId]){
 				moduleId = (element.getAttribute( 'data-module' ) || '').split('/');
 
 				if(!moduleId.length){
@@ -1712,20 +1688,7 @@ if(!window.rb){
 				widget = life.create(element, rb.widgets[ moduleId ]);
 			}
 		}
-
-		ret = widget;
-		if(widget && key){
-			rb.log('deprecated use of getWidget');
-			ret = widget[key];
-
-			if(typeof ret == 'function'){
-				ret = ret.apply(widget, args || []);
-			} else if(args !== undefined){
-				widget[key] = args;
-				ret = undefined;
-			}
-		}
-		return ret;
+		return widget;
 	};
 
 
@@ -1775,7 +1738,9 @@ if(!window.rb){
 			 */
 			defaults: {},
 
-
+			/**
+			 * @function
+			 */
 			widget: life.getWidget,
 
 			/**
@@ -1799,23 +1764,22 @@ if(!window.rb){
 
 			/**
 			 *
-			 * @param [name] {String|Object}
+			 * @param [type] {String|Object}
 			 * @param [detail] {Object}
 			 * @returns {Event}
-			 * @private
 			 */
-			_trigger: function(name, detail){
+			_trigger: function(type, detail){
 				var evt;
-				if(typeof name == 'object'){
-					detail = name;
-					name = detail.type;
+				if(typeof type == 'object'){
+					detail = type;
+					type = detail.type;
 				}
-				if(name == null){
-					name = this._evtName;
-				} else if(!name.includes(this.name)){
-					name = this.name + name;
+				if(type == null){
+					type = this._evtName;
+				} else if(!type.includes(this.name)){
+					type = this.name + type;
 				}
-				evt = $.Event(name, {detail: detail || {}});
+				evt = $.Event(type, {detail: detail || {}});
 				this.$element.trigger(evt);
 				return evt;
 			},
