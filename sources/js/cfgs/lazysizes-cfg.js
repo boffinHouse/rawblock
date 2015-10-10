@@ -3,10 +3,12 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 
 (function(){
 	'use strict';
-
+	var docElem = document.documentElement;
 	window.lazySizesConfig = window.lazySizesConfig || {};
+
 	//set expand to a higher value on larger displays
-	window.lazySizesConfig.expand = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight) > 650 ? 650 : 359;
+	window.lazySizesConfig.expand = Math.max(Math.min(docElem.clientWidth, docElem.clientHeight), 359);
+	window.lazySizesConfig.expFactor = lazySizesConfig.expand < 500 ? 2.5 : 2;
 
 	var addLifeClass = function(elem){
 		elem.classList.add('js-rb-life');

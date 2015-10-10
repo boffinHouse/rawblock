@@ -10,16 +10,16 @@
 		var name = 'panel' + id;
 
 		var addSpy = function(){
-			for(fn in module.widget.prototype){
-				if(typeof module.widget.prototype[fn] == 'function' && !('getCall' in module.widget.prototype[fn])){
-					sinon.spy(module.widget.prototype, fn);
+			for(fn in module.component.prototype){
+				if(typeof module.component.prototype[fn] == 'function' && !('getCall' in module.component.prototype[fn])){
+					sinon.spy(module.component.prototype, fn);
 				}
 			}
 		};
 
 		module = {
 			name: name,
-			widget: rb.Widget.extend(name, {
+			component: rb.Component.extend(name, {
 
 				init: function(element){
 					this._super(element);
@@ -62,8 +62,8 @@
 
 		assert.ok($panel1.get(0).classList.contains('panel-open'));
 
-		assert.equal($panel1.rbWidget().activeButtonWidget, $button.rbWidget());
-		assert.equal($button.rbWidget().target, $panel1.get(0));
+		assert.equal($panel1.rbComponent().activeButtonComponent, $button.rbComponent());
+		assert.equal($button.rbComponent().target, $panel1.get(0));
 
 		assert.notOk($panel2.get(0).classList.contains('panel-open'));
 
@@ -72,14 +72,14 @@
 
 		assert.ok($panel1.get(0).classList.contains('panel-open'));
 		assert.ok($panel2.get(0).classList.contains('panel-open'));
-		assert.equal($panel2.rbWidget().activeButtonWidget, $button.rbWidget());
-		assert.equal($button.rbWidget().target, $panel2.get(0));
+		assert.equal($panel2.rbComponent().activeButtonComponent, $button.rbComponent());
+		assert.equal($button.rbComponent().target, $panel2.get(0));
 
-		$button.rbWidget().setTarget($panel1.get(0));
-		$button.rbWidget().setOption('type', 'special');
+		$button.rbComponent().setTarget($panel1.get(0));
+		$button.rbComponent().setOption('type', 'special');
 		$button.get(0).click();
 
-		assert.equal($button.rbWidget().target, $panel1.get(0));
+		assert.equal($button.rbComponent().target, $panel1.get(0));
 		assert.ok($panel1.get(0).classList.contains('special-panel'));
 
 		QUnit.afterAF()

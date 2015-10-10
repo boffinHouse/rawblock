@@ -1,10 +1,10 @@
 (function(){
 	'use strict';
-	QUnit.module('rb.WidgetES6');
+	QUnit.module('rb.ComponentES6');
 
 	var modules = {};
 	QUnit.testStart(function(obj){
-		if(obj.module != 'rb.WidgetES6'){return;}
+		if(obj.module != 'rb.ComponentES6'){return;}
 		var fn, tmpName, module;
 		var id = rb.getID();
 		var name = 'dummy' + id;
@@ -21,7 +21,7 @@
 
 		modules.ext1 = {
 			name: name,
-			module: rb.Widget.extend(name, {
+			module: rb.Component.extend(name, {
 				statics: {
 					ext1: function(){},
 				},
@@ -140,10 +140,10 @@
 		addSpy();
 	});
 
-	QUnit.test("rb.Widget - inheritance", function( assert ){
-		var ext1 = rb.$(document.createElement('div')).rbWidget(modules.ext1.name);
-		var ext2 = rb.$(document.createElement('div')).rbWidget(modules.ext2.name);
-		var ext3 = rb.$(document.createElement('div')).rbWidget(modules.ext3.name);
+	QUnit.test("rb.Component - inheritance", function( assert ){
+		var ext1 = rb.$(document.createElement('div')).rbComponent(modules.ext1.name);
+		var ext2 = rb.$(document.createElement('div')).rbComponent(modules.ext2.name);
+		var ext3 = rb.$(document.createElement('div')).rbComponent(modules.ext3.name);
 
 
 		assert.equal(modules.ext1.module.prototype.init.callCount, 3);
@@ -170,10 +170,10 @@
 		assert.equal(ext3._setterSet, 'test3ext2');
 	});
 
-	QUnit.test("rb.Widget - inheritance - statics + defaults + events", function( assert ){
-		var ext1 = rb.$(document.createElement('div')).rbWidget(modules.ext1.name);
-		var ext2 = rb.$(document.createElement('div')).rbWidget(modules.ext2.name);
-		var ext3 = rb.$(document.createElement('div')).rbWidget(modules.ext3.name);
+	QUnit.test("rb.Component - inheritance - statics + defaults + events", function( assert ){
+		var ext1 = rb.$(document.createElement('div')).rbComponent(modules.ext1.name);
+		var ext2 = rb.$(document.createElement('div')).rbComponent(modules.ext2.name);
+		var ext3 = rb.$(document.createElement('div')).rbComponent(modules.ext3.name);
 
 		assert.equal(typeof modules.ext1.module.ext1, 'function');
 		assert.equal(typeof modules.ext3.module.ext3, 'function');
