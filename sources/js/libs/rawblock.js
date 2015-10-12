@@ -400,14 +400,15 @@ if(!window.rb){
 
 		/**
 		 * camel cases a String
-		 * @memberof rb
-		 * @name rb.camelCase
+		 * @alias rb#camelCase
 		 * @param str {String} String to camelcase
 		 * @returns {String} the camel cased string
 		 */
-		return function(str) {
+		var retCamel = function(str) {
 			return str.replace(reg, camelCase);
 		};
+
+		return retCamel;
 	})();
 
 	/* End: camelCase */
@@ -419,7 +420,7 @@ if(!window.rb){
 
 		/**
 		 * Parses a String into another type using JSON.parse, if this fails returns the given string
-		 * @name rb#parseValue
+		 * @alias rb#parseValue
 		 * @param {String} attrVal The string to be parsed
 		 * @returns {String} The parsed string.
 		 */
@@ -469,7 +470,7 @@ if(!window.rb){
 		/**
 		 * Invokes a function inside a rAF call
 		 * @memberof rb
-		 * @name rb#rAFQueue
+		 * @alias rb#rAFQueue
 		 * @param fn {Function} the function that should be invoked
 		 * @param inProgress {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
 		 */
@@ -756,7 +757,7 @@ if(!window.rb){
 					heightChange = curHeightChange || heightChange;
 					data.height = height;
 					data.width = width;
-					block = true;
+					block = widthChange && heightChange;
 					read();
 				}
 
@@ -974,6 +975,7 @@ if(!window.rb){
 
 	/**
 	 * Removes leading and ending quotes (",') from a string.
+	 * @memberof rb
 	 * @param str
 	 * @returns {string}
 	 */
@@ -983,6 +985,7 @@ if(!window.rb){
 
 	/**
 	 * Parses the CSS content value of a pseudo element using JSON.parse.
+	 * @memberof rb
 	 * @param element {Element} The element to parse.
 	 * @param [pseudo='::after'] {String}
 	 * @returns {Object|undefined}
@@ -1001,6 +1004,7 @@ if(!window.rb){
 
 	/**
 	 * Returns the ComputedStyleObject of an element.
+	 * @memberof rb
 	 * @param elem {Element}
 	 * @param [pseudo]
 	 * @returns {CssStyle}
@@ -1014,6 +1018,16 @@ if(!window.rb){
 		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$.noop};
 	};
 
+	/**
+	 * Parsed global data from Stylesheet (html::before and html::after)
+	 * @alias rb.cssConfig
+	 * @property cssConfig {Object}
+	 * @property cssConfig.mqs {Object} Map of different media queries
+	 * @property cssConfig.currentMQ {String} Currently active media query
+	 * @property cssConfig.beforeMQ {String} Media query that was active before
+	 * @property cssConfig.mqChange {Object} jQuery Callback object to listen for media query changes.
+	 *
+	 */
 	var cssConfig = {mqs: {}, currentMQ: '', beforeMQ: '', mqChange: rb.$.Callbacks()};
 	var parseCSS = function(){
 		var root = rb.root;
@@ -1057,6 +1071,12 @@ if(!window.rb){
 	var console = window.console || {};
 	var log = console.log && console.log.bind ? console.log : rb.$.noop;
 
+	/**
+	 * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
+	 * @memberof rb
+	 * @param obj    {Object}
+	 * @param [initial] {Boolean}
+	 */
 	rb.addLog = function(obj, initial){
 		var realLog = log.bind(console);
 		var fakeLog = rb.$.noop;
@@ -1113,6 +1133,11 @@ if(!window.rb){
 		}, true);
 	};
 
+	/**
+	 * Allows to add fast click listeners. For elements with the class `js-click` and a data-{name} attribute.
+	 * @property rb.click.add {Function} add the given name and the function as a delegated click handler.
+	 * @memberof rb
+	 */
 	rb.click = {
 		cbs: cbs,
 		add: function(name, fn){
@@ -1130,6 +1155,13 @@ if(!window.rb){
 	var regNum = /:(\d)+\s*$/;
 	var regTarget = /^\s*?\.?([a-z0-9_]+)\((.*?)\)\s*?/i;
 
+	/**
+	 * Returns an array of elements based on a string.
+	 * @memberof rb
+	 * @param targetStr {String} Either a whitespace separated list of ids or q jQuery traversal method. ("foo-1 bar-2", "next(.input)")
+	 * @param element {Element} The element that should be used as starting point for the jQuery traversal method.
+	 * @returns {Element[]}
+	 */
 	rb.elementFromStr = function(targetStr, element){
 		var i, len, target, temp, num, match;
 		if((num = targetStr.match(regNum))){
@@ -1993,64 +2025,107 @@ if(!window.rb){
 	var rb = window.rb;
 	var $ = rb.$;
 
-	var Button = rb.Component.extend('button', {
-		defaults: {
-			target: '',
-			type: 'toggle',
-		},
 
-		init: function(element) {
+	rb.Component.extend('button',
+		/** @lends rb.components.button.prototype */
+		{
+			/**
+			 * @static
+			 * @property {Object} defaults
+			 * @property {String} defaults.target String that references the target element. Is processed by rb.elementFromStr.
+			 * @property {String} defaults.type Method name to invoke on target component.
+			 */
+			defaults: {
+				target: '',
+				type: 'toggle',
+			},
+			/**
+			 * @constructs
+			 * @classdesc Class component to create a button.
+			 * @name rb.components.button
+			 * @extends rb.Component
+			 * @param {Element} element
+			 * @example
+			 * <button type="button"
+			 *  data-module="button"
+			 *  class="js-click"
+			 *  aria-controls="panel-1"
+			 *  data-type="open">
+			 *      click me
+			 * </button>
+			 * <div id="panel-1" data-module="panel"></div>
+			 */
+			init: function(element) {
 
-			this._super(element);
+				this._super(element);
 
-			this._setTarget = rb.rAF(this._setTarget);
-		},
+				this._setTarget = rb.rAF(this._setTarget);
+			},
 
-		events: {
-			click: '_onClick',
-		},
+			events: {
+				click: '_onClick',
+			},
 
-		_onClick: function(){
-			var target = this.getTarget() || {};
-			var component = this.component(target);
+			_onClick: function(){
+				var target = this.getTarget() || {};
+				var component = this.component(target);
 
-			if (!component) {
-				return;
-			}
+				if (!component) {
+					return;
+				}
 
-			if(component[this.options.type]){
-				component.activeButtonComponent = this;
-				component[this.options.type]();
-			}
-		},
+				if(component[this.options.type]){
+					component.activeButtonComponent = this;
+					component[this.options.type]();
+				}
+			},
 
-		_setTarget: function(){
-			var id = this.getId(this.target);
-			this.isTargeting = false;
-			this.element.removeAttribute('data-target');
-			this.$element.attr({
-				'aria-controls': id
-			});
-			this.targetAttr = id;
-		},
+			setOption: function(name, value){
+				var dom;
+				this._super(name, value);
 
-		setTarget: function(dom) {
-			this.target = dom;
-			this.isTargeting = true;
-			this._setTarget();
-		},
+				if(name == 'target'){
+					dom = rb.elementFromStr(value, this.element)[0];
+					if(dom){
+						this.setTarget(dom);
+					}
+				}
+			},
+			_setTarget: function(){
+				var id = this.getId(this.target);
+				this._isTargeting = false;
+				this.element.removeAttribute('data-target');
+				this.$element.attr({'aria-controls': id});
+				this.targetAttr = id;
+				this.options.target = id;
+			},
 
-		getTarget: function() {
-			var target = this.$element.attr('data-target') || this.$element.attr('aria-controls') || '';
+			setTarget: function(dom) {
+				this.target = dom;
+				this._isTargeting = true;
+				this._setTarget();
+			},
 
-			if (!this.target || (!this.isTargeting && target != this.targetAttr)) {
-				this.targetAttr = target;
-				this.target = rb.elementFromStr(target, this.element)[0];
-			}
+			/**
+			 * Returns the current target component of the button
+			 * @returns {Element}
+			 */
+			getTarget: function() {
+				var target = this._isTargeting ?
+					this.targetAttr :
+					this.element.getAttribute('data-target') || this.$element.attr('aria-controls') || this.options.target;
 
-			return this.target;
-		},
-	}, true);
+				if (!this.target || (target != this.targetAttr)) {
+					this.targetAttr = target;
+					this.target = rb.elementFromStr(target, this.element)[0];
+				}
+
+				return this.target;
+			},
+		}
+		,
+		true
+	);
 
 })(window, document);
 
