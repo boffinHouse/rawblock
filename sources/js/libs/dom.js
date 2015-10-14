@@ -485,17 +485,13 @@
 
 	fn.detach = fn.remove;
 
-	['add', 'remove', 'has', 'toggle'].forEach(function(action){
+	['add', 'remove', 'toggle'].forEach(function(action){
 		fn[action + 'Class'] =  function(cl){
 			this.elements.forEach(function(elem){
 				elem.classList[action](cl);
 			});
 			return this;
 		};
-
-		if(action == 'has'){
-			action = 'contains';
-		}
 	});
 
 	//new array or returns array

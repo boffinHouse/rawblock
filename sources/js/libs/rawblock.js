@@ -243,15 +243,13 @@ if(!window.rb){
 	/* End: contains */
 
 	/* Begin: throttle */
-	var setImmediate = window.setImmediate || setTimeout;
-
 	/**
 	 * Throttles a given function
 	 * @memberof rb
 	 * @param {function} fn - The function to be throttled.
 	 * @param {object} options - options for the throttle.
 	 *  @param {object} options.that -  the context in which fn should be called.
-	 *  @param {boolean} options.write -  wether fn is used to write layout (default is read).
+	 *  @param {boolean} options.write -  wether fn is used to write layout.
 	 *  @param {number} options.delay = 200 -  the throttle delay.
 	 * @returns {function} the throttled function.
 	 */
@@ -265,7 +263,7 @@ if(!window.rb){
 			fn.apply(that, args);
 		};
 		var afterAF = function(){
-			setImmediate(_run);
+			setTimeout(_run);
 		};
 		var getAF = function(){
 			rb.rAFQueue(afterAF);
@@ -1508,21 +1506,17 @@ if(!window.rb){
 	};
 
 	life.searchModules = (function() {
-		var setImmediate = window.setImmediate || window.setTimeout;
-		var requestAnimationFrame = window.requestAnimationFrame;
-		var runs = false;
 		var removeInitClass = rb.rAF(function(){
 			while (removeElements.length) {
 				removeElements.shift().classList.remove(initClass);
 			}
 		});
 
-		var findElements = function() {
+		var findElements = rb.throttle(function() {
 
 			var module, modulePath, moduleId, i;
 
 			var len = elements.length;
-			runs = false;
 
 			for ( i = 0; i < len; i++ ) {
 				module = elements[ i ];
@@ -1561,16 +1555,9 @@ if(!window.rb){
 
 			removeInitClass();
 			lifeBatch.run();
-		};
-		var rAFRun = function() {
-			setImmediate(findElements);
-		};
-		return function () {
-			if ( !runs ) {
-				runs = true;
-				requestAnimationFrame( rAFRun );
-			}
-		};
+		}, {delay: 50});
+
+		return findElements;
 	})();
 
 	life.destroyComponent = function(instance, index){
@@ -2122,8 +2109,7 @@ if(!window.rb){
 
 				return this.target;
 			},
-		}
-		,
+		},
 		true
 	);
 

@@ -224,6 +224,7 @@
 		;
 	});
 
+
 	QUnit.test("rb. .is-teaser delegate", function( assert ){
 		var $mainElement;
 		var i = 0;
@@ -241,6 +242,11 @@
 		var content = '<div id="test-wrapper" class="is-teaser">' +
 			'<a class="is-teaser-link">ssas</a>' +
 			'</div>';
+
+		if(!window.MouseEvent || typeof MouseEvent != 'function'){
+			assert.ok(true);
+			return;
+		}
 
 		rb.$('#qunit-fixture').html(content);
 
