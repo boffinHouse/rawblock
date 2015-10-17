@@ -841,7 +841,7 @@ if(!window.rb){
 			setTimeout(function(){
 				element.focus();
 				rb.$doc.trigger('rbscriptfocus');
-			}, delay || 9);
+			}, delay || 4);
 		} catch(e){}
 	};
 
@@ -1868,9 +1868,11 @@ if(!window.rb){
 				} else {
 					focusElement = this.element.querySelector('.js-autofocus');
 				}
-				if(!focusElement && element === true){
+
+				if(!focusElement && (element === true || this.element.classList.contains('js-autofocus'))){
 					focusElement = this.element;
 				}
+
 				if(focusElement){
 					this.setFocus(focusElement, delay);
 				}
