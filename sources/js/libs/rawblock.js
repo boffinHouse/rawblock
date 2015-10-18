@@ -26,6 +26,7 @@ if(!window.rb){
 
 
 	var $ = rb.$;
+	var regSplit = /\s*?,\s*?|\s+?/g;
 
 	/**
 	 * Reference to the root element (mostly html element)
@@ -290,15 +291,18 @@ if(!window.rb){
 			var delay = options.delay;
 			running =  true;
 
-			if(!options.simple){
+			if(delay && !options.simple){
 				delay -= (Date.now() - lastTime);
-				if(delay < 0){
-					delay = 0;
-				}
 			}
+
 			that = options.that || this;
 			args = arguments;
-			setTimeout(getAF, delay);
+
+			if(delay > 0){
+				setTimeout(getAF, delay);
+			} else {
+				getAF();
+			}
 		};
 	};
 	/* End: throttle */
@@ -803,6 +807,27 @@ if(!window.rb){
 	};
 	/* End: elementResize */
 
+	/**
+	 * Invokes on the first element in collection the closest method and on the result the querySelector method.
+	 * @function external:"jQuery.fn".closestFind
+	 * @param {String} sels Two selectors separated by an white space or comma. First is used for closest and second for querySelector.
+	 * @returns {jQueryfiedObject}
+	 */
+	$.fn.closestFind = function(sels){
+		var closestSel, findSel;
+		var elem = this.get(0);
+		if(elem){
+			sels = sels.split(regSplit);
+			closestSel = sels[0];
+			findSel = sels[1];
+			elem = elem.closest(closestSel);
+			if(elem){
+				elem = elem.querySelector(findSel);
+			}
+		}
+		return $(elem || []);
+	};
+
 	/* Begin: is-teaser delegate */
 	var getSelection = window.getSelection || function(){return {};};
 	var regInputs = /^(?:input|select|textarea|button|a)$/i;
@@ -1149,7 +1174,6 @@ if(!window.rb){
 		}
 	};
 
-	var regSplit = /\s*?,\s*?|\s+?/g;
 	var regNum = /:(\d)+\s*$/;
 	var regTarget = /^\s*?\.?([a-z0-9_]+)\((.*?)\)\s*?/i;
 
@@ -1162,33 +1186,36 @@ if(!window.rb){
 	 */
 	rb.elementFromStr = function(targetStr, element){
 		var i, len, target, temp, num, match;
-		if((num = targetStr.match(regNum))){
-			targetStr = targetStr.replace(num[0], '');
-			num = num[1];
-		}
-		if ((match = targetStr.match(regTarget))) {
 
-			if(match[1] == '$' || match[1] == 'sel'){
-				target = Array.from(document.querySelectorAll(match[2]));
-			} else if($.fn[match[1]]){
-				if(!match[2]){
-					match[2] = null;
-				}
-				target = $(element)[match[1]](match[2]).get();
+		if (targetStr){
+			if((num = targetStr.match(regNum))){
+				targetStr = targetStr.replace(num[0], '');
+				num = num[1];
 			}
-		} else if (targetStr) {
-			targetStr = targetStr.split(regSplit);
-			target = [];
-			for(i = 0, len = targetStr.length; i < len; i++){
-				temp = targetStr[i] && document.getElementById(targetStr[i]);
-				if(temp){
-					target.push(temp);
-				}
-			}
-		}
+			if ((match = targetStr.match(regTarget))) {
 
-		if(num && target){
-			target = target[num] ? [target[num]] : [];
+				if(match[1] == '$' || match[1] == 'sel'){
+					target = Array.from(document.querySelectorAll(match[2]));
+				} else if($.fn[match[1]]){
+					if(!match[2]){
+						match[2] = null;
+					}
+					target = $(element)[match[1]](match[2]).get();
+				}
+			} else {
+				targetStr = targetStr.split(regSplit);
+				target = [];
+				for(i = 0, len = targetStr.length; i < len; i++){
+					temp = targetStr[i] && document.getElementById(targetStr[i]);
+					if(temp){
+						target.push(temp);
+					}
+				}
+			}
+
+			if(num && target){
+				target = target[num] ? [target[num]] : [];
+			}
 		}
 
 		return target || [];
@@ -2023,10 +2050,12 @@ if(!window.rb){
 			 * @property {Object} defaults
 			 * @property {String} defaults.target String that references the target element. Is processed by rb.elementFromStr.
 			 * @property {String} defaults.type Method name to invoke on target component.
+			 * @property {*} defaults.args Arguments to be used to invoke target method.
 			 */
 			defaults: {
 				target: '',
 				type: 'toggle',
+				args: null,
 			},
 			/**
 			 * @constructs
@@ -2049,6 +2078,7 @@ if(!window.rb){
 				this._super(element);
 
 				this._setTarget = rb.rAF(this._setTarget);
+				this.setOption('args', this.options.args);
 			},
 
 			events: {
@@ -2056,6 +2086,7 @@ if(!window.rb){
 			},
 
 			_onClick: function(){
+				var args;
 				var target = this.getTarget() || {};
 				var component = this.component(target);
 
@@ -2063,9 +2094,14 @@ if(!window.rb){
 					return;
 				}
 
-				if(component[this.options.type]){
+				if(this.options.type in component){
+					args = this.options.args;
 					component.activeButtonComponent = this;
-					component[this.options.type]();
+					if(typeof component[this.options.type] == 'function'){
+						component[this.options.type].apply(component, args);
+					} else {
+						component[this.options.type] = args;
+					}
 				}
 			},
 
@@ -2078,6 +2114,13 @@ if(!window.rb){
 					if(dom){
 						this.setTarget(dom);
 					}
+				} else if(name == 'args'){
+					if(value == null){
+						value = [];
+					} else if(!Array.isArray(value)){
+						value = [value];
+					}
+					this.options.args = value;
 				}
 			},
 			_setTarget: function(){
