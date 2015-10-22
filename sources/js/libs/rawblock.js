@@ -1800,6 +1800,50 @@ if(!window.rb){
 			 * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options, bind and trigger events as also handles the components life cycle (init, attached, detached).
 			 * @param element
 			 * @constructs
+			 *
+			 * @example
+			 * rb.Component.extend('myComponent', {
+			 *      defaults: {
+			 *          className: 'toggle-class',
+			 *      },
+			 *      init: function(element){
+			 *          this._super(element);
+			 *
+			 *          this.changeClass = rb.rAF(this.changeClass);
+			 *      },
+			 *      events: {
+			 *          'click .change-btn': 'changeClass',
+			 *      },
+			 *      changeClass: function(){
+			 *          this.$element.toggleClass(this.options.className);
+			 *      }
+			 * });
+			 *
+			 * @example
+			 * class MyComponent extends rb.Component {
+			 *      static get defaults(){
+			 *          return {
+			 *              className: 'toggle-class',
+			 *          }
+			 *      }
+			 *
+			 *      constructor(element){
+			 *          super(element);
+			 *          this.changeClass = rb.rAF(this.changeClass);
+			 *      }
+			 *
+			 *      static get events(){
+			 *          return {
+			 *              'click .change-btn': 'changeClass',
+			 *          }
+			 *      }
+			 *
+			 *      changeClass(){
+			 *          this.$element.toggleClass(this.options.className);
+			 *      }
+			 * }
+			 *
+			 * rb.life.register('myComponent', MyComponent);
 			 */
 			init: function(element){
 
