@@ -298,11 +298,10 @@ if(!window.rb){
 			that = options.that || this;
 			args = arguments;
 
-			if(delay > 0){
-				setTimeout(getAF, delay);
-			} else {
-				getAF();
+			if(delay < 0){
+				delay = 0;
 			}
+			setTimeout(getAF, delay);
 		};
 	};
 	/* End: throttle */
@@ -440,9 +439,7 @@ if(!window.rb){
 				attrVal = parseFloat(attrVal);
 			}
 			else if(regObj.test(attrVal)){
-				try {
-					attrVal = JSON.parse( attrVal );
-				} catch(e){}
+				attrVal = rb.jsonParse(attrVal);
 			}
 			return attrVal;
 		};
@@ -669,7 +666,7 @@ if(!window.rb){
 			}
 			return element[elementResize.expando];
 		},
-		remove: function(element, fn, options){
+		remove: function(element, fn){
 			if(element[elementResize.expando]){
 				element[elementResize.expando].cbs.remove(fn);
 				element[elementResize.expando].heightCbs.remove(fn);
@@ -717,7 +714,6 @@ if(!window.rb){
 
 				if(first){
 					first = false;
-					setTimeout(onScroll);
 					addEvents();
 				}
 				block = false;
@@ -726,12 +722,12 @@ if(!window.rb){
 			var write = rb.rAF(function(){
 				expandChild.style.width = data.exChildWidth;
 				expandChild.style.height = data.exChildHeight;
-				setTimeout(scrollWrite, 4);
+				setTimeout(scrollWrite);
 			});
 
 			var read = function(){
-				data.exChildWidth = expandElem.offsetWidth + 10 + 'px';
-				data.exChildHeight = expandElem.offsetHeight + 10 + 'px';
+				data.exChildWidth = expandElem.offsetWidth + 9 + 'px';
+				data.exChildHeight = expandElem.offsetHeight + 9 + 'px';
 
 				data.exScrollLeft = expandElem.scrollWidth;
 				data.exScrollTop = expandElem.scrollHeight;
@@ -810,16 +806,16 @@ if(!window.rb){
 	/**
 	 * Invokes on the first element in collection the closest method and on the result the querySelector method.
 	 * @function external:"jQuery.fn".closestFind
-	 * @param {String} sels Two selectors separated by an white space or comma. First is used for closest and second for querySelector.
+	 * @param {String} selectors Two selectors separated by a white space and/or comma. First is used for closest and second for querySelector. Example: `".rb-item, .item-input"`.
 	 * @returns {jQueryfiedObject}
 	 */
-	$.fn.closestFind = function(sels){
+	$.fn.closestFind = function(selectors){
 		var closestSel, findSel;
 		var elem = this.get(0);
 		if(elem){
-			sels = sels.split(regSplit);
-			closestSel = sels[0];
-			findSel = sels[1];
+			selectors = selectors.split(regSplit);
+			closestSel = selectors[0];
+			findSel = selectors[1];
 			elem = elem.closest(closestSel);
 			if(elem){
 				elem = elem.querySelector(findSel);
@@ -864,6 +860,9 @@ if(!window.rb){
 	rb.setFocus = function(element, delay){
 		try {
 			setTimeout(function(){
+				if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
+					element.setAttribute('tabindex', -1);
+				}
 				element.focus();
 				rb.$doc.trigger('rbscriptfocus');
 			}, delay || 4);
@@ -1007,6 +1006,20 @@ if(!window.rb){
 	};
 
 	/**
+	 * Parses a string using JSON.parse without throwing an error.
+	 * @memberof rb
+	 * @param str
+	 * @returns {Object}
+	 */
+	rb.jsonParse = function(str){
+		var ret = null;
+		try {
+			ret = JSON.parse(str);
+		} catch(e){}
+		return ret;
+	};
+
+	/**
 	 * Parses the CSS content value of a pseudo element using JSON.parse.
 	 * @memberof rb
 	 * @param element {Element} The element to parse.
@@ -1019,9 +1032,7 @@ if(!window.rb){
 				element :
 				rb.getStyles(element, pseudo || '::after').content
 			;
-		try {
-			ret = JSON.parse(rb.removeLeadingQuotes(value));
-		} catch(e){}
+		ret = rb.jsonParse(rb.removeLeadingQuotes(value));
 		return ret;
 	};
 
@@ -1960,14 +1971,15 @@ if(!window.rb){
 			 * @returns {{}}
 			 */
 			parseHTMLOptions: function(element){
+				element = (element || this.element);
 				var i, name;
-				var options = {};
-				var attributes = (element || this.element).attributes;
+				var attributes = element.attributes;
+				var options = rb.jsonParse(element.getAttribute('data-options')) || {};
 				var len = attributes.length;
 
 				for ( i = 0; i < len; i++ ) {
 					name = attributes[ i ].nodeName;
-					if ( !name.indexOf( 'data-' ) ) {
+					if ( name != 'data-options' && name.startsWith( 'data-' ) ) {
 						options[ rb.camelCase( name.replace( regData , '' ) ) ] = rb.parseValue( attributes[ i ].nodeValue );
 					}
 				}
