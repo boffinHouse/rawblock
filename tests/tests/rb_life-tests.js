@@ -117,7 +117,7 @@
 		assert.equal(rb.$('.js-rb-life').length, 4);
 		assert.equal(rb.$('.js-rb-attached').length, 0);
 
-		QUnit.afterAF(5)
+		QUnit.afterAF(50)
 			.then(function(){
 				assert.equal(Dummy.prototype.init.callCount, 3);
 				assert.equal(Dummy.prototype.attached.callCount, 3);
@@ -125,7 +125,7 @@
 				assert.ok(Dummy.prototype.init.calledBefore(Dummy.prototype.attached));
 				assert.notOk(Dummy.prototype.detached.calledOnce);
 
-				return QUnit.afterAF()
+				return QUnit.afterAF(50)
 					.then(function(){
 						assert.equal(rb.$('.js-rb-life').length, 0);
 						assert.equal(rb.$('.js-rb-attached').length, 3);

@@ -31,8 +31,12 @@
 		tmp = rb.elementFromStr('prevAll(.first)', document.querySelector('#test-id3'));
 		assert.equal(tmp[0], document.querySelector('#test-id2'));
 
+
+		tmp = rb.elementFromStr('closestFind(#test-wrapper, .children-1)', document.querySelector('#test-id6'));
+		assert.equal(tmp[0], document.querySelector('#test-id2'));
+
 		tmp = rb.elementFromStr('closest(#test-wrapper)', document.querySelector('.childrens-child'));
-		assert.equal(tmp[0], document.querySelector('#test-wrapper'))
+		assert.equal(tmp[0], document.querySelector('#test-wrapper'));
 
 		tmp = rb.elementFromStr('parent(.children-2)', document.querySelector('.childrens-child'));
 		assert.equal(tmp[0], rb.elementFromStr('parent()', document.querySelector('.childrens-child'))[0]);

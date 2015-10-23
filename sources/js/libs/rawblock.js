@@ -810,12 +810,13 @@ if(!window.rb){
 	 * @returns {jQueryfiedObject}
 	 */
 	$.fn.closestFind = function(selectors){
+		var sels;
 		var closestSel, findSel;
 		var elem = this.get(0);
 		if(elem){
-			selectors = selectors.split(regSplit);
-			closestSel = selectors[0];
-			findSel = selectors[1];
+			sels = selectors.split(regSplit);
+			closestSel = sels.shift();
+			findSel = sels.join(' ');
 			elem = elem.closest(closestSel);
 			if(elem){
 				elem = elem.querySelector(findSel);
