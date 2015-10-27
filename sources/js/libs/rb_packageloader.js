@@ -62,14 +62,16 @@
 	};
 
 	loadPackage.loadScript = function(src){
-		loadPackage.promises[src] = new Promise(function(resolve, reject){
+		loadPackage.promises[src] = new Promise(function(resolve){
 			var script = document.createElement('script');
 			script.onload = resolve;
 			script.onerror = resolve;
 			script.src = src;
 			script.async = false;
-			(document.body || document.documentElement).appendChild(script);
-			script = null;
+			(rb.rAFQueue || requestAnimationFrame)(function(){
+				(document.body || document.documentElement).appendChild(script);
+				script = null;
+			});
 		});
 		return loadPackage.promises[src];
 	};

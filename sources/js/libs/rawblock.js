@@ -2105,9 +2105,9 @@ if(!window.rb){
 			/**
 			 * @static
 			 * @property {Object} defaults
-			 * @property {String} defaults.target String that references the target element. Is processed by rb.elementFromStr.
-			 * @property {String} defaults.type Method name to invoke on target component.
-			 * @property {*} defaults.args Arguments to be used to invoke target method.
+			 * @property {String} defaults.target="" String that references the target element. Is processed by rb.elementFromStr.
+			 * @property {String} defaults.type="toggle" Method name to invoke on target component.
+			 * @property {*} defaults.args=null Arguments to be used to invoke target method.
 			 */
 			defaults: {
 				target: '',
@@ -2189,8 +2189,12 @@ if(!window.rb){
 				this.options.target = id;
 			},
 
-			setTarget: function(dom) {
-				this.target = dom;
+			/**
+			 * Changes/sets the target element.
+			 * @param {Element} element
+			 */
+			setTarget: function(element) {
+				this.target = element;
 				this._isTargeting = true;
 				this._setTarget();
 			},

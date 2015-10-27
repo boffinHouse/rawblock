@@ -495,18 +495,34 @@
 	});
 
 	//new array or returns array
-	['map', 'filter'].forEach(function(name){
+	['map', 'filter', 'not'].forEach(function(name){
+		var isNot;
+		var arrayFn = name;
+		if((isNot = name == 'not')){
+			arrayFn = 'filter';
+		}
 		fn[name] = function(fn){
-			var sel;
+			var needle;
+			var type = typeof fn;
 
-			if(typeof fn == 'string'){
-				sel = fn;
-				fn = function(){
-					return this.matches(sel);
-				};
+			if (type != 'function'){
+				needle = fn;
+				if (!this.length) {
+					fn = Dom.noop;
+				} else if (type == 'string') {
+					fn = function(){
+						return this.matches(needle);
+					};
+				} else if (type == 'object') {
+					fn = function(){
+						return this == needle;
+					};
+				}
 			}
-			return new Dom(this.elements[name](function(elem, index){
-				return fn.call(elem, index, elem);
+
+			return new Dom(this.elements[arrayFn](function(elem, index){
+				var ret = fn.call(elem, index, elem);
+				return isNot ? !ret : ret;
 			}));
 		};
 	});
