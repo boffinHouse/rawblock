@@ -766,7 +766,6 @@ if(!window.rb){
 	});
 
 	document.addEventListener('click', blockKeyboardFocus, true);
-
 	window.addEventListener('focus', blockKeyboardFocus);
 	document.addEventListener('focus', blockKeyboardFocus);
 
