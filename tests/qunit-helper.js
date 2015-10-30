@@ -122,17 +122,31 @@
 				clientY: pos.left + ((pos.height || 1) / 2),
 			};
 		};
+		var supportMouse = typeof MouseEvent == 'function';
 		var actions = {
 			mouse: {
 				dispatch: function(elem, type, props){
-					var event = new MouseEvent(type,
-						Object.assign(
-							getElementPos(elem),
-							{bubbles: true},
-							props
-						)
+					var opts = Object.assign(
+						getElementPos(elem),
+						{bubbles: true},
+						props
 					);
-					elem.dispatchEvent(event);
+					var event = supportMouse ? new MouseEvent(type, opts) : document.createEvent('MouseEvent');
+
+					if(supportMouse){
+						elem.dispatchEvent(event);
+					} else {
+						event.initMouseEvent(
+							type,
+							opts.bubbles, /* bubble */
+							!!opts.bubbles, /* cancelable */
+							opts.view || window, opts.detail || null,
+							opts.screenX || 0, opts.screenY || 0, opts.clientX || 0, opts.clientY || 0, /* coordinates */
+							!!opts.ctrlKey, !!opts.altKey, !!opts.shiftKey, !!opts.metaKey, /* modifier keys */
+							opts.button || 0,/*left*/
+							opts.relatedTarget || null
+						);
+					}
 					return event;
 				},
 				reg: /^mouse|click$/

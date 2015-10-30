@@ -6,14 +6,14 @@
 	}
 }(typeof window != 'undefined' ? window : this , function(window, document) {
 	'use strict';
-	var slice = [].slice;
+
 	var Dom = function(elements, context){
 
 		if(!(this instanceof Dom)){
 			return new Dom(elements);
 		}
 		if(typeof elements == 'string'){
-			elements = slice.call((context || document).querySelectorAll(elements));
+			elements = Array.from((context || document).querySelectorAll(elements));
 		} else if(typeof elements == 'function'){
 			if(Dom.isReady){
 				elements(Dom);
@@ -31,7 +31,7 @@
 			} else if(elements.nodeName || !('length' in elements) || elements == window){
 				elements = [elements];
 			} else {
-				elements = slice.call(elements);
+				elements = Array.from(elements);
 			}
 		}
 
@@ -54,7 +54,7 @@
 				isJumpToEnd = true;
 			}
 			step();
-			rAF.remove(step);
+			hardStop = true;
 		};
 		var tweenObj = {};
 		var stepObj = {};
@@ -105,7 +105,7 @@
 
 			if(pos < 1){
 				if(!isStopped){
-					rAF.add(step);
+					rAF(step);
 				} else if(options.always){
 					options.always.call(element);
 				}
@@ -131,7 +131,7 @@
 		tweenObj.opts = options;
 		tweenObj.props = endProps;
 
-		rAF.add(step);
+		rAF(step);
 	};
 
 	tween.getStartValues = function(element, elementStyle, startProps, endProps){
@@ -432,13 +432,14 @@
 
 	[['find', 'querySelectorAll', true], ['children', 'children']].forEach(function(action, test){
 		var isMatched = !!action[2];
+		var isMethod = !!action[2];
 		fn[action[0]] = function(sel){
 			var array = [];
-			this.elements.forEach(function(elem){
+			this.elements.forEach(function(elem, index){
 				var i, len;
-				var elements = test ? elem[action[1]] : elem[action[1]](sel);
+				var elements = isMethod ? elem[action[1]](sel) : elem[action[1]];
 				for(i = 0, len = elements.length; i < len; i++){
-					if((isMatched || !sel || elements[i].matches(sel)) && array.indexOf(elements[i]) == -1){
+					if((isMatched || !sel || elements[i].matches(sel)) && (!index || array.indexOf(elements[i]) == -1)){
 						array.push(elements[i]);
 					}
 				}
@@ -454,9 +455,9 @@
 		var isMethod = !!action[4];
 		fn[action[0]] = function(sel){
 			var array = [];
-			this.elements.forEach(function(elem){
+			this.elements.forEach(function(elem, index){
 				var element = isMethod ? elem[action[1]](sel) : elem[action[1]];
-				if(element && (isMatched || !sel || element.matches(sel)) && (isUnique || array.indexOf(element) == -1)){
+				if(element && (isMatched || !sel || element.matches(sel)) && (isUnique || !index || array.indexOf(element) == -1)){
 					array.push(element);
 				}
 			});
@@ -464,34 +465,64 @@
 		};
 	});
 
+	[['prevAll', 'previousElementSibling'], ['nextAll', 'nextElementSibling'], ['parents', 'parentNode']].forEach(function(action){
+		fn[action[0]] = function(sel){
+			var array = [];
+			this.elements.forEach(function(elem, index){
+				var element = elem[action[1]];
+
+				while(element && element.nodeType == 1){
+					if((!sel || element.matches(sel)) && (!index || array.indexOf(element) == -1)){
+						array.push(element);
+					}
+					element = element[action[1]];
+				}
+			});
+
+			return new Dom( array );
+		};
+	});
+
 	fn.detach = fn.remove;
 
-	['add', 'remove', 'has', 'toggle'].forEach(function(action){
+	['add', 'remove', 'toggle'].forEach(function(action){
 		fn[action + 'Class'] =  function(cl){
 			this.elements.forEach(function(elem){
 				elem.classList[action](cl);
 			});
 			return this;
 		};
-
-		if(action == 'has'){
-			action = 'contains';
-		}
 	});
 
 	//new array or returns array
-	['map', 'filter'].forEach(function(name){
+	['map', 'filter', 'not'].forEach(function(name){
+		var isNot;
+		var arrayFn = name;
+		if((isNot = name == 'not')){
+			arrayFn = 'filter';
+		}
 		fn[name] = function(fn){
-			var sel;
+			var needle;
+			var type = typeof fn;
 
-			if(typeof fn == 'string'){
-				sel = fn;
-				fn = function(){
-					return this.matches(sel);
-				};
+			if (type != 'function'){
+				needle = fn;
+				if (!this.length) {
+					fn = Dom.noop;
+				} else if (type == 'string') {
+					fn = function(){
+						return this.matches(needle);
+					};
+				} else if (type == 'object') {
+					fn = function(){
+						return this == needle;
+					};
+				}
 			}
-			return new Dom(this.elements[name](function(elem, index){
-				return fn.call(elem, index, elem);
+
+			return new Dom(this.elements[arrayFn](function(elem, index){
+				var ret = fn.call(elem, index, elem);
+				return isNot ? !ret : ret;
 			}));
 		};
 	});

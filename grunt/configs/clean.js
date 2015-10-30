@@ -27,5 +27,12 @@ module.exports = {
 				src: ['<%= paths.tmp %>']
 			}
 		]
+	},
+	scssglobbing: {
+		files: [
+			{
+				src: ['<%= paths.src %>/sass/tmp_*.scss']
+			}
+		]
 	}
 };

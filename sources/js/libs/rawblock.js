@@ -1,24 +1,72 @@
 if(!window.rb){
+	/**
+	 * rawblock main object holds classes and util properties and methods to work with rawblock
+	 * @namespace rb
+	 */
 	window.rb = {};
 }
 
 (function(window, document, undefined){
 	'use strict';
-	window.rb.$ = window.rb.$ || window.jQuery || window.dom;
 
+	/* Begin: global vars end */
 	var rb = window.rb;
-	var $ = rb.$;
 
+	/**
+	 * The jQuery plugin namespace.
+	 * @external "jQuery.fn"
+	 * @see {@link http://learn.jquery.com/plugins/|jQuery Plugins}
+	 */
+
+	/**
+	 * Reference to the internally used DOM or jQuery instance
+	 * @memberof rb
+	 */
+	rb.$ = rb.$ || window.jQuery || window.dom;
+
+
+	var $ = rb.$;
+	var regSplit = /\s*?,\s*?|\s+?/g;
+
+	/**
+	 * Reference to the root element (mostly html element)
+	 * @memberof rb
+	 * @type {Element}
+	 */
 	rb.root = document.documentElement;
 
+	/**
+	 * Reference to the jQueryfied root element
+	 * @memberof rb
+	 * @type {jQueryfiedDOMList}
+	 */
 	rb.$root = $(rb.root);
 
+	/**
+	 * Reference to the jQueryfied window object
+	 * @memberof rb
+	 * @type {jQueryfiedDOMList}
+	 */
 	rb.$win = $(window);
+
+	/**
+	 * Reference to the jQueryfied document object
+	 * @memberof rb
+	 * @type {jQueryfiedDOMList}
+	 */
 	rb.$doc = $(document);
 
-	/* global vars end */
+	/* End: global vars end */
 
-	/* rbSlideUp / rbSlideDown */
+	/* Begin: rbSlideUp / rbSlideDown */
+
+	/**
+	 * A jQuery plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
+	 * Also does not animate padding, margin, borders (use child elements)
+	 * @function external:"jQuery.fn".rbSlideUp
+	 * @param options {object} All jQuery animate options
+	 * @returns {jQueryfiedDOMList}
+	 */
 	$.fn.rbSlideUp = function(options){
 		if(!options){
 			options = {};
@@ -28,7 +76,7 @@ if(!window.rb){
 			var opts = Object.assign({}, options, {
 				always: function(){
 					this.style.display = '';
-					this.style.visibility = '';
+					this.style.visibility = 'hidden';
 
 					if(options.always){
 						return options.always.apply(this, arguments);
@@ -36,6 +84,9 @@ if(!window.rb){
 				}
 			});
 
+			if(opts.easing){
+				rb.addEasing(opts.easing);
+			}
 			this
 				.stop()
 				.css({overflow: 'hidden', display: 'block', visibility: 'inherit'})
@@ -45,6 +96,13 @@ if(!window.rb){
 		return this;
 	};
 
+	/**
+	 * A jQuery plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
+	 * Also does not animate padding, margin, borders (use child elements)
+	 * @function external:"jQuery.fn".rbSlideDown
+	 * @param options {object} All jQuery animate options
+	 * @returns {jQueryfiedDOMList}
+	 */
 	$.fn.rbSlideDown = function(options){
 		var opts;
 		if(!options){
@@ -80,9 +138,16 @@ if(!window.rb){
 		});
 	};
 
-	/* scrollIntoView */
+	/* End: rbSlideUp / rbSlideDown */
 
-	var getScrollingElement = function(){
+
+	/* Begin: getScrollingElement/scrollIntoView */
+
+	/**
+	 * @memberof rb
+	 * @returns {Element} The DOM element that scrolls the viewport (either html or body)
+	 */
+	rb.getScrollingElement = function(){
 		var bH, dH, isCompat;
 		var scrollingElement = document.scrollingElement;
 
@@ -103,8 +168,15 @@ if(!window.rb){
 		return scrollingElement || rb.root;
 	};
 
-	rb.getScrollingElement = getScrollingElement;
-
+	/**
+	 * A jQuery plugin to scroll an element into the viewort
+	 * @function external:"jQuery.fn".scrollIntoView
+	 * @param options {object} All jQuery animate options and additional options
+	 * @param options.focus {Element} Element that should be focused after animation is done.
+	 * @param options.hash {String} Hash to set on the location object
+	 *
+	 * @returns {jQueryfiedDOMList}
+	 */
 	$.fn.scrollIntoView = function(options){
 		var bbox, distance, scrollingElement, opts;
 		var elem = this.get(0);
@@ -113,7 +185,7 @@ if(!window.rb){
 			options = options || {};
 			bbox = elem.getBoundingClientRect();
 			distance = Math.max(Math.abs(bbox.top), Math.abs(bbox.left));
-			scrollingElement = getScrollingElement();
+			scrollingElement = rb.getScrollingElement();
 
 			if(options.easing){
 				rb.addEasing(options.easing);
@@ -152,26 +224,35 @@ if(!window.rb){
 		}
 		return this;
 	};
+	/* End: getScrollingElement/scrollIntoView */
 
-	/* contains */
-	rb.contains = function(elements, needle){
-		return elements.find(rb.contains._contains, needle);
+	/* Begin: contains */
+
+	/**
+	 * Tests whether an element is inside or equal to a list of elements.
+	 * @memberof rb
+	 * @param containerElements {Element[]} Array of elements that might contain innerElement.
+	 * @param innerElement {Element} An element that might be inside of one of containerElements.
+	 * @returns {Element|undefined} The first element in containerElements, that contains innerElement or is the innerElement.
+	 */
+	rb.contains = function(containerElements, innerElement){
+		return containerElements.find(rb.contains._contains, innerElement);
 	};
 	rb.contains._contains = function(element){
 		return element == this || element.contains(this);
 	};
+	/* End: contains */
 
-	/* throttle */
-	var setImmediate = window.setImmediate || setTimeout;
-
+	/* Begin: throttle */
 	/**
-	 *
-	 * @param {function} fn - The function to be throttled
-	 * @param {object} options - options for the throttle
-	 *  @param {object} options.that -  the context in which fn should be called
-	 *  @param {boolean} options.write -  wether fn is used to write layout (default is read)
-	 *  @param {number} options.delay = 200 -  the throttle delay
-	 * @returns {function} the throttled function
+	 * Throttles a given function
+	 * @memberof rb
+	 * @param {function} fn - The function to be throttled.
+	 * @param {object} options - options for the throttle.
+	 *  @param {object} options.that -  the context in which fn should be called.
+	 *  @param {boolean} options.write -  wether fn is used to write layout.
+	 *  @param {number} options.delay = 200 -  the throttle delay.
+	 * @returns {function} the throttled function.
 	 */
 	rb.throttle = function(fn, options){
 		var running, that, args;
@@ -183,10 +264,10 @@ if(!window.rb){
 			fn.apply(that, args);
 		};
 		var afterAF = function(){
-			setImmediate(_run);
+			setTimeout(_run);
 		};
 		var getAF = function(){
-			rb.rAFQueue.add(afterAF);
+			rb.rAFQueue(afterAF);
 		};
 
 		if(!options){
@@ -210,61 +291,86 @@ if(!window.rb){
 			var delay = options.delay;
 			running =  true;
 
-			if(!options.simple){
+			if(delay && !options.simple){
 				delay -= (Date.now() - lastTime);
-				if(delay < 0){
-					delay = 0;
-				}
 			}
+
 			that = options.that || this;
 			args = arguments;
+
+			if(delay < 0){
+				delay = 0;
+			}
 			setTimeout(getAF, delay);
 		};
 	};
+	/* End: throttle */
 
-	/* resize */
+	/* Begin: resize */
 	var iWidth, cHeight, installed;
 	var docElem = rb.root;
 
-	rb.resize = Object.assign(rb.$.Callbacks(), {
+	/**
+	 *
+	 * Resize uitility object to listen/unlisten (on/off) for throttled window.resize events (also see jQuery.fn.elementResize).
+	 * @memberof rb
+	 * @extends jQuery.Callbacks
+	 * @property {object} resize
+	 * @property {Function} resize.on Adds the passed function to listen to the global window.resize
+	 * @property {Function} resize.off Removes the passed function to unlisten from the global window.resize
+	 */
+	rb.resize = Object.assign(rb.$.Callbacks(),
+		{
+			_setup: function(){
+				if(!installed){
+					installed = true;
+					setTimeout(function(){
+						iWidth = innerWidth;
+						cHeight = docElem.clientHeight;
+					});
+					window.removeEventListener('resize', this._run);
+					window.addEventListener('resize', this._run);
+				}
+			},
+			_teardown: function(){
+				if(installed && !this.has()){
+					installed = false;
+					window.removeEventListener('resize', this._run);
+				}
+			},
+			on: function(fn){
+				this.add(fn);
+				this._setup();
+			},
+			off: function(fn){
+				this.remove(fn);
+				this._teardown();
+			},
+		}
+	);
 
-		setup: function(){
-			if(!installed){
-				installed = true;
-				setTimeout(function(){
-					iWidth = innerWidth;
-					cHeight = docElem.clientHeight;
-				});
-				window.removeEventListener('resize', this.run);
-				window.addEventListener('resize', this.run);
-			}
-		},
-		teardown: function(){
-			if(installed && !this.has()){
-				installed = false;
-				window.removeEventListener('resize', this.run);
-			}
-		},
-		on: function(fn){
-			this.add(fn);
-			this.setup();
-		},
-		off: function(fn){
-			this.remove(fn);
-			this.teardown();
-		},
-	});
-
-	rb.resize.run = rb.throttle(function(){
+	rb.resize._run = rb.throttle(function(){
 		if(iWidth != innerWidth || cHeight != docElem.clientHeight){
 			iWidth = innerWidth;
 			cHeight = docElem.clientHeight;
 
 			this.fire();
 		}
-	}, {that: rb.resize});
+	}, {that: rb.resize, read: true,});
 
+	/* End: resize */
 
+	/* Begin: getCSSNumbers */
+	/**
+	 * Sums up all style values of an element
+	 * @memberof rb
+	 * @param element {Element}
+	 * @param styles {String[]} The names of the style properties (i.e. paddingTop, marginTop)
+	 * @param onlyPositive {Boolean} Whether only positive numbers should be considered
+	 * @returns {number} Total of all style values
+	 * @example
+	 * var innerWidth = rb.getCSSNumbers(domElement, ['paddingLeft', 'paddingRight', 'width'];
+	 */
 	rb.getCSSNumbers = function(element, styles, onlyPositive){
 		var i, value;
 		var numbers = 0;
@@ -283,6 +389,9 @@ if(!window.rb){
 
 		return numbers;
 	};
+	/* End: getCSSNumbers */
+
+	/* Begin: camelCase */
 
 	rb.camelCase = (function() {
 		var reg = /-([\da-z])/gi;
@@ -290,15 +399,33 @@ if(!window.rb){
 			return found.toUpperCase();
 		};
 
-		return function(str) {
+		/**
+		 * camel cases a String
+		 * @alias rb#camelCase
+		 * @param str {String} String to camelcase
+		 * @returns {String} the camel cased string
+		 */
+		var retCamel = function(str) {
 			return str.replace(reg, camelCase);
 		};
+
+		return retCamel;
 	})();
 
+	/* End: camelCase */
+
+	/* Begin: parseValue */
 	rb.parseValue = (function() {
 		var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
 		var regObj = /^\[.*?]|\{.*?}$/;
-		return function( attrVal ) {
+
+		/**
+		 * Parses a String into another type using JSON.parse, if this fails returns the given string
+		 * @alias rb#parseValue
+		 * @param {String} attrVal The string to be parsed
+		 * @returns {String} The parsed string.
+		 */
+		var parseValue = function( attrVal ) {
 
 			if(attrVal == 'true'){
 				attrVal = true;
@@ -312,13 +439,15 @@ if(!window.rb){
 				attrVal = parseFloat(attrVal);
 			}
 			else if(regObj.test(attrVal)){
-				try {
-					attrVal = JSON.parse( attrVal );
-				} catch(e){}
+				attrVal = rb.jsonParse(attrVal);
 			}
 			return attrVal;
 		};
+		return parseValue;
 	})();
+	/* End: parseValue */
+
+	/* Begin: rAF helpers */
 
 	rb.rAFQueue = (function(){
 		var isInProgress, inProgressStack;
@@ -336,7 +465,15 @@ if(!window.rb){
 			}
 			isInProgress = false;
 		};
-		var add = function(fn, inProgress){
+
+		/**
+		 * Invokes a function inside a rAF call
+		 * @memberof rb
+		 * @alias rb#rAFQueue
+		 * @param fn {Function} the function that should be invoked
+		 * @param inProgress {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
+		 */
+		return function(fn, inProgress){
 
 			if(inProgress && isInProgress){
 				inProgressStack.push(fn);
@@ -347,22 +484,20 @@ if(!window.rb){
 				}
 			}
 		};
-		var remove = function(fn){
-			var index = curFns.indexOf(fn);
-
-			if(index != -1){
-				curFns.splice(index, 1);
-			}
-		};
-
-		return {
-			add: add,
-			remove: remove,
-		};
 	})();
 
-	rb.rAF = function(fn, thisArg, inProgress, isBatched){
-		var running, args, that, options;
+	/**
+	 * Generates and returns a new, rAFed version of the passed function, so that the passed function is always called using requestAnimationFrame
+	 * @memberof rb
+	 * @param fn {Function} The function to be rAFed
+	 * @param options {Object} Options object
+	 * @param options.that {Object} The context in which the function should be invoked. If nothing is passed the context of the wrapper function is used.
+	 * @param options.queue {Object} Whether the fn should be added to an ongoing rAF or should be queued to the next rAF.
+	 * @param options.batch {boolean} Normally the passed function is also automatically throtteld by rAF. In case batch is true multiple calls to the wrapper function during one frame cycle will also lead to multiple calls to the passed function.
+	 * @returns {Function}
+	 */
+	rb.rAF = function(fn, options){
+		var running, args, that, inProgress;
 		var batchStack = [];
 		var run = function(){
 			running = false;
@@ -383,37 +518,12 @@ if(!window.rb){
 			}
 			if(!running){
 				running = true;
-				rb.rAFQueue.add(run, inProgress);
+				rb.rAFQueue(run, inProgress);
 			}
 		};
 
-		if(thisArg && typeof thisArg == 'object' && (('that' in thisArg) || ('batch' in thisArg) || ('inProgress' in thisArg))){
-			options = thisArg;
-		} else {
-			if(typeof thisArg == 'boolean' && arguments.length < 4){
-				inProgress = thisArg;
-				isBatched = inProgress;
-				thisArg = null;
-			}
-
-			if(thisArg || isBatched || inProgress){
-				rb.log('deprecated use of rAF');
-			}
-
+		if(!options){
 			options = {};
-			if(thisArg !== undefined){
-				options.that = thisArg;
-			}
-			if(isBatched){
-				options.batch = isBatched;
-			}
-			if(inProgress){
-				options.queue = !inProgress;
-			}
-		}
-
-		if(options.inProgress){
-			rb.log('deprecated use of rAF (inProgress)');
 		}
 
 		inProgress = !options.queue;
@@ -427,12 +537,24 @@ if(!window.rb){
 		return rafedFn;
 	};
 
-	/* rbWidget */
-	$.fn.rbWidget = function(name, args){
+	/* End: rAF helpers */
+
+	/* Begin: rbComponent */
+
+	/**
+	 * A jQuery plugin that returns a component instance by using rb.life.getComponent. Or invokes a methods or sets/gets a property
+	 * @function external:"jQuery.fn".rbComponent
+	 * @see rb.life.getComponent
+	 * @param [name] {String} The name of the property or method.
+	 * @param [args] {*} The value of the property name to set or an array of arguments in case of a method.
+	 *
+	 * @returns {ComponentInstance|jQueryfiedDOMList|*}
+	 */
+	$.fn.rbComponent = function(name, args){
 		var ret;
 		this.each(function(){
 			if(ret === undefined){
-				ret = rb.life.getWidget(this, name, args);
+				ret = rb.life.getComponent(this, name, args);
 			}
 		});
 
@@ -441,13 +563,13 @@ if(!window.rb){
 			ret
 			;
 	};
+	/* End: rbComponent */
 
+	/* Begin: addEasing */
 	var isExtended;
 	var copyEasing = function(easing){
 		var easObj = BezierEasing.css[easing];
-		$.easing[easing] = function(number){
-			return easObj.get(number);
-		};
+		$.easing[easing] = easObj.get;
 	};
 	var extendEasing = function(){
 		var easing;
@@ -459,8 +581,15 @@ if(!window.rb){
 		}
 	};
 
+	/**
+	 * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object.
+	 * @memberof rb
+	 * @param {String} easing The easing value. Expects a string with 4 numbers separated by a "," describing a cubic bezier curve.
+	 * @returns {Function} Easing a function
+	 */
 	rb.addEasing = function(easing){
 		var bezierArgs;
+		if(typeof easing != 'string'){return;}
 		if(window.BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
 			extendEasing();
 			bezierArgs = bezierArgs.map(function(str){
@@ -480,10 +609,24 @@ if(!window.rb){
 	};
 	extendEasing();
 	setTimeout(extendEasing);
+	/* End: addEasing */
 
-	/* Symbol */
+	/* Begin: ID/Symbol */
+	/**
+	 * Returns a Symbol or unique String
+	 * @memberof rb
+	 * @param {String} description ID or description of the symbol
+	 * @type {Function}
+	 * @returns {String|Symbol}
+	 */
 	rb.Symbol = window.Symbol;
 	var id = Math.round(Date.now() * Math.random());
+
+	/**
+	 * Returns a unique id based on Math.random and Date.now().
+	 * @memberof rb
+	 * @returns {string}
+	 */
 	rb.getID = function(){
 		id++;
 		return id + '-' + Math.round(Math.random() * 1000000000000000000);
@@ -496,6 +639,9 @@ if(!window.rb){
 		};
 	}
 
+	/* End: ID/Symbol */
+
+	/* Begin: elementResize */
 	var elementResize = {
 		add: function(element, fn, options){
 			if(!element[elementResize.expando]){
@@ -510,6 +656,7 @@ if(!window.rb){
 
 				this.addMarkup(element, element[elementResize.expando]);
 			}
+
 			if(options && options.noWidth){
 				element[elementResize.expando].heightCbs.add(fn);
 			} else if(options && options.noHeight){
@@ -519,7 +666,7 @@ if(!window.rb){
 			}
 			return element[elementResize.expando];
 		},
-		remove: function(element, fn, options){
+		remove: function(element, fn){
 			if(element[elementResize.expando]){
 				element[elementResize.expando].cbs.remove(fn);
 				element[elementResize.expando].heightCbs.remove(fn);
@@ -540,19 +687,20 @@ if(!window.rb){
 				shrinkElem.addEventListener('scroll', onScroll);
 			};
 
-			var runFire = rb.throttle(function(){
+			var runFire = function(){
 
 				if(heightChange){
-					element[elementResize.expando].heightCbs.fire();
+					element[elementResize.expando].heightCbs.fire(data);
 				}
 				if(widthChange){
-					element[elementResize.expando].widthCbs.fire();
+					element[elementResize.expando].widthCbs.fire(data);
 				}
 
-				data.cbs.fire();
+				data.cbs.fire(data);
+
 				heightChange = false;
 				widthChange = false;
-			});
+			};
 
 			var scrollWrite = function(){
 				expandElem.scrollLeft = data.exScrollLeft;
@@ -566,7 +714,6 @@ if(!window.rb){
 
 				if(first){
 					first = false;
-					setTimeout(onScroll);
 					addEvents();
 				}
 				block = false;
@@ -575,12 +722,12 @@ if(!window.rb){
 			var write = rb.rAF(function(){
 				expandChild.style.width = data.exChildWidth;
 				expandChild.style.height = data.exChildHeight;
-				setTimeout(scrollWrite, 8);
+				setTimeout(scrollWrite);
 			});
 
 			var read = function(){
-				data.exChildWidth = expandElem.offsetWidth + 10 + 'px';
-				data.exChildHeight = expandElem.offsetHeight + 10 + 'px';
+				data.exChildWidth = expandElem.offsetWidth + 9 + 'px';
+				data.exChildHeight = expandElem.offsetHeight + 9 + 'px';
 
 				data.exScrollLeft = expandElem.scrollWidth;
 				data.exScrollTop = expandElem.scrollHeight;
@@ -590,7 +737,7 @@ if(!window.rb){
 
 				write();
 			};
-			var onScroll = function(){
+			var onScroll = rb.throttle(function(){
 				if(block){
 					return;
 				}
@@ -600,6 +747,7 @@ if(!window.rb){
 
 				var curWidthChange = width != data.width;
 				var curHeightChange = height != data.height;
+
 				fire = curHeightChange || curWidthChange;
 
 				if(fire){
@@ -607,11 +755,11 @@ if(!window.rb){
 					heightChange = curHeightChange || heightChange;
 					data.height = height;
 					data.width = width;
-					block = true;
+					block = widthChange && heightChange;
 					read();
 				}
 
-			};
+			});
 
 			wrapper.className = 'js-element-resize';
 			wrapper.setAttribute('style', wrapperStyle +'visibility:hidden;z-index: -1;');
@@ -635,6 +783,16 @@ if(!window.rb){
 		}, {batch: true}),
 	};
 
+	/**
+	 * A jQuery plugin that invokes a callback as soon as the dimension of an element changes
+	 * @function external:"jQuery.fn".elementResize
+	 * @param action {String} "add" or "remove". Whether the function should be added or removed
+	 * @param fn {Function} The resize listener function that should be added or removed.
+	 * @param [options] {Object}
+	 * @param [options.noWidth=false] {Boolean} Only height changes to this element should fire the callback function.
+	 * @param [options.noHeight=false] {Boolean} Only width changes to this element should fire the callback function.
+	 * @returns {jQueryfiedObject}
+	 */
 	$.fn.elementResize = function(action, fn, options){
 		if(action != 'remove'){
 			action = 'add';
@@ -643,8 +801,31 @@ if(!window.rb){
 			elementResize[action](this, fn, options);
 		});
 	};
+	/* End: elementResize */
 
-	/* is-teaser delegate */
+	/**
+	 * Invokes on the first element in collection the closest method and on the result the querySelector method.
+	 * @function external:"jQuery.fn".closestFind
+	 * @param {String} selectors Two selectors separated by a white space and/or comma. First is used for closest and second for querySelector. Example: `".rb-item, .item-input"`.
+	 * @returns {jQueryfiedObject}
+	 */
+	$.fn.closestFind = function(selectors){
+		var sels;
+		var closestSel, findSel;
+		var elem = this.get(0);
+		if(elem){
+			sels = selectors.split(regSplit);
+			closestSel = sels.shift();
+			findSel = sels.join(' ');
+			elem = elem.closest(closestSel);
+			if(elem){
+				elem = elem.querySelector(findSel);
+			}
+		}
+		return $(elem || []);
+	};
+
+	/* Begin: is-teaser delegate */
 	var getSelection = window.getSelection || function(){return {};};
 	var regInputs = /^(?:input|select|textarea|button|a)$/i;
 
@@ -669,23 +850,32 @@ if(!window.rb){
 			}
 		}
 	});
+	/* End: is-teaser delegate */
 
-	rb.setFocus = function(elem){
+	/**
+	 * Sets focus to an element. Note element has to be focusable
+	 * @memberof rb
+	 * @param element The element that needs to get focus.
+	 * @param [delay] {Number} The delay to focus the element.
+	 */
+	rb.setFocus = function(element, delay){
 		try {
 			setTimeout(function(){
-				elem.focus();
+				if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
+					element.setAttribute('tabindex', -1);
+				}
+				element.focus();
 				rb.$doc.trigger('rbscriptfocus');
-			}, 9);
+			}, delay || 4);
 		} catch(e){}
 	};
 
-	/* focus-within polyfill */
-
+	/* Begin: focus-within polyfill */
 	var running = false;
 	var isClass = 'is-focus-within';
 	var isClassSelector = '.' + isClass;
 
-	function updateFocus(){
+	var updateFocus = function(){
 		var oldFocusParents, i, len;
 
 		var parent = document.activeElement;
@@ -705,22 +895,23 @@ if(!window.rb){
 		}
 
 		running = false;
-	}
+	};
 
-	function update(){
+	var update = function(){
 		if(!running){
 			running = true;
-			rb.rAFQueue.add(updateFocus, true);
+			rb.rAFQueue(updateFocus, true);
 		}
-	}
+	};
 
 	document.addEventListener('focus', update, true);
 	document.addEventListener('blur', update, true);
 	update();
+	/* End: focus-within polyfill */
 
 
-	/* keyboard-focus */
-	var keyboardBlocktimer;
+	/* Begin: keyboard-focus */
+	var keyboardBlocktimer, keyboardFocusElem;
 	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
 	var root = rb.root;
@@ -732,11 +923,25 @@ if(!window.rb){
 	var blockKeyboardFocus = function(){
 		isKeyboardBlocked = true;
 		clearTimeout(keyboardBlocktimer);
-		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 66);
+		keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 99);
+	};
+
+	var _removeChildFocus = function(){
+		if(keyboardFocusElem && keyboardFocusElem != document.activeElement){
+			keyboardFocusElem.classList.remove('is-keyboardfocus');
+			keyboardFocusElem = null;
+		}
+	};
+
+	var removeChildFocus = function(){
+		if(keyboardFocusElem){
+			rb.rAFQueue(_removeChildFocus);
+		}
 	};
 
 	var _removeKeyBoardFocus = rb.rAF(function(){
 		hasKeyboardFocus = false;
+		_removeChildFocus();
 		root.classList.remove('is-keyboardfocus');
 	});
 
@@ -748,9 +953,22 @@ if(!window.rb){
 	};
 
 	var setKeyboardFocus = rb.rAF(function(){
-		if(!isKeyboardBlocked){
+
+		if(!isKeyboardBlocked || hasKeyboardFocus){
+
+			if(keyboardFocusElem != document.activeElement){
+				_removeChildFocus();
+				keyboardFocusElem = document.activeElement;
+
+				if(keyboardFocusElem){
+					keyboardFocusElem.classList.add('is-keyboardfocus');
+				}
+			}
+
+			if(!hasKeyboardFocus){
+				root.classList.add('is-keyboardfocus');
+			}
 			hasKeyboardFocus = true;
-			root.classList.add('is-keyboardfocus');
 		}
 	});
 
@@ -759,6 +977,7 @@ if(!window.rb){
 			['mousedown', 'mouseup', 'touchstart', 'touchend']
 		;
 
+	root.addEventListener('blur', removeChildFocus, true);
 	root.addEventListener('focus', setKeyboardFocus, true);
 
 	pointerEvents.forEach(function(eventName){
@@ -770,27 +989,60 @@ if(!window.rb){
 	document.addEventListener('focus', blockKeyboardFocus);
 
 	rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
-
+	/* End: keyboard-focus */
 
 	var regStartQuote = /^"?'?"?/;
 	var regEndQuote = /"?'?"?$/;
 	var regEscapedQuote = /\\"/g;
+
+	/**
+	 * Removes leading and ending quotes (",') from a string.
+	 * @memberof rb
+	 * @param str
+	 * @returns {string}
+	 */
 	rb.removeLeadingQuotes = function(str){
 		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
 	};
 
+	/**
+	 * Parses a string using JSON.parse without throwing an error.
+	 * @memberof rb
+	 * @param str
+	 * @returns {Object}
+	 */
+	rb.jsonParse = function(str){
+		var ret = null;
+		try {
+			ret = JSON.parse(str);
+		} catch(e){}
+		return ret;
+	};
+
+	/**
+	 * Parses the CSS content value of a pseudo element using JSON.parse.
+	 * @memberof rb
+	 * @param element {Element} The element to parse.
+	 * @param [pseudo='::after'] {String}
+	 * @returns {Object|undefined}
+	 */
 	rb.parsePseudo = function(element, pseudo){
 		var ret;
 		var value = typeof element == 'string' ?
 				element :
 				rb.getStyles(element, pseudo || '::after').content
 			;
-		try {
-			ret = JSON.parse(rb.removeLeadingQuotes(value));
-		} catch(e){}
+		ret = rb.jsonParse(rb.removeLeadingQuotes(value));
 		return ret;
 	};
 
+	/**
+	 * Returns the ComputedStyleObject of an element.
+	 * @memberof rb
+	 * @param elem {Element}
+	 * @param [pseudo]
+	 * @returns {CssStyle}
+	 */
 	rb.getStyles = function(elem, pseudo){
 		var view = elem.ownerDocument.defaultView;
 
@@ -800,6 +1052,16 @@ if(!window.rb){
 		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$.noop};
 	};
 
+	/**
+	 * Parsed global data from Stylesheet (html::before and html::after)
+	 * @alias rb.cssConfig
+	 * @property cssConfig {Object}
+	 * @property cssConfig.mqs {Object} Map of different media queries
+	 * @property cssConfig.currentMQ {String} Currently active media query
+	 * @property cssConfig.beforeMQ {String} Media query that was active before
+	 * @property cssConfig.mqChange {Object} jQuery Callback object to listen for media query changes.
+	 *
+	 */
 	var cssConfig = {mqs: {}, currentMQ: '', beforeMQ: '', mqChange: rb.$.Callbacks()};
 	var parseCSS = function(){
 		var root = rb.root;
@@ -843,6 +1105,12 @@ if(!window.rb){
 	var console = window.console || {};
 	var log = console.log && console.log.bind ? console.log : rb.$.noop;
 
+	/**
+	 * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
+	 * @memberof rb
+	 * @param obj    {Object}
+	 * @param [initial] {Boolean}
+	 */
 	rb.addLog = function(obj, initial){
 		var realLog = log.bind(console);
 		var fakeLog = rb.$.noop;
@@ -899,6 +1167,11 @@ if(!window.rb){
 		}, true);
 	};
 
+	/**
+	 * Allows to add fast click listeners. For elements with the class `js-click` and a data-{name} attribute.
+	 * @property rb.click.add {Function} add the given name and the function as a delegated click handler.
+	 * @memberof rb
+	 */
 	rb.click = {
 		cbs: cbs,
 		add: function(name, fn){
@@ -912,61 +1185,48 @@ if(!window.rb){
 		}
 	};
 
-
-	var regSplit = /\s*?,\s*?|\s+?/g;
 	var regNum = /:(\d)+\s*$/;
-	var regTarget = /^\s*?\.?([a-z0-9-_]+)\((.*?)\)\s*?/i;
+	var regTarget = /^\s*?\.?([a-z0-9_]+)\((.*?)\)\s*?/i;
 
-	[['closestNext', 'nextElementSibling'], ['closestPrev', 'previousElementSibling']].forEach(function(action){
-		$.fn[action[0]] = function(sel){
-			var array = [];
-			var found = false;
-
-			this.each(function(i, elem){
-				var element = found || elem[action[1]];
-				while(!found && element){
-					if((!sel || element.matches(sel))){
-						found = true;
-						array.push(element);
-						break;
-					} else {
-						element = element[action[1]];
-					}
-				}
-			});
-			return $( array );
-		};
-	});
-
+	/**
+	 * Returns an array of elements based on a string.
+	 * @memberof rb
+	 * @param targetStr {String} Either a whitespace separated list of ids or q jQuery traversal method. ("foo-1 bar-2", "next(.input)")
+	 * @param element {Element} The element that should be used as starting point for the jQuery traversal method.
+	 * @returns {Element[]}
+	 */
 	rb.elementFromStr = function(targetStr, element){
 		var i, len, target, temp, num, match;
-		if((num = targetStr.match(regNum))){
-			targetStr = targetStr.replace(num[0], '');
-			num = num[1];
-		}
-		if ((match = targetStr.match(regTarget))) {
 
-			if(match[1] == '$' || match[1] == 'sel'){
-				target = Array.from(document.querySelectorAll(match[2]));
-			} else if($.fn[match[1]]){
-				if(!match[2]){
-					match[2] = null;
-				}
-				target = $(element)[match[1]](match[2]).get();
+		if (targetStr){
+			if((num = targetStr.match(regNum))){
+				targetStr = targetStr.replace(num[0], '');
+				num = num[1];
 			}
-		} else if (targetStr) {
-			targetStr = targetStr.split(regSplit);
-			target = [];
-			for(i = 0, len = targetStr.length; i < len; i++){
-				temp = targetStr[i] && document.getElementById(targetStr[i]);
-				if(temp){
-					target.push(temp);
-				}
-			}
-		}
+			if ((match = targetStr.match(regTarget))) {
 
-		if(num && target){
-			target = target[num] ? [target[num]] : [];
+				if(match[1] == '$' || match[1] == 'sel'){
+					target = Array.from(document.querySelectorAll(match[2]));
+				} else if($.fn[match[1]]){
+					if(!match[2]){
+						match[2] = null;
+					}
+					target = $(element)[match[1]](match[2]).get();
+				}
+			} else {
+				targetStr = targetStr.split(regSplit);
+				target = [];
+				for(i = 0, len = targetStr.length; i < len; i++){
+					temp = targetStr[i] && document.getElementById(targetStr[i]);
+					if(temp){
+						target.push(temp);
+					}
+				}
+			}
+
+			if(num && target){
+				target = target[num] ? [target[num]] : [];
+			}
 		}
 
 		return target || [];
@@ -996,7 +1256,7 @@ if(!window.rb){
 	var attachedClass = 'js-rb-attached';
 	var rb = window.rb;
 	var $ = rb.$;
-	var widgetExpando = rb.Symbol('_rbWidget');
+	var componentExpando = rb.Symbol('_rbComponent');
 	var expando = rb.Symbol('_rbCreated');
 	var docElem = rb.root;
 
@@ -1013,8 +1273,8 @@ if(!window.rb){
 			if(protoClass[action]){
 				cb = action + 'Callback';
 				proto[cb] = function(){
-					if(this[life.widgetExpando]){
-						return this[life.widgetExpando][action]();
+					if(this[life.componentExpando]){
+						return this[life.componentExpando][action]();
 					}
 				};
 			}
@@ -1042,16 +1302,34 @@ if(!window.rb){
 	var initClickCreate = function(){
 		initClickCreate = $.noop;
 		rb.click.add('module', function(elem){
-			life.getWidget(elem);
-			rb.rAFQueue.add(function(){
+			life.getComponent(elem);
+			rb.rAFQueue(function(){
 				elem.classList.remove('js-click');
 			}, true);
 			lifeBatch.run();
 		});
 	};
 
+	var initWatchCss = function(){
+		initWatchCss = $.noop;
+		var elements = document.getElementsByClassName(attachedClass);
+
+		rb.resize.on(function(){
+			var i, elem, component;
+			var len = elements.length;
+			for(i = 0; i < len; i++){
+				elem = elements[i];
+				component = elem && elem[componentExpando];
+
+				if(component && component.parseOptions && component._afterStyle && component._afterStyle.content != component._styleOptsStr){
+					component.parseOptions();
+				}
+			}
+		});
+	};
+
 	var initObserver = function() {
-		var removeWidgets = (function(){
+		var removeComponents = (function(){
 			var runs, timer;
 			var i = 0;
 			var main = function() {
@@ -1060,9 +1338,9 @@ if(!window.rb){
 				for(len = life._attached.length; i < len && Date.now() - start < 6; i++){
 					element = life._attached[i];
 
-					if( element && (instance = element[widgetExpando]) && !docElem.contains(element) ){
+					if( element && (instance = element[componentExpando]) && !docElem.contains(element) ){
 						element.classList.add( initClass );
-						life.destroyWidget(instance, i);
+						life.destroyComponent(instance, i);
 
 						i--;
 						len--;
@@ -1098,7 +1376,7 @@ if(!window.rb){
 					life.searchModules();
 				}
 				if ( mutation.removedNodes.length ) {
-					removeWidgets();
+					removeComponents();
 				}
 			}
 		};
@@ -1162,12 +1440,10 @@ if(!window.rb){
 	life.autoStart = true;
 
 	life.expando = expando;
-	life.widgetExpando = widgetExpando;
+	life.componentExpando = componentExpando;
 
 	life._failed = {};
-	rb.widgets = {};
-	rb.components = rb.widgets;
-	life._behaviors = rb.widgets;
+	rb.components = {};
 	life._attached = [];
 	life.customElements = false;
 
@@ -1186,6 +1462,8 @@ if(!window.rb){
 		life.searchModules();
 
 		initClickCreate();
+
+		initWatchCss();
 	};
 
 	life.register = function(name, LifeClass, noCheck) {
@@ -1200,11 +1478,11 @@ if(!window.rb){
 			proto.name = name;
 		}
 
-		if(rb.widgets[ name ]){
+		if(rb.components[ name ]){
 			rb.log(name +' already exists.');
 		}
 
-		rb.widgets[ name ] = LifeClass;
+		rb.components[ name ] = LifeClass;
 
 		if(name.charAt(0) == '_'){return;}
 
@@ -1235,14 +1513,14 @@ if(!window.rb){
 	life.create = function(element, LifeClass, _fromWebComponent) {
 		var instance;
 
-		if ( !(instance = element[widgetExpando]) ) {
+		if ( !(instance = element[componentExpando]) ) {
 			instance = new LifeClass( element );
-			element[widgetExpando] = instance;
+			element[componentExpando] = instance;
 		}
 
-		rb.rAFQueue.add(function(){
+		rb.rAFQueue(function(){
 			element.classList.add( attachedClass );
-		});
+		}, true);
 
 		if (!_fromWebComponent && !element[expando] && instance && (instance.attached || instance.detached)) {
 
@@ -1266,21 +1544,17 @@ if(!window.rb){
 	};
 
 	life.searchModules = (function() {
-		var setImmediate = window.setImmediate || window.setTimeout;
-		var requestAnimationFrame = window.requestAnimationFrame;
-		var runs = false;
 		var removeInitClass = rb.rAF(function(){
 			while (removeElements.length) {
 				removeElements.shift().classList.remove(initClass);
 			}
 		});
 
-		var findElements = function() {
+		var findElements = rb.throttle(function() {
 
 			var module, modulePath, moduleId, i;
 
 			var len = elements.length;
-			runs = false;
 
 			for ( i = 0; i < len; i++ ) {
 				module = elements[ i ];
@@ -1294,8 +1568,8 @@ if(!window.rb){
 				moduleId = modulePath.split( '/' );
 				moduleId = moduleId[ moduleId.length - 1 ];
 
-				if ( rb.widgets[ moduleId ] ) {
-					life.create( module, rb.widgets[ moduleId ] );
+				if ( rb.components[ moduleId ] ) {
+					life.create( module, rb.components[ moduleId ] );
 					removeElements.push( module );
 				}
 				else if ( life._failed[ moduleId ] ) {
@@ -1305,7 +1579,7 @@ if(!window.rb){
 					/* jshint loopfunc: true */
 					(function (module, modulePath, moduleId) {
 						rb.loadPackage(modulePath).then(function () {
-							if (!rb.widgets[ moduleId ]) {
+							if (!rb.components[ moduleId ]) {
 								life._failed[ moduleId ] = true;
 							}
 						});
@@ -1319,19 +1593,12 @@ if(!window.rb){
 
 			removeInitClass();
 			lifeBatch.run();
-		};
-		var rAFRun = function() {
-			setImmediate(findElements);
-		};
-		return function () {
-			if ( !runs ) {
-				runs = true;
-				requestAnimationFrame( rAFRun );
-			}
-		};
+		}, {delay: 50});
+
+		return findElements;
 	})();
 
-	life.destroyWidget = function(instance, index){
+	life.destroyComponent = function(instance, index){
 		var element = instance.element;
 
 		if(index == null){
@@ -1454,20 +1721,60 @@ if(!window.rb){
 
 	var rb = window.rb;
 	var $ = rb.$;
-	var widgetExpando = life.widgetExpando;
+	var componentExpando = life.componentExpando;
 	var regData = /^data-/;
 	var regName = /\{name}/g;
 
-	life.getWidget = function(element, key, args){
-		var ret, moduleId;
-		var widget = element && element[widgetExpando];
+	var _setupEventsByEvtObj = function(that){
+		var evt, namedStr, evtName, selector;
+		var evts = that.constructor.events;
 
-		if(!widget){
+		for(evt in evts){
+			namedStr = evt.replace(regName, that.name);
+			selector = namedStr.split(' ');
+			evtName = selector.shift();
 
-			if(rb.widgets[key]){
-				moduleId = key;
-				key = false;
-			} else {
+			/* jshint loopfunc: true */
+			(function(evtName, selector, method){
+				var args = [evtName];
+
+				if(selector){
+					args.push(selector);
+				}
+
+				args.push((typeof method == 'string') ? function(e){
+					return that[method].apply(that, arguments);
+				} :
+					function(){
+						return method.apply(that, arguments);
+					});
+
+				if(args.length == 2 && evtName.startsWith('elemresize')){
+					that.$element.elementResize('add', args[1], {
+						noWidth: evtName.endsWith('height'),
+						noHeight: evtName.endsWith('width'),
+					});
+				} else {
+					that.$element.on.apply(that.$element, args);
+				}
+
+			})(evtName, selector.join(' '), evts[evt]);
+		}
+	};
+
+	/**
+	 * returns the component instance of an element
+	 * @memberof rb
+	 * @param {Element} element - DOM element
+	 * @param {String} [moduleId] - optional name of the component
+	 * @returns {Object} A component instance
+	 */
+	life.getComponent = function(element, moduleId){
+		var component = element && element[componentExpando];
+
+		if(!component){
+
+			if(!rb.components[moduleId]){
 				moduleId = (element.getAttribute( 'data-module' ) || '').split('/');
 
 				if(!moduleId.length){
@@ -1477,247 +1784,285 @@ if(!window.rb){
 				moduleId = moduleId[ moduleId.length - 1 ];
 			}
 
-			if(rb.widgets[ moduleId ]){
-				widget = life.create(element, rb.widgets[ moduleId ]);
+			if(rb.components[ moduleId ]){
+				component = life.create(element, rb.components[ moduleId ]);
 			}
 		}
-
-		ret = widget;
-		if(widget && key){
-			ret = widget[key];
-
-			if(typeof ret == 'function'){
-				ret = ret.apply(widget, args || []);
-			} else if(args !== undefined){
-				widget[key] = args;
-				ret = undefined;
-			}
-		}
-		return ret;
+		return component;
 	};
 
+	rb.Component = rb.Class.extend(
+		/** @lends rb.Component.prototype */
+		{
 
-	life.Widget = rb.Class.extend({
-		/**
-		 * Component Base Class - all UI components should extend this class.
-		 * This Class adds some neat stuff to parse/change options, bind and trigger events as also handles the components life cycle (init, attached, detached).
-		 * @class
-		 * @exports rb#Widget
-		 */
-		init: function(element){
-			this.element = element;
-			this.$element = $(element);
-			this.options = {};
+			/**
+			 * constructs the class
+			 * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options, bind and trigger events as also handles the components life cycle (init, attached, detached).
+			 * @param element
+			 * @constructs
+			 *
+			 * @example
+			 * rb.Component.extend('myComponent', {
+			 *      defaults: {
+			 *          className: 'toggle-class',
+			 *      },
+			 *      init: function(element){
+			 *          this._super(element);
+			 *
+			 *          this.changeClass = rb.rAF(this.changeClass);
+			 *      },
+			 *      events: {
+			 *          'click .change-btn': 'changeClass',
+			 *      },
+			 *      changeClass: function(){
+			 *          this.$element.toggleClass(this.options.className);
+			 *      }
+			 * });
+			 *
+			 * @example
+			 * class MyComponent extends rb.Component {
+			 *      static get defaults(){
+			 *          return {
+			 *              className: 'toggle-class',
+			 *          }
+			 *      }
+			 *
+			 *      constructor(element){
+			 *          super(element);
+			 *          this.changeClass = rb.rAF(this.changeClass);
+			 *      }
+			 *
+			 *      static get events(){
+			 *          return {
+			 *              'click .change-btn': 'changeClass',
+			 *          }
+			 *      }
+			 *
+			 *      changeClass(){
+			 *          this.$element.toggleClass(this.options.className);
+			 *      }
+			 * }
+			 *
+			 * rb.life.register('myComponent', MyComponent);
+			 */
+			init: function(element){
 
-			this._evtName = this.name + 'changed';
-			this._beforeEvtName = this.name + 'change';
+				this.element = element;
+				this.$element = $(element);
+				this.options = {};
+				this._afterStyle = rb.getStyles(element, '::after');
 
-			element[widgetExpando] = this;
+				element[componentExpando] = this;
 
-			this.parseOptions(this.options, this.constructor.defaults);
+				this.parseOptions(this.options);
 
-			this._setupLifeOptions();
-
-			this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
-			this._setupEventsByEvtObj();
-		},
-
-		/**
-		 * defaults Object, represent the default options of the component.
-		 * While an option can be of any type, it is recommended to only use immutable values as defaults.
-		 */
-		defaults: {},
-
-		/**
-		 * returns the widget instance of an element or sets/gets/invokes a property of another widget instance
-		 * @param {object} element - DOM element
-		 * œparam {string} [name] - property name or method name of the component instance
-		 * @param {string} [value] - value or in case of a method arguments {array}
-		 */
-		widget: life.getWidget,
-
-		_setupEventsByEvtObj: function(){
-			var evt, evtName, selector;
-			var evts = this.constructor.events;
-			var that = this;
-
-			for(evt in evts){
-				selector = evt.split(' ');
-				evtName = selector.shift();
-
-				/* jshint loopfunc: true */
-				(function(evtName, selector, method){
-					var args = [evtName];
-
-					if(selector){
-						args.push(selector.replace(regName, that.name));
-					}
-
-					args.push((typeof method == 'string') ? function(e){
-						return that[method].apply(that, arguments);
-					} :
-					function(){
-						return method.apply(that, arguments);
-					});
-
-					that.$element.on.apply(that.$element, args);
-
-				})(evtName, selector.join(' '), evts[evt]);
-			}
-		},
-
-		_setupLifeOptions: function(){
-			var runner, styles;
-			var old = {};
-			var that = this;
-
-			if (this.options.watchCss) {
-				styles = rb.getStyles(that.element, '::after');
-				old.attached = this.attached;
-				old.detached = this.detached;
-				runner = function() {
-					if(that._styleOptsStr != (styles.content || '')){
-						that.parseOptions(null, that.constructor.defaults);
-					}
-				};
-
-				this.attached = function(){
-					rb.resize.on(runner);
-					if(old.attached){
-						return old.attached.apply(this, arguments);
-					}
-				};
-				this.detached = function(){
-					rb.resize.off(runner);
-					if(old.detached){
-						return old.detached.apply(this, arguments);
-					}
-				};
-
-				if(!old.attached && !old.detached && life._attached.indexOf(this.element) == -1){
-					life._attached.push(this.element);
+				if(this.options.name){
+					this.name = this.options.name;
 				}
-			}
-		},
 
-		getId: function(element){
-			var id;
-			if(!element){
-				element = this.element;
-			}
+				this._evtName = this.name + 'changed';
+				this._beforeEvtName = this.name + 'change';
 
-			if (!(id = element.id)) {
-				id = 'rbjsid-' + rb.getID();
-				element.id = id;
-			}
 
-			return id;
-		},
+				this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
 
-		_trigger: function(name, detail){
-			var evt;
-			if(typeof name == 'object'){
-				detail = name;
-				name = detail.type;
-			}
-			if(name == null){
-				name = this._evtName;
-			} else if(!name.includes(this.name)){
-				name = this.name + name;
-			}
-			evt = $.Event(name, {detail: detail || {}});
-			this.$element.trigger(evt);
-			return evt;
-		},
+				_setupEventsByEvtObj(this);
+			},
 
-		setFocus: rb.setFocus,
+			/**
+			 * defaults Object, represent the default options of the component.
+			 * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
+			 */
+			defaults: {},
 
-		setWidgetFocus: function(element){
-			this._activeElement = document.activeElement;
-			var focusElement;
+			/**
+			 * Shortcut to rb.getComponent.
+			 * @function
+			 */
+			component: life.getComponent,
 
-			if(element && element !== true){
-				if(element.nodeType == 1){
-					focusElement = element;
-				} else if(typeof element == 'string'){
-					focusElement = rb.elementFromStr(element, this.element)[0];
-				}
-			} else {
-				focusElement = this.element.querySelector('.js-autofocus');
-			}
-			if(!focusElement && element === true){
-				focusElement = this.element;
-			}
-			if(focusElement){
-				this.setFocus(focusElement);
-			}
-		},
-
-		restoreFocus: function(checkInside){
-			var activeElem = this._activeElement;
-			if(!activeElem){return;}
-
-			this._activeElement = null;
-			if(!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)){
-				this.setFocus(activeElem);
-			}
-		},
-
-		parseOptions: function(opts, defaults){
-			var options = Object.assign(opts || {}, defaults, this.parseCSSOptions(), this.parseHTMLOptions());
-			this.setOptions(options);
-		},
-
-		setOptions: function(opts){
-			for(var prop in opts){
-				if(opts[prop] !== this.options[prop]){
-					this.setOption(prop, opts[prop]);
-				}
-			}
-		},
-
-		setOption: function(name, value){
-			this.options[name] = value;
-			if(name == 'debug' && value){
-				this.isDebug = true;
-			}
-		},
-
-		parseHTMLOptions: function(element){
-			var i, name;
-			var options = {};
-			var attributes = (element || this.element).attributes;
-			var len = attributes.length;
-
-			for ( i = 0; i < len; i++ ) {
-				name = attributes[ i ].nodeName;
-				if ( !name.indexOf( 'data-' ) ) {
-					options[ rb.camelCase( name.replace( regData , '' ) ) ] = rb.parseValue( attributes[ i ].nodeValue );
-				}
-			}
-
-			return options;
-		},
-
-		parseCSSOptions: function(element){
-			var style = rb.getStyles(element || this.element, '::after').content || '';
-			if(style && (element || !this._styleOptsStr || style != this._styleOptsStr )){
+			/**
+			 * returns id of an element, if no id exist generates one for the element
+			 * @param [element] {Element} element, if no element is given. the component element is used.
+			 * @returns {String} id
+			 */
+			getId: function(element){
+				var id;
 				if(!element){
-					this._styleOptsStr = style;
+					element = this.element;
 				}
-				style = rb.parsePseudo(style);
+
+				if (!(id = element.id)) {
+					id = 'rbjsid-' + rb.getID();
+					element.id = id;
+				}
+
+				return id;
+			},
+
+			/**
+			 * Dispatches an event on the component element and returns the Event object.
+			 * @param [type] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component.
+			 * @param [detail] {Object} The value for the event.detail property to transport event related informations.
+			 * @returns {Event}
+			 */
+			_trigger: function(type, detail){
+				var evt;
+				if(typeof type == 'object'){
+					detail = type;
+					type = detail.type;
+				}
+				if(type == null){
+					type = this._evtName;
+				} else if(!type.includes(this.name)){
+					type = this.name + type;
+				}
+				evt = $.Event(type, {detail: detail || {}});
+				this.$element.trigger(evt);
+				return evt;
+			},
+
+			/**
+			 * shortcut to rb.setFocus
+			 */
+			setFocus: rb.setFocus,
+
+			/**
+			 * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with class `js-autofocus` inside of the component element is focused.
+			 * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
+			 * @param [delay] {Number} The delay that should be used to focus an element.
+			 */
+			setComponentFocus: function(element, delay){
+				this._activeElement = document.activeElement;
+				var focusElement;
+
+				if(typeof element == 'number'){
+					delay = element;
+					element = null;
+				}
+
+				if(element && element !== true){
+					if(element.nodeType == 1){
+						focusElement = element;
+					} else if(typeof element == 'string'){
+						focusElement = rb.elementFromStr(element, this.element)[0];
+					}
+				} else {
+					focusElement = this.element.querySelector('.js-autofocus');
+				}
+
+				if(!focusElement && (element === true || this.element.classList.contains('js-autofocus'))){
+					focusElement = this.element;
+				}
+
+				if(focusElement){
+					this.setFocus(focusElement, delay);
+				}
+			},
+
+			/**
+			 * Restores the focus to the element, that had focus before `setComponentFocus` was invoked.
+			 * @param [checkInside] {Boolean} If checkInside is true, the focus is only restored, if the current activeElement is inside the component itself.
+			 */
+			restoreFocus: function(checkInside){
+				var activeElem = this._activeElement;
+				if(!activeElem){return;}
+
+				this._activeElement = null;
+				if(!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)){
+					this.setFocus(activeElem);
+				}
+			},
+
+			/**
+			 * Parses the Options from HTML (data-* attributes) and CSS using rb.parsePseudo. This function is automatically invoked by the init.
+			 * @param opts
+			 */
+			parseOptions: function(opts){
+				var options = Object.assign(opts || {}, this.constructor.defaults, this.parseCSSOptions(), this.parseHTMLOptions());
+				this.setOptions(options);
+			},
+
+			/**
+			 * Sets mutltiple options at once.
+			 * @param opts
+			 */
+			setOptions: function(opts){
+				for(var prop in opts){
+					if(opts[prop] !== this.options[prop]){
+						this.setOption(prop, opts[prop]);
+					}
+				}
+			},
+
+			/**
+			 * sets an option. The function should be extended to react to dynamic option changes after instantiation.
+			 * @param name {String} Name of the option.
+			 * @param value {*} Value of the option.
+			 */
+			setOption: function(name, value){
+				this.options[name] = value;
+				if(name == 'debug' && value){
+					this.isDebug = true;
+				} else if(name == 'name'){
+					rb.log('don\'t change name after init.');
+				}
+			},
+
+			/**
+			 * parses the HTML options (data-*) of a given Element.
+			 * @param [element] {Element}
+			 * @returns {{}}
+			 */
+			parseHTMLOptions: function(element){
+				element = (element || this.element);
+				var i, name;
+				var attributes = element.attributes;
+				var options = rb.jsonParse(element.getAttribute('data-options')) || {};
+				var len = attributes.length;
+
+				for ( i = 0; i < len; i++ ) {
+					name = attributes[ i ].nodeName;
+					if ( name != 'data-options' && name.startsWith( 'data-' ) ) {
+						options[ rb.camelCase( name.replace( regData , '' ) ) ] = rb.parseValue( attributes[ i ].nodeValue );
+					}
+				}
+
+				return options;
+			},
+
+			/**
+			 * parses the CSS options (::after pseudo) of a given Element.
+			 * @param [element] {Element}
+			 * @returns {{}}
+			 */
+			parseCSSOptions: function(element){
+				if(element == this.element){
+					element = null;
+				}
+				var style = (element ? rb.getStyles(element, '::after') : this._afterStyle).content || '';
+				if(element || !this._styleOptsStr || style != this._styleOptsStr){
+					if(!element){
+						this._styleOptsStr = style;
+					}
+					style = rb.parsePseudo(style);
+				}
+				return style || false;
+			},
+
+			destroy: function(){
+				life.destroyComponent(this);
+			},
+
+			_super: function(){
+				this.log('no _super');
 			}
-			return style || false;
-		},
-
-		destroy: function(){
-			life.destroyWidget(this);
 		}
-	});
+	);
 
-	rb.addLog(life.Widget.prototype, false);
+	rb.addLog(rb.Component.prototype, false);
 
-	life.Widget.extend = function(name, prop, noCheck){
+	rb.Component.extend = function(name, prop, noCheck){
 		var Class = rb.Class.extend.call(this, prop);
 
 		if(prop.statics){
@@ -1729,7 +2074,7 @@ if(!window.rb){
 		return Class;
 	};
 
-	life.Widget.mixin = function(Class, prop){
+	rb.Component.mixin = function(Class, prop){
 		if(prop.defaults){
 			Class.defaults = Object.assign(Class.defaults || {}, prop.defaults);
 		}
@@ -1745,8 +2090,6 @@ if(!window.rb){
 		return Class;
 	};
 
-	rb.Widget = life.Widget;
-	rb.Component = rb.Widget;
 })(window, document, rb.life);
 
 (function (window, document, undefined) {
@@ -1754,64 +2097,126 @@ if(!window.rb){
 	var rb = window.rb;
 	var $ = rb.$;
 
-	var Button = rb.Widget.extend('button', {
-		defaults: {
-			target: '',
-			type: 'toggle',
+
+	rb.Component.extend('button',
+		/** @lends rb.components.button.prototype */
+		{
+			/**
+			 * @static
+			 * @property {Object} defaults
+			 * @property {String} defaults.target="" String that references the target element. Is processed by rb.elementFromStr.
+			 * @property {String} defaults.type="toggle" Method name to invoke on target component.
+			 * @property {*} defaults.args=null Arguments to be used to invoke target method.
+			 */
+			defaults: {
+				target: '',
+				type: 'toggle',
+				args: null,
+			},
+			/**
+			 * @constructs
+			 * @classdesc Class component to create a button.
+			 * @name rb.components.button
+			 * @extends rb.Component
+			 * @param {Element} element
+			 * @example
+			 * <button type="button"
+			 *  data-module="button"
+			 *  class="js-click"
+			 *  aria-controls="panel-1"
+			 *  data-type="open">
+			 *      click me
+			 * </button>
+			 * <div id="panel-1" data-module="panel"></div>
+			 */
+			init: function(element) {
+
+				this._super(element);
+
+				this._setTarget = rb.rAF(this._setTarget);
+				this.setOption('args', this.options.args);
+			},
+
+			events: {
+				click: '_onClick',
+			},
+
+			_onClick: function(){
+				var args;
+				var target = this.getTarget() || {};
+				var component = this.component(target);
+
+				if (!component) {
+					return;
+				}
+
+				if(this.options.type in component){
+					args = this.options.args;
+					component.activeButtonComponent = this;
+					if(typeof component[this.options.type] == 'function'){
+						component[this.options.type].apply(component, args);
+					} else {
+						component[this.options.type] = args;
+					}
+				}
+			},
+
+			setOption: function(name, value){
+				var dom;
+				this._super(name, value);
+
+				if(name == 'target'){
+					dom = rb.elementFromStr(value, this.element)[0];
+					if(dom){
+						this.setTarget(dom);
+					}
+				} else if(name == 'args'){
+					if(value == null){
+						value = [];
+					} else if(!Array.isArray(value)){
+						value = [value];
+					}
+					this.options.args = value;
+				}
+			},
+			_setTarget: function(){
+				var id = this.getId(this.target);
+				this._isTargeting = false;
+				this.element.removeAttribute('data-target');
+				this.$element.attr({'aria-controls': id});
+				this.targetAttr = id;
+				this.options.target = id;
+			},
+
+			/**
+			 * Changes/sets the target element.
+			 * @param {Element} element
+			 */
+			setTarget: function(element) {
+				this.target = element;
+				this._isTargeting = true;
+				this._setTarget();
+			},
+
+			/**
+			 * Returns the current target component of the button
+			 * @returns {Element}
+			 */
+			getTarget: function() {
+				var target = this._isTargeting ?
+					this.targetAttr :
+					this.element.getAttribute('data-target') || this.$element.attr('aria-controls') || this.options.target;
+
+				if (!this.target || (target != this.targetAttr)) {
+					this.targetAttr = target;
+					this.target = rb.elementFromStr(target, this.element)[0];
+				}
+
+				return this.target;
+			},
 		},
-
-		init: function(element) {
-
-			this._super(element);
-
-			this._setTarget = rb.rAF(this._setTarget);
-		},
-
-		events: {
-			click: '_onClick',
-		},
-
-		_onClick: function(){
-			var target = this.getTarget() || {};
-			var widget = this.widget(target);
-
-			if (!widget) {
-				return;
-			}
-
-			if(widget[this.options.type]){
-				widget.activeButtonWidget = this;
-				widget[this.options.type]();
-			}
-		},
-
-		_setTarget: function(){
-			var id = this.getId(this.target);
-			this.isTargeting = false;
-			this.element.removeAttribute('data-target');
-			this.$element.attr({
-				'aria-controls': id
-			});
-			this.targetAttr = id;
-		},
-
-		setTarget: function(dom) {
-			this.target = dom;
-			this.isTargeting = true;
-			this._setTarget();
-		},
-
-		getTarget: function() {
-			var target = this.$element.attr('data-target') || this.$element.attr('aria-controls') || '';
-
-			if (!this.target || (!this.isTargeting && target != this.targetAttr)) {
-				this.targetAttr = target;
-				this.target = rb.elementFromStr(target, this.element)[0];
-			}
-
-			return this.target;
-		},
-	}, true);
+		true
+	);
 
 })(window, document);
 

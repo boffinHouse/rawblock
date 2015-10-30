@@ -1,7 +1,7 @@
 <script>
 	(function(docElem){
 		//polyfills
-		if(!Object.assign || !window.fetch || !docElem.closest || !String.prototype.includes || !window.cancelAnimationFrame || !Array.from || !Array.prototype.find || !('sizes' in document.createElement('img'))){ //  || !docElem.before || !docElem.queryAll
+		if(!Object.assign || !docElem.closest || !String.prototype.includes || !window.cancelAnimationFrame || !Array.from || !Array.prototype.find || !('sizes' in document.createElement('img'))){ //  || !docElem.before || !docElem.queryAll || !window.fetch
 			document.write('<script src="js/rb_polyfills.js"><\/script>');
 		}
 	})(document.documentElement);

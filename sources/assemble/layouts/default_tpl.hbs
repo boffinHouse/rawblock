@@ -24,8 +24,14 @@
 		</div>
 
 
+		<script>
+			requestAnimationFrame(function(){
+				Array.from(document.querySelectorAll('link[media^="async-css"]')).forEach(function(link){
+					link.media = link.media.replace('async-css', '');
+				});
+			});
+		</script>
 		<script src="js/body-async.js" async=""></script>
-
 	</body>
 
 </html>

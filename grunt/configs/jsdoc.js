@@ -5,9 +5,11 @@
  */
 module.exports = {
 	dist : {
-		src: ['sources/js/libs/rawblock.js'],
+		src: ['sources/js/**/*.js'],
 		options: {
-			destination: 'doc'
+			destination: 'doc',
+			template : 'node_modules/ink-docstrap/template',
+			configure : 'node_modules/ink-docstrap/template/jsdoc.conf.json',
 		}
 	}
 };

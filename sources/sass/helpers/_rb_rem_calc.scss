@@ -12,15 +12,15 @@
 }
 
 @function rb-rem-calc($values) {
-	$value-lenght: length($values);
+	$value-length: length($values);
 
-	@if $value-lenght == 1 {
+	@if $value-length == 1 {
 		@return rb-convert-to-rem(nth($values, 1));
 	}
 
 	$remValues: ();
 
-	@for $i from 1 through $value-lenght {
+	@for $i from 1 through $value-length {
 		$remValues: append($remValues, rb-convert-to-rem(nth($values, $i)));
 	}
 

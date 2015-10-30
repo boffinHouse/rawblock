@@ -10,7 +10,7 @@
 		var name = 'dummy' + id;
 		modules.dummy = {
 			name: name,
-			module: rb.Widget.extend(name, {
+			module: rb.Component.extend(name, {
 				init: function(element){
 					this._super(element);
 				},
@@ -28,7 +28,7 @@
 
 		modules.simpledummy = {
 			name: name,
-			module: rb.Widget.extend(name, {
+			module: rb.Component.extend(name, {
 				init: function(element){
 					this._super(element);
 				}
@@ -60,7 +60,7 @@
 		rb.$('#qunit-fixture').append(div);
 		instance = rb.life.create(div, Dummy);
 
-		assert.ok(instance === rb.$(div).rbWidget());
+		assert.ok(instance === rb.$(div).rbComponent());
 
 		assert.ok(Dummy.prototype.init.calledOnce);
 
@@ -117,7 +117,7 @@
 		assert.equal(rb.$('.js-rb-life').length, 4);
 		assert.equal(rb.$('.js-rb-attached').length, 0);
 
-		QUnit.afterAF(5)
+		QUnit.afterAF(50)
 			.then(function(){
 				assert.equal(Dummy.prototype.init.callCount, 3);
 				assert.equal(Dummy.prototype.attached.callCount, 3);
@@ -125,7 +125,7 @@
 				assert.ok(Dummy.prototype.init.calledBefore(Dummy.prototype.attached));
 				assert.notOk(Dummy.prototype.detached.calledOnce);
 
-				return QUnit.afterAF()
+				return QUnit.afterAF(50)
 					.then(function(){
 						assert.equal(rb.$('.js-rb-life').length, 0);
 						assert.equal(rb.$('.js-rb-attached').length, 3);
@@ -136,7 +136,7 @@
 		;
 	});
 
-	QUnit.test("destroyWidget", function( assert ){
+	QUnit.test("destroyComponent", function( assert ){
 		var explicitDestroyed, implicitDestroyed;
 		var done = assert.async();
 		var dummyName = modules.dummy.name;
@@ -161,7 +161,7 @@
 				assert.ok(Dummy.prototype.init.calledBefore(Dummy.prototype.attached));
 				assert.notOk(Dummy.prototype.detached.calledOnce);
 
-				rb.life.destroyWidget(rb.life.getWidget(explicitDestroyed));
+				rb.life.destroyComponent(rb.life.getComponent(explicitDestroyed));
 
 				rb.$(implicitDestroyed).detach();
 				rb.$(explicitDestroyed).detach();
@@ -191,7 +191,7 @@
 		;
 	});
 
-	QUnit.test("getWidget", function( assert ){
+	QUnit.test("getComponent", function( assert ){
 		var dummyName = modules.dummy.name;
 		var Dummy = modules.dummy.module;
 		var simpledummyName = modules.simpledummy.name;
@@ -205,18 +205,18 @@
 
 		assert.equal(Dummy.prototype.init.callCount, 0);
 
-		rb.$('#m1').rbWidget();
+		rb.$('#m1').rbComponent();
 		assert.equal(Dummy.prototype.init.callCount, 1);
 		assert.equal(simpledummy.prototype.init.callCount, 0);
-		assert.ok(rb.$('#m1').rbWidget().init);
+		assert.ok(rb.$('#m1').rbComponent().init);
 
-		rb.$('#m2').rbWidget();
+		rb.$('#m2').rbComponent();
 		assert.equal(simpledummy.prototype.init.callCount, 1);
 		assert.equal(Dummy.prototype.init.callCount, 1);
-		assert.ok(rb.$('#m2').rbWidget().init);
+		assert.ok(rb.$('#m2').rbComponent().init);
 
-		rb.$('#m3').rbWidget();
-		assert.notOk(rb.life.getWidget(rb.$('#m3').get(0)));
+		rb.$('#m3').rbComponent();
+		assert.notOk(rb.life.getComponent(rb.$('#m3').get(0)));
 		assert.equal(simpledummy.prototype.init.callCount, 1);
 		assert.equal(Dummy.prototype.init.callCount, 1);
 	});

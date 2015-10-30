@@ -3,14 +3,16 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 
 (function(){
 	'use strict';
-
-	window.lazySizesConfig = window.lazySizesConfig || {};
-	//set expand to a higher value on larger displays
-	window.lazySizesConfig.expand = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight) > 650 ? 650 : 359;
-
+	var docElem = document.documentElement;
 	var addLifeClass = function(elem){
 		elem.classList.add('js-rb-life');
 	};
+
+	window.lazySizesConfig = window.lazySizesConfig || {};
+
+	//set expand to a higher value on larger displays
+	window.lazySizesConfig.expand = Math.max(Math.min(docElem.clientWidth, docElem.clientHeight, 1222), 359);
+	window.lazySizesConfig.expFactor = Math.min(Math.max(2000 / lazySizesConfig.expand, 2), 4);
 
 	addEventListener('lazybeforeunveil', function(e){
 		if(!e.target.getAttribute('data-optimumx') && e.target.getAttribute('data-sizes') == 'auto'){

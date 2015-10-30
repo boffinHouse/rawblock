@@ -5,22 +5,38 @@
  */
 module.exports = {
 
-    dev: {
-        options: {
-            outputStyle: 'nested',
-            sourceMap: true
-        },
-        files: {
-            '<%= paths.dev %>/css/styles.css': '<%= paths.tmp %>/styles.scss'
-        }
-    },
+	dev: {
+		options: {
+			outputStyle: 'nested',
+			sourceMap: true
+		},
+		files: [{
+			expand: true,
+			cwd: '<%= paths.src %>/sass/',
+			src: ['*.scss', '!**/_*.scss'],
+			dest: '<%= paths.dev %>/css/',
+			ext: '.css',
+			extDot: 'last',
+			rename: function(path, file){
+				return path + (file.replace(/^tmp_/, ''));
+			}
+		}],
+	},
 	dist: {
 		options: {
 			outputStyle: 'nested',
 			sourceMap: false
 		},
-		files: {
-			'<%= paths.dist %>/css/styles.css': '<%= paths.tmp %>/styles.scss'
-		}
+		files: [{
+			expand: true,
+			cwd: '<%= paths.src %>/sass/',
+			src: ['*.scss', '!_*.scss'],
+			dest: '<%= paths.dist %>/css/',
+			ext: '.css',
+			extDot: 'last',
+			rename: function(path, file){
+				return path + (file.replace(/^tmp_/, ''));
+			}
+		}],
 	}
 }

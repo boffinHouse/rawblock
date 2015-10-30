@@ -1,10 +1,10 @@
 (function(){
 	'use strict';
-	QUnit.module('rb.Widget');
+	QUnit.module('rb.Component');
 
 	var modules = {};
 	QUnit.testStart(function(obj){
-		if(obj.module != 'rb.Widget'){return;}
+		if(obj.module != 'rb.Component'){return;}
 		var fn, tmpName, module;
 		var id = rb.getID();
 		var name = 'ext1' + id;
@@ -21,7 +21,7 @@
 
 		modules.ext1 = {
 			name: name,
-			module: rb.Widget.extend(name, {
+			module: rb.Component.extend(name, {
 				statics: {
 					ext1: function(){},
 				},
@@ -69,7 +69,7 @@
 
 		modules.ext2 = {
 			name: tmpName,
-			module: rb.widgets[name].extend(tmpName, {
+			module: rb.components[name].extend(tmpName, {
 				statics: {
 					ext2: function(){},
 				},
@@ -101,7 +101,7 @@
 
 		modules.ext3 = {
 			name: tmpName,
-			module: rb.widgets[name].extend(tmpName, {
+			module: rb.components[name].extend(tmpName, {
 				statics: {
 					ext3: function(){},
 				},
@@ -128,10 +128,10 @@
 		addSpy();
 	});
 
-	QUnit.test("rb.Widget - inheritance", function( assert ){
-		var ext1 = rb.$(document.createElement('div')).rbWidget(modules.ext1.name);
-		var ext2 = rb.$(document.createElement('div')).rbWidget(modules.ext2.name);
-		var ext3 = rb.$(document.createElement('div')).rbWidget(modules.ext3.name);
+	QUnit.test("rb.Component - inheritance", function( assert ){
+		var ext1 = rb.$(document.createElement('div')).rbComponent(modules.ext1.name);
+		var ext2 = rb.$(document.createElement('div')).rbComponent(modules.ext2.name);
+		var ext3 = rb.$(document.createElement('div')).rbComponent(modules.ext3.name);
 
 
 		assert.equal(modules.ext1.module.prototype.init.callCount, 3);
@@ -168,10 +168,10 @@
 		assert.equal(ext3._setterSet, 'test3ext2');
 	});
 
-	QUnit.test("rb.Widget - inheritance - statics + defaults + events", function( assert ){
-		var ext1 = rb.$(document.createElement('div')).rbWidget(modules.ext1.name);
-		var ext2 = rb.$(document.createElement('div')).rbWidget(modules.ext2.name);
-		var ext3 = rb.$(document.createElement('div')).rbWidget(modules.ext3.name);
+	QUnit.test("rb.Component - inheritance - statics + defaults + events", function( assert ){
+		var ext1 = rb.$(document.createElement('div')).rbComponent(modules.ext1.name);
+		var ext2 = rb.$(document.createElement('div')).rbComponent(modules.ext2.name);
+		var ext3 = rb.$(document.createElement('div')).rbComponent(modules.ext3.name);
 
 		assert.equal(typeof modules.ext1.module.ext1, 'function');
 		assert.equal(typeof modules.ext2.module.ext1, 'undefined');
@@ -202,7 +202,7 @@
 	});
 
 
-	QUnit.test("rb.Widget - options/setOptions", function( assert ){
+	QUnit.test("rb.Component - options/setOptions", function( assert ){
 		var callCount;
 		var array = [1, 2];
 		var obj = {foo: 'bar'};
@@ -218,7 +218,7 @@
 					'data-number-zero': '0',
 					'data-camel-case-foo': 'baz',
 				})
-			.rbWidget(modules.ext1.name)
+			.rbComponent(modules.ext1.name)
 		;
 		var ext2 = rb.$(document.createElement('div'))
 				.attr({
@@ -228,7 +228,7 @@
 			;
 		rb.$('#qunit-fixture').append(ext2.get(0))
 
-		ext2 = ext2.rbWidget(modules.ext2.name);
+		ext2 = ext2.rbComponent(modules.ext2.name);
 
 		callCount = modules.ext1.module.prototype.setOption.callCount;
 
@@ -259,13 +259,13 @@
 
 	});
 
-	QUnit.test("rb.Widget - events setup", function( assert ){
+	QUnit.test("rb.Component - events setup", function( assert ){
 		var ext2Instance;
 
 		var ext2elem = rb.$(document.createElement('div')).html('<div class="delegate"></div>');
 		rb.$('#qunit-fixture').append(ext2elem.get(0));
 
-		ext2Instance = ext2elem.rbWidget(modules.ext2.name);
+		ext2Instance = ext2elem.rbComponent(modules.ext2.name);
 
 		assert.equal(ext2Instance.click.callCount, 0);
 
@@ -280,7 +280,7 @@
 		assert.equal(ext2Instance.click.callCount, 2);
 	});
 
-	QUnit.test("rb.Widget - getId", function( assert ){
+	QUnit.test("rb.Component - getId", function( assert ){
 		var ext2Instance;
 
 		var tmpId;
@@ -290,7 +290,7 @@
 		var hasNoIdElem = ext2elem.find('.has-no-id').get(0);
 		rb.$('#qunit-fixture').append(ext2elem.get(0));
 
-		ext2Instance = ext2elem.rbWidget(modules.ext2.name);
+		ext2Instance = ext2elem.rbComponent(modules.ext2.name);
 
 
 		tmpId = ext2Instance.getId(hasIdElem);
@@ -307,7 +307,7 @@
 
 	});
 
-	QUnit.test("rb.Widget - setWidgetFocus / restoreFocus / setFocus", function( assert ){
+	QUnit.test("rb.Component - setComponentFocus / restoreFocus / setFocus", function( assert ){
 		var ext2Instance;
 
 		var done = assert.async();
@@ -320,14 +320,14 @@
 		rb.$('#qunit-fixture').append(outsideActice);
 		rb.$('#qunit-fixture').append(ext2elem.get(0));
 
-		ext2Instance = ext2elem.rbWidget(modules.ext2.name);
+		ext2Instance = ext2elem.rbComponent(modules.ext2.name);
 
 		curActive.focus();
 
 
 		QUnit.afterAF()
 			.then(function(){
-				ext2Instance.setWidgetFocus();
+				ext2Instance.setComponentFocus();
 
 				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, ext2elem.find('.js-autofocus').get(0));
@@ -340,7 +340,7 @@
 				});
 			})
 			.then(function(){
-				ext2Instance.setWidgetFocus('find(.manual-focus)');
+				ext2Instance.setComponentFocus('find(.manual-focus)');
 				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, ext2elem.find('.manual-focus').get(0));
 				});
@@ -353,7 +353,7 @@
 			})
 			.then(function(){
 				ext2elem.html('');
-				ext2Instance.setWidgetFocus();
+				ext2Instance.setComponentFocus();
 				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, curActive);
 				});
@@ -361,7 +361,7 @@
 
 			.then(function(){
 				ext2elem.html('');
-				ext2Instance.setWidgetFocus(true);
+				ext2Instance.setComponentFocus(true);
 				return QUnit.afterAF(20).then(function(){
 					assert.equal(document.activeElement, ext2elem.get(0));
 				});
@@ -384,7 +384,7 @@
 		;
 	});
 
-	QUnit.test("rb.Widget - _trigger", function( assert ){
+	QUnit.test("rb.Component - _trigger", function( assert ){
 		var ext2Instance;
 		var events = {};
 		var ext2elem = rb.$(document.createElement('div'));
@@ -412,7 +412,7 @@
 
 		rb.$('#qunit-fixture').append(ext2elem.get(0));
 
-		ext2Instance = ext2elem.rbWidget(modules.ext2.name);
+		ext2Instance = ext2elem.rbComponent(modules.ext2.name);
 
 		assert.equal(ext2Instance._trigger().type, name +'changed');
 
@@ -432,7 +432,7 @@
 		assert.equal(events[name +'custom'].count, 2);
 		assert.deepEqual(events[name +'custom'].last.detail, {foo: 'bar2'});
 
-		ext2elem.rbWidget('_trigger', ['changed']);
+		ext2elem.rbComponent()._trigger('changed');
 		assert.equal(events[name +'changed'].count, 3);
 	});
 })();

@@ -25,14 +25,18 @@
 		tmp = rb.elementFromStr('children(.children-2)', mainElement);
 		assert.equal(tmp.length, 1);
 
-		tmp = rb.elementFromStr('closestNext(.last)', document.querySelector('#test-id2'));
+		tmp = rb.elementFromStr('nextAll(.last)', document.querySelector('#test-id2'));
 		assert.equal(tmp[0], document.querySelector('#test-id3'));
 
-		tmp = rb.elementFromStr('closestPrev(.first)', document.querySelector('#test-id3'));
+		tmp = rb.elementFromStr('prevAll(.first)', document.querySelector('#test-id3'));
+		assert.equal(tmp[0], document.querySelector('#test-id2'));
+
+
+		tmp = rb.elementFromStr('closestFind(#test-wrapper, .children-1)', document.querySelector('#test-id6'));
 		assert.equal(tmp[0], document.querySelector('#test-id2'));
 
 		tmp = rb.elementFromStr('closest(#test-wrapper)', document.querySelector('.childrens-child'));
-		assert.equal(tmp[0], document.querySelector('#test-wrapper'))
+		assert.equal(tmp[0], document.querySelector('#test-wrapper'));
 
 		tmp = rb.elementFromStr('parent(.children-2)', document.querySelector('.childrens-child'));
 		assert.equal(tmp[0], rb.elementFromStr('parent()', document.querySelector('.childrens-child'))[0]);
@@ -78,31 +82,31 @@
 	QUnit.test("rb.resize", function( assert ){
 		var fn = rb.$.noop;
 
-		sinon.spy(rb.resize, 'setup');
-		sinon.spy(rb.resize, 'teardown');
+		sinon.spy(rb.resize, '_setup');
+		sinon.spy(rb.resize, '_teardown');
 		sinon.spy(rb.resize, 'add');
 		sinon.spy(rb.resize, 'remove');
 
-		assert.equal(rb.resize.setup.callCount, 0);
+		assert.equal(rb.resize._setup.callCount, 0);
 		assert.equal(rb.resize.add.callCount, 0);
-		assert.equal(rb.resize.teardown.callCount, 0);
+		assert.equal(rb.resize._teardown.callCount, 0);
 
 		rb.resize.on(fn);
 
-		assert.equal(rb.resize.setup.callCount, 1);
+		assert.equal(rb.resize._setup.callCount, 1);
 		assert.equal(rb.resize.add.callCount, 1);
-		assert.equal(rb.resize.teardown.callCount, 0);
+		assert.equal(rb.resize._teardown.callCount, 0);
 
 		rb.resize.off(fn);
 
-		assert.equal(rb.resize.setup.callCount, 1);
+		assert.equal(rb.resize._setup.callCount, 1);
 		assert.equal(rb.resize.add.callCount, 1);
-		assert.equal(rb.resize.teardown.callCount, 1);
+		assert.equal(rb.resize._teardown.callCount, 1);
 		assert.equal(rb.resize.remove.callCount, 1);
 
-		rb.resize.setup.restore();
+		rb.resize._setup.restore();
 		rb.resize.add.restore();
-		rb.resize.teardown.restore();
+		rb.resize._teardown.restore();
 		rb.resize.remove.restore();
 	});
 
@@ -224,6 +228,7 @@
 		;
 	});
 
+
 	QUnit.test("rb. .is-teaser delegate", function( assert ){
 		var $mainElement;
 		var i = 0;
@@ -241,6 +246,11 @@
 		var content = '<div id="test-wrapper" class="is-teaser">' +
 			'<a class="is-teaser-link">ssas</a>' +
 			'</div>';
+
+		if(!window.MouseEvent || typeof MouseEvent != 'function'){
+			assert.ok(true);
+			return;
+		}
 
 		rb.$('#qunit-fixture').html(content);
 
