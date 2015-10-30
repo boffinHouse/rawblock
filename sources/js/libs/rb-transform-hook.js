@@ -1,0 +1,62 @@
+(function(){
+	'use strict';
+	var rb = window.rb;
+	var hookExpando = rb.Symbol('_rbCssHooks');
+	var $ = rb.$;
+	var defaults = {};
+	var units = {};
+
+	var setTransformString = function(element) {
+		var prop;
+		var props = element[hookExpando];
+		var transforms = [];
+		for(prop in props){
+			if(props[prop] !== defaults[prop]){
+				transforms.push(prop + '('+ props[prop] + units[prop] +')');
+			}
+		}
+		element.style.transform = transforms.join(' ');
+	};
+
+	var createHook = function(name, defaultVal, unit){
+		var rbName = 'rb' + name;
+		defaults[name] = defaultVal || 0;
+		units[name] = unit || '';
+
+		$.cssNumber[rbName] = true;
+
+		$.fx.step[rbName] = function( fx ) {
+			$.cssHooks[rbName].set( fx.elem, fx.now );
+		};
+		
+		$.cssHooks[rbName] = {
+			get: function(element, computed, extra){
+				var value = element[hookExpando] && element[hookExpando][name] || defaultVal || 0;
+				if(!extra){
+					value += unit;
+				}
+
+				return value;
+			},
+			set: function(element, value){
+				if(!element[hookExpando]){
+					element[hookExpando] = {};
+				}
+				element[hookExpando][name] = value;
+				setTransformString(element);
+			}
+		};
+	};
+
+	createHook('rotate', 0, 'deg');
+	createHook('rotateX', 0, 'deg');
+	createHook('rotateY', 0, 'deg');
+	createHook('skewX', 0, 'deg');
+	createHook('skewY', 0, 'deg');
+	createHook('scaleX', 1, '');
+	createHook('scaleY', 1, '');
+	createHook('translateX', 0, 'px');
+	createHook('translateY', 0, 'px');
+	createHook('translateZ', 0, 'px');
+
+})();

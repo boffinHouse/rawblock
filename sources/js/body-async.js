@@ -12,6 +12,7 @@ window.BezierEasing = require('bezier-easing');
 require('./libs/dom');
 
 require('./libs/rawblock');
+require('./libs/rb-queue');
 
 /* configuration */
 rb.isDebug = true;
