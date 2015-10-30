@@ -249,9 +249,11 @@ if(!window.rb){
 	 * @memberof rb
 	 * @param {function} fn - The function to be throttled.
 	 * @param {object} options - options for the throttle.
-	 *  @param {object} options.that -  the context in which fn should be called.
-	 *  @param {boolean} options.write -  wether fn is used to write layout.
-	 *  @param {number} options.delay = 200 -  the throttle delay.
+	 *  @param {object} options.that=null -  the context in which fn should be called.
+	 *  @param {boolean} options.write=false -  wether fn is used to write layout.
+	 *  @param {boolean} options.read=false -  wether fn is used to read layout.
+	 *  @param {number} options.delay=200 -  the throttle delay.
+	 *  @param {boolean} options.unthrottle=false -  Wether function should be invoked directly.
 	 * @returns {function} the throttled function.
 	 */
 	rb.throttle = function(fn, options){
@@ -260,7 +262,7 @@ if(!window.rb){
 		var Date = window.Date;
 		var _run = function(){
 			running = false;
-			lastTime = options.simple || Date.now();
+			lastTime = Date.now();
 			fn.apply(that, args);
 		};
 		var afterAF = function(){
@@ -291,17 +293,21 @@ if(!window.rb){
 			var delay = options.delay;
 			running =  true;
 
-			if(delay && !options.simple){
-				delay -= (Date.now() - lastTime);
-			}
-
 			that = options.that || this;
 			args = arguments;
 
-			if(delay < 0){
-				delay = 0;
+			if(options.unthrottle){
+				_run();
+			} else {
+				if(delay && !options.simple){
+					delay -= (Date.now() - lastTime);
+				}
+				if(delay < 0){
+					delay = 0;
+				}
+				setTimeout(getAF, delay);
 			}
-			setTimeout(getAF, delay);
+
 		};
 	};
 	/* End: throttle */
@@ -759,7 +765,7 @@ if(!window.rb){
 					read();
 				}
 
-			});
+			}, {read: true});
 
 			wrapper.className = 'js-element-resize';
 			wrapper.setAttribute('style', wrapperStyle +'visibility:hidden;z-index: -1;');

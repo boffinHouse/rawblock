@@ -53,11 +53,22 @@
 			if(jumpToEnd){
 				isJumpToEnd = true;
 			}
+			if(clearQueue && Dom.fn.clearQueue && options.queue !== false){
+				new Dom(element).clearQueue(options.queue);
+			}
 			step();
 			hardStop = true;
 		};
 		var tweenObj = {};
 		var stepObj = {};
+		var alwaysEnd = function(){
+			if(options.always){
+				options.always.call(element);
+			}
+			if(Dom.dequeue && options.queue !== false){
+				Dom.dequeue(element, options.queue);
+			}
+		};
 		var step = function() {
 			if(hardStop){return;}
 			var prop, value, eased;
@@ -106,8 +117,8 @@
 			if(pos < 1){
 				if(!isStopped){
 					rAF(step);
-				} else if(options.always){
-					options.always.call(element);
+				} else {
+					alwaysEnd();
 				}
 			} else{
 				if(element._rbTweenStop){
@@ -116,9 +127,7 @@
 				if(options.complete && !isStopped){
 					options.complete.call(element);
 				}
-				if(options.always){
-					options.always.call(element);
-				}
+				alwaysEnd();
 			}
 		};
 
@@ -136,15 +145,20 @@
 
 	tween.getStartValues = function(element, elementStyle, startProps, endProps){
 		var prop;
+		var styles = rb.getStyles(element);
 		for(prop in endProps){
 			if(typeof endProps[prop] == 'string'){
 				endProps[prop] = parseFloat(endProps[prop]) || 0;
 			}
-			if(prop in elementStyle){
-				startProps[prop] = parseFloat(getComputedStyle(element).getPropertyValue(prop)) || 0;
+			if(Dom.cssHooks[prop] && Dom.cssHooks[prop].get){
+				startProps[prop] = Dom.cssHooks[prop].get(element);
+			} else if(prop in elementStyle){
+				startProps[prop] = (styles.getPropertyValue(prop) || styles[prop]);
 			} else {
 				startProps[prop] = element[prop] || 0;
 			}
+
+			startProps[prop] = parseFloat(startProps[prop]) || 0;
 		}
 	};
 
@@ -164,6 +178,7 @@
 		cssNumber: {
 			"opacity": true,
 		},
+		cssHooks: {},
 		isReady: document.readyState != 'loading',
 		noop: function(){},
 		q: function(sel, context){
@@ -409,8 +424,25 @@
 			return this;
 		},
 		animate: function(endProps, options){
+			var queue = (!options || options.queue !== false) && Dom.queue;
+			var start = function(){
+				tween(this, endProps, options);
+			};
+
 			this.elements.forEach(function(elem){
-				tween(elem, endProps, options);
+				var queues;
+				var queueName = options && options.queue;
+				if(queue){
+					queues = Dom.queue(elem, queueName, start);
+					if(queues.length == 1){
+						Dom.queue(elem, queueName, function(){
+							Dom.dequeue(elem, queueName);
+						});
+						Dom.dequeue(elem, queueName);
+					}
+				} else {
+					tween(elem, endProps, options);
+				}
 			});
 			return this;
 		},
