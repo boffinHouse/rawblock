@@ -1,8 +1,10 @@
 (function(){
 	'use strict';
 	var rb = window.rb;
-	var hookExpando = rb.Symbol('_rbCssHooks');
 	var $ = rb.$;
+
+	var hookExpando = rb.Symbol('_rbCssTransformHooks');
+	var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
 	var defaults = {};
 	var units = {};
 
@@ -28,7 +30,7 @@
 		$.fx.step[rbName] = function( fx ) {
 			$.cssHooks[rbName].set( fx.elem, fx.now );
 		};
-		
+
 		$.cssHooks[rbName] = {
 			get: function(element, computed, extra){
 				var value = element[hookExpando] && element[hookExpando][name] || defaultVal || 0;
@@ -42,21 +44,27 @@
 				if(!element[hookExpando]){
 					element[hookExpando] = {};
 				}
-				element[hookExpando][name] = value;
+				element[hookExpando][name] = value === '' ?
+					defaultVal :
+					value
+				;
 				setTransformString(element);
 			}
 		};
 	};
 
 	createHook('rotate', 0, 'deg');
-	createHook('rotateX', 0, 'deg');
-	createHook('rotateY', 0, 'deg');
 	createHook('skewX', 0, 'deg');
 	createHook('skewY', 0, 'deg');
 	createHook('scaleX', 1, '');
 	createHook('scaleY', 1, '');
 	createHook('translateX', 0, 'px');
 	createHook('translateY', 0, 'px');
-	createHook('translateZ', 0, 'px');
+
+	if(supports3dTransform){
+		createHook('translateZ', 0, 'px');
+		createHook('rotateX', 0, 'deg');
+		createHook('rotateY', 0, 'deg');
+	}
 
 })();
