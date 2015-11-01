@@ -38,6 +38,7 @@
 		this.elements = elements;
 		this.length = this.elements.length || 0;
 	};
+	var regUnit = /^\d+\.*\d*(px|em|rem|%|deg)$/;
 	var fn = Dom.prototype;
 	var steps = {};
 	var tween = function(element, endProps, options){
@@ -46,7 +47,7 @@
 		var hardStop = false;
 		var start = Date.now();
 		var elementStyle = element.style;
-		var startProps = {};
+		var props = {};
 		var rAF = rb.rAFQueue;
 		var stop = function(clearQueue, jumpToEnd){
 			isStopped = true;
@@ -60,7 +61,6 @@
 			hardStop = true;
 		};
 		var tweenObj = {};
-		var stepObj = {};
 		var alwaysEnd = function(){
 			if(options.always){
 				options.always.call(element);
@@ -81,27 +81,16 @@
 			if(!isStopped){
 				eased = easing(pos);
 
-				for(prop in startProps){
-					value = (endProps[prop] - startProps[prop]) * eased + startProps[prop];
+				for(prop in props){
+					value = (props[prop].end - props[prop].start) * eased + props[prop].start;
 
 					if(prop in steps){
-
-						if(!stepObj[prop]) {
-							stepObj[prop] = {
-								elem: element,
-								start: startProps[prop],
-								end: endProps[prop],
-								options: options,
-							};
-						}
-
-						stepObj[prop].pos = eased;
-						stepObj[prop].now = value;
-						steps[prop](stepObj[prop]);
-
+						props[prop].pos = eased;
+						props[prop].now = value;
+						steps[prop](props[prop]);
 					} else if(prop in elementStyle){
 						if(!Dom.cssNumber[prop]){
-							value += 'px';
+							value += props[prop].unit;
 						}
 						elementStyle[prop] = value;
 					} else {
@@ -131,9 +120,9 @@
 			}
 		};
 
-		tween.getStartValues(element, elementStyle, startProps, endProps);
-
 		options = Object.assign({duration: 400, easing: 'ease'}, options || {});
+
+		tween.createPropValues(element, elementStyle, props, endProps, options);
 
 		easing = Dom.easing[options.easing] || Dom.easing.ease || Dom.easing.swing;
 		element._rbTweenStop = stop;
@@ -143,22 +132,37 @@
 		rAF(step);
 	};
 
-	tween.getStartValues = function(element, elementStyle, startProps, endProps){
-		var prop;
+	tween.createPropValues = function(element, elementStyle, props, endProps, options){
+		var prop, unit, tmpValue;
 		var styles = rb.getStyles(element);
 		for(prop in endProps){
+			props[prop] = {
+				elem: element,
+				options: options,
+			};
+
 			if(typeof endProps[prop] == 'string'){
-				endProps[prop] = parseFloat(endProps[prop]) || 0;
-			}
-			if(Dom.cssHooks[prop] && Dom.cssHooks[prop].get){
-				startProps[prop] = Dom.cssHooks[prop].get(element);
-			} else if(prop in elementStyle){
-				startProps[prop] = (styles.getPropertyValue(prop) || styles[prop]);
+				unit = endProps[prop].match(regUnit);
+				tmpValue = parseFloat(endProps[prop]);
+
+				props[prop].end = isNaN(tmpValue) ? endProps[prop] : tmpValue;
 			} else {
-				startProps[prop] = element[prop] || 0;
+				props[prop].end = endProps[prop] || 0;
 			}
 
-			startProps[prop] = parseFloat(startProps[prop]) || 0;
+			props[prop].unit = unit && unit[1] || 'px';
+
+			if(Dom.cssHooks[prop] && Dom.cssHooks[prop].get){
+				props[prop].start = Dom.cssHooks[prop].get(element);
+			} else if(prop in elementStyle){
+				props[prop].start = (styles.getPropertyValue(prop) || styles[prop]);
+			} else {
+				props[prop].start = element[prop] || 0;
+			}
+
+			tmpValue = parseFloat(props[prop].start);
+
+			props[prop].start = isNaN(tmpValue) ? props[prop].start : tmpValue;
 		}
 	};
 
@@ -241,8 +245,12 @@
 		},
 		css: function( elem, name, extra, styles ) {
 			var ret, num;
-			styles = styles || rb.getStyles(elem, null);
-			ret = styles.getPropertyValue(name) || styles[name];
+			if(Dom.cssHooks[name] && Dom.cssHooks[name].get){
+				ret = Dom.cssHooks[name].get(elem);
+			} else {
+				styles = styles || rb.getStyles(elem, null);
+				ret = styles.getPropertyValue(name) || styles[name];
+			}
 
 			if(extra){
 				num = parseFloat(ret);
@@ -271,7 +279,11 @@
 				var prop;
 				var eStyle = elem.style;
 				for(prop in style){
-					eStyle[prop] = style[prop];
+					if(Dom.cssHooks[prop] && Dom.cssHooks[prop].set){
+						Dom.cssHooks[prop].set(elem, style[prop]);
+					} else {
+						eStyle[prop] = style[prop];
+					}
 				}
 			});
 			return this;
