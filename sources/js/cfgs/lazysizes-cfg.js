@@ -10,6 +10,10 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 
 	window.lazySizesConfig = window.lazySizesConfig || {};
 
+	if(window.rb && window.rb.cssConfig && rb.cssConfig.mqs){
+		lazySizesConfig.customMedia = Object.assign(lazySizesConfig.customMedia || {}, rb.cssConfig.mqs);
+	}
+
 	//set expand to a higher value on larger displays
 	window.lazySizesConfig.expand = Math.max(Math.min(docElem.clientWidth, docElem.clientHeight, 1222), 359);
 	window.lazySizesConfig.expFactor = Math.min(Math.max(2000 / lazySizesConfig.expand, 2), 4);
