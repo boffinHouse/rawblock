@@ -866,13 +866,15 @@ if(!window.rb){
 	 */
 	rb.setFocus = function(element, delay){
 		try {
-			setTimeout(function(){
+			rb.rAFQueue(function(){
 				if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
 					element.setAttribute('tabindex', -1);
 				}
-				element.focus();
-				rb.$doc.trigger('rbscriptfocus');
-			}, delay || 4);
+				setTimeout(function(){
+					element.focus();
+					rb.$doc.trigger('rbscriptfocus');
+				}, delay || 4);
+			});
 		} catch(e){}
 	};
 
