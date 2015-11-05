@@ -573,9 +573,13 @@ if(!window.rb){
 
 	/* Begin: addEasing */
 	var isExtended;
-	var copyEasing = function(easing){
+	var copyEasing = function(easing, name){
 		var easObj = BezierEasing.css[easing];
 		$.easing[easing] = easObj.get;
+
+		if(name && !$.easing[easing]){
+			$.easing[name] = $.easing[easing];
+		}
 	};
 	var extendEasing = function(){
 		var easing;
@@ -591,9 +595,10 @@ if(!window.rb){
 	 * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object.
 	 * @memberof rb
 	 * @param {String} easing The easing value. Expects a string with 4 numbers separated by a "," describing a cubic bezier curve.
+	 * @param {String} [name] Human readable name of the easing.
 	 * @returns {Function} Easing a function
 	 */
-	rb.addEasing = function(easing){
+	rb.addEasing = function(easing, name){
 		var bezierArgs;
 		if(typeof easing != 'string'){return;}
 		if(window.BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
@@ -602,11 +607,11 @@ if(!window.rb){
 				return parseFloat(str);
 			});
 			BezierEasing.css[easing] = BezierEasing.apply(this, bezierArgs);
-			copyEasing(easing);
+			copyEasing(easing, name);
 		}
 		if(!$.easing[easing]) {
 			if(window.BezierEasing && BezierEasing.css[easing]){
-				copyEasing(easing);
+				copyEasing(easing, name);
 			} else {
 				$.easing[easing] =  $.easing.ease || $.easing.swing;
 			}
@@ -728,7 +733,7 @@ if(!window.rb){
 			var write = rb.rAF(function(){
 				expandChild.style.width = data.exChildWidth;
 				expandChild.style.height = data.exChildHeight;
-				setTimeout(scrollWrite);
+				setTimeout(scrollWrite, 20);
 			});
 
 			var read = function(){
@@ -848,8 +853,7 @@ if(!window.rb){
 				return;
 			}
 			if(window.MouseEvent && link.dispatchEvent){
-				event = new MouseEvent('click', {shiftKey: e.shiftKey, altKey: e.altKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey});
-				event.stopImmediatePropagation();
+				event = new MouseEvent('click', {cancelable: true, bubbles: true, shiftKey: e.shiftKey, altKey: e.altKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey});
 				link.dispatchEvent(event);
 			} else if(link.click) {
 				link.click();
@@ -1821,6 +1825,15 @@ if(!window.rb){
 			},
 
 			/**
+			 * Uses `rb.elementFromStr` with this.element has element argument
+			 * @param {String} string
+			 * @returns {Element[]}
+			 */
+			getElementsFromString: function(string){
+				return rb.elementFromStr(string, this.element);
+			},
+
+			/**
 			 * shortcut to rb.setFocus
 			 */
 			setFocus: rb.setFocus,
@@ -2038,7 +2051,6 @@ if(!window.rb){
 			events: {
 				click: '_onClick',
 			},
-
 			_onClick: function(){
 				var args;
 				var target = this.getTarget() || {};
