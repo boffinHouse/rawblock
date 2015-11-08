@@ -1037,24 +1037,33 @@ if(!window.rb){
 
 	var cbs = [];
 	var setup = function(){
-		setup = rb.$;
-		document.addEventListener('click', function(e){
+		var applyBehavior = function(clickElem){
 			var i, len, attr, found;
+			for(i = 0, len = cbs.length; i < len;i++){
+				attr = clickElem.getAttribute(cbs[i].attr);
+
+				if(attr != null){
+					found = true;
+					cbs[i].fn(clickElem, e, attr);
+					break;
+				}
+			}
+
+			if(!found){
+				clickElem.classList.remove('js-click');
+			}
+		};
+		setup = rb.$;
+		document.addEventListener('keydown', function(e){
+			var elem = e.target;
+			if(e.keyCode == 40 && elem.contains('js-click') && (elem.getAttribute('aria-haspopup') || elem.getAttribute('data-module'))){
+				applyBehavior(elem);
+			}
+		}, true);
+		document.addEventListener('click', function(e){
 			var clickElem = e.target.closest('.js-click');
 			while(clickElem){
-				for(i = 0, len = cbs.length; i < len;i++){
-					attr = clickElem.getAttribute(cbs[i].attr);
-
-					if(attr != null){
-						found = true;
-						cbs[i].fn(clickElem, e, attr);
-						break;
-					}
-				}
-
-				if(!found){
-					clickElem.classList.remove('js-click');
-				}
+				applyBehavior(clickElem);
 
 				clickElem = clickElem.parentNode;
 				if(clickElem && clickElem.closest){
