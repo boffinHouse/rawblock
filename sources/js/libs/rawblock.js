@@ -1056,7 +1056,7 @@ if(!window.rb){
 		setup = rb.$;
 		document.addEventListener('keydown', function(e){
 			var elem = e.target;
-			if(e.keyCode == 40 && elem.contains('js-click') && (elem.getAttribute('aria-haspopup') || elem.getAttribute('data-module'))){
+			if(e.keyCode == 40 && elem.classList.contains('js-click') && (elem.getAttribute('aria-haspopup') || elem.getAttribute('data-module'))){
 				applyBehavior(elem, e);
 			}
 		}, true);
