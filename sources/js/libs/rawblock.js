@@ -362,7 +362,7 @@ if(!window.rb){
 
 			this.fire();
 		}
-	}, {that: rb.resize, read: true,});
+	}, {that: rb.resize});
 
 	/* End: resize */
 
@@ -770,7 +770,7 @@ if(!window.rb){
 					read();
 				}
 
-			}, {read: true});
+			});
 
 			wrapper.className = 'js-element-resize';
 			wrapper.setAttribute('style', wrapperStyle +'visibility:hidden;z-index: -1;');
@@ -1577,7 +1577,7 @@ if(!window.rb){
 							})(superDescriptor[descProp], origDescriptor[descProp]);
 					}
 
-					//always allow NFE call for frequently called methods without this._super, but functionName._super
+					//always allow NFE call for frequently called methods without this._super, but functionName._supbase
 					//see http://techblog.netflix.com/2014/05/improving-performance-of-our-javascript.html
 					origDescriptor[descProp]._supbase = superDescriptor[descProp];
 				}

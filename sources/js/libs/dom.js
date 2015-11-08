@@ -328,12 +328,12 @@
 			});
 		},
 		html: function(html){
-			var elem;
-			var isString = typeof html == 'string';
+			var elem, isString;
 			if(!arguments.length){
 				elem = this.elements[0];
 				return elem && elem.innerHTML || '';
 			}
+			isString = typeof html != 'object';
 			this.elements.forEach(function(elem){
 				if(isString){
 					elem.innerHTML = html;
@@ -345,7 +345,7 @@
 			return this;
 		},
 		before: function(html){
-			var isString = typeof html == 'string';
+			var isString = typeof html != 'object';
 			this.elements.forEach(function(elem){
 				var parentElement;
 				if (isString){
@@ -360,7 +360,7 @@
 			return this;
 		},
 		prepend: function(html){
-			var isString = typeof html == 'string';
+			var isString = typeof html != 'object';
 			this.elements.forEach(function(elem){
 				if (isString){
 					elem.insertAdjacentHTML('afterbegin', html);
@@ -371,7 +371,7 @@
 			return this;
 		},
 		append: function(html){
-			var isString = typeof html == 'string';
+			var isString = typeof html != 'object';
 			this.elements.forEach(function(elem){
 				if (isString){
 					elem.insertAdjacentHTML('beforeend', html);
@@ -382,7 +382,7 @@
 			return this;
 		},
 		after: function(html){
-			var isString = typeof html == 'string';
+			var isString = typeof html != 'object';
 			this.elements.forEach(function(elem){
 				var parentElement;
 				if (isString){
