@@ -878,7 +878,7 @@ if(!window.rb){
 				rb.$doc.trigger('rbscriptfocus');
 			}, delay || 4);
 		} catch(e){}
-	});
+	}, {queue: true});
 
 	/* Begin: focus-within polyfill */
 	var running = false;
