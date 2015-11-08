@@ -868,19 +868,17 @@ if(!window.rb){
 	 * @param element The element that needs to get focus.
 	 * @param [delay] {Number} The delay to focus the element.
 	 */
-	rb.setFocus = function(element, delay){
+	rb.setFocus = rb.rAF(function(element, delay){
 		try {
-			rb.rAFQueue(function(){
-				if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
-					element.setAttribute('tabindex', -1);
-				}
-				setTimeout(function(){
-					element.focus();
-					rb.$doc.trigger('rbscriptfocus');
-				}, delay || 4);
-			});
+			if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
+				element.setAttribute('tabindex', -1);
+			}
+			setTimeout(function(){
+				element.focus();
+				rb.$doc.trigger('rbscriptfocus');
+			}, delay || 4);
 		} catch(e){}
-	};
+	});
 
 	/* Begin: focus-within polyfill */
 	var running = false;
