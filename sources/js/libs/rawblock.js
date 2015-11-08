@@ -1037,7 +1037,7 @@ if(!window.rb){
 
 	var cbs = [];
 	var setup = function(){
-		var applyBehavior = function(clickElem){
+		var applyBehavior = function(clickElem, e){
 			var i, len, attr, found;
 			for(i = 0, len = cbs.length; i < len;i++){
 				attr = clickElem.getAttribute(cbs[i].attr);
@@ -1057,13 +1057,13 @@ if(!window.rb){
 		document.addEventListener('keydown', function(e){
 			var elem = e.target;
 			if(e.keyCode == 40 && elem.contains('js-click') && (elem.getAttribute('aria-haspopup') || elem.getAttribute('data-module'))){
-				applyBehavior(elem);
+				applyBehavior(elem, e);
 			}
 		}, true);
 		document.addEventListener('click', function(e){
 			var clickElem = e.target.closest('.js-click');
 			while(clickElem){
-				applyBehavior(clickElem);
+				applyBehavior(clickElem, e);
 
 				clickElem = clickElem.parentNode;
 				if(clickElem && clickElem.closest){
