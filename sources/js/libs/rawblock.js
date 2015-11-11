@@ -920,7 +920,7 @@ if(!window.rb){
 	/* End: focus-within polyfill */
 
 
-	/* Begin: keyboard-focus */
+	/* * * Begin: keyboard-focus * * */
 	var keyboardBlocktimer, keyboardFocusElem;
 	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
@@ -952,7 +952,7 @@ if(!window.rb){
 	var _removeKeyBoardFocus = rb.rAF(function(){
 		hasKeyboardFocus = false;
 		_removeChildFocus();
-		root.classList.remove('is-keyboardfocus');
+		root.classList.remove('is-keyboardfocus-within');
 	});
 
 	var removeKeyBoardFocus = function(){
@@ -976,7 +976,7 @@ if(!window.rb){
 			}
 
 			if(!hasKeyboardFocus){
-				root.classList.add('is-keyboardfocus');
+				root.classList.add('is-keyboardfocus-within');
 			}
 			hasKeyboardFocus = true;
 		}
@@ -1842,6 +1842,7 @@ if(!window.rb){
 
 			/**
 			 * shortcut to rb.setFocus
+			 * @borrows rb.setFocus as setFocus
 			 */
 			setFocus: rb.setFocus,
 

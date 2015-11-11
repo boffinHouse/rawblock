@@ -11,13 +11,7 @@ if(!window.rb){
 	var regEndQuote = /"?'?"?$/;
 	var regEscapedQuote = /\\"/g;
 
-	/**
-	 * Removes leading and ending quotes (",') from a string.
-	 * @memberof rb
-	 * @param str
-	 * @returns {string}
-	 */
-	rb.removeLeadingQuotes = function(str){
+	var removeLeadingQuotes = function(str){
 		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
 	};
 
@@ -48,7 +42,7 @@ if(!window.rb){
 				element :
 				rb.getStyles(element, pseudo || '::after').content
 			;
-		ret = rb.jsonParse(rb.removeLeadingQuotes(value));
+		ret = rb.jsonParse(removeLeadingQuotes(value));
 		return ret;
 	};
 
@@ -91,7 +85,7 @@ if(!window.rb){
 			if(currentStyle != nowStyle){
 				currentStyle = nowStyle;
 				rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
-				rb.cssConfig.currentMQ = rb.removeLeadingQuotes(currentStyle);
+				rb.cssConfig.currentMQ = removeLeadingQuotes(currentStyle);
 				if(rb.$ && rb.$.Callbacks){
 					rb.cssConfig.mqChange.fireWith(rb.cssConfig);
 				}
