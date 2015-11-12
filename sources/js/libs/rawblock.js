@@ -497,9 +497,9 @@ if(!window.rb){
 	 * @memberof rb
 	 * @param fn {Function} The function to be rAFed
 	 * @param options {Object} Options object
-	 * @param options.that {Object} The context in which the function should be invoked. If nothing is passed the context of the wrapper function is used.
-	 * @param options.queue {Object} Whether the fn should be added to an ongoing rAF or should be queued to the next rAF.
-	 * @param options.batch {boolean} Normally the passed function is also automatically throtteld by rAF. In case batch is true multiple calls to the wrapper function during one frame cycle will also lead to multiple calls to the passed function.
+	 * @param options.that=null {Object} The context in which the function should be invoked. If nothing is passed the context of the wrapper function is used.
+	 * @param options.queue=false {Object} Whether the fn should be added to an ongoing rAF (i.e.: `false`) or should be queued to the next rAF (i.e.: `true`).
+	 * @param options.throttle=false {boolean} Whether multiple calls in one frame cycle should be throtteled to one.
 	 * @returns {Function}
 	 */
 	rb.rAF = function(fn, options){
@@ -507,7 +507,7 @@ if(!window.rb){
 		var batchStack = [];
 		var run = function(){
 			running = false;
-			if(options.batch){
+			if(!options.throttle){
 				while(batchStack.length){
 					args = batchStack.shift();
 					fn.apply(args[0], args[1]);
@@ -519,7 +519,7 @@ if(!window.rb){
 		var rafedFn = function(){
 			args = arguments;
 			that = options.that || this;
-			if(options.batch){
+			if(!options.throttle){
 				batchStack.push([that, args]);
 			}
 			if(!running){
@@ -734,7 +734,7 @@ if(!window.rb){
 				expandChild.style.width = data.exChildWidth;
 				expandChild.style.height = data.exChildHeight;
 				setTimeout(scrollWrite, 20);
-			});
+			}, {throttle: true});
 
 			var read = function(){
 				data.exChildWidth = expandElem.offsetWidth + 9 + 'px';
@@ -791,7 +791,7 @@ if(!window.rb){
 
 			element.appendChild(wrapper);
 			setTimeout(read);
-		}, {batch: true}),
+		}),
 	};
 
 	/**
@@ -865,6 +865,7 @@ if(!window.rb){
 	/**
 	 * Sets focus to an element. Note element has to be focusable
 	 * @memberof rb
+	 * @type function
 	 * @param element The element that needs to get focus.
 	 * @param [delay] {Number} The delay to focus the element.
 	 */
@@ -878,7 +879,7 @@ if(!window.rb){
 				rb.$doc.trigger('rbscriptfocus');
 			}, delay || 4);
 		} catch(e){}
-	}, {queue: true});
+	}, {queue: true, throttle: true});
 
 	/* Begin: focus-within polyfill */
 	var running = false;
@@ -953,7 +954,7 @@ if(!window.rb){
 		hasKeyboardFocus = false;
 		_removeChildFocus();
 		root.classList.remove('is-keyboardfocus-within');
-	});
+	}, {throttle: true});
 
 	var removeKeyBoardFocus = function(){
 		if(hasKeyboardFocus){
@@ -980,7 +981,7 @@ if(!window.rb){
 			}
 			hasKeyboardFocus = true;
 		}
-	});
+	}, {throttle: true});
 
 	var pointerEvents = (window.PointerEvent) ?
 			['pointerdown', 'pointerup'] :
@@ -1375,27 +1376,66 @@ if(!window.rb){
 		initWatchCss();
 	};
 
-	life.register = function(name, LifeClass, noCheck) {
-		var proto = LifeClass.prototype;
+	/**
+	 * Registers a class with a name. An instance of this class will be constructed with the element as the first argument. If the Class has a attached or detached method these methods also will be invoked, if the element is removed or added to the DOM. In most cases the given class inherits from `rb.Component`.
+	 * @memberof rb
+	 * @param name
+	 * @param Class
+	 *
+	 * @example
+	 * class MyButton {
+	 *      constructor(element){
+	 *
+	 *      }
+	 * }
+	 *
+	 * //<button class="js-rb-life" data-module="my-button"></button>
+	 * rb.life.register('my-button', MyButton);
+	 *
+	 * @example
+	 * class Time {
+	 *      constructor(element){
+	 *          this.element = element;
+	 *      }
+	 *
+	 *      attached(){
+	 *          this.timer = setInterval(() = > {
+	 *              this.element.innerHTML = new Date().toLocaleString();
+	 *          }, 1000);
+	 *      }
+	 *
+	 *      detached(){
+	 *          clearInterval(this.timer);
+	 *      }
+	 * }
+	 *
+	 * //<span class="js-rb-life" data-module="time"></span>
+	 * rb.life.register('time', Time);
+	 *
+	 */
+	life.register = function(name, Class, _noCheck) {
+		var proto = Class.prototype;
 		var superProto = Object.getPrototypeOf(proto);
 		var superClass = superProto.constructor;
 
-		extendStatics(LifeClass, proto, superClass, 'defaults');
-		extendStatics(LifeClass, proto, superClass, 'events');
+		if(proto instanceof rb.Component){
+			extendStatics(Class, proto, superClass, 'defaults');
+			extendStatics(Class, proto, superClass, 'events');
 
-		if(!proto.hasOwnProperty('name')){
-			proto.name = name;
+			if(!proto.hasOwnProperty('name')){
+				proto.name = name;
+			}
 		}
 
 		if(rb.components[ name ]){
 			rb.log(name +' already exists.');
 		}
 
-		rb.components[ name ] = LifeClass;
+		rb.components[ name ] = Class;
 
 		if(name.charAt(0) == '_'){return;}
 
-		if ( !noCheck ) {
+		if ( !_noCheck ) {
 			if(!elements && !implicitlyStarted){
 				implicitlyStarted = true;
 				setTimeout(function(){
@@ -1414,7 +1454,7 @@ if(!window.rb){
 
 		setTimeout(function(){
 			if(life.customElements && document.registerElement){
-				registerElement(name, LifeClass);
+				registerElement(name, Class);
 			}
 		});
 	};
@@ -2052,7 +2092,7 @@ if(!window.rb){
 
 				this._super(element);
 
-				this._setTarget = rb.rAF(this._setTarget);
+				this._setTarget = rb.rAF(this._setTarget, {throttle: true});
 				this.setOption('args', this.options.args);
 			},
 

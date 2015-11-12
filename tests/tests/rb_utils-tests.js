@@ -207,20 +207,20 @@
 			})
 			.then(function(){
 				$mainElement.css({width: '350px'});
-				return QUnit.afterAF(209).then(function(){
+				return QUnit.afterAF(239).then(function(){
 					assert.equal(i, 1);
 				});
 			})
 			.then(function(){
 
 				$mainElement.css({width: '50px'});
-				return QUnit.afterAF(209).then(function(){
+				return QUnit.afterAF(239).then(function(){
 					assert.equal(i, 2);
 				});
 			})
 			.then(function(){
 				$mainElement.css({height: '250px'});
-				return QUnit.afterAF(209).then(function(){
+				return QUnit.afterAF(239).then(function(){
 					assert.equal(i, 3);
 				});
 			})
@@ -262,15 +262,15 @@
 
 		rbTest.simulate($mainElement.get(0), 'click');
 
-		assert.equal(i, 1);
-		assert.equal(ni, 0);
-		assert.equal(mainI, 1);
-
-		rbTest.simulate($mainElement.find('.is-teaser-link').get(0), 'click');
-
 		assert.equal(i, 2);
 		assert.equal(ni, 1);
 		assert.equal(mainI, 2);
+
+		rbTest.simulate($mainElement.find('.is-teaser-link').get(0), 'click');
+
+		assert.equal(i, 3);
+		assert.equal(ni, 2);
+		assert.equal(mainI, 3);
 
 
 		$mainElement.off('click', mainFn);
