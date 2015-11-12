@@ -4,13 +4,8 @@
 	<head>
 		{{> meta_data }}
 		{{> app_icons }}
-		{{> blocking_head_scripts }}
-		{{> styles }}
+		{{> head_assets }}
 
-
-		<!--
-		<script src="js/head.js" async=""></script>
-		-->
 	</head>
 	<body>
 		<div class="rb-page-wrapper">
@@ -23,15 +18,7 @@
 			{{> _rb_page_footer }}
 		</div>
 
-
-		<script>
-			requestAnimationFrame(function(){
-				Array.from(document.querySelectorAll('link[media^="async-css"]')).forEach(function(link){
-					link.media = link.media.replace('async-css', '');
-				});
-			});
-		</script>
-		<script src="js/body-async.js" async=""></script>
+		{{> body_assets}}
 	</body>
 
 </html>

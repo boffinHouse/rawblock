@@ -49,17 +49,20 @@ if(!window.rb){
 	/**
 	 * Returns the ComputedStyleObject of an element.
 	 * @memberof rb
-	 * @param elem {Element}
-	 * @param [pseudo]
+	 * @param element {Element}
+	 * @param [pseudo] {String|null} Either `'::after'`, `'::before'` or `null`/`undefined`
 	 * @returns {CssStyle}
+	 *
+	 * @example
+	 * rb.getStyles(element).position // returns 'absolute', 'relative' ...
 	 */
-	rb.getStyles = function(elem, pseudo){
-		var view = elem.ownerDocument.defaultView;
+	rb.getStyles = function(element, pseudo){
+		var view = element.ownerDocument.defaultView;
 
 		if(!view.opener){
 			view = window;
 		}
-		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$ && rb.$.noop};
+		return view.getComputedStyle(element, pseudo || null) || {getPropertyValue: rb.$ && rb.$.noop};
 	};
 
 	/**
@@ -109,9 +112,12 @@ if(!window.rb){
 				}
 
 				return mqCallbacks;
-			}
+			},
 		});
 
+		document.addEventListener('DOMContentLoaded', detectMQChange);
+
+		window.addEventListener('load', detectMQChange);
 		detectMQChange();
 	};
 
@@ -121,6 +127,6 @@ if(!window.rb){
 		get: function(){
 			parseCSS();
 			return cssConfig;
-		}
+		},
 	});
 })();

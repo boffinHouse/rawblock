@@ -1379,8 +1379,8 @@ if(!window.rb){
 	/**
 	 * Registers a class with a name. An instance of this class will be constructed with the element as the first argument. If the Class has a attached or detached method these methods also will be invoked, if the element is removed or added to the DOM. In most cases the given class inherits from `rb.Component`.
 	 * @memberof rb
-	 * @param name
-	 * @param Class
+	 * @param {String} name The name of your component.
+	 * @param Class {Class} The Component class for your component.
 	 *
 	 * @example
 	 * class MyButton {
@@ -1851,7 +1851,7 @@ if(!window.rb){
 
 			/**
 			 * Dispatches an event on the component element and returns the Event object.
-			 * @param [type] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component.
+			 * @param [type='changed'] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component. If an opbject is passed this will be used as the `event.detail` property.
 			 * @param [detail] {Object} The value for the event.detail property to transport event related informations.
 			 * @returns {Event}
 			 */
@@ -1872,7 +1872,7 @@ if(!window.rb){
 			},
 
 			/**
-			 * Uses `rb.elementFromStr` with this.element has element argument
+			 * Uses `rb.elementFromStr` with this.element as the element argument
 			 * @param {String} string
 			 * @returns {Element[]}
 			 */
