@@ -248,7 +248,7 @@ if(!window.rb){
 	 * Throttles a given function
 	 * @memberof rb
 	 * @param {function} fn - The function to be throttled.
-	 * @param {object} options - options for the throttle.
+	 * @param {object} [options] - options for the throttle.
 	 *  @param {object} options.that=null -  the context in which fn should be called.
 	 *  @param {boolean} options.write=false -  wether fn is used to write layout.
 	 *  @param {boolean} options.read=false -  wether fn is used to read layout.
