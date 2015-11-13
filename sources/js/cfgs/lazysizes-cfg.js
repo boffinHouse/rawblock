@@ -1,11 +1,18 @@
 require('lazysizes');
 require('lazysizes/plugins/optimumx/ls.optimumx');
 
-(function(){
+(function(window){
 	'use strict';
 	var docElem = document.documentElement;
 	var addLifeClass = function(elem){
 		elem.classList.add('js-rb-life');
+	};
+	//only usefull if you use the picture element with the customMedia option.
+	var addCustomMedia = function(){
+		if(window.rb && window.rb.cssConfig && rb.cssConfig.mqs){
+			lazySizesConfig.customMedia = Object.assign(lazySizesConfig.customMedia || {}, rb.cssConfig.mqs, lazySizesConfig.customMedia);
+		}
+		removeEventListener('lazybeforeunveil', addCustomMedia, true);
 	};
 
 	window.lazySizesConfig = window.lazySizesConfig || {};
@@ -14,7 +21,10 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 	window.lazySizesConfig.expand = Math.max(Math.min(docElem.clientWidth, docElem.clientHeight, 1222), 359);
 	window.lazySizesConfig.expFactor = Math.min(Math.max(2000 / lazySizesConfig.expand, 2), 4);
 
+	addEventListener('lazybeforeunveil', addCustomMedia, true);
+
 	addEventListener('lazybeforeunveil', function(e){
+
 		if(!e.target.getAttribute('data-optimumx') && e.target.getAttribute('data-sizes') == 'auto'){
 			e.target.setAttribute('data-optimumx', 'auto');
 		} else
@@ -31,5 +41,5 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 			}
 		}
 	}, true);
-})();
+})(window);
 

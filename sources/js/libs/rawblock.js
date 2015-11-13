@@ -248,7 +248,7 @@ if(!window.rb){
 	 * Throttles a given function
 	 * @memberof rb
 	 * @param {function} fn - The function to be throttled.
-	 * @param {object} options - options for the throttle.
+	 * @param {object} [options] - options for the throttle.
 	 *  @param {object} options.that=null -  the context in which fn should be called.
 	 *  @param {boolean} options.write=false -  wether fn is used to write layout.
 	 *  @param {boolean} options.read=false -  wether fn is used to read layout.
@@ -362,7 +362,7 @@ if(!window.rb){
 
 			this.fire();
 		}
-	}, {that: rb.resize, read: true,});
+	}, {that: rb.resize});
 
 	/* End: resize */
 
@@ -497,9 +497,9 @@ if(!window.rb){
 	 * @memberof rb
 	 * @param fn {Function} The function to be rAFed
 	 * @param options {Object} Options object
-	 * @param options.that {Object} The context in which the function should be invoked. If nothing is passed the context of the wrapper function is used.
-	 * @param options.queue {Object} Whether the fn should be added to an ongoing rAF or should be queued to the next rAF.
-	 * @param options.batch {boolean} Normally the passed function is also automatically throtteld by rAF. In case batch is true multiple calls to the wrapper function during one frame cycle will also lead to multiple calls to the passed function.
+	 * @param options.that=null {Object} The context in which the function should be invoked. If nothing is passed the context of the wrapper function is used.
+	 * @param options.queue=false {Object} Whether the fn should be added to an ongoing rAF (i.e.: `false`) or should be queued to the next rAF (i.e.: `true`).
+	 * @param options.throttle=false {boolean} Whether multiple calls in one frame cycle should be throtteled to one.
 	 * @returns {Function}
 	 */
 	rb.rAF = function(fn, options){
@@ -507,7 +507,7 @@ if(!window.rb){
 		var batchStack = [];
 		var run = function(){
 			running = false;
-			if(options.batch){
+			if(!options.throttle){
 				while(batchStack.length){
 					args = batchStack.shift();
 					fn.apply(args[0], args[1]);
@@ -519,7 +519,7 @@ if(!window.rb){
 		var rafedFn = function(){
 			args = arguments;
 			that = options.that || this;
-			if(options.batch){
+			if(!options.throttle){
 				batchStack.push([that, args]);
 			}
 			if(!running){
@@ -573,9 +573,13 @@ if(!window.rb){
 
 	/* Begin: addEasing */
 	var isExtended;
-	var copyEasing = function(easing){
+	var copyEasing = function(easing, name){
 		var easObj = BezierEasing.css[easing];
 		$.easing[easing] = easObj.get;
+
+		if(name && !$.easing[easing]){
+			$.easing[name] = $.easing[easing];
+		}
 	};
 	var extendEasing = function(){
 		var easing;
@@ -591,9 +595,10 @@ if(!window.rb){
 	 * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object.
 	 * @memberof rb
 	 * @param {String} easing The easing value. Expects a string with 4 numbers separated by a "," describing a cubic bezier curve.
+	 * @param {String} [name] Human readable name of the easing.
 	 * @returns {Function} Easing a function
 	 */
-	rb.addEasing = function(easing){
+	rb.addEasing = function(easing, name){
 		var bezierArgs;
 		if(typeof easing != 'string'){return;}
 		if(window.BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
@@ -602,11 +607,11 @@ if(!window.rb){
 				return parseFloat(str);
 			});
 			BezierEasing.css[easing] = BezierEasing.apply(this, bezierArgs);
-			copyEasing(easing);
+			copyEasing(easing, name);
 		}
 		if(!$.easing[easing]) {
 			if(window.BezierEasing && BezierEasing.css[easing]){
-				copyEasing(easing);
+				copyEasing(easing, name);
 			} else {
 				$.easing[easing] =  $.easing.ease || $.easing.swing;
 			}
@@ -728,8 +733,8 @@ if(!window.rb){
 			var write = rb.rAF(function(){
 				expandChild.style.width = data.exChildWidth;
 				expandChild.style.height = data.exChildHeight;
-				setTimeout(scrollWrite);
-			});
+				setTimeout(scrollWrite, 20);
+			}, {throttle: true});
 
 			var read = function(){
 				data.exChildWidth = expandElem.offsetWidth + 9 + 'px';
@@ -765,7 +770,7 @@ if(!window.rb){
 					read();
 				}
 
-			}, {read: true});
+			});
 
 			wrapper.className = 'js-element-resize';
 			wrapper.setAttribute('style', wrapperStyle +'visibility:hidden;z-index: -1;');
@@ -786,7 +791,7 @@ if(!window.rb){
 
 			element.appendChild(wrapper);
 			setTimeout(read);
-		}, {batch: true}),
+		}),
 	};
 
 	/**
@@ -848,8 +853,7 @@ if(!window.rb){
 				return;
 			}
 			if(window.MouseEvent && link.dispatchEvent){
-				event = new MouseEvent('click', {shiftKey: e.shiftKey, altKey: e.altKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey});
-				event.stopImmediatePropagation();
+				event = new MouseEvent('click', {cancelable: true, bubbles: true, shiftKey: e.shiftKey, altKey: e.altKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey});
 				link.dispatchEvent(event);
 			} else if(link.click) {
 				link.click();
@@ -861,20 +865,21 @@ if(!window.rb){
 	/**
 	 * Sets focus to an element. Note element has to be focusable
 	 * @memberof rb
+	 * @type function
 	 * @param element The element that needs to get focus.
 	 * @param [delay] {Number} The delay to focus the element.
 	 */
-	rb.setFocus = function(element, delay){
+	rb.setFocus = rb.rAF(function(element, delay){
 		try {
+			if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
+				element.setAttribute('tabindex', -1);
+			}
 			setTimeout(function(){
-				if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
-					element.setAttribute('tabindex', -1);
-				}
 				element.focus();
 				rb.$doc.trigger('rbscriptfocus');
 			}, delay || 4);
 		} catch(e){}
-	};
+	}, {queue: true, throttle: true});
 
 	/* Begin: focus-within polyfill */
 	var running = false;
@@ -916,7 +921,7 @@ if(!window.rb){
 	/* End: focus-within polyfill */
 
 
-	/* Begin: keyboard-focus */
+	/* * * Begin: keyboard-focus * * */
 	var keyboardBlocktimer, keyboardFocusElem;
 	var hasKeyboardFocus = false;
 	var isKeyboardBlocked = false;
@@ -948,8 +953,8 @@ if(!window.rb){
 	var _removeKeyBoardFocus = rb.rAF(function(){
 		hasKeyboardFocus = false;
 		_removeChildFocus();
-		root.classList.remove('is-keyboardfocus');
-	});
+		root.classList.remove('is-keyboardfocus-within');
+	}, {throttle: true});
 
 	var removeKeyBoardFocus = function(){
 		if(hasKeyboardFocus){
@@ -972,11 +977,11 @@ if(!window.rb){
 			}
 
 			if(!hasKeyboardFocus){
-				root.classList.add('is-keyboardfocus');
+				root.classList.add('is-keyboardfocus-within');
 			}
 			hasKeyboardFocus = true;
 		}
-	});
+	}, {throttle: true});
 
 	var pointerEvents = (window.PointerEvent) ?
 			['pointerdown', 'pointerup'] :
@@ -996,117 +1001,6 @@ if(!window.rb){
 
 	rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
 	/* End: keyboard-focus */
-
-	var regStartQuote = /^"?'?"?/;
-	var regEndQuote = /"?'?"?$/;
-	var regEscapedQuote = /\\"/g;
-
-	/**
-	 * Removes leading and ending quotes (",') from a string.
-	 * @memberof rb
-	 * @param str
-	 * @returns {string}
-	 */
-	rb.removeLeadingQuotes = function(str){
-		return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
-	};
-
-	/**
-	 * Parses a string using JSON.parse without throwing an error.
-	 * @memberof rb
-	 * @param str
-	 * @returns {Object}
-	 */
-	rb.jsonParse = function(str){
-		var ret = null;
-		try {
-			ret = JSON.parse(str);
-		} catch(e){}
-		return ret;
-	};
-
-	/**
-	 * Parses the CSS content value of a pseudo element using JSON.parse.
-	 * @memberof rb
-	 * @param element {Element} The element to parse.
-	 * @param [pseudo='::after'] {String}
-	 * @returns {Object|undefined}
-	 */
-	rb.parsePseudo = function(element, pseudo){
-		var ret;
-		var value = typeof element == 'string' ?
-				element :
-				rb.getStyles(element, pseudo || '::after').content
-			;
-		ret = rb.jsonParse(rb.removeLeadingQuotes(value));
-		return ret;
-	};
-
-	/**
-	 * Returns the ComputedStyleObject of an element.
-	 * @memberof rb
-	 * @param elem {Element}
-	 * @param [pseudo]
-	 * @returns {CssStyle}
-	 */
-	rb.getStyles = function(elem, pseudo){
-		var view = elem.ownerDocument.defaultView;
-
-		if(!view.opener){
-			view = window;
-		}
-		return view.getComputedStyle(elem, pseudo || null) || {getPropertyValue: rb.$.noop};
-	};
-
-	/**
-	 * Parsed global data from Stylesheet (html::before and html::after)
-	 * @alias rb.cssConfig
-	 * @property cssConfig {Object}
-	 * @property cssConfig.mqs {Object} Map of different media queries
-	 * @property cssConfig.currentMQ {String} Currently active media query
-	 * @property cssConfig.beforeMQ {String} Media query that was active before
-	 * @property cssConfig.mqChange {Object} jQuery Callback object to listen for media query changes.
-	 *
-	 */
-	var cssConfig = {mqs: {}, currentMQ: '', beforeMQ: '', mqChange: rb.$.Callbacks()};
-	var parseCSS = function(){
-		var root = rb.root;
-
-		var styles = rb.parsePseudo(root) || {};
-		var beforeStyle = rb.getStyles(root, '::before');
-		var currentStyle = '';
-
-		var detectMQChange = function(){
-			var nowStyle = beforeStyle.content;
-			if(currentStyle != nowStyle){
-				currentStyle = nowStyle;
-				rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
-				rb.cssConfig.currentMQ = rb.removeLeadingQuotes(currentStyle);
-				rb.cssConfig.mqChange.fireWith(rb.cssConfig);
-			}
-		};
-
-		Object.defineProperty(rb, 'cssConfig', {
-			configurable: true,
-			enumerable: true,
-			writable: true,
-			value: Object.assign(cssConfig, styles)
-		});
-
-		rb.resize.on(detectMQChange);
-
-		detectMQChange();
-	};
-
-	Object.defineProperty(rb, 'cssConfig', {
-		configurable: true,
-		enumerable: true,
-		get: function(){
-			parseCSS();
-			return cssConfig;
-		}
-	});
-
 
 	var console = window.console || {};
 	var log = console.log && console.log.bind ? console.log : rb.$.noop;
@@ -1141,24 +1035,33 @@ if(!window.rb){
 
 	var cbs = [];
 	var setup = function(){
-		setup = rb.$;
-		document.addEventListener('click', function(e){
+		var applyBehavior = function(clickElem, e){
 			var i, len, attr, found;
+			for(i = 0, len = cbs.length; i < len;i++){
+				attr = clickElem.getAttribute(cbs[i].attr);
+
+				if(attr != null){
+					found = true;
+					cbs[i].fn(clickElem, e, attr);
+					break;
+				}
+			}
+
+			if(!found){
+				clickElem.classList.remove('js-click');
+			}
+		};
+		setup = rb.$;
+		document.addEventListener('keydown', function(e){
+			var elem = e.target;
+			if(e.keyCode == 40 && elem.classList.contains('js-click') && (elem.getAttribute('aria-haspopup') || elem.getAttribute('data-module'))){
+				applyBehavior(elem, e);
+			}
+		}, true);
+		document.addEventListener('click', function(e){
 			var clickElem = e.target.closest('.js-click');
 			while(clickElem){
-				for(i = 0, len = cbs.length; i < len;i++){
-					attr = clickElem.getAttribute(cbs[i].attr);
-
-					if(attr != null){
-						found = true;
-						cbs[i].fn(clickElem, e, attr);
-						break;
-					}
-				}
-
-				if(!found){
-					clickElem.classList.remove('js-click');
-				}
+				applyBehavior(clickElem, e);
 
 				clickElem = clickElem.parentNode;
 				if(clickElem && clickElem.closest){
@@ -1174,9 +1077,14 @@ if(!window.rb){
 	};
 
 	/**
-	 * Allows to add fast click listeners. For elements with the class `js-click` and a data-{name} attribute.
+	 * Allows to add click listeners for fast event delegation. For elements with the class `js-click` and a data-{name} attribute.
 	 * @property rb.click.add {Function} add the given name and the function as a delegated click handler.
 	 * @memberof rb
+	 * @example
+	 * //<a class="js-click" data-lightbox="1"></a>
+	 * rb.click.add('lightbox', function(element, event, attrValue){
+	 *
+	 * });
 	 */
 	rb.click = {
 		cbs: cbs,
@@ -1472,27 +1380,66 @@ if(!window.rb){
 		initWatchCss();
 	};
 
-	life.register = function(name, LifeClass, noCheck) {
-		var proto = LifeClass.prototype;
+	/**
+	 * Registers a class with a name. An instance of this class will be constructed with the element as the first argument. If the Class has a attached or detached method these methods also will be invoked, if the element is removed or added to the DOM. In most cases the given class inherits from `rb.Component`.
+	 * @memberof rb
+	 * @param {String} name The name of your component.
+	 * @param Class {Class} The Component class for your component.
+	 *
+	 * @example
+	 * class MyButton {
+	 *      constructor(element){
+	 *
+	 *      }
+	 * }
+	 *
+	 * //<button class="js-rb-life" data-module="my-button"></button>
+	 * rb.life.register('my-button', MyButton);
+	 *
+	 * @example
+	 * class Time {
+	 *      constructor(element){
+	 *          this.element = element;
+	 *      }
+	 *
+	 *      attached(){
+	 *          this.timer = setInterval(() = > {
+	 *              this.element.innerHTML = new Date().toLocaleString();
+	 *          }, 1000);
+	 *      }
+	 *
+	 *      detached(){
+	 *          clearInterval(this.timer);
+	 *      }
+	 * }
+	 *
+	 * //<span class="js-rb-life" data-module="time"></span>
+	 * rb.life.register('time', Time);
+	 *
+	 */
+	life.register = function(name, Class, _noCheck) {
+		var proto = Class.prototype;
 		var superProto = Object.getPrototypeOf(proto);
 		var superClass = superProto.constructor;
 
-		extendStatics(LifeClass, proto, superClass, 'defaults');
-		extendStatics(LifeClass, proto, superClass, 'events');
+		if(proto instanceof rb.Component){
+			extendStatics(Class, proto, superClass, 'defaults');
+			extendStatics(Class, proto, superClass, 'events');
 
-		if(!proto.hasOwnProperty('name')){
-			proto.name = name;
+			if(!proto.hasOwnProperty('name')){
+				proto.name = name;
+			}
 		}
 
 		if(rb.components[ name ]){
 			rb.log(name +' already exists.');
 		}
 
-		rb.components[ name ] = LifeClass;
+		rb.components[ name ] = Class;
 
 		if(name.charAt(0) == '_'){return;}
 
-		if ( !noCheck ) {
+		if ( !_noCheck ) {
 			if(!elements && !implicitlyStarted){
 				implicitlyStarted = true;
 				setTimeout(function(){
@@ -1511,7 +1458,7 @@ if(!window.rb){
 
 		setTimeout(function(){
 			if(life.customElements && document.registerElement){
-				registerElement(name, LifeClass);
+				registerElement(name, Class);
 			}
 		});
 	};
@@ -1681,7 +1628,7 @@ if(!window.rb){
 							})(superDescriptor[descProp], origDescriptor[descProp]);
 					}
 
-					//always allow NFE call for frequently called methods without this._super, but functionName._super
+					//always allow NFE call for frequently called methods without this._super, but functionName._supbase
 					//see http://techblog.netflix.com/2014/05/improving-performance-of-our-javascript.html
 					origDescriptor[descProp]._supbase = superDescriptor[descProp];
 				}
@@ -1878,8 +1825,12 @@ if(!window.rb){
 			/**
 			 * defaults Object, represent the default options of the component.
 			 * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
+			 * @prop {Object} defaults
+			 * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
 			 */
-			defaults: {},
+			defaults: {
+				focusDelay: 0,
+			},
 
 			/**
 			 * Shortcut to rb.getComponent.
@@ -1908,7 +1859,7 @@ if(!window.rb){
 
 			/**
 			 * Dispatches an event on the component element and returns the Event object.
-			 * @param [type] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component.
+			 * @param [type='changed'] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component. If an opbject is passed this will be used as the `event.detail` property.
 			 * @param [detail] {Object} The value for the event.detail property to transport event related informations.
 			 * @returns {Event}
 			 */
@@ -1929,7 +1880,17 @@ if(!window.rb){
 			},
 
 			/**
+			 * Uses `rb.elementFromStr` with this.element as the element argument
+			 * @param {String} string
+			 * @returns {Element[]}
+			 */
+			getElementsFromString: function(string){
+				return rb.elementFromStr(string, this.element);
+			},
+
+			/**
 			 * shortcut to rb.setFocus
+			 * @borrows rb.setFocus as setFocus
 			 */
 			setFocus: rb.setFocus,
 
@@ -1962,7 +1923,7 @@ if(!window.rb){
 				}
 
 				if(focusElement){
-					this.setFocus(focusElement, delay);
+					this.setFocus(focusElement, delay || this.options.focusDelay);
 				}
 			},
 
@@ -2139,14 +2100,13 @@ if(!window.rb){
 
 				this._super(element);
 
-				this._setTarget = rb.rAF(this._setTarget);
+				this._setTarget = rb.rAF(this._setTarget, {throttle: true});
 				this.setOption('args', this.options.args);
 			},
 
 			events: {
 				click: '_onClick',
 			},
-
 			_onClick: function(){
 				var args;
 				var target = this.getTarget() || {};

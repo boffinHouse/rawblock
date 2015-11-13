@@ -13,13 +13,13 @@ Main Stylesheet
 
 // Basic Formatting
 //@import "basics";
-@import "normalize";
+@import "basics/normalize";
 
 // Webfonts
 //@import "rb_webfonts";
 
 //Layout Grid
-@import "rb_basics";
+@import "basics/rb_basics";
 @include rb-generate-layout-styles($breakpointConfigs);
 
 @include rb-export-globaljs(

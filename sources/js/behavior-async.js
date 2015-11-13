@@ -11,11 +11,8 @@ window.BezierEasing = require('bezier-easing');
 //load dom or jQuery
 require('./libs/dom');
 
+require('./libs/rb-cssconfig');
 require('./libs/rawblock');
-
-require('./libs/rb_queue');
-require('./libs/rb_transform-hook');
-require('./libs/rb_color-hook');
 
 /* configuration */
 rb.isDebug = true;
