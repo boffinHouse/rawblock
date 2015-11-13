@@ -1078,9 +1078,14 @@ if(!window.rb){
 	};
 
 	/**
-	 * Allows to add fast click listeners. For elements with the class `js-click` and a data-{name} attribute.
+	 * Allows to add click listeners for fast event delegation. For elements with the class `js-click` and a data-{name} attribute.
 	 * @property rb.click.add {Function} add the given name and the function as a delegated click handler.
 	 * @memberof rb
+	 * @example
+	 * //<a class="js-click" data-lightbox="1"></a>
+	 * rb.click.add('lightbox', function(element, event, attrValue){
+	 *
+	 * });
 	 */
 	rb.click = {
 		cbs: cbs,
@@ -1821,8 +1826,12 @@ if(!window.rb){
 			/**
 			 * defaults Object, represent the default options of the component.
 			 * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
+			 * @prop {Object} defaults
+			 * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
 			 */
-			defaults: {},
+			defaults: {
+				focusDelay: 0,
+			},
 
 			/**
 			 * Shortcut to rb.getComponent.
@@ -1915,7 +1924,7 @@ if(!window.rb){
 				}
 
 				if(focusElement){
-					this.setFocus(focusElement, delay);
+					this.setFocus(focusElement, delay || this.options.focusDelay);
 				}
 			},
 

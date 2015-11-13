@@ -26,6 +26,13 @@
 	 *  @param {object} [options.data=null] The send data.
 	 *  @param {function} [options.beforeSend] A callback function to allow modification of the XHR object before it is send.
 	 * @returns {Promise}
+	 *
+	 * @example
+	 *
+	 * rb.xhr('api/user.json?id=12')
+	 *  .then(function(response){
+	 *      console.log(response.data);
+	 *  });
 	 */
 	rb.xhr = function(url, options){
 		if(typeof url == 'object'){
