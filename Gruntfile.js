@@ -83,7 +83,6 @@
 			'prettify:dist',
 			'clean:scssglobbing',
 		]);
-
 	};
 
 })();

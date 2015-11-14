@@ -8,7 +8,7 @@ module.exports = {
 
 	},
 	main: {
-		options: {
+		files: {
 			src: 'sources/sass/__*.scss',
 		}
 	}
