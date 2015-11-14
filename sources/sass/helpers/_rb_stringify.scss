@@ -59,6 +59,8 @@
 	&::before {
 		$string: rbToJSON($data);
 		content: $string !important;
-		display: none !important;
+		visibility: hidden !important;
+		display: block !important;
+		height: 0 !important;
 	}
 }
