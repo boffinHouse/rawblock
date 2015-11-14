@@ -33,14 +33,14 @@ if(!window.rb){
 	 * Parses the CSS content value of a pseudo element using JSON.parse.
 	 * @memberof rb
 	 * @param element {Element} The element to parse.
-	 * @param [pseudo='::after'] {String}
+	 * @param [pseudo='::before'] {String}
 	 * @returns {Object|undefined}
 	 */
 	rb.parsePseudo = function(element, pseudo){
 		var ret;
 		var value = typeof element == 'string' ?
 				element :
-				rb.getStyles(element, pseudo || '::after').content
+				rb.getStyles(element, pseudo || '::before').content
 			;
 		ret = rb.jsonParse(removeLeadingQuotes(value));
 		return ret;
@@ -62,11 +62,11 @@ if(!window.rb){
 		if(!view.opener){
 			view = window;
 		}
-		return view.getComputedStyle(element, pseudo || null) || {getPropertyValue: rb.$ && rb.$.noop};
+		return view.getComputedStyle(element, pseudo || null) || {getPropertyValue: rb.$ && rb.$.noop, isNull: true};
 	};
 
 	/**
-	 * Parsed global data from Stylesheet (html::before and html::after)
+	 * Parsed global data from Stylesheet (html::before and html::before)
 	 * @alias rb.cssConfig
 	 * @property cssConfig {Object}
 	 * @property cssConfig.mqs {Object} Map of different media queries
@@ -80,11 +80,11 @@ if(!window.rb){
 		var mqCallbacks;
 		var root = document.documentElement;
 		var styles = rb.parsePseudo(root) || {};
-		var beforeStyle = rb.getStyles(root, '::before');
+		var currentMQStyle = rb.getStyles(root, '::after');
 		var currentStyle = '';
 
 		var detectMQChange = function(){
-			var nowStyle = beforeStyle.content;
+			var nowStyle = currentMQStyle.content;
 			if(currentStyle != nowStyle){
 				currentStyle = nowStyle;
 				rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;

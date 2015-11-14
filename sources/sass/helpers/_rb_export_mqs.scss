@@ -17,7 +17,7 @@
 
 			html {
 				@media #{map-get($mq, 'media')}{
-					&::before {
+					&::after {
 						content: '#{$name}';
 						display: none !important;
 					}

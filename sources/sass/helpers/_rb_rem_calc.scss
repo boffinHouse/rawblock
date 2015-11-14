@@ -1,14 +1,20 @@
 
-@function rb-convert-to-rem($value)  {
-
-	$base-value: 16;
-	$value: ($value / $base-value) + rem;
+@function rb-convert-to-rem($value, $base-value: 16, $unit: "rem")  {
+	$value: ($value / $base-value) + $unit;
 
 	@if ($value == "0rem") {
 		$value: 0;  // Turn 0rem into 0
 	}
 
 	@return $value;
+}
+
+@function rb-rem($args...){
+	@return rb-convert-to-rem($args...);
+}
+
+@function rb-em($value, $base-value: 16){
+	@return rb-rem($value, $base-value, "em");
 }
 
 @function rb-rem-calc($values) {

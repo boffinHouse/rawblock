@@ -56,7 +56,7 @@
 }
 
 @mixin exportToJS($data){
-	&::after {
+	&::before {
 		$string: rbToJSON($data);
 		content: $string !important;
 		display: none !important;

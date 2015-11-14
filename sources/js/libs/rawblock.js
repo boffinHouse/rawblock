@@ -1804,7 +1804,7 @@ if(!window.rb){
 				this.element = element;
 				this.$element = $(element);
 				this.options = {};
-				this._afterStyle = rb.getStyles(element, '::after');
+				this._afterStyle = rb.getStyles(element, '::before');
 
 				element[componentExpando] = this;
 
@@ -2000,7 +2000,7 @@ if(!window.rb){
 			},
 
 			/**
-			 * parses the CSS options (::after pseudo) of a given Element.
+			 * parses the CSS options (::before pseudo) of a given Element.
 			 * @param [element] {Element}
 			 * @returns {{}}
 			 */
@@ -2008,7 +2008,7 @@ if(!window.rb){
 				if(element == this.element){
 					element = null;
 				}
-				var style = (element ? rb.getStyles(element, '::after') : this._afterStyle).content || '';
+				var style = (element ? rb.getStyles(element, '::before') : this._afterStyle).content || '';
 				if(element || !this._styleOptsStr || style != this._styleOptsStr){
 					if(!element){
 						this._styleOptsStr = style;
