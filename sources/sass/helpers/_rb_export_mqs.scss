@@ -28,6 +28,6 @@
 	}
 
 	html {
-		@include exportToJS(map-merge($mainconfig, (mqs: $rbExportMqMap)));
+		@include rb-js-export(map-merge($mainconfig, (mqs: $rbExportMqMap)));
 	}
 }

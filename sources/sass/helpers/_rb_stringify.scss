@@ -1,4 +1,4 @@
-@function rbEscapeQuotes($string, $prepend: '') {
+@function rb-escape-quotes($string, $prepend: '') {
 	$newstring: $string;
 	$length: str_length($string);
 	$index: str_index($string, '"');
@@ -8,13 +8,13 @@
 			@warn 'doubble quote found in "' + $string + '" will convert to single quote.';
 		}
 		$prepend: str_slice($string, 0, $index - 1) + "'";
-		$newstring: rbEscapeQuotes((str_slice($string, $index + 1, $length + 1)), $prepend);
+		$newstring: rb-escape-quotes((str_slice($string, $index + 1, $length + 1)), $prepend);
 	}
 
 	@return $prepend + $newstring;
 }
 
-@function rbToJSON($data) {
+@function rb-stringify($data) {
 	$string: "";
 	$type: type-of($data);
 
@@ -27,7 +27,7 @@
 		$string: $string + "{";
 
 		@each $key, $value in $data {
-			$string: $string + '"' + $key + '":' + rbToJSON($value) +',';
+			$string: $string + '"' + $key + '":' + rb-stringify($value) +',';
 		}
 
 		$string: str-slice($string, 0, str-length($string) - 1) + '}';
@@ -36,7 +36,7 @@
 		$string: $string + "[";
 
 		@for $i from 1 through length($data) {
-			$string: $string + rbToJSON(nth($data, $i)) +',';
+			$string: $string + rb-stringify(nth($data, $i)) +',';
 		}
 
 		$string: str-slice($string, 0, str-length($string) - 1)  + ']';
@@ -45,7 +45,7 @@
 		$string: $string + $data;
 	}
 	@else if type-of($data) == "string" {
-		$string: $string + ' "' + rbEscapeQuotes($data) + '"';
+		$string: $string + ' "' + rb-escape-quotes($data) + '"';
 	} @else if $type == "bool" {
 		$string: $string + $data;
 	} @else {
@@ -55,12 +55,22 @@
 	@return $string;
 }
 
-@mixin exportToJS($data){
+@mixin rb-js-export($data){
 	&::before {
-		$string: rbToJSON($data);
+		$string: rb-stringify($data);
 		content: $string !important;
 		visibility: hidden !important;
 		display: block !important;
 		height: 0 !important;
+		width: 100% !important;
 	}
+}
+
+/* old/deprecated API: */
+@function rbToJSON($data){
+	@return rb-stringify($data);
+}
+
+@mixin exportToJS($data){
+	@include rb-js-export($data);
 }
