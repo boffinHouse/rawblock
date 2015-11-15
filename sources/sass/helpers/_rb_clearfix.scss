@@ -1,5 +1,6 @@
 @mixin rb-clearfix (){
-	&::after {
+	&::after,
+	&::before {
 		clear: both;
 		content: "";
 		display: table;
