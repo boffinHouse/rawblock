@@ -73,6 +73,7 @@
     "lodash": "^3.10.1",
     "npm": "^3.3.12",
     "qunitjs": "^1.20.0",
+    "rb_template": "^0.1.0",
     "sinon": "^1.17.2",
     "time-grunt": "*"
   },
