@@ -2,6 +2,7 @@ node_modules
 build
 dist
 dev
+doc
 tmp
 bower_components
 
