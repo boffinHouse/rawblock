@@ -1148,8 +1148,18 @@ if(!window.rb){
 
 	var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
-	rb.getPropertyDescriptor = function getPropertyDescriptor(o, name) {
-		var proto = o, descriptor;
+	/**
+	 * Returns the descriptor of a property. Moves up the prototype chain to do so.
+	 *
+	 * @memberof rb
+	 * @static
+	 *
+	 * @param {Object} object
+	 * @param {String} name
+	 * @returns {Object|undefined}
+	 */
+	rb.getPropertyDescriptor = function getPropertyDescriptor(object, name) {
+		var proto = object, descriptor;
 		if(name in proto){
 			while (proto && !(descriptor = getOwnPropertyDescriptor(proto, name))){
 				proto = Object.getPrototypeOf(proto);
@@ -1157,6 +1167,49 @@ if(!window.rb){
 		}
 		return descriptor;
 	};
+
+	/* begin: html escape */
+	// List of HTML entities for escaping.
+	var escapeMap = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#x27;',
+		'`': '&#x60;'
+	};
+
+	// Functions for escaping and unescaping strings to/from HTML interpolation.
+	var createEscaper = function(map) {
+		var escaper = function(match) {
+			return map[match];
+		};
+		// Regexes for identifying a key that needs to be escaped
+		var source = '(?:' + Object.keys(map).join('|') + ')';
+		var testRegexp = new RegExp(source);
+		var replaceRegexp = new RegExp(source, 'g');
+		return function(string) {
+			string = string == null ? '' : '' + string;
+			return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
+		};
+	};
+
+	/**
+	 * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
+	 * their corresponding HTML entities.
+	 *
+	 * @static
+	 * @memberOf rb
+	 * @category String
+	 * @param {string} [string=''] The string to escape.
+	 * @returns {string} Returns the escaped string.
+	 * @example
+	 *
+	 * _.escape('fred, barney, & pebbles');
+	 * // => 'fred, barney, &amp; pebbles'
+	 */
+	rb.escape = createEscaper(escapeMap);
+	/* end: html escape */
 })(window, document);
 
 (function(window, document) {
