@@ -31,13 +31,13 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 		if(e.target.getAttribute('data-module') && e.target.matches('.lazymodule, .lazypreload')){
 			e.target.classList.add('js-rb-life');
 			if(window.rb && rb.life){
-				rb.life.throttledFindElements();
+				rb.life.searchModules();
 			}
 		} else
 		if(e.target.classList.contains('lazymodules')){
 			Array.from(e.target.querySelectorAll('.lazymodule')).forEach(addLifeClass);
 			if(window.rb && rb.life){
-				rb.life.throttledFindElements();
+				rb.life.searchModules();
 			}
 		}
 	}, true);
