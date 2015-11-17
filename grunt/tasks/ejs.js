@@ -5,8 +5,7 @@ module.exports = function(grunt) {
 	/**
 	 * EJS grunt task
 	 */
-	grunt.registerMultiTask('ejs', 'Compile hogan templates.', function() {
-
+	grunt.registerMultiTask('ejs', 'Compile ejs templates.', function() {
 
 		var options = this.options({
 			src: 'sources/ejs/',
@@ -18,8 +17,6 @@ module.exports = function(grunt) {
 			var module = dir.split('/');
 			var output = [];
 
-			console.log(dir)
-
 			module = module[module.length - 1];
 			outputFile = options.dest + module +'-ejs.js';
 
@@ -27,7 +24,6 @@ module.exports = function(grunt) {
 				var compiled;
 				var filename = file.split('/');
 				var src = grunt.file.read(file);
-
 
 				try {
 					compiled = template(src).source;

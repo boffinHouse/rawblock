@@ -5,7 +5,7 @@
  */
 module.exports = {
 	dist : {
-		src: ['sources/js/**/*.js'],
+		src: ['sources/js/**/*.js', 'sources/js/libs/readme.md'],
 		options: {
 			destination: 'doc',
 			template : 'node_modules/ink-docstrap/template',
