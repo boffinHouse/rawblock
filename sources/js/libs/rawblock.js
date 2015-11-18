@@ -2272,6 +2272,7 @@ if(!window.rb){
 			 * @extends rb.Component
 			 * @param {Element} element
 			 * @example
+			 * ```html
 			 * <button type="button"
 			 *  data-module="button"
 			 *  class="js-click"
@@ -2280,6 +2281,7 @@ if(!window.rb){
 			 *      click me
 			 * </button>
 			 * <div id="panel-1" data-module="panel"></div>
+			 * ```
 			 */
 			init: function(element) {
 
