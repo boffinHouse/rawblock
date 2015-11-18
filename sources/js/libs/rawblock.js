@@ -1225,6 +1225,13 @@ if(!window.rb){
 	 */
 	rb.escape = createEscaper(escapeMap);
 	/* end: html escape */
+
+	rb.not = function(condition, ret){
+		return !condition ? ret : '';
+	};
+	rb.if = function(condition, ret){
+		return condition ? ret : '';
+	};
 })(window, document);
 
 (function(window, document) {

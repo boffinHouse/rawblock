@@ -53,7 +53,7 @@ module.exports = function(grunt) {
 				} else {
 					return true;
 				}
-			}).map(function(filepath) {
+			}).forEach(function(filepath) {
 
 				jsdoc2md({ src: filepath, json: true })
 					.pipe(collectJson(function (data) {
