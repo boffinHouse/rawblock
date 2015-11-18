@@ -8,8 +8,8 @@ module.exports = {
 		src: ['sources/js/**/*.js', 'sources/js/libs/readme.md'],
 		options: {
 			destination: 'jsdoc',
-			template : 'node_modules/ink-docstrap/template',
-			configure : 'node_modules/ink-docstrap/template/jsdoc.conf.json',
+			template : 'node_modules/jsdoc-oblivion/template',
+			configure : 'node_modules/jsdoc-oblivion/template/jsdoc.conf.json',
 		}
 	}
 };

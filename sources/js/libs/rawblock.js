@@ -564,19 +564,18 @@ if(!window.rb){
 	/* Begin: rbComponent */
 
 	/**
-	 * A jQuery plugin that returns a component instance by using rb.getComponent. Or invokes a methods or sets/gets a property
+	 * A jQuery plugin that returns a component instance by using rb.getComponent.
 	 * @function external:"jQuery.fn".rbComponent
 	 * @see rb.getComponent
 	 * @param [name] {String} The name of the property or method.
-	 * @param [args] {*} The value of the property name to set or an array of arguments in case of a method.
 	 *
-	 * @returns {ComponentInstance|jQueryfiedDOMList|*}
+	 * @returns {ComponentInstance|jQueryfiedDOMList}
 	 */
-	$.fn.rbComponent = function(name, args){
+	$.fn.rbComponent = function(name){
 		var ret;
 		this.each(function(){
 			if(ret === undefined){
-				ret = rb.getComponent(this, name, args);
+				ret = rb.getComponent(this, name);
 			}
 		});
 
@@ -608,7 +607,7 @@ if(!window.rb){
 	};
 
 	/**
-	 * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object.
+	 * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object. requires npm module: "bezier-easing".
 	 * @memberof rb
 	 * @param {String} easing The easing value. Expects a string with 4 numbers separated by a "," describing a cubic bezier curve.
 	 * @param {String} [name] Human readable name of the easing.
