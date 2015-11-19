@@ -47,6 +47,8 @@
 	/**
 	 * JavaScript ERB style/EJS/JST micro-templating, taken from Underscore without modifying settings parameter.
 	 *
+	 * If templates are pre-compiled, this script doesn't need to be included in the production build.
+	 *
 	 *
 	 * @static
 	 * @memberOf rb
@@ -55,12 +57,12 @@
 	 *
 	 * @example
 	 * // using the "interpolate" delimiter to create a compiled template
-	 * var compiled = _.template('hello <%= user %>!');
+	 * var compiled = rb.template('hello <%= user %>!');
 	 * compiled({ 'user': 'fred' });
 	 * // => 'hello fred!'
 	 *
 	 * // using the HTML "escape" delimiter to escape data property values
-	 * var compiled = _.template('<b><%- value %></b>');
+	 * var compiled = rb.template('<b><%- value %></b>');
 	 * compiled({ 'value': '<script>' });
 	 * // => '<b>&lt;script&gt;</b>'
 	 *

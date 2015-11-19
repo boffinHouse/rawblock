@@ -13,7 +13,7 @@ if(!window.rb){
 	var rb = window.rb;
 
 	/**
-	 * The jQuery plugin namespace.
+	 * The jQuery or dom.js (rb.$) plugin namespace.
 	 * @external "jQuery.fn"
 	 * @see {@link http://learn.jquery.com/plugins/|jQuery Plugins}
 	 */
@@ -1220,17 +1220,22 @@ if(!window.rb){
 	 * @returns {string} Returns the escaped string.
 	 * @example
 	 *
-	 * _.escape('fred, barney, & pebbles');
+	 * rb.escape('fred, barney, & pebbles');
 	 * // => 'fred, barney, &amp; pebbles'
 	 */
 	rb.escape = createEscaper(escapeMap);
 	/* end: html escape */
 
-	rb.not = function(condition, ret){
-		return !condition ? ret : '';
-	};
-	rb.if = function(condition, ret){
-		return condition ? ret : '';
+
+	/**
+	 * Returns yes, if condition is true-thy no/empty string otherwise. Can be used inside of [`rb.template`]{@link rb.template}
+	 * @param condition
+	 * @param {String} yes
+	 * @param {String} [no=""]
+	 * @returns {string}
+	 */
+	rb.if = function(condition, yes, no){
+		return condition ? yes : (no || '');
 	};
 })(window, document);
 
