@@ -1975,6 +1975,7 @@ if(!window.rb){
 			defaults: {
 				focusDelay: 0,
 			},
+
 			/**
 			 * Events object can be used to specify events, that will be bound to the component element.
 			 *
@@ -2115,6 +2116,7 @@ if(!window.rb){
 					this.setFocus(activeElem);
 				}
 			},
+
 			/**
 			 * Interpolates {name} to the name of the component. Helps to generate BEM-style Class-Structure.
 			 * @param {String} str
@@ -2127,6 +2129,28 @@ if(!window.rb){
 			interpolateName: function(str){
 				return str.replace(regName, this.name);
 			},
+
+			/**
+			 * Returns first matched element. Interpolates selector with `interpolateName`.
+			 * @param {String} selector
+			 * @param {Element} [context=this.element]
+			 * @returns {Element}
+			 */
+
+			query: function(selector, context){
+				return (context || this.element).querySelector(this.interpolateName(selector));
+			},
+
+			/**
+			 * Returns Array of matched elements. Interpolates selector with `interpolateName`.
+			 * @param {String} selector
+			 * @param {Element} [context=this.element]
+			 * @returns {Element[]}
+			 */
+			queryAll: function(selector, context){
+				return Array.from((context || this.element).querySelectorAll(this.interpolateName(selector)));
+			},
+
 			/*
 			 * Parses the Options from HTML (data-* attributes) and CSS using rb.parsePseudo. This function is automatically invoked by the init/constructor.
 			 * @param opts
