@@ -56,6 +56,12 @@ if(!window.rb){
 	 */
 	rb.$doc = $(document);
 
+	/**
+	 * Namespace for global template functions
+	 * @memberof rb
+	 */
+	rb.templates = {};
+
 	/* End: global vars end */
 
 	/* Begin: rbSlideUp / rbSlideDown */
@@ -1890,15 +1896,13 @@ if(!window.rb){
 			 * });
 			 */
 			init: function(element){
-
+				var origName = this.name;
 				/**
 				 * Reference to the main element.
 				 * @type {Element}
 				 */
 				this.element = element;
 				this.$element = $(element);
-
-				this.templates = {};
 
 				/**
 				 * Current options object constructed by defaults and overriding markup/CSS.
@@ -1917,6 +1921,8 @@ if(!window.rb){
 
 				this._evtName = this.name + 'changed';
 				this._beforeEvtName = this.name + 'change';
+
+				this.templates = rb.templates[this.name] || rb.templates[origName] || {};
 
 
 				this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
@@ -2205,10 +2211,19 @@ if(!window.rb){
 			 * @returns {String}
 			 */
 			render: function(name, data){
+				if(typeof name == 'object'){
+					data = name;
+					name = '';
+				}
 				if(!data.name){
 					data.name = this.name;
 				}
-				return this.templates[name] ? this.templates[name](data) : '';
+				return this.templates[name] ?
+					this.templates[name](data) :
+					(!name && typeof this.templates == 'function') ?
+						this.templates(data) :
+					''
+				;
 			},
 			/*
 			 * parses the HTML options (data-*) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.

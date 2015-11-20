@@ -58,7 +58,7 @@ module.exports = {
 		tasks: ['newer:assemble:dev', 'prettify:dev']
 	},
 	ejs: {
-		files: ['<%= paths.src %>/ejs/**/*.{ejs}'],
+		files: ['<%= paths.src %>/_templates/**/*.{ejs}'],
 		tasks: ['ejs']
 	},
 };
