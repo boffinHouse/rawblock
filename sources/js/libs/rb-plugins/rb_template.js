@@ -72,6 +72,7 @@
 	 * // => '<li>fred</li><li>barney</li>'
 	 */
 	rb.template = function(text) {
+		var render, template;
 		// Combine delimiters into one regular expression via alternation.
 		var matcher = new RegExp([
 				(settings.escape || noMatch).source,
@@ -100,22 +101,23 @@
 		source += "';\n";
 
 		// If a variable is not specified, place data values in local scope.
-		if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+		source = 'with(obj||{}){\n' + source + '}\n';
 
 		source = "var __t,__p='',__j=Array.prototype.join," +
 			"print=function(){__p+=__j.call(arguments,'');};\n" +
 			source + 'return __p;\n';
 
-		var render;
+
+		/* jshint ignore:start */
 		try {
-			/* jshint ignore:start */
-			render = new Function(settings.variable || 'obj', 'rb', source);
+			render = new Function('obj', 'rb', source);
 		} catch (e) {
 			e.source = source;
 			throw e;
 		}
+		/* jshint ignore:end */
 
-		var template = function(data) {
+		template = function(data) {
 			return render.call(this, data, rb);
 		};
 

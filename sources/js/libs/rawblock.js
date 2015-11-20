@@ -57,7 +57,7 @@ if(!window.rb){
 	rb.$doc = $(document);
 
 	/**
-	 * Namespace for global template functions
+	 * Namespace for global template functions. Compiled JavaScript templates should be added to this hash object. (see jst grunt task).
 	 * @memberof rb
 	 */
 	rb.templates = {};
@@ -1922,8 +1922,11 @@ if(!window.rb){
 				this._evtName = this.name + 'changed';
 				this._beforeEvtName = this.name + 'change';
 
+				/**
+				 * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.
+				 * @type {Function|{}}
+				 */
 				this.templates = rb.templates[this.name] || rb.templates[origName] || {};
-
 
 				this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
 

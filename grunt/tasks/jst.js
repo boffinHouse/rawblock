@@ -1,8 +1,11 @@
 module.exports = function(grunt) {
 
+	/**
+	 * EJS grunt task
+	 */
 	var template = require('rb_template').template;
 
-	grunt.registerMultiTask('ejs', 'Compile ejs templates.', function() {
+	grunt.registerMultiTask('jst', 'Compile ejs templates.', function() {
 
 		var options = this.options({
 			src: 'sources/_templates/',
@@ -30,7 +33,7 @@ module.exports = function(grunt) {
 				if(compiled){
 					compiled = compiled.replace(/\t+|\n+/g, '').replace(/<!--[\s\S]*?-->/g, '');
 
-					filename = filename[filename.length -1].replace('.ejs', '');
+					filename = filename[filename.length -1].split('.')[0];
 
 					output.push('rb.templates["' + module +'"]' +
 						(isStandalone ? '' : '["' + filename + '"]')+' = ' + compiled + ';');
@@ -43,7 +46,7 @@ module.exports = function(grunt) {
 
 			if(grunt.file.isDir(dir)){
 				isStandalone = false;
-				grunt.file.expand(dir +'/**/*.ejs').forEach(compileFile);
+				grunt.file.expand(dir +'/**/*.*').forEach(compileFile);
 			} else {
 				isStandalone = true;
 				compileFile(dir);
