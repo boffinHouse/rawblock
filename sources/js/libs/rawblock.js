@@ -1898,6 +1898,8 @@ if(!window.rb){
 				this.element = element;
 				this.$element = $(element);
 
+				this.templates = {};
+
 				/**
 				 * Current options object constructed by defaults and overriding markup/CSS.
 				 * @type {{}}
@@ -1990,7 +1992,7 @@ if(!window.rb){
 			 * class MyComponent extends rb.Component {
 			 *      constructor(element){
 			 *          super(element);
-			 *          this.child = this.element.querySelector(this.interpolateName('.{name}__close-button');
+			 *          this.child = this.query('.{name}__close-button');
 			 *
 			 *          this.setLayout = rb.rAF(this.setLayout);
 			 *      }
@@ -2056,12 +2058,12 @@ if(!window.rb){
 			},
 
 			/**
-			 * Uses [`rb.elementFromStr`]{@link rb.elementFromStr} with this.element as the element argument
+			 * Uses [`rb.elementFromStr`]{@link rb.elementFromStr} with this.element as the element argument and interpolates string using `this.interpolateName`.
 			 * @param {String} string
 			 * @returns {Element[]}
 			 */
 			getElementsFromString: function(string){
-				return rb.elementFromStr(string, this.element);
+				return rb.elementFromStr(this.interpolateName(string), this.element);
 			},
 
 			/*
@@ -2196,7 +2198,18 @@ if(!window.rb){
 					rb.log('don\'t change name after init.');
 				}
 			},
-
+			/**
+			 * Convenient method to render a template. Expects a template function with the given name added to the templates hash property of the component. The data will be extended with a name of the component.
+			 * @param {String} name
+			 * @param {Object} data
+			 * @returns {String}
+			 */
+			render: function(name, data){
+				if(!data.name){
+					data.name = this.name;
+				}
+				return this.templates[name] ? this.templates[name](data) : '';
+			},
 			/*
 			 * parses the HTML options (data-*) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.
 			 * @param [element] {Element}
@@ -2248,6 +2261,11 @@ if(!window.rb){
 		}
 	);
 
+	/**
+	 * Logs arguments to the console, if debug option of the component is turned on.
+	 * @name rb.Component.prototype
+	 * @type function
+	 */
 	rb.addLog(rb.Component.prototype, false);
 
 	rb.Component.extend = function(name, prop, noCheck){
