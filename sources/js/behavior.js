@@ -4,7 +4,7 @@ import Handlebars from '../../node_modules/handlebars/dist/handlebars.runtime';
 import templates from './templates';
 templates.call(window, Handlebars);
 */
-require('./libs/rb_packageloader');
+require('./libs/rb-plugins/rb_packageloader');
 
 window.BezierEasing = require('bezier-easing');
 
@@ -12,6 +12,7 @@ window.BezierEasing = require('bezier-easing');
 require('./libs/dom');
 
 require('./libs/rb-cssconfig');
+
 require('./libs/rawblock');
 
 /* configuration */
@@ -22,15 +23,16 @@ if(!('ASSETBASEPATH' in window)){
 	window.ASSETBASEPATH = '';
 	rb.log('set ASSETBASEPATH to "". Please configure!');
 }
-rb.loadPackage.basePath = window.ASSETBASEPATH + 'js/';
-rb.loadPackage.modulePath = window.ASSETBASEPATH + 'js/modules/';
 
-//loadPackage.onlyKnown = true;
+Object.assign(rb.packageConfig, {
+	basePath: window.ASSETBASEPATH + 'js/',
+	modulePath: window.ASSETBASEPATH + 'js/modules/rb_',
+});
 
 
 /* define loading packages for non-crucial behaviors */
 /* either require modules or configure package loader */
-//loadPackage.addPackage('moduleId/packageId', ['dependency-source.js', 'source.js'])
+//rb.registerPackage('moduleId/packageId', ['dependency-source.js', 'source.js'])
 
 
 /* require crucial or small/often used behaviors directly */

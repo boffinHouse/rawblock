@@ -1,1 +1,9 @@
-<script src="js/behavior-async.js" async=""></script>
+<!--<script src="js/crucial.js"></script>-->
+
+<script src="js/behavior.js" async="" class="sync-js"></script>
+
+<script>
+	Array.from(document.querySelectorAll('script[async].sync-js')).forEach(function(script){
+		script.async = false;
+	});
+</script>

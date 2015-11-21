@@ -1,6 +1,9 @@
 (function(window, document) {
 	'use strict';
-
+	if(!window.rb){
+		window.rb = {};
+	}
+	var rb = window.rb;
 	var regPath = /^[\.\/]|:\//;
 	var rgJS = /\.js/;
 
@@ -8,52 +11,23 @@
 		setTimeout(reject);
 	}).catch(function(){});
 
-	var loadPackage = function(moduleId, onlyKnown){
-		var packagePaths;
-		var packages = loadPackage.packages[moduleId];
-		if(!packages){
-			if(!onlyKnown && (!loadPackage.onlyKnown || onlyKnown === false)){
-				packages = [moduleId];
-				packages.isModule = true;
-			} else {
-				return rejectedPromise;
-			}
-		}
+	var packages = {};
+	var promises = {};
 
-		packagePaths = packages.map(loadPackage.createPath);
-
-		packagePaths
-			.filter(function(path){
-				return !loadPackage.promises[path];
-			})
-			.forEach(loadPackage.loadScript)
-		;
-		return loadPackage.promises[packagePaths[packagePaths.length - 1]];
+	var packageConfig = {
+		basePath: '',
+		modulePath: '',
+		onlyKnown: false,
 	};
 
-	loadPackage.basePath = '';
-	loadPackage.modulePath = '';
-	loadPackage.onlyKnown = false;
-
-	loadPackage.packages = {};
-
-	loadPackage.promises = {};
-
-	loadPackage.addPackage = function(moduleId, dependenciesSources){
-		if(!Array.isArray(dependenciesSources)){
-			dependenciesSources = [dependenciesSources];
-		}
-		loadPackage.packages[moduleId] = dependenciesSources;
-	};
-
-	loadPackage.createPath = function(moduleId, index, packageIds){
+	var createPath = function(moduleId, index, packageIds){
 		var key = 'basePath';
 		if(!regPath.test(moduleId)){
 			if(packageIds.isModule){
 				key = 'modulePath';
-				moduleId = 'rb_' + moduleId;
+				moduleId = moduleId;
 			}
-			moduleId = loadPackage[key] + moduleId;
+			moduleId = packageConfig[key] + moduleId;
 		}
 		if(!rgJS.test(moduleId)){
 			moduleId += '.js';
@@ -61,11 +35,85 @@
 		return moduleId;
 	};
 
-	loadPackage.loadScript = function(src){
-		loadPackage.promises[src] = new Promise(function(resolve){
+	rb.packageConfig = packageConfig;
+
+	/**
+	 * Loads a given package and returns a Promise. If it's a registered package the sources will be prefixed using `rb.packageConfig.basePath` option otherwise the packageName will be used as source and prefixed with the `rb.packageConfig.modulePath` option.
+	 * @memberof rb
+	 *
+	 * @see rb.registerPackage
+	 *
+	 * @param {String} packageName
+	 * @returns {Promise}
+	 */
+	rb.loadPackage = function(packageName, onlyKnown){
+		var packagePaths;
+		var packages = packages[packageName];
+		if(!packages){
+			if(!onlyKnown && (!packageConfig.onlyKnown || onlyKnown === false)){
+				packages = [packageName];
+				packages.isModule = true;
+			} else {
+				return rejectedPromise;
+			}
+		}
+
+		packagePaths = packages.map(createPath);
+
+		packagePaths
+			.filter(function(path){
+				return !promises[path];
+			})
+			.forEach(rb.loadScript)
+		;
+		return promises[packagePaths[packagePaths.length - 1]];
+	};
+
+	/**
+	 * Registers a package name with one or multiple sources. If a package is loaded all sources are loaded async but executed in order. The sources will be prefixed with `rb.packageConfig..basePath` and suffixed with `.js` (if last is missing).
+	 * Different packages can have overlapping sources/dependencies. If an array of packageName is passed these are treated as aliases.
+	 *
+	 * @memberof rb
+	 *
+	 * @param {String|String[]} packageName
+	 * @param {String|String[]} srces
+	 *
+	 * @example
+	 * //aliasing
+	 * rb.registerPackage(['accordion', 'tabs', 'panelgroup'], ['js/panelgroup.js']);
+	 *
+	 * rb.registerPackage('form-validation', ['js/form-validation.js']);
+	 * rb.registerPackage('checkout-form', ['js/form-validation.js', 'js/checkout-form.js']);
+	 */
+	rb.registerPackage = function(packageName, srces){
+		var addPackage = function(packageName){
+			packages[packageName] = srces;
+		};
+		if(!Array.isArray(srces)){
+			srces = [srces];
+		}
+		if(Array.isArray(packageName)){
+			packageName.forEach(addPackage);
+		} else {
+			addPackage(packageName)
+		}
+	};
+
+	/**
+	 * Loads a script and returns a promise.
+	 * @memberof rb
+	 *
+	 * @param src
+	 * @returns {Promise}
+	 */
+	rb.loadScript = function(src){
+		promises[src] = new Promise(function(resolve){
 			var script = document.createElement('script');
 			script.onload = resolve;
-			script.onerror = resolve;
+			script.onerror = function(){
+				rb.log('package error. Configure rb.packageConfig? src: ' + src);
+				resolve();
+			};
 			script.src = src;
 			script.async = false;
 			(rb.rAFQueue || requestAnimationFrame)(function(){
@@ -73,12 +121,6 @@
 				script = null;
 			});
 		});
-		return loadPackage.promises[src];
+		return promises[src];
 	};
-
-	if(!window.rb){
-		window.rb = {};
-	}
-	window.rb.loadPackage = loadPackage;
-	return loadPackage;
 })(window, document);

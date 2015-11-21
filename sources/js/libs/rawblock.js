@@ -1260,31 +1260,6 @@ if(!window.rb){
 	var expando = rb.Symbol('_rbCreated');
 	var docElem = rb.root;
 
-	//var registerElement = function(name, LifeClass){
-	//	var proto = Object.create(HTMLElement.prototype);
-	//	var protoClass = LifeClass.prototype;
-	//
-	//	proto.createdCallback = function(){
-	//		life.create(this, LifeClass, true);
-	//	};
-	//
-	//	['attached', 'detached'].forEach(function(action){
-	//		var cb;
-	//		if(protoClass[action]){
-	//			cb = action + 'Callback';
-	//			proto[cb] = function(){
-	//				if(this[life.componentExpando]){
-	//					return this[life.componentExpando][action]();
-	//				}
-	//			};
-	//		}
-	//	});
-	//
-	//	document.registerElement('rb-' + name, {
-	//		prototype: proto
-	//	});
-	//};
-
 	var extendStatics = function(Class, proto, SuperClasss, prop){
 
 		Object.defineProperty(Class, prop, {
@@ -1550,12 +1525,6 @@ if(!window.rb){
 				life.searchModules();
 			}
 		}
-
-		//setTimeout(function(){
-		//	if(life.customElements && document.registerElement){
-		//		registerElement(name, Class);
-		//	}
-		//});
 	};
 
 	life.create = function(element, LifeClass, _fromWebComponent) {
@@ -2208,10 +2177,27 @@ if(!window.rb){
 				}
 			},
 			/**
-			 * Convenient method to render a template. Expects a template function with the given name added to the templates hash property of the component. The data will be extended with a name of the component.
-			 * @param {String} name
+			 * Convenient method to render a template. Expects a template function with the given name added to the templates hash property of the component. The data will be extended with the name of the component.
+			 * @param {String} [name]
 			 * @param {Object} data
 			 * @returns {String}
+			 *
+			 * @example
+			 * //sources/_templates/my-component/main.ejs:
+			 *
+			 * //<div class="rb-<%= component %>">
+			 * //    <h1 class="<%= component %>-header">
+			 * //        <%- title ->
+			 * //    </h1>
+			 * //</div>
+			 *
+			 * //require('sources/js/_templates/my-component.js');
+			 *
+			 * rb.life.register('my-component', class MyComponent extends rb.Component {
+			 *      renderMain(){
+			 *          this.element.innerHTML = this.render('main', {title: 'foo'});
+			 *      }
+			 * });
 			 */
 			render: function(name, data){
 				if(typeof name == 'object'){
@@ -2221,6 +2207,11 @@ if(!window.rb){
 				if(!data.name){
 					data.name = this.name;
 				}
+
+				if(!data.component){
+					data.component = this.component;
+				}
+
 				return this.templates[name] ?
 					this.templates[name](data) :
 					(!name && typeof this.templates == 'function') ?
