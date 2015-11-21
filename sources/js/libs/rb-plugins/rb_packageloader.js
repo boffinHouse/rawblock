@@ -11,7 +11,7 @@
 		setTimeout(reject);
 	}).catch(function(){});
 
-	var packages = {};
+	var _packages = {};
 	var promises = {};
 
 	var packageConfig = {
@@ -48,7 +48,7 @@
 	 */
 	rb.loadPackage = function(packageName, onlyKnown){
 		var packagePaths;
-		var packages = packages[packageName];
+		var packages = _packages[packageName];
 		if(!packages){
 			if(!onlyKnown && (!packageConfig.onlyKnown || onlyKnown === false)){
 				packages = [packageName];
@@ -87,7 +87,7 @@
 	 */
 	rb.registerPackage = function(packageName, srces){
 		var addPackage = function(packageName){
-			packages[packageName] = srces;
+			_packages[packageName] = srces;
 		};
 		if(!Array.isArray(srces)){
 			srces = [srces];
