@@ -5,7 +5,7 @@
 	}
 	var rb = window.rb;
 	var regPath = /^[\.\/]|:\//;
-	var rgJS = /\.js/;
+	var regJS = /\.js/;
 
 	var rejectedPromise = new Promise(function(resolve, reject){
 		setTimeout(reject);
@@ -29,10 +29,24 @@
 			}
 			moduleId = packageConfig[key] + moduleId;
 		}
-		if(!rgJS.test(moduleId)){
+		if(!regJS.test(moduleId)){
 			moduleId += '.js';
 		}
 		return moduleId;
+	};
+
+	var addHook = function(){
+		if(rb.life && rb.life.unregisteredFoundHook){
+			rb.life.unregisteredFoundHook['*'] = function(moduleId, element, moduleAttribute, reject){
+				rb.loadPackage(moduleAttribute).then(function(){
+					if(rb.components[ moduleId ]){
+						reject();
+					}
+				});
+			};
+		} else {
+			setTimeout(addHook, 4);
+		}
 	};
 
 	rb.packageConfig = packageConfig;
@@ -123,4 +137,7 @@
 		});
 		return promises[src];
 	};
+
+	addHook();
+
 })(window, document);

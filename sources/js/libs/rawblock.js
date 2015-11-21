@@ -1259,6 +1259,8 @@ if(!window.rb){
 	var componentExpando = rb.Symbol('_rbComponent');
 	var expando = rb.Symbol('_rbCreated');
 	var docElem = rb.root;
+	var hooksCalled = {};
+	var unregisteredFoundHook = {};
 
 	var extendStatics = function(Class, proto, SuperClasss, prop){
 
@@ -1410,7 +1412,7 @@ if(!window.rb){
 		};
 	};
 
-	window.rb.life = life;
+	rb.life = life;
 
 	life.autoStart = true;
 
@@ -1527,6 +1529,8 @@ if(!window.rb){
 		}
 	};
 
+	life.unregisteredFoundHook = unregisteredFoundHook;
+
 	life.create = function(element, LifeClass, _fromWebComponent) {
 		var instance;
 
@@ -1569,7 +1573,7 @@ if(!window.rb){
 
 		var findElements = rb.throttle(function() {
 
-			var module, modulePath, moduleId, i;
+			var module, modulePath, moduleId, i, hook;
 
 			var len = elements.length;
 
@@ -1592,15 +1596,16 @@ if(!window.rb){
 				else if ( life._failed[ moduleId ] ) {
 					removeElements.push( module );
 				}
-				else if ( modulePath && rb.loadPackage ) {
-					/* jshint loopfunc: true */
-					(function (module, modulePath, moduleId) {
-						rb.loadPackage(modulePath).then(function () {
-							if (!rb.components[ moduleId ]) {
+				else if( (hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*'])) ) {
+					if(!hooksCalled[modulePath]){
+						hooksCalled[modulePath] = true;
+						/* jshint loopfunc: true */
+						hook(moduleId, module, modulePath, (function (modulePath, moduleId) {
+							return function() {
 								life._failed[ moduleId ] = true;
-							}
-						});
-					})(module, modulePath, moduleId);
+							};
+						})(modulePath, moduleId))
+					}
 				}
 				else {
 					life._failed[ moduleId ] = true;

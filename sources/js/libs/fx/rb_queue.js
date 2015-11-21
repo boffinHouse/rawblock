@@ -53,6 +53,40 @@
 		return queues[queue];
 	};
 
+	$.fn.promise = function(queue){
+		var _run, queues, queueToEnd;
+		var deferred = {
+			resolve: function(){
+				if(!_run){
+					_run = true;
+					setTimeout(deferred.resolve);
+				}
+			}
+		};
+		var promise = new Promise(function(resolve){
+			deferred.resolve = resolve;
+		});
+		var element = this[0];
+		
+		if(element){
+			queueToEnd = function(){
+				if(queues.length){
+					$.queue(element, queue, queueToEnd);
+					$.dequeue(element, queue);
+				} else {
+					deferred.resolve();
+				}
+			};
+			queues = $.queue(element, queue, queueToEnd);
+			if(queues.length == 1){
+				$.dequeue(element, queue);
+			}
+		} else {
+			deferred.resolve();
+		}
+		return promise;
+	};
+
 	['queue', 'dequeue'].forEach(function(methodName){
 		$.fn[methodName] = function(queue, callback){
 			this.elements.forEach(function(element){
@@ -100,7 +134,7 @@
 		this.elements.forEach(function(){
 			var queues = $.queue(element, queue);
 			if(queues.length){
-
+				queues.splice(0, queues.length)
 			}
 		});
 		return this;
