@@ -36,14 +36,14 @@
 	};
 
 	var addHook = function(){
-		if(rb.life && rb.life.unregisteredFoundHook){
-			rb.life.unregisteredFoundHook['*'] = function(moduleId, moduleAttribute, reject){
+		if(rb.life && rb.life.addImportHook){
+			rb.life.addImportHook('*', function(moduleId, moduleAttribute, reject){
 				rb.loadPackage(moduleAttribute).then(function(){
 					if(rb.components[ moduleId ]){
 						reject();
 					}
 				});
-			};
+			});
 		} else {
 			setTimeout(addHook, 4);
 		}

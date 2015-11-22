@@ -19,7 +19,7 @@ if(!window.rb){
 	 */
 
 	/**
-	 * Reference to the internally used DOM or jQuery instance
+	 * Reference to the internally used dom.js or jQuery instance
 	 * @memberof rb
 	 */
 	rb.$ = rb.$ || window.jQuery || window.dom;
@@ -36,21 +36,21 @@ if(!window.rb){
 	rb.root = document.documentElement;
 
 	/**
-	 * Reference to the jQueryfied root element
+	 * Reference to the jQueryfied/rb.$ root element
 	 * @memberof rb
 	 * @type {jQueryfiedDOMList}
 	 */
 	rb.$root = $(rb.root);
 
 	/**
-	 * Reference to the jQueryfied window object
+	 * Reference to the jQueryfied/rb.$ window object
 	 * @memberof rb
 	 * @type {jQueryfiedDOMList}
 	 */
 	rb.$win = $(window);
 
 	/**
-	 * Reference to the jQueryfied document object
+	 * Reference to the jQueryfied//rb.$ document object
 	 * @memberof rb
 	 * @type {jQueryfiedDOMList}
 	 */
@@ -67,7 +67,7 @@ if(!window.rb){
 	/* Begin: rbSlideUp / rbSlideDown */
 
 	/**
-	 * A jQuery plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
+	 * A jQuery/rb.$ plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
 	 * Also does not animate padding, margin, borders (use child elements)
 	 * @function external:"jQuery.fn".rbSlideUp
 	 * @param options {object} All jQuery animate options
@@ -103,7 +103,7 @@ if(!window.rb){
 	};
 
 	/**
-	 * A jQuery plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
+	 * A jQuery/rb.$ plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
 	 * Also does not animate padding, margin, borders (use child elements)
 	 * @function external:"jQuery.fn".rbSlideDown
 	 * @param options {object} All jQuery animate options
@@ -175,7 +175,7 @@ if(!window.rb){
 	};
 
 	/**
-	 * A jQuery plugin to scroll an element into the viewort
+	 * A jQuery/rb.$ plugin to scroll an element into the viewort
 	 * @function external:"jQuery.fn".scrollIntoView
 	 * @param options {object} All jQuery animate options and additional options
 	 * @param options.focus {Element} Element that should be focused after animation is done.
@@ -1530,22 +1530,50 @@ if(!window.rb){
 	};
 
 	/**
-	 * Hash object to define callback hooks for not yet registered components. A hook is only called once per component class. The key is either the component name or '*' as a wildcard. (rb-plugins/rb_packageloader automatically adds a wildcard hook.)
+	 * Allows to add import callbacks for not yet registered components. The importCallback is only called once per component class. The names parameter is either the component name or '*' as a wildcard. In case names is an array of strings these are treated as aliases for the same module. (rb-plugins/rb_packageloader automatically adds a wildcard hook.) If only importCallback is passed it will be treated as a wildcard ('*').
+	 *
+	 * There can be only one importHook for a module name.
+	 *
 	 * @memberof rb
-	 * @type {{}}
 	 *
-	 * @example
+	 * @param {String|String[]} [names] Component name or Component names/aliases for the module.
+	 * @param {Function} importCallback Callback that should import/require the module.
 	 *
-	 * Object.assign(rb.life.unregisteredFoundHook, {
-	 *      'accordion': function(moduleName, moduleAttributeValue, reject, element){
-	 *          require('./modules/accordion-v2');
-	 *      },
-	 *      '*': function(moduleName, moduleAttributeValue, reject, element){
-	 *          require('./modules/'+ moduleAttributeValue);
-	 *      }
+	 * //create a short cut.
+	 * var addImportHook = rb.life.addImportHook;
+	 *
+	 * addImportHook('slider', function(moduleName, moduleAttributeValue, reject, element){
+	 *      System.import('./modules/slider-v2').catch(reject);
+	 * });
+	 *
+	 * //Add component class with different aliases
+	 * addImportHook(['accordion', 'tabs', 'panelgroup'], function(moduleName, moduleAttributeValue, reject, element){
+	 *      System.import('./modules/panelgroups/index').catch(reject);
+	 * });
+	 *
+	 * //dynamic catch all hook
+	 * addImportHook('*', function(moduleName, moduleAttributeValue, reject, element){
+	 *      require('./modules/' + moduleAttributeValue);
 	 * });
 	 */
-	life.unregisteredFoundHook = unregisteredFoundHook;
+	life.addImportHook = function(names, importCallback){
+		var add = function(name){
+			if(unregisteredFoundHook[name]){
+				rb.log('overrides ' + name + ' import hook', names, importCallback);
+			}
+			unregisteredFoundHook[name] = importCallback;
+		};
+
+		if(typeof names == 'function'){
+			importCallback = names;
+			names = '*';
+		}
+		if(Array.isArray(names)){
+			names.forEach(add);
+		} else {
+			add(names);
+		}
+	};
 
 	life.create = function(element, LifeClass, _fromWebComponent) {
 		var instance;
