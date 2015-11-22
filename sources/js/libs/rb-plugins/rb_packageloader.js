@@ -37,7 +37,7 @@
 
 	var addHook = function(){
 		if(rb.life && rb.life.unregisteredFoundHook){
-			rb.life.unregisteredFoundHook['*'] = function(moduleId, element, moduleAttribute, reject){
+			rb.life.unregisteredFoundHook['*'] = function(moduleId, moduleAttribute, reject){
 				rb.loadPackage(moduleAttribute).then(function(){
 					if(rb.components[ moduleId ]){
 						reject();

@@ -1529,6 +1529,22 @@ if(!window.rb){
 		}
 	};
 
+	/**
+	 * Hash object to define callback hooks for not yet registered components. A hook is only called once per component class. The key is either the component name or '*' as a wildcard. (rb-plugins/rb_packageloader automatically adds a wildcard hook.)
+	 * @memberof rb
+	 * @type {{}}
+	 *
+	 * @example
+	 *
+	 * Object.assign(rb.life.unregisteredFoundHook, {
+	 *      'accordion': function(moduleName, moduleAttributeValue, reject, element){
+	 *          require('./modules/accordion-v2');
+	 *      },
+	 *      '*': function(moduleName, moduleAttributeValue, reject, element){
+	 *          require('./modules/'+ moduleAttributeValue);
+	 *      }
+	 * });
+	 */
 	life.unregisteredFoundHook = unregisteredFoundHook;
 
 	life.create = function(element, LifeClass, _fromWebComponent) {
@@ -1600,11 +1616,11 @@ if(!window.rb){
 					if(!hooksCalled[modulePath]){
 						hooksCalled[modulePath] = true;
 						/* jshint loopfunc: true */
-						hook(moduleId, module, modulePath, (function (modulePath, moduleId) {
+						hook(moduleId, modulePath, (function (modulePath, moduleId) {
 							return function() {
 								life._failed[ moduleId ] = true;
 							};
-						})(modulePath, moduleId))
+						})(modulePath, moduleId), module)
 					}
 				}
 				else {
@@ -2315,8 +2331,6 @@ if(!window.rb){
 (function (window, document, undefined) {
 	'use strict';
 	var rb = window.rb;
-	var $ = rb.$;
-
 
 	rb.Component.extend('button',
 		/** @lends rb.components.button.prototype */
