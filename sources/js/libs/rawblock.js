@@ -1530,7 +1530,7 @@ if(!window.rb){
 	};
 
 	/**
-	 * Allows to add import callbacks for not yet registered components. The importCallback is only called once per component class. The names parameter is either the component name or '*' as a wildcard. In case names is an array of strings these are treated as aliases for the same module. (rb-plugins/rb_packageloader automatically adds a wildcard hook.) If only importCallback is passed it will be treated as a wildcard ('*').
+	 * Allows to add import callbacks for not yet registered components. The importCallback is only called once per component class name. The names parameter is either the component name or '*' as a wildcard. In case names is an array of strings these are treated as aliases for the same module. (rb-plugins/rb_packageloader automatically adds a wildcard hook.) If only importCallback is passed it will be also treated as a wildcard.
 	 *
 	 * There can be only one importHook for a module name.
 	 *
@@ -1539,6 +1539,7 @@ if(!window.rb){
 	 * @param {String|String[]} [names] Component name or Component names/aliases for the module.
 	 * @param {Function} importCallback Callback that should import/require the module.
 	 *
+	 * @example
 	 * //create a short cut.
 	 * var addImportHook = rb.life.addImportHook;
 	 *
@@ -1553,7 +1554,7 @@ if(!window.rb){
 	 *
 	 * //dynamic catch all hook
 	 * addImportHook('*', function(moduleName, moduleAttributeValue, reject, element){
-	 *      require('./modules/' + moduleAttributeValue);
+	 *      require(['./modules/' + moduleAttributeValue]);
 	 * });
 	 */
 	life.addImportHook = function(names, importCallback){

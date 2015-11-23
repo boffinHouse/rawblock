@@ -1,7 +1,6 @@
 var webpack = require("webpack");
 
 var devPlugins = [
-	//new webpack.optimize.CommonsChunkPlugin("_main-behavior", "_main-behavior.js"),
 	new webpack.DefinePlugin({
 		"process.env": {
 			// This has effect on the react lib size
@@ -22,9 +21,7 @@ var devPlugins = [
 	}),
 	new webpack.optimize.CommonsChunkPlugin({
 		children: true,
-		async: true,
-		minSize: 500,
-		minChunks: 4,
+		minChunks: 6,
 	})
 ];
 var productionPlugins = devPlugins.concat([new webpack.optimize.UglifyJsPlugin()]);
@@ -34,7 +31,7 @@ module.exports = {
 		cache: true,
 		entry: {
 			'_main-behavior': "./sources/js/_main-behavior.js",
-			'_crucial-behavior': "./sources/js/_crucial-behavior.js",
+			//'_crucial-behavior': "./sources/js/_crucial-behavior.js",
 			'_rb_polyfills': ["./sources/js/_rb_polyfills"],
 		},
 		output: {
@@ -47,7 +44,14 @@ module.exports = {
 					test: /\.css$/,
 					loader: "style-loader!css-loader"
 				},
-
+				{
+					test: /\.scss$/,
+					loaders: ["style", "css", "sass"]
+				},
+				{
+					test: /\.ejs/,
+					loader: "rb_template-loader",
+				}
 			]
 		},
 		resolve: {

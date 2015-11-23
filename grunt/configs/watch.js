@@ -43,7 +43,7 @@ module.exports = {
 	},
 	js: {
 		files: ['<%= paths.src %>/js/**/*.js'],
-		tasks: ['browserify:dev'] //
+		tasks: ['webpack:dev'] //
 	},
 	jsmodules: {
 		files: ['<%= paths.src %>/js/*/**/*.js'],

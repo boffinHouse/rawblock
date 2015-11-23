@@ -3,10 +3,9 @@ window.BezierEasing = require('bezier-easing');
 //load dom or jQuery
 require('./libs/dom');
 
-//require('./libs/rb-cssconfig');
+require('./libs/rb-cssconfig');
 
 require('./libs/rawblock');
-require('./libs/rb-plugins/rb_packageloader');
 
 /* configuration */
 rb.isDebug = true;
@@ -19,11 +18,9 @@ if(!('ASSETBASEPATH' in window)){
 //if webpack is used:
 __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
-
-/* require crucial or small/often used behaviors directly */
 //require('./modules/*');
 
-/* init after all modules are loaded or package loader is configured */
+/* init after all modules are loaded or imports are configured. */
 rb.life.init();
 
 
