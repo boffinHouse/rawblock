@@ -65,8 +65,10 @@
 			if(options.always){
 				options.always.call(element);
 			}
-			if(Dom.dequeue && options.queue !== false){
-				Dom.dequeue(element, options.queue);
+			if(Dom.dequeue){
+				if(options.queue !== false){
+					Dom.dequeue(element, options.queue);
+				}
 			}
 		};
 		var step = function() {
@@ -450,7 +452,9 @@
 						Dom.queue(elem, queueName, function(){
 							Dom.dequeue(elem, queueName);
 						});
-						Dom.dequeue(elem, queueName);
+						if(!queueName || queueName == 'fx'){
+							Dom.dequeue(elem, queueName);
+						}
 					}
 				} else {
 					tween(elem, endProps, options);

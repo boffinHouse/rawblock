@@ -5,11 +5,11 @@
  */
 module.exports = {
 	dist : {
-		src: ['sources/js/**/*.js'],
+		src: ['sources/js/**/*.js', 'sources/js/libs/readme.md'],
 		options: {
-			destination: 'doc',
-			template : 'node_modules/ink-docstrap/template',
-			configure : 'node_modules/ink-docstrap/template/jsdoc.conf.json',
+			destination: 'jsdoc',
+			template : 'node_modules/jsdoc-oblivion/template',
+			configure : 'node_modules/jsdoc-oblivion/template/jsdoc.conf.json',
 		}
 	}
 };

@@ -43,7 +43,7 @@
 		options = Object.assign({
 			type: 'get',
 			username: null,
-			password: null
+			password: null,
 		}, options);
 
 		var promise = new Promise(function(resolve, reject){
@@ -52,9 +52,9 @@
 			oReq.addEventListener('load', function(){
 				var value;
 				var status = oReq.status;
-				var isSuccess = status >= 200 && status < 300 || status === 304;
+				var isSuccess = status >= 200 && status < 300 || status == 304;
 
-				value = {data: getData(oReq), xhr: oReq};
+				value = {data: getData(oReq)};
 
 				if(isSuccess){
 					resolve(value);
@@ -65,7 +65,7 @@
 			});
 
 			oReq.addEventListener('error', function(){
-				var value = {data: getData(oReq), xhr: oReq};
+				var value = {data: getData(oReq)};
 				reject(value);
 				oReq = null;
 			});

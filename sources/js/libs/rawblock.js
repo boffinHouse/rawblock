@@ -13,13 +13,13 @@ if(!window.rb){
 	var rb = window.rb;
 
 	/**
-	 * The jQuery plugin namespace.
+	 * The jQuery or dom.js (rb.$) plugin namespace.
 	 * @external "jQuery.fn"
 	 * @see {@link http://learn.jquery.com/plugins/|jQuery Plugins}
 	 */
 
 	/**
-	 * Reference to the internally used DOM or jQuery instance
+	 * Reference to the internally used dom.js or jQuery instance
 	 * @memberof rb
 	 */
 	rb.$ = rb.$ || window.jQuery || window.dom;
@@ -36,32 +36,38 @@ if(!window.rb){
 	rb.root = document.documentElement;
 
 	/**
-	 * Reference to the jQueryfied root element
+	 * Reference to the jQueryfied/rb.$ root element
 	 * @memberof rb
 	 * @type {jQueryfiedDOMList}
 	 */
 	rb.$root = $(rb.root);
 
 	/**
-	 * Reference to the jQueryfied window object
+	 * Reference to the jQueryfied/rb.$ window object
 	 * @memberof rb
 	 * @type {jQueryfiedDOMList}
 	 */
 	rb.$win = $(window);
 
 	/**
-	 * Reference to the jQueryfied document object
+	 * Reference to the jQueryfied//rb.$ document object
 	 * @memberof rb
 	 * @type {jQueryfiedDOMList}
 	 */
 	rb.$doc = $(document);
+
+	/**
+	 * Namespace for global template functions. Compiled JavaScript templates should be added to this hash object. (see jst grunt task).
+	 * @memberof rb
+	 */
+	rb.templates = {};
 
 	/* End: global vars end */
 
 	/* Begin: rbSlideUp / rbSlideDown */
 
 	/**
-	 * A jQuery plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
+	 * A jQuery/rb.$ plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
 	 * Also does not animate padding, margin, borders (use child elements)
 	 * @function external:"jQuery.fn".rbSlideUp
 	 * @param options {object} All jQuery animate options
@@ -97,7 +103,7 @@ if(!window.rb){
 	};
 
 	/**
-	 * A jQuery plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
+	 * A jQuery/rb.$ plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
 	 * Also does not animate padding, margin, borders (use child elements)
 	 * @function external:"jQuery.fn".rbSlideDown
 	 * @param options {object} All jQuery animate options
@@ -169,7 +175,7 @@ if(!window.rb){
 	};
 
 	/**
-	 * A jQuery plugin to scroll an element into the viewort
+	 * A jQuery/rb.$ plugin to scroll an element into the viewort
 	 * @function external:"jQuery.fn".scrollIntoView
 	 * @param options {object} All jQuery animate options and additional options
 	 * @param options.focus {Element} Element that should be focused after animation is done.
@@ -493,7 +499,7 @@ if(!window.rb){
 	})();
 
 	/**
-	 * Generates and returns a new, rAFed version of the passed function, so that the passed function is always called using requestAnimationFrame
+	 * Generates and returns a new, rAFed version of the passed function, so that the passed function is always called using requestAnimationFrame. Normally all methods/functions, that mutate the DOM/CSSOM, should be wrapped using `rb.rAF` to avoid layout thrashing.
 	 * @memberof rb
 	 * @param fn {Function} The function to be rAFed
 	 * @param options {Object} Options object
@@ -501,6 +507,22 @@ if(!window.rb){
 	 * @param options.queue=false {Object} Whether the fn should be added to an ongoing rAF (i.e.: `false`) or should be queued to the next rAF (i.e.: `true`).
 	 * @param options.throttle=false {boolean} Whether multiple calls in one frame cycle should be throtteled to one.
 	 * @returns {Function}
+	 *
+	 * @example
+	 *  class Foo {
+	 *      constructor(element){
+	 *          this.element = element;
+	 *          this.changeLayout = rb.rAF(this.changeLayout);
+	 *      }
+	 *
+	 *      changeLayout(width){
+	 *          this.element.classList[width > 800 ? 'add' : 'remove']('is-large');
+	 *      }
+	 *
+	 *      measureLayout(){
+	 *          this.changeLayout(this.element.offsetWidth);
+	 *      }
+	 *  }
 	 */
 	rb.rAF = function(fn, options){
 		var running, args, that, inProgress;
@@ -548,19 +570,18 @@ if(!window.rb){
 	/* Begin: rbComponent */
 
 	/**
-	 * A jQuery plugin that returns a component instance by using rb.life.getComponent. Or invokes a methods or sets/gets a property
+	 * A jQuery plugin that returns a component instance by using rb.getComponent.
 	 * @function external:"jQuery.fn".rbComponent
-	 * @see rb.life.getComponent
+	 * @see rb.getComponent
 	 * @param [name] {String} The name of the property or method.
-	 * @param [args] {*} The value of the property name to set or an array of arguments in case of a method.
 	 *
-	 * @returns {ComponentInstance|jQueryfiedDOMList|*}
+	 * @returns {ComponentInstance|jQueryfiedDOMList}
 	 */
-	$.fn.rbComponent = function(name, args){
+	$.fn.rbComponent = function(name){
 		var ret;
 		this.each(function(){
 			if(ret === undefined){
-				ret = rb.life.getComponent(this, name, args);
+				ret = rb.getComponent(this, name);
 			}
 		});
 
@@ -592,7 +613,7 @@ if(!window.rb){
 	};
 
 	/**
-	 * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object.
+	 * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object. requires npm module: "bezier-easing".
 	 * @memberof rb
 	 * @param {String} easing The easing value. Expects a string with 4 numbers separated by a "," describing a cubic bezier curve.
 	 * @param {String} [name] Human readable name of the easing.
@@ -1148,14 +1169,86 @@ if(!window.rb){
 
 	var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
-	rb.getPropertyDescriptor = function getPropertyDescriptor(o, name) {
-		var proto = o, descriptor;
+	/**
+	 * Returns the descriptor of a property. Moves up the prototype chain to do so.
+	 *
+	 * @memberof rb
+	 * @static
+	 *
+	 * @param {Object} object
+	 * @param {String} name
+	 * @returns {Object|undefined}
+	 */
+	rb.getPropertyDescriptor = function getPropertyDescriptor(object, name) {
+		var proto = object, descriptor;
 		if(name in proto){
 			while (proto && !(descriptor = getOwnPropertyDescriptor(proto, name))){
 				proto = Object.getPrototypeOf(proto);
 			}
 		}
 		return descriptor;
+	};
+
+	/* begin: html escape */
+	// List of HTML entities for escaping.
+	var escapeMap = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#x27;',
+		'`': '&#x60;'
+	};
+
+	// Functions for escaping and unescaping strings to/from HTML interpolation.
+	var createEscaper = function(map) {
+		var escaper = function(match) {
+			return map[match];
+		};
+		// Regexes for identifying a key that needs to be escaped
+		var source = '(?:' + Object.keys(map).join('|') + ')';
+		var testRegexp = new RegExp(source);
+		var replaceRegexp = new RegExp(source, 'g');
+		return function(string) {
+			string = string == null ? '' : '' + string;
+			return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
+		};
+	};
+
+	/**
+	 * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
+	 * their corresponding HTML entities.
+	 *
+	 * @static
+	 * @memberOf rb
+	 * @category String
+	 * @param {string} [string=''] The string to escape.
+	 * @returns {string} Returns the escaped string.
+	 * @example
+	 *
+	 * rb.escape('fred, barney, & pebbles');
+	 * // => 'fred, barney, &amp; pebbles'
+	 */
+	rb.escape = createEscaper(escapeMap);
+
+	if(!window._){
+		window._ = {};
+	}
+	if(!_.escape){
+		_.escape = rb.escape;
+	}
+	/* end: html escape */
+
+
+	/**
+	 * Returns yes, if condition is true-thy no/empty string otherwise. Can be used inside of [`rb.template`]{@link rb.template}
+	 * @param condition
+	 * @param {String} yes
+	 * @param {String} [no=""]
+	 * @returns {string}
+	 */
+	rb.if = function(condition, yes, no){
+		return condition ? yes : (no || '');
 	};
 })(window, document);
 
@@ -1173,31 +1266,8 @@ if(!window.rb){
 	var componentExpando = rb.Symbol('_rbComponent');
 	var expando = rb.Symbol('_rbCreated');
 	var docElem = rb.root;
-
-	var registerElement = function(name, LifeClass){
-		var proto = Object.create(HTMLElement.prototype);
-		var protoClass = LifeClass.prototype;
-
-		proto.createdCallback = function(){
-			life.create(this, LifeClass, true);
-		};
-
-		['attached', 'detached'].forEach(function(action){
-			var cb;
-			if(protoClass[action]){
-				cb = action + 'Callback';
-				proto[cb] = function(){
-					if(this[life.componentExpando]){
-						return this[life.componentExpando][action]();
-					}
-				};
-			}
-		});
-
-		document.registerElement('rb-' + name, {
-			prototype: proto
-		});
-	};
+	var hooksCalled = {};
+	var unregisteredFoundHook = {};
 
 	var extendStatics = function(Class, proto, SuperClasss, prop){
 
@@ -1216,7 +1286,7 @@ if(!window.rb){
 	var initClickCreate = function(){
 		initClickCreate = $.noop;
 		rb.click.add('module', function(elem){
-			life.getComponent(elem);
+			rb.getComponent(elem);
 			rb.rAFQueue(function(){
 				elem.classList.remove('js-click');
 			}, true);
@@ -1349,7 +1419,7 @@ if(!window.rb){
 		};
 	};
 
-	window.rb.life = life;
+	rb.life = life;
 
 	life.autoStart = true;
 
@@ -1357,6 +1427,12 @@ if(!window.rb){
 	life.componentExpando = componentExpando;
 
 	life._failed = {};
+
+	/**
+	 * List of all component classes registered by `rb.life.register`.
+	 * @memberof rb
+	 * @type {{}}
+	 */
 	rb.components = {};
 	life._attached = [];
 	life.customElements = false;
@@ -1381,7 +1457,10 @@ if(!window.rb){
 	};
 
 	/**
-	 * Registers a class with a name. An instance of this class will be constructed with the element as the first argument. If the Class has a attached or detached method these methods also will be invoked, if the element is removed or added to the DOM. In most cases the given class inherits from `rb.Component`.
+	 * Registers a component class with a name and manages its lifecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an attached or detached method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
+	 *
+	 * The markup of a component class should get the class `js-rb-life` and a `data-module` attribute with the name as its value.
+	 *
 	 * @memberof rb
 	 * @param {String} name The name of your component.
 	 * @param Class {Class} The Component class for your component.
@@ -1455,12 +1534,64 @@ if(!window.rb){
 				life.searchModules();
 			}
 		}
+	};
 
-		setTimeout(function(){
-			if(life.customElements && document.registerElement){
-				registerElement(name, Class);
+	/**
+	 * Allows to add import callbacks for not yet registered components. The importCallback is only called once per component class name. The names parameter is either the component name or '*' as a wildcard. In case names is an array of strings these are treated as aliases for the same module. (rb-plugins/rb_packageloader automatically adds a wildcard hook.) If only importCallback is passed it will be also treated as a wildcard.
+	 *
+	 * There can be only one importHook for a module name.
+	 *
+	 * @memberof rb
+	 *
+	 * @param {String|String[]} [names] Component name or Component names/aliases for the module.
+	 * @param {Function} importCallback Callback that should import/require the module.
+	 *
+	 * @example
+	 * //create a short cut.
+	 * var addImportHook = rb.life.addImportHook;
+	 *
+	 * addImportHook('slider', function(moduleName, moduleAttributeValue, reject, element){
+	 *      //non-standard futuristic import
+	 *      System.import('./components/slider-v2').catch(reject);
+	 * });
+	 *
+	 * //Add component class with different aliases
+	 * addImportHook(['accordion', 'tabs', 'panelgroup'], function(){
+	 *      //webpack require
+	 *      require.ensure([], function(require){
+	 *          require('./components/panelgroups/index');
+	 *      });
+	 * });
+	 *
+	 * //Multiple component aliases with multiple modules
+	 * addImportHook(['accordion', 'tabs', 'panelgroup', 'slider'], function(){
+	 *      //AMD or webpack require
+	 *      require(['./components/slider', './components/panelgroup', './components/panel']);
+	 * });
+	 *
+	 * //dynamic catch all hook
+	 * addImportHook(function(moduleName, moduleAttributeValue){
+	 *      //AMD or webpack require
+	 *      require(['./components/' + moduleAttributeValue]);
+	 * });
+	 */
+	life.addImportHook = function(names, importCallback){
+		var add = function(name){
+			if(unregisteredFoundHook[name]){
+				rb.log('overrides ' + name + ' import hook', names, importCallback);
 			}
-		});
+			unregisteredFoundHook[name] = importCallback;
+		};
+
+		if(typeof names == 'function'){
+			importCallback = names;
+			names = '*';
+		}
+		if(Array.isArray(names)){
+			names.forEach(add);
+		} else {
+			add(names);
+		}
 	};
 
 	life.create = function(element, LifeClass, _fromWebComponent) {
@@ -1505,7 +1636,7 @@ if(!window.rb){
 
 		var findElements = rb.throttle(function() {
 
-			var module, modulePath, moduleId, i;
+			var module, modulePath, moduleId, i, hook;
 
 			var len = elements.length;
 
@@ -1528,15 +1659,16 @@ if(!window.rb){
 				else if ( life._failed[ moduleId ] ) {
 					removeElements.push( module );
 				}
-				else if ( modulePath && rb.loadPackage ) {
-					/* jshint loopfunc: true */
-					(function (module, modulePath, moduleId) {
-						rb.loadPackage(modulePath).then(function () {
-							if (!rb.components[ moduleId ]) {
+				else if( (hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*'])) ) {
+					if(!hooksCalled[modulePath]){
+						hooksCalled[modulePath] = true;
+						/* jshint loopfunc: true */
+						hook(moduleId, modulePath, (function (modulePath, moduleId) {
+							return function() {
 								life._failed[ moduleId ] = true;
-							}
-						});
-					})(module, modulePath, moduleId);
+							};
+						})(modulePath, moduleId), module)
+					}
 				}
 				else {
 					life._failed[ moduleId ] = true;
@@ -1683,7 +1815,7 @@ if(!window.rb){
 		var evts = that.constructor.events;
 
 		for(evt in evts){
-			namedStr = evt.replace(regName, that.name);
+			namedStr = that.interpolateName(evt);
 			selector = namedStr.split(' ');
 			evtName = selector.shift();
 
@@ -1722,7 +1854,7 @@ if(!window.rb){
 	 * @param {String} [moduleId] - optional name of the component
 	 * @returns {Object} A component instance
 	 */
-	life.getComponent = function(element, moduleId){
+	rb.getComponent = function(element, moduleId){
 		var component = element && element[componentExpando];
 
 		if(!component){
@@ -1744,18 +1876,20 @@ if(!window.rb){
 		return component;
 	};
 
+	life.getComponent = rb.getComponent;
+
 	rb.Component = rb.Class.extend(
 		/** @lends rb.Component.prototype */
 		{
-
 			/**
 			 * constructs the class
-			 * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options, bind and trigger events as also handles the components life cycle (init, attached, detached).
+			 * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options, listen and trigger events, react to responsive state changes and establish a11y focus management.
 			 * @param element
 			 * @constructs
 			 *
 			 * @example
-			 * rb.Component.extend('myComponent', {
+			 * //<div class="js-rb-life" data-module="my-module"></div>
+			 * rb.Component.extend('my-component', {
 			 *      defaults: {
 			 *          className: 'toggle-class',
 			 *      },
@@ -1771,9 +1905,11 @@ if(!window.rb){
 			 *          this.$element.toggleClass(this.options.className);
 			 *      }
 			 * });
+			 * //If ES5 static extend method is used, rb.life.register is called implicitly.
 			 *
 			 * @example
-			 * class MyComponent extends rb.Component {
+			 * //<div class="js-rb-life" data-module="my-module"></div>
+			 * rb.life.register('my-component', class MyComponent extends rb.Component {
 			 *      static get defaults(){
 			 *          return {
 			 *              className: 'toggle-class',
@@ -1794,14 +1930,21 @@ if(!window.rb){
 			 *      changeClass(){
 			 *          this.$element.toggleClass(this.options.className);
 			 *      }
-			 * }
-			 *
-			 * rb.life.register('myComponent', MyComponent);
+			 * });
 			 */
 			init: function(element){
-
+				var origName = this.name;
+				/**
+				 * Reference to the main element.
+				 * @type {Element}
+				 */
 				this.element = element;
 				this.$element = $(element);
+
+				/**
+				 * Current options object constructed by defaults and overriding markup/CSS.
+				 * @type {{}}
+				 */
 				this.options = {};
 				this._afterStyle = rb.getStyles(element, '::before');
 
@@ -1816,6 +1959,11 @@ if(!window.rb){
 				this._evtName = this.name + 'changed';
 				this._beforeEvtName = this.name + 'change';
 
+				/**
+				 * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.
+				 * @type {Function|{}}
+				 */
+				this.templates = rb.templates[this.name] || rb.templates[origName] || {};
 
 				this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
 
@@ -1825,21 +1973,97 @@ if(!window.rb){
 			/**
 			 * defaults Object, represent the default options of the component.
 			 * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
+			 *
+			 * @see rb.Component.prototype.setOption
+			 *
 			 * @prop {Object} defaults
 			 * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
+			 *
+			 * @example
+			 * <!-- overriding defaults with markup -->
+			 * <div data-module="foo" data-options='{"fooBar": false, "baz": true}'></div>
+			 * <div data-module="foo" data-foo-bar="false" data-baz="true"></div>
+			 *
+			 * @example
+			 *
+			 * //creating a new component with different defaults:
+			 * rb.life.register('special-accordion', class SpecialAccordion extends rb.components.accordion {
+			 *      static get defaults(){
+			 *          return {
+			 *              multiple: true,
+			 *          };
+			 *      }
+			 * });
+			 *
+			 * //overriding defaults (before initialization for all instances) with JS
+			 * rb.components.accordion.defaults.multiple = true;
+			 *
+			 * //overriding defaults (after initialization for one instance) with JS
+			 * var accordion = rb.getComponent(accordionElement);
+			 * accordion.setOption('multiple', true);
+			 *
+			 * @example
+			 * //overriding defaults using Sass
+			 * .rb-accordion {
+			 *      (at)include rb-js-export((
+			 *          multiple: false
+			 *      ));
+			 * }
+			 *
+			 * //also works responsive:
+			 * (at)media (max-width: 800px) {
+			 *   .rb-accordion {
+			 *      (at)include rb-js-export((
+			 *          multiple: false
+			 *      ));
+			 *   }
+			 * }
+			 *
 			 */
 			defaults: {
 				focusDelay: 0,
 			},
 
 			/**
-			 * Shortcut to rb.getComponent.
+			 * Events object can be used to specify events, that will be bound to the component element.
+			 *
+			 * The key specifies the event type and optional a selector (separated by a whitespace) for event delegation. The key will be interpolated with [`this.interpolateName`]{@link rb.Component#interpolateName}.
+			 *
+			 * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
+			 *
+			 * As events the following special events can also be used: 'elemresize', 'elemresizewidth' and 'elemresizeheight'.
+			 *
+			 * @example
+			 *
+			 * class MyComponent extends rb.Component {
+			 *      constructor(element){
+			 *          super(element);
+			 *          this.child = this.query('.{name}__close-button');
+			 *
+			 *          this.setLayout = rb.rAF(this.setLayout);
+			 *      }
+			 *
+			 *      static get events(){
+			 *          return {
+			 *              'mouseenter': '_onInteraction',
+			 *              'click .{name}__close-button': 'close',
+			 *              'elemresizewidth': function(){
+			 *                  this.readLayout();
+			 *                  this.setLayout();
+			 *              }
+			 *          }
+			 *      }
+			 * }
+			 */
+			events: {},
+			/**
+			 * Shortcut to [`rb.getComponent`]{@link rb.getComponent}
 			 * @function
 			 */
-			component: life.getComponent,
+			component: rb.getComponent,
 
 			/**
-			 * returns id of an element, if no id exist generates one for the element
+			 * returns the id of an element, if no id exist generates one for the element
 			 * @param [element] {Element} element, if no element is given. the component element is used.
 			 * @returns {String} id
 			 */
@@ -1858,9 +2082,9 @@ if(!window.rb){
 			},
 
 			/**
-			 * Dispatches an event on the component element and returns the Event object.
+			 * Dispatches an event on the component element and returns the Event object. The event object has a `isDefaultPrevented` method.
 			 * @param [type='changed'] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component. If an opbject is passed this will be used as the `event.detail` property.
-			 * @param [detail] {Object} The value for the event.detail property to transport event related informations.
+			 * @param [detail] {Object} The value for the event.detail property to transport event related information.
 			 * @returns {Event}
 			 */
 			_trigger: function(type, detail){
@@ -1880,22 +2104,22 @@ if(!window.rb){
 			},
 
 			/**
-			 * Uses `rb.elementFromStr` with this.element as the element argument
+			 * Uses [`rb.elementFromStr`]{@link rb.elementFromStr} with this.element as the element argument and interpolates string using `this.interpolateName`.
 			 * @param {String} string
 			 * @returns {Element[]}
 			 */
 			getElementsFromString: function(string){
-				return rb.elementFromStr(string, this.element);
+				return rb.elementFromStr(this.interpolateName(string), this.element);
 			},
 
-			/**
-			 * shortcut to rb.setFocus
+			/*
+			 * shortcut to [`rb.setFocus`]{@link rb.setFocus}
 			 * @borrows rb.setFocus as setFocus
 			 */
 			setFocus: rb.setFocus,
 
 			/**
-			 * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with class `js-autofocus` inside of the component element is focused.
+			 * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with the class `js-autofocus` inside of the component element is focused.
 			 * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
 			 * @param [delay] {Number} The delay that should be used to focus an element.
 			 */
@@ -1942,7 +2166,41 @@ if(!window.rb){
 			},
 
 			/**
-			 * Parses the Options from HTML (data-* attributes) and CSS using rb.parsePseudo. This function is automatically invoked by the init.
+			 * Interpolates {name} to the name of the component. Helps to generate BEM-style Class-Structure.
+			 * @param {String} str
+			 * @returns {string}
+			 *
+			 * @example
+			 * //assume the name of the component is dialog
+			 * this.interpolateName('.{name}__button'); //return '.dialog__button'
+			 */
+			interpolateName: function(str){
+				return str.replace(regName, this.name);
+			},
+
+			/**
+			 * Returns first matched element. Interpolates selector with `interpolateName`.
+			 * @param {String} selector
+			 * @param {Element} [context=this.element]
+			 * @returns {Element}
+			 */
+
+			query: function(selector, context){
+				return (context || this.element).querySelector(this.interpolateName(selector));
+			},
+
+			/**
+			 * Returns Array of matched elements. Interpolates selector with `interpolateName`.
+			 * @param {String} selector
+			 * @param {Element} [context=this.element]
+			 * @returns {Element[]}
+			 */
+			queryAll: function(selector, context){
+				return Array.from((context || this.element).querySelectorAll(this.interpolateName(selector)));
+			},
+
+			/*
+			 * Parses the Options from HTML (data-* attributes) and CSS using rb.parsePseudo. This function is automatically invoked by the init/constructor.
 			 * @param opts
 			 */
 			parseOptions: function(opts){
@@ -1950,7 +2208,7 @@ if(!window.rb){
 				this.setOptions(options);
 			},
 
-			/**
+			/*
 			 * Sets mutltiple options at once.
 			 * @param opts
 			 */
@@ -1963,9 +2221,20 @@ if(!window.rb){
 			},
 
 			/**
-			 * sets an option. The function should be extended to react to dynamic option changes after instantiation.
+			 * Sets an option. The function should be extended to react to dynamic option changes after instantiation.
 			 * @param name {String} Name of the option.
 			 * @param value {*} Value of the option.
+			 *
+			 * @example
+			 * class MyComponent extends rb.Component {
+			 *      setOptions(name, value){
+			 *          super.setOption(name, value);
+			 *
+			 *          if(name == 'foo'){
+			 *              this.updateFoo();
+			 *          }
+			 *      }
+			 * }
 			 */
 			setOption: function(name, value){
 				this.options[name] = value;
@@ -1975,9 +2244,51 @@ if(!window.rb){
 					rb.log('don\'t change name after init.');
 				}
 			},
-
 			/**
-			 * parses the HTML options (data-*) of a given Element.
+			 * Convenient method to render a template. Expects a template function with the given name added to the templates hash property of the component. The data will be extended with the name of the component.
+			 * @param {String} [name]
+			 * @param {Object} data
+			 * @returns {String}
+			 *
+			 * @example
+			 * //sources/_templates/my-component/main.ejs:
+			 *
+			 * //<div class="rb-<%= component %>">
+			 * //    <h1 class="<%= component %>-header">
+			 * //        <%- title ->
+			 * //    </h1>
+			 * //</div>
+			 *
+			 * //require('sources/js/_templates/my-component.js');
+			 *
+			 * rb.life.register('my-component', class MyComponent extends rb.Component {
+			 *      renderMain(){
+			 *          this.element.innerHTML = this.render('main', {title: 'foo'});
+			 *      }
+			 * });
+			 */
+			render: function(name, data){
+				if(typeof name == 'object'){
+					data = name;
+					name = '';
+				}
+				if(!data.name){
+					data.name = this.name;
+				}
+
+				if(!data.component){
+					data.component = this.component;
+				}
+
+				return this.templates[name] ?
+					this.templates[name](data) :
+					(!name && typeof this.templates == 'function') ?
+						this.templates(data) :
+					''
+				;
+			},
+			/*
+			 * parses the HTML options (data-*) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.
 			 * @param [element] {Element}
 			 * @returns {{}}
 			 */
@@ -1998,8 +2309,8 @@ if(!window.rb){
 				return options;
 			},
 
-			/**
-			 * parses the CSS options (::before pseudo) of a given Element.
+			/*
+			 * parses the CSS options (::before pseudo) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.
 			 * @param [element] {Element}
 			 * @returns {{}}
 			 */
@@ -2027,6 +2338,11 @@ if(!window.rb){
 		}
 	);
 
+	/**
+	 * Logs arguments to the console, if debug option of the component is turned on.
+	 * @name rb.Component.prototype
+	 * @type function
+	 */
 	rb.addLog(rb.Component.prototype, false);
 
 	rb.Component.extend = function(name, prop, noCheck){
@@ -2062,8 +2378,6 @@ if(!window.rb){
 (function (window, document, undefined) {
 	'use strict';
 	var rb = window.rb;
-	var $ = rb.$;
-
 
 	rb.Component.extend('button',
 		/** @lends rb.components.button.prototype */
@@ -2087,6 +2401,7 @@ if(!window.rb){
 			 * @extends rb.Component
 			 * @param {Element} element
 			 * @example
+			 * ```html
 			 * <button type="button"
 			 *  data-module="button"
 			 *  class="js-click"
@@ -2095,6 +2410,7 @@ if(!window.rb){
 			 *      click me
 			 * </button>
 			 * <div id="panel-1" data-module="panel"></div>
+			 * ```
 			 */
 			init: function(element) {
 

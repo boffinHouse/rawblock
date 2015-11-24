@@ -43,7 +43,7 @@ module.exports = {
 	},
 	js: {
 		files: ['<%= paths.src %>/js/**/*.js'],
-		tasks: ['browserify:dev'] //
+		tasks: ['webpack:dev'] //
 	},
 	jsmodules: {
 		files: ['<%= paths.src %>/js/*/**/*.js'],
@@ -56,5 +56,9 @@ module.exports = {
 	templates: {
 		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}'],
 		tasks: ['newer:assemble:dev', 'prettify:dev']
+	},
+	ejs: {
+		files: ['<%= paths.src %>/_templates/**/*.{ejs}'],
+		tasks: ['ejs']
 	},
 };
