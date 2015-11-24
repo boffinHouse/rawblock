@@ -1,5 +1,5 @@
 //don't forget to include in HTML
 
-//if uncommenting `rb-cssconfig`/`rb_packageloader`, remove from behavior.js.
-//require('./libs/rb-plugins/rb_packageloader');
-require('./libs/rb-cssconfig');
+//if uncommenting `rb-cssconfig`, remove from behavior.js.
+//require('./libs/rb-cssconfig');
+//require('./components/lazyload/lazysizes-cfg');

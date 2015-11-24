@@ -1,12 +1,6 @@
 var webpack = require("webpack");
 
 var devPlugins = [
-	new webpack.DefinePlugin({
-		"process.env": {
-			// This has effect on the react lib size
-			"NODE_ENV": JSON.stringify("production")
-		}
-	}),
 	new webpack.optimize.DedupePlugin(),
 	new webpack.optimize.CommonsChunkPlugin({
 		children: true,
@@ -22,7 +16,13 @@ var devPlugins = [
 	new webpack.optimize.CommonsChunkPlugin({
 		children: true,
 		async: true,
+		minSize: 500,
 		minChunks: 6,
+	}),
+	new webpack.optimize.AggressiveMergingPlugin({
+		minSizeReduce: 2,
+		moveToParents: true,
+		entryChunkMultiplicator: 5,
 	})
 ];
 var productionPlugins = devPlugins.concat([new webpack.optimize.UglifyJsPlugin()]);

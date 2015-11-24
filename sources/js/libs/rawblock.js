@@ -1230,6 +1230,13 @@ if(!window.rb){
 	 * // => 'fred, barney, &amp; pebbles'
 	 */
 	rb.escape = createEscaper(escapeMap);
+
+	if(!window._){
+		window._ = {};
+	}
+	if(!_.escape){
+		_.escape = rb.escape;
+	}
 	/* end: html escape */
 
 
@@ -1544,17 +1551,28 @@ if(!window.rb){
 	 * var addImportHook = rb.life.addImportHook;
 	 *
 	 * addImportHook('slider', function(moduleName, moduleAttributeValue, reject, element){
-	 *      System.import('./modules/slider-v2').catch(reject);
+	 *      //non-standard futuristic import
+	 *      System.import('./components/slider-v2').catch(reject);
 	 * });
 	 *
 	 * //Add component class with different aliases
-	 * addImportHook(['accordion', 'tabs', 'panelgroup'], function(moduleName, moduleAttributeValue, reject, element){
-	 *      System.import('./modules/panelgroups/index').catch(reject);
+	 * addImportHook(['accordion', 'tabs', 'panelgroup'], function(){
+	 *      //webpack require
+	 *      require.ensure([], function(require){
+	 *          require('./components/panelgroups/index');
+	 *      });
+	 * });
+	 *
+	 * //Multiple component aliases with multiple modules
+	 * addImportHook(['accordion', 'tabs', 'panelgroup', 'slider'], function(){
+	 *      //AMD or webpack require
+	 *      require(['./components/slider', './components/panelgroup', './components/panel']);
 	 * });
 	 *
 	 * //dynamic catch all hook
-	 * addImportHook('*', function(moduleName, moduleAttributeValue, reject, element){
-	 *      require(['./modules/' + moduleAttributeValue]);
+	 * addImportHook(function(moduleName, moduleAttributeValue){
+	 *      //AMD or webpack require
+	 *      require(['./components/' + moduleAttributeValue]);
 	 * });
 	 */
 	life.addImportHook = function(names, importCallback){

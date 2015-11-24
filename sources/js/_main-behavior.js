@@ -18,6 +18,30 @@ if(!('ASSETBASEPATH' in window)){
 //if webpack is used:
 __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
+rb.life.addImportHook('modulea', function(){
+	require.ensure([], function(require){
+		require('./modules/module-a');
+	});
+});
+
+rb.life.addImportHook('moduleb', function(){
+	require.ensure([], function(require){
+		require('./modules/module-b');
+	});
+});
+
+rb.life.addImportHook('modulea', function(){
+	require.ensure([], function(require){
+		require('./modules/module-a');
+	});
+});
+
+rb.life.addImportHook('modulec', function(){
+	require.ensure([], function(require){
+		require('./modules/module-c');
+	});
+});
+
 //require('./modules/*');
 
 /* init after all modules are loaded or imports are configured. */
