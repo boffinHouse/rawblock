@@ -1,0 +1,53 @@
+//
+// rb-arrow-icon mixin
+// --------------
+//
+// This mixin is used for generating arrow-like icon.
+//
+//  Options:
+//  $height: height arrow
+//  $width: width arrow
+//  $borderWidth: border width arrow
+//  $color: color arrow (use border-left-color to change color on hover/focus)
+//  $direction: right/left/up/down
+//
+// Sample input:
+// .element {
+//      &::after {
+//			@include arrow-icon(10px, 10px, 2px, #fff, down);
+//		}
+//
+// }
+
+
+
+@mixin rb-arrow-icon($height, $width, $borderWidth, $color, $direction) {
+	content: '';
+	position: absolute;
+	height: $height;
+	width: $width;
+	border-top: $borderWidth solid $color;
+	border-right: $borderWidth solid $color;
+	background-color: rgba(255,255,255,0);
+	pointer-events: none;
+
+	@if $direction == "right" {
+		transform: rotate(45deg);
+	}
+
+	@if $direction == "down" {
+		transform: rotate(135deg);
+	}
+
+	@if $direction == "up" {
+		transform: rotate(-45deg);
+	}
+
+	@if $direction == "left" {
+		transform: rotate(-135deg);
+	}
+
+}
+
+
+

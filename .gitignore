@@ -5,6 +5,7 @@ dev
 doc
 tmp
 bower_components
+styleguide
 
 .sass-cache
 .css

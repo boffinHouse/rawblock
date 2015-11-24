@@ -1,3 +1,7 @@
+
+
+
+
 // ====================================================================
 //  Generate Grid
 //
@@ -115,13 +119,13 @@
 
 
 		.is-gutters {
-			margin-right: (-$gutterHorizontal / 2);
-			margin-left: (-$gutterHorizontal / 2);
+			//margin-right: (-$gutterHorizontal / 2);
+			margin-left: (-$gutterHorizontal);
 
 			> [class*=is-size-] {
 				margin-bottom: $gutterVertical;
-				padding-right: ($gutterHorizontal / 2);
-				padding-left: ($gutterHorizontal / 2);
+				//padding-right: ($gutterHorizontal / 2);
+				padding-left: ($gutterHorizontal);
 			}
 		}
 
@@ -133,12 +137,12 @@
 		}
 
 		.is-gutters-horizontal {
-			margin-right: (-$gutterHorizontal / 2);
-			margin-left: (-$gutterHorizontal / 2);
+			//margin-right: (-$gutterHorizontal / 2);
+			margin-left: (-$gutterHorizontal);
 
 			> [class*=is-size-]  {
-				padding-right: ($gutterHorizontal / 2);
-				padding-left: ($gutterHorizontal / 2);
+				//padding-right: ($gutterHorizontal / 2);
+				padding-left: ($gutterHorizontal);
 			}
 		}
 

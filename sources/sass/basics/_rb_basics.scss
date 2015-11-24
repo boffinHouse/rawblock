@@ -1,9 +1,12 @@
-/*********************************************************
-
-Basics
-----------------------------------------------------------
-
-**********************************************************/
+//Button
+//
+// Your standard button suitable for clicking.
+//
+// :hover   - Highlights when hovering.
+// .shiny   - Do not press this big, shiny, red button.
+//
+//
+// Style guide: button
 html {
 	 -webkit-font-smoothing: antialiased;
 	 -webkit-font-smoothing: subpixel-antialiased;
@@ -15,7 +18,6 @@ html {
 body {
 	width: 100%;
 	margin: 0;
-	background: $color-1b;
 }
 
 * {
@@ -28,6 +30,14 @@ body {
 	box-sizing: inherit;
 }
 
+*:focus {
+	outline: none;
+}
+
+/* ---------------------------------------
+	TEXT-SELECTION
+
+--------------------------------------- */
 ::-moz-selection {
 	color: #fff;
 	text-shadow: none;
@@ -54,10 +64,19 @@ a:focus {
 }
 
 
+/* ---------------------------------------
+	EMBEDDED CONTENT
 
+--------------------------------------- */
+img,
+video {
+	max-width: 100%;
+	display: block; //Removes extra space img
+}
 
-
-
+iframe {
+	border: none;
+}
 
 
 
