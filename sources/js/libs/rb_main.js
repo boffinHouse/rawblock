@@ -2106,10 +2106,11 @@ if(!window.rb){
 			/**
 			 * Uses [`rb.elementFromStr`]{@link rb.elementFromStr} with this.element as the element argument and interpolates string using `this.interpolateName`.
 			 * @param {String} string
+			 * @param {Element} [element=this.element]
 			 * @returns {Element[]}
 			 */
-			getElementsFromString: function(string){
-				return rb.elementFromStr(this.interpolateName(string), this.element);
+			getElementsFromString: function(string, element){
+				return rb.elementFromStr(this.interpolateName(string), element || this.element);
 			},
 
 			/*
