@@ -10,16 +10,11 @@ Main Stylesheet
 // Variables
 @import "variables/**/*.scss";
 
-
 // Basic Formatting
-//@import "basics";
 @import "basics/normalize";
-
-// Webfonts
-//@import "rb_webfonts";
+@import "basics/rb_basics";
 
 //Layout Grid
-@import "basics/rb_basics";
 @include rb-generate-layout-styles($breakpointConfigs);
 
 @include rb-export-globaljs(
@@ -30,6 +25,6 @@ Main Stylesheet
 );
 
 // All Components
-@import "_blocks/**/*.scss";
+@import "../components/**/*.scss";
 
 
