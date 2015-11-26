@@ -865,8 +865,8 @@ if(!window.rb){
 
 		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches('a[href], a[href] *') || !e.target.matches('.is-teaser, .is-teaser *')){return;}
 		var event, selection;
-		var item = e.target.closest('.is-teaser');
-		var link = item.querySelector('.is-teaser-link');
+		var item = e.target.closest('.is-clickarea');
+		var link = item.querySelector('.is-clickarea-action');
 
 		if(link){
 			selection = getSelection();
