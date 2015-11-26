@@ -20,9 +20,12 @@ var devPlugins = [
 		minChunks: 6,
 	}),
 	new webpack.optimize.AggressiveMergingPlugin({
-		minSizeReduce: 2,
+		minSizeReduce: 3,
 		moveToParents: true,
 		entryChunkMultiplicator: 5,
+	}),
+	new webpack.optimize.AggressiveMergingPlugin({
+		minSizeReduce: 1.5,
 	})
 ];
 var productionPlugins = devPlugins.concat([new webpack.optimize.UglifyJsPlugin()]);
