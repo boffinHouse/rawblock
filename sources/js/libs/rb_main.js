@@ -233,20 +233,25 @@ if(!window.rb){
 	/* End: getScrollingElement/scrollIntoView */
 
 	/* Begin: contains */
-
+	var _contains = function(element){
+		return element == this || element.contains(this);
+	};
 	/**
 	 * Tests whether an element is inside or equal to a list of elements.
 	 * @memberof rb
-	 * @param containerElements {Element[]} Array of elements that might contain innerElement.
+	 * @param containerElements {Element[]|Element} Array of elements that might contain innerElement.
 	 * @param innerElement {Element} An element that might be inside of one of containerElements.
-	 * @returns {Element|undefined} The first element in containerElements, that contains innerElement or is the innerElement.
+	 * @returns {Element|undefined|null} The first element in containerElements, that contains innerElement or is the innerElement.
 	 */
 	rb.contains = function(containerElements, innerElement){
-		return containerElements.find(rb.contains._contains, innerElement);
+		return Array.isArray(containerElements) ?
+			containerElements.find(_contains, innerElement) :
+			_contains.call(innerElement, containerElements) ?
+				containerElements :
+				null
+		;
 	};
-	rb.contains._contains = function(element){
-		return element == this || element.contains(this);
-	};
+	rb.contains._contains = _contains;
 	/* End: contains */
 
 	/* Begin: throttle */
@@ -1978,6 +1983,7 @@ if(!window.rb){
 			 *
 			 * @prop {Object} defaults
 			 * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
+			 * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used by `interpolateName` and its dependent methods.
 			 *
 			 * @example
 			 * <!-- overriding defaults with markup -->
@@ -2074,7 +2080,7 @@ if(!window.rb){
 				}
 
 				if (!(id = element.id)) {
-					id = 'rbjsid-' + rb.getID();
+					id = 'js-' + rb.getID();
 					element.id = id;
 				}
 
