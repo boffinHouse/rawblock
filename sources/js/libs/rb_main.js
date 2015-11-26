@@ -660,8 +660,8 @@ if(!window.rb){
 	 * @returns {string}
 	 */
 	rb.getID = function(){
-		id++;
-		return id + '-' + Math.round(Math.random() * 1000000000000000000);
+		id += (Math.round(Math.random() * 1000));
+		return id.toString(36);
 	};
 
 	if(!rb.Symbol){
@@ -1667,7 +1667,7 @@ if(!window.rb){
 							return function() {
 								life._failed[ moduleId ] = true;
 							};
-						})(modulePath, moduleId), module)
+						})(modulePath, moduleId), module);
 					}
 				}
 				else {
