@@ -1080,7 +1080,7 @@ if(!window.rb){
 		setup = rb.$;
 		document.addEventListener('keydown', function(e){
 			var elem = e.target;
-			if(e.keyCode == 40 && elem.classList.contains('js-click') && (elem.getAttribute('aria-haspopup') || elem.getAttribute('data-module'))){
+			if((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains('js-click') && elem.getAttribute('data-module')){
 				applyBehavior(elem, e);
 			}
 		}, true);
@@ -1464,7 +1464,7 @@ if(!window.rb){
 	/**
 	 * Registers a component class with a name and manages its lifecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an attached or detached method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
 	 *
-	 * The markup of a component class should get the class `js-rb-life` and a `data-module` attribute with the name as its value.
+	 * The markup of a component class should get the class `js-rb-life` and a `data-module` attribute with the name as its value. The `data-module` is split by a "/" and only the last part is used as component name. The part before can be optionally used for [`rb.life.addImportHook`]{@link rb.life.addImportHook}.
 	 *
 	 * @memberof rb
 	 * @param {String} name The name of your component.
@@ -1599,7 +1599,16 @@ if(!window.rb){
 		}
 	};
 
-	life.create = function(element, LifeClass, _fromWebComponent) {
+	/**
+	 * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback mathod.
+	 *
+	 * @see rb.getComponent
+	 *
+	 * @param element
+	 * @param LifeClass
+	 * @returns {Object}
+	 */
+	life.create = function(element, LifeClass) {
 		var instance;
 
 		if ( !(instance = element[componentExpando]) ) {
@@ -1611,7 +1620,7 @@ if(!window.rb){
 			element.classList.add( attachedClass );
 		}, true);
 
-		if (!_fromWebComponent && !element[expando] && instance && (instance.attached || instance.detached)) {
+		if (!element[expando] && instance && (instance.attached || instance.detached)) {
 
 			if((instance.attached || instance.detached)){
 				if(life._attached.indexOf(element) == -1){
@@ -1853,29 +1862,26 @@ if(!window.rb){
 	};
 
 	/**
-	 * returns the component instance of an element
+	 * returns the component instance of an element. If the component is not yet initialized it will be initialized.
+	 *
 	 * @memberof rb
 	 * @param {Element} element - DOM element
-	 * @param {String} [moduleId] - optional name of the component
+	 * @param {String} [componentName] - optional name of the component (if element has no `data-module="componentName"`).
 	 * @returns {Object} A component instance
 	 */
-	rb.getComponent = function(element, moduleId){
+	rb.getComponent = function(element, componentName){
 		var component = element && element[componentExpando];
 
 		if(!component){
 
-			if(!rb.components[moduleId]){
-				moduleId = (element.getAttribute( 'data-module' ) || '').split('/');
+			if(!rb.components[componentName]){
+				componentName = (element.getAttribute( 'data-module' ) || '').split('/');
 
-				if(!moduleId.length){
-					moduleId = (element.localeName || '').split('-');
-				}
-
-				moduleId = moduleId[ moduleId.length - 1 ];
+				componentName = componentName[ componentName.length - 1 ];
 			}
 
-			if(rb.components[ moduleId ]){
-				component = life.create(element, rb.components[ moduleId ]);
+			if(rb.components[ componentName ]){
+				component = life.create(element, rb.components[ componentName ]);
 			}
 		}
 		return component;
@@ -1982,6 +1988,7 @@ if(!window.rb){
 			 * @see rb.Component.prototype.setOption
 			 *
 			 * @prop {Object} defaults
+			 * @prop {Boolean} defaults.isDebug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
 			 * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
 			 * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used by `interpolateName` and its dependent methods.
 			 *
@@ -2341,7 +2348,14 @@ if(!window.rb){
 
 			_super: function(){
 				this.log('no _super');
-			}
+			},
+			/**
+			 * Passes args to `console.log` if isDebug option is `true.
+			 * @param {...*} args
+			 */
+			log: function(){
+
+			},
 		}
 	);
 
@@ -2400,6 +2414,7 @@ if(!window.rb){
 				target: '',
 				type: 'toggle',
 				args: null,
+				switchedOff: false,
 			},
 			/**
 			 * @constructs
@@ -2423,22 +2438,63 @@ if(!window.rb){
 
 				this._super(element);
 
+				this._isFakeBtn = !this.element.matches('input, button');
+				this._resetPreventClick = this._resetPreventClick.bind(this);
+				this._switchOff = rb.rAF(this._switchOff, {throttle: true});
+				this._switchOn = rb.rAF(this._switchOn, {throttle: true});
+
 				this._setTarget = rb.rAF(this._setTarget, {throttle: true});
 				this.setOption('args', this.options.args);
+
+				if(!this.options.switchedOff){
+					this.setOption('switchedOff', false);
+				}
 			},
 
 			events: {
 				click: '_onClick',
+				keydown: function(e){
+					if(this.options.switchedOff){return;}
+
+					if(e.keyCode == 40 && this.element.getAttribute('aria-haspopup') == 'true'){
+						if(!this.panelComponent){return;}
+
+						if(!this.panelComponent.isOpen){
+							this._onClick();
+						} else {
+							this.panelComponent.setComponentFocus();
+						}
+						e.preventDefault();
+					} else {
+						this._delegateFakeClick(e);
+					}
+				},
+				keyup: '_delegateFakeClick',
+			},
+			_delegateFakeClick: function(e){
+				if(this.options.switchedOff){return;}
+				if(this._isFakeBtn && (e.keyCode == 32 || e.keyCode == 13)){
+					e.preventDefault();
+
+					if((e.type == 'keyup' && e.keyCode == 32) || (e.type == 'keydown' && e.keyCode == 13)){
+						this._onClick(e);
+						this._preventClick = true;
+						setTimeout(this._resetPreventClick, 33);
+					}
+				}
+			},
+			_resetPreventClick: function(){
+				this._preventClick = false;
 			},
 			_onClick: function(){
 				var args;
-				var target = this.getTarget() || {};
-				var component = this.component(target);
+				if(this.options.switchedOff || this._preventClick || this.element.disabled){return;}
+				var target = this.getTarget();
+				var component = target && this.component(target);
 
 				if (!component) {
 					return;
 				}
-
 				if(this.options.type in component){
 					args = this.options.args;
 					component.activeButtonComponent = this;
@@ -2454,19 +2510,39 @@ if(!window.rb){
 				var dom;
 				this._super(name, value);
 
-				if(name == 'target'){
-					dom = rb.elementFromStr(value, this.element)[0];
-					if(dom){
-						this.setTarget(dom);
-					}
-				} else if(name == 'args'){
-					if(value == null){
-						value = [];
-					} else if(!Array.isArray(value)){
-						value = [value];
-					}
-					this.options.args = value;
+				switch (name) {
+					case 'target':
+						dom = rb.elementFromStr(value, this.element)[0];
+						if(dom){
+							this.setTarget(dom);
+						}
+						break;
+					case 'args':
+						if(value == null){
+							value = [];
+						} else if(!Array.isArray(value)){
+							value = [value];
+						}
+						this.options.args = value;
+						break;
+					case 'switchedOff':
+						if(this._isFakeBtn){
+							if (value) {
+								this._switchOff();
+							} else {
+								this._switchOn();
+							}
+						}
+						break;
 				}
+			},
+			_switchOff: function(){
+				this.element.removeAttribute('role');
+				this.element.removeAttribute('tabindex');
+			},
+			_switchOn: function(){
+				this.element.setAttribute('role', 'button');
+				this.element.setAttribute('tabindex', '0');
 			},
 			_setTarget: function(){
 				var id = this.getId(this.target);
