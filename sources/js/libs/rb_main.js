@@ -2497,6 +2497,11 @@ if(!window.rb){
 				}
 				if(this.options.type in component){
 					args = this.options.args;
+
+					if(this.element != document.activeElement){
+						this.element.focus();
+					}
+
 					component.activeButtonComponent = this;
 					if(typeof component[this.options.type] == 'function'){
 						component[this.options.type].apply(component, args);
