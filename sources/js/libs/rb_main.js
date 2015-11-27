@@ -2526,23 +2526,26 @@ if(!window.rb){
 						this.options.args = value;
 						break;
 					case 'switchedOff':
-						if(this._isFakeBtn){
-							if (value) {
-								this._switchOff();
-							} else {
-								this._switchOn();
-							}
+						if (value) {
+							this._switchOff();
+						} else {
+							this._switchOn();
 						}
+
 						break;
 				}
 			},
 			_switchOff: function(){
-				this.element.removeAttribute('role');
-				this.element.removeAttribute('tabindex');
+				if(this._isFakeBtn){
+					this.element.removeAttribute('role');
+					this.element.removeAttribute('tabindex');
+				}
 			},
 			_switchOn: function(){
-				this.element.setAttribute('role', 'button');
-				this.element.setAttribute('tabindex', '0');
+				if(this._isFakeBtn){
+					this.element.setAttribute('role', 'button');
+					this.element.setAttribute('tabindex', '0');
+				}
 			},
 			_setTarget: function(){
 				var id = this.getId(this.target);
