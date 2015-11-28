@@ -29,12 +29,12 @@
 	 *
 	 * @example
 	 *
-	 * rb.xhr('api/user.json?id=12')
+	 * rb.fetch('api/user.json?id=12')
 	 *  .then(function(response){
 	 *      console.log(response.data);
 	 *  });
 	 */
-	rb.xhr = function(url, options){
+	rb.fetch = function(url, options){
 		if(typeof url == 'object'){
 			options = url;
 			url = options.url;

@@ -1,4 +1,4 @@
-var webpack = require("webpack");
+var webpack = require('webpack');
 
 var devPlugins = [
 	new webpack.optimize.DedupePlugin(),
@@ -34,20 +34,20 @@ module.exports = {
 	options: {
 		cache: true,
 		entry: {
-			'_main-behavior': "./sources/js/_main-behavior.js",
-			//'_crucial-behavior': "./sources/js/_crucial-behavior.js",
-			'_rb_polyfills': ["./sources/js/_rb_polyfills"],
+			'_main-behavior': '<%= paths.src %>/js/_main-behavior.js',
+			//'_crucial-behavior': "<%= paths.src %>/js/_crucial-behavior.js",
+			'_rb_polyfills': ['<%= paths.src %>/js/_rb_polyfills'],
 		},
 		output: {
-			filename: "[name].js",
-			chunkFilename: "[chunkhash].js"
+			filename: '[name].js',
+			chunkFilename: '[chunkhash].js',
 		},
 		module: {
 			loaders: [
 				{
 					test: /\.jsx?$|\.es6$|\.es2015/,
 					exclude: /node_modules/,
-					loader: "babel-loader",
+					loader: 'babel-loader',
 					query: {
 						plugins: [],
 						presets: ['es2015'],
@@ -55,15 +55,15 @@ module.exports = {
 				},
 				{
 					test: /\.css$/,
-					loader: "style-loader!css-loader"
+					loader: 'style-loader!css-loader',
 				},
 				{
 					test: /\.scss$/,
-					loaders: ["style", "css", "sass"]
+					loaders: ['style', 'css', 'sass'],
 				},
 				{
 					test: /\.ejs/,
-					loader: "rb_template-loader",
+					loader: 'rb_template-loader',
 				}
 			]
 		},
@@ -74,17 +74,17 @@ module.exports = {
 		},
 	},
 	dev: {
-		devtool: "sourcemap",
+		devtool: 'sourcemap',
 		debug: true,
 		output: {
 			path: '<%= paths.dev %>/js/',
 		},
-		plugins: devPlugins
+		plugins: devPlugins,
 	},
-	"dist": {
+	dist: {
 		output: {
 			path: '<%= paths.dist %>/js/',
 		},
-		plugins: productionPlugins
+		plugins: productionPlugins,
 	}
 };

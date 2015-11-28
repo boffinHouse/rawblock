@@ -87,8 +87,10 @@
 		start: function(pos, evt){
 
 			this.startPos = {
-				x: pos.pageX,
-				y: pos.pageY,
+				x: pos.clientX,
+				y: pos.clientY,
+				pX: pos.pageX,
+				pY: pos.pageY,
 			};
 			this.movedPos = {
 				x: 0,
@@ -107,8 +109,10 @@
 		move: function(pos, evt){
 			this.lastPos = this.curPos;
 			this.curPos = {
-				x: pos.pageX,
-				y: pos.pageY,
+				x: pos.clientX,
+				y: pos.clientY,
+				pX: pos.pageX,
+				pY: pos.pageY,
 			};
 
 			if(this.relevantChange !== true && !(this.relevantChange = this.hasRelevantChange())){
