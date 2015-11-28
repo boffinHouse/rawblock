@@ -1963,9 +1963,7 @@ if(!window.rb){
 
 				this.parseOptions(this.options);
 
-				if(this.options.name){
-					this.name = this.options.name;
-				}
+				this.name = this.options.name || this.name;
 
 				this._evtName = this.name + 'changed';
 				this._beforeEvtName = this.name + 'change';
