@@ -868,7 +868,7 @@ if(!window.rb){
 
 	document.addEventListener('click', function(e){
 
-		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches('a[href], a[href] *') || !e.target.matches('.is-clickarea, .is-clickarea *')){return;}
+		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || !e.target.matches('.is-clickarea, .is-clickarea *') || e.target.matches('a[href], a[href] *, .is-clickarea-action, .is-clickarea-action *')){return;}
 		var event, selection;
 		var item = e.target.closest('.is-clickarea');
 		var link = item && item.querySelector('.is-clickarea-action');
