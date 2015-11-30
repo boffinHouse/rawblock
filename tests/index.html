@@ -39,7 +39,7 @@
 
 <script>
 	(function(){
-		var src = '../sources/js/libs/dom.js';
+		var src = '../sources/js/libs/rb_$.js';
 		if(location.search.indexOf('jqueryinsteadrb') != -1){
 			src = 'http://code.jquery.com/jquery-2.1.4.js';
 		}
@@ -53,7 +53,7 @@
 <script>
 	rb.life.autoStart = false;
 </script>
-<script src="../sources/js/modules/rb_draggy.js"></script>
+<script src="../sources/js/utils/rb_draggy.js"></script>
 
 <!-- TESTS -->
 <script>
@@ -66,7 +66,7 @@
 		}
 
 		if(supportsClass){
-			document.write('<script src="tests\/rb_widget-tests.es6"><\/script>');
+			document.write('<script src="tests\/rb_component-tests.es6"><\/script>');
 		}
 	})();
 </script>

@@ -34,9 +34,9 @@ module.exports = {
 	options: {
 		cache: true,
 		entry: {
-			'_main-behavior': '<%= paths.src %>/js/_main-behavior.js',
-			//'_crucial-behavior': "<%= paths.src %>/js/_crucial-behavior.js",
-			'_rb_polyfills': ['<%= paths.src %>/js/_rb_polyfills'],
+			'_main-behavior': './<%= paths.src %>/js/_main-behavior.js',
+			//'_crucial-behavior': './<%= paths.src %>/js/_crucial-behavior.js',
+			'_rb_polyfills': './<%= paths.src %>/js/_rb_polyfills.js',
 		},
 		output: {
 			filename: '[name].js',

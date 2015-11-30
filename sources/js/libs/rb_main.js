@@ -868,10 +868,10 @@ if(!window.rb){
 
 	document.addEventListener('click', function(e){
 
-		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches('a[href], a[href] *') || !e.target.matches('.is-teaser, .is-teaser *')){return;}
+		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches('a[href], a[href] *') || !e.target.matches('.is-clickarea, .is-clickarea *')){return;}
 		var event, selection;
 		var item = e.target.closest('.is-clickarea');
-		var link = item.querySelector('.is-clickarea-action');
+		var link = item && item.querySelector('.is-clickarea-action');
 
 		if(link){
 			selection = getSelection();
@@ -896,15 +896,17 @@ if(!window.rb){
 	 * @param [delay] {Number} The delay to focus the element.
 	 */
 	rb.setFocus = rb.rAF(function(element, delay){
-		try {
-			if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
-				element.setAttribute('tabindex', -1);
-			}
-			setTimeout(function(){
-				element.focus();
-				rb.$doc.trigger('rbscriptfocus');
-			}, delay || 4);
-		} catch(e){}
+		if(element !== document.activeElement){
+			try {
+				if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
+					element.setAttribute('tabindex', -1);
+				}
+				setTimeout(function(){
+					element.focus();
+					rb.$doc.trigger('rbscriptfocus');
+				}, delay || 4);
+			} catch(e){}
+		}
 	}, {queue: true, throttle: true});
 
 	/* Begin: focus-within polyfill */
@@ -1284,7 +1286,12 @@ if(!window.rb){
 		});
 
 		if(proto[prop]){
-			proto[prop] = null;
+			Object.defineProperty(proto, prop, {
+				configurable: true,
+				enumerable: true,
+				writable: true,
+				value: null,
+			});
 		}
 	};
 
@@ -1647,46 +1654,50 @@ if(!window.rb){
 				removeElements.shift().classList.remove(initClass);
 			}
 		});
+		var failed = function(element, id){
+			life._failed[ id ] = true;
+			removeElements.push( element );
+			rb.log('failed', id, element);
+		};
 
 		var findElements = rb.throttle(function() {
 
-			var module, modulePath, moduleId, i, hook;
+			var element, modulePath, moduleId, i, hook;
 
 			var len = elements.length;
 
 			for ( i = 0; i < len; i++ ) {
-				module = elements[ i ];
+				element = elements[ i ];
 
-				if(module[expando]){
-					removeElements.push( module );
+				if(element[expando]){
+					removeElements.push( element );
 					continue;
 				}
 
-				modulePath = module.getAttribute( 'data-module' ) || '';
+				modulePath = element.getAttribute( 'data-module' ) || '';
 				moduleId = modulePath.split( '/' );
 				moduleId = moduleId[ moduleId.length - 1 ];
 
 				if ( rb.components[ moduleId ] ) {
-					life.create( module, rb.components[ moduleId ] );
-					removeElements.push( module );
+					life.create( element, rb.components[ moduleId ] );
+					removeElements.push( element );
 				}
 				else if ( life._failed[ moduleId ] ) {
-					removeElements.push( module );
+					failed(element, moduleId);
 				}
 				else if( (hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*'])) ) {
 					if(!hooksCalled[modulePath]){
 						hooksCalled[modulePath] = true;
 						/* jshint loopfunc: true */
-						hook(moduleId, modulePath, (function (modulePath, moduleId) {
+						hook(moduleId, modulePath, (function (element, moduleId) {
 							return function() {
-								life._failed[ moduleId ] = true;
+								failed(element, moduleId);
 							};
-						})(modulePath, moduleId), module);
+						})(element, moduleId), element);
 					}
 				}
 				else {
-					life._failed[ moduleId ] = true;
-					removeElements.push(module);
+					failed(element, moduleId);
 				}
 			}
 
@@ -2406,6 +2417,7 @@ if(!window.rb){
 			 * @property {Object} defaults
 			 * @property {String} defaults.target="" String that references the target element. Is processed by rb.elementFromStr.
 			 * @property {String} defaults.type="toggle" Method name to invoke on target component.
+			 * @property {Boolean} defaults.preventDefault=false Whether the default click action should prevented.
 			 * @property {*} defaults.args=null Arguments to be used to invoke target method.
 			 */
 			defaults: {
@@ -2458,7 +2470,7 @@ if(!window.rb){
 						if(!this.panelComponent){return;}
 
 						if(!this.panelComponent.isOpen){
-							this._onClick();
+							this._onClick(e);
 						} else {
 							this.panelComponent.setComponentFocus();
 						}
@@ -2484,7 +2496,7 @@ if(!window.rb){
 			_resetPreventClick: function(){
 				this._preventClick = false;
 			},
-			_onClick: function(){
+			_onClick: function(e){
 				var args;
 				if(this.options.switchedOff || this._preventClick || this.element.disabled){return;}
 				var target = this.getTarget();
@@ -2493,6 +2505,11 @@ if(!window.rb){
 				if (!component) {
 					return;
 				}
+
+				if(e && this.options.preventDefault && e.preventDefault){
+					e.preventDefault();
+				}
+
 				if(this.options.type in component){
 					args = this.options.args;
 
