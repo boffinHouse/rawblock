@@ -3,7 +3,7 @@ rawblock
 
 Rawblock JS is a simple UI component library, that allows to create re-usable, accessible, responsive and self-contained components using either ES5 or ES6.
 
-The rawblock core scripts consists of the rb-cssconfig.js and the rawblock.js. As a dependency for rawblock.js either dom.js or jQuery has to be included. In most cases dom.js, which provides a jQuery like API and adds itself to the `rb.$` namespace should be good enough.
+The rawblock core scripts consists of the rb_crucial.js and the rb_main.js. As a dependency for rawblock either rb_$.js or jQuery has to be included. In most cases rb_$.js, which provides a jQuery like API and adds itself to the `rb.$` namespace should be good enough.
 
 For older browsers some polyfills (IE11-), namely DOM4 and some ES6 Promise/String/Array/Object polyfills has to be added.
 

@@ -67,7 +67,7 @@
 			deferred.resolve = resolve;
 		});
 		var element = this[0];
-		
+
 		if(element){
 			queueToEnd = function(){
 				if(queues.length){
@@ -134,7 +134,7 @@
 		this.elements.forEach(function(){
 			var queues = $.queue(element, queue);
 			if(queues.length){
-				queues.splice(0, queues.length)
+				queues.splice(0, queues.length);
 			}
 		});
 		return this;

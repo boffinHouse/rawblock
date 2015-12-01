@@ -10,21 +10,27 @@
 		}
 	}
 
-	@each $name, $mq in $mainbreakpoints {
-		@if map-has-key($mq, 'media') {
+	@each $name, $mqo in $mainbreakpoints {
+		$mq: '';
 
-			$rbExportMqMap: map-merge($rbExportMqMap, ($name: map-get($mq, 'media')));
+		@if(type-of($mqo) == string){
+			$mq: $mqo;
+		} @else if(type-of($mq) == map and map-has-key($mqo, 'media')) {
+			$mq: map-get($mqo, 'media');
+		}
 
+		@if($mq != ''){
+			$rbExportMqMap: map-merge($rbExportMqMap, ($name: $mq));
 			html {
-				@media #{map-get($mq, 'media')}{
+				@media #{$mq}{
 					&::after {
 						content: '#{$name}';
-						display: none !important;
+						//display: none !important;
 					}
 				}
 			}
-
 		}
+
 	}
 
 	html {

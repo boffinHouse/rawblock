@@ -233,20 +233,25 @@ if(!window.rb){
 	/* End: getScrollingElement/scrollIntoView */
 
 	/* Begin: contains */
-
+	var _contains = function(element){
+		return element == this || element.contains(this);
+	};
 	/**
 	 * Tests whether an element is inside or equal to a list of elements.
 	 * @memberof rb
-	 * @param containerElements {Element[]} Array of elements that might contain innerElement.
+	 * @param containerElements {Element[]|Element} Array of elements that might contain innerElement.
 	 * @param innerElement {Element} An element that might be inside of one of containerElements.
-	 * @returns {Element|undefined} The first element in containerElements, that contains innerElement or is the innerElement.
+	 * @returns {Element|undefined|null} The first element in containerElements, that contains innerElement or is the innerElement.
 	 */
 	rb.contains = function(containerElements, innerElement){
-		return containerElements.find(rb.contains._contains, innerElement);
+		return Array.isArray(containerElements) ?
+			containerElements.find(_contains, innerElement) :
+			_contains.call(innerElement, containerElements) ?
+				containerElements :
+				null
+		;
 	};
-	rb.contains._contains = function(element){
-		return element == this || element.contains(this);
-	};
+	rb.contains._contains = _contains;
 	/* End: contains */
 
 	/* Begin: throttle */
@@ -660,8 +665,8 @@ if(!window.rb){
 	 * @returns {string}
 	 */
 	rb.getID = function(){
-		id++;
-		return id + '-' + Math.round(Math.random() * 1000000000000000000);
+		id += (Math.round(Math.random() * 1000));
+		return id.toString(36);
 	};
 
 	if(!rb.Symbol){
@@ -863,10 +868,10 @@ if(!window.rb){
 
 	document.addEventListener('click', function(e){
 
-		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches('a[href], a[href] *') || !e.target.matches('.is-teaser, .is-teaser *')){return;}
+		if(e.defaultPrevented || regInputs.test(e.target.nodeName || '') || !e.target.matches('.is-clickarea, .is-clickarea *') || e.target.matches('a[href], a[href] *, .is-clickarea-action, .is-clickarea-action *')){return;}
 		var event, selection;
-		var item = e.target.closest('.is-teaser');
-		var link = item.querySelector('.is-teaser-link');
+		var item = e.target.closest('.is-clickarea');
+		var link = item && item.querySelector('.is-clickarea-action');
 
 		if(link){
 			selection = getSelection();
@@ -891,15 +896,17 @@ if(!window.rb){
 	 * @param [delay] {Number} The delay to focus the element.
 	 */
 	rb.setFocus = rb.rAF(function(element, delay){
-		try {
-			if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
-				element.setAttribute('tabindex', -1);
-			}
-			setTimeout(function(){
-				element.focus();
-				rb.$doc.trigger('rbscriptfocus');
-			}, delay || 4);
-		} catch(e){}
+		if(element !== document.activeElement){
+			try {
+				if(element.tabIndex < 0 && !element.getAttribute('tabindex')){
+					element.setAttribute('tabindex', -1);
+				}
+				setTimeout(function(){
+					element.focus();
+					rb.$doc.trigger('rbscriptfocus');
+				}, delay || 4);
+			} catch(e){}
+		}
 	}, {queue: true, throttle: true});
 
 	/* Begin: focus-within polyfill */
@@ -1075,7 +1082,7 @@ if(!window.rb){
 		setup = rb.$;
 		document.addEventListener('keydown', function(e){
 			var elem = e.target;
-			if(e.keyCode == 40 && elem.classList.contains('js-click') && (elem.getAttribute('aria-haspopup') || elem.getAttribute('data-module'))){
+			if((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains('js-click') && elem.getAttribute('data-module')){
 				applyBehavior(elem, e);
 			}
 		}, true);
@@ -1279,7 +1286,12 @@ if(!window.rb){
 		});
 
 		if(proto[prop]){
-			proto[prop] = null;
+			Object.defineProperty(proto, prop, {
+				configurable: true,
+				enumerable: true,
+				writable: true,
+				value: null,
+			});
 		}
 	};
 
@@ -1459,7 +1471,7 @@ if(!window.rb){
 	/**
 	 * Registers a component class with a name and manages its lifecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an attached or detached method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
 	 *
-	 * The markup of a component class should get the class `js-rb-life` and a `data-module` attribute with the name as its value.
+	 * The markup of a component class should get the class `js-rb-life` and a `data-module` attribute with the name as its value. The `data-module` is split by a "/" and only the last part is used as component name. The part before can be optionally used for [`rb.life.addImportHook`]{@link rb.life.addImportHook}.
 	 *
 	 * @memberof rb
 	 * @param {String} name The name of your component.
@@ -1594,7 +1606,16 @@ if(!window.rb){
 		}
 	};
 
-	life.create = function(element, LifeClass, _fromWebComponent) {
+	/**
+	 * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback mathod.
+	 *
+	 * @see rb.getComponent
+	 *
+	 * @param element
+	 * @param LifeClass
+	 * @returns {Object}
+	 */
+	life.create = function(element, LifeClass) {
 		var instance;
 
 		if ( !(instance = element[componentExpando]) ) {
@@ -1606,7 +1627,7 @@ if(!window.rb){
 			element.classList.add( attachedClass );
 		}, true);
 
-		if (!_fromWebComponent && !element[expando] && instance && (instance.attached || instance.detached)) {
+		if (!element[expando] && instance && (instance.attached || instance.detached)) {
 
 			if((instance.attached || instance.detached)){
 				if(life._attached.indexOf(element) == -1){
@@ -1633,46 +1654,50 @@ if(!window.rb){
 				removeElements.shift().classList.remove(initClass);
 			}
 		});
+		var failed = function(element, id){
+			life._failed[ id ] = true;
+			removeElements.push( element );
+			rb.log('failed', id, element);
+		};
 
 		var findElements = rb.throttle(function() {
 
-			var module, modulePath, moduleId, i, hook;
+			var element, modulePath, moduleId, i, hook;
 
 			var len = elements.length;
 
 			for ( i = 0; i < len; i++ ) {
-				module = elements[ i ];
+				element = elements[ i ];
 
-				if(module[expando]){
-					removeElements.push( module );
+				if(element[expando]){
+					removeElements.push( element );
 					continue;
 				}
 
-				modulePath = module.getAttribute( 'data-module' ) || '';
+				modulePath = element.getAttribute( 'data-module' ) || '';
 				moduleId = modulePath.split( '/' );
 				moduleId = moduleId[ moduleId.length - 1 ];
 
 				if ( rb.components[ moduleId ] ) {
-					life.create( module, rb.components[ moduleId ] );
-					removeElements.push( module );
+					life.create( element, rb.components[ moduleId ] );
+					removeElements.push( element );
 				}
 				else if ( life._failed[ moduleId ] ) {
-					removeElements.push( module );
+					failed(element, moduleId);
 				}
 				else if( (hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*'])) ) {
 					if(!hooksCalled[modulePath]){
 						hooksCalled[modulePath] = true;
 						/* jshint loopfunc: true */
-						hook(moduleId, modulePath, (function (modulePath, moduleId) {
+						hook(moduleId, modulePath, (function (element, moduleId) {
 							return function() {
-								life._failed[ moduleId ] = true;
+								failed(element, moduleId);
 							};
-						})(modulePath, moduleId), module)
+						})(element, moduleId), element);
 					}
 				}
 				else {
-					life._failed[ moduleId ] = true;
-					removeElements.push(module);
+					failed(element, moduleId);
 				}
 			}
 
@@ -1848,29 +1873,26 @@ if(!window.rb){
 	};
 
 	/**
-	 * returns the component instance of an element
+	 * returns the component instance of an element. If the component is not yet initialized it will be initialized.
+	 *
 	 * @memberof rb
 	 * @param {Element} element - DOM element
-	 * @param {String} [moduleId] - optional name of the component
+	 * @param {String} [componentName] - optional name of the component (if element has no `data-module="componentName"`).
 	 * @returns {Object} A component instance
 	 */
-	rb.getComponent = function(element, moduleId){
+	rb.getComponent = function(element, componentName){
 		var component = element && element[componentExpando];
 
 		if(!component){
 
-			if(!rb.components[moduleId]){
-				moduleId = (element.getAttribute( 'data-module' ) || '').split('/');
+			if(!rb.components[componentName]){
+				componentName = (element.getAttribute( 'data-module' ) || '').split('/');
 
-				if(!moduleId.length){
-					moduleId = (element.localeName || '').split('-');
-				}
-
-				moduleId = moduleId[ moduleId.length - 1 ];
+				componentName = componentName[ componentName.length - 1 ];
 			}
 
-			if(rb.components[ moduleId ]){
-				component = life.create(element, rb.components[ moduleId ]);
+			if(rb.components[ componentName ]){
+				component = life.create(element, rb.components[ componentName ]);
 			}
 		}
 		return component;
@@ -1952,9 +1974,7 @@ if(!window.rb){
 
 				this.parseOptions(this.options);
 
-				if(this.options.name){
-					this.name = this.options.name;
-				}
+				this.name = this.options.name || this.name;
 
 				this._evtName = this.name + 'changed';
 				this._beforeEvtName = this.name + 'change';
@@ -1977,7 +1997,9 @@ if(!window.rb){
 			 * @see rb.Component.prototype.setOption
 			 *
 			 * @prop {Object} defaults
+			 * @prop {Boolean} defaults.isDebug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
 			 * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
+			 * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used by `interpolateName` and its dependent methods.
 			 *
 			 * @example
 			 * <!-- overriding defaults with markup -->
@@ -2074,7 +2096,7 @@ if(!window.rb){
 				}
 
 				if (!(id = element.id)) {
-					id = 'rbjsid-' + rb.getID();
+					id = 'js-' + rb.getID();
 					element.id = id;
 				}
 
@@ -2106,10 +2128,11 @@ if(!window.rb){
 			/**
 			 * Uses [`rb.elementFromStr`]{@link rb.elementFromStr} with this.element as the element argument and interpolates string using `this.interpolateName`.
 			 * @param {String} string
+			 * @param {Element} [element=this.element]
 			 * @returns {Element[]}
 			 */
-			getElementsFromString: function(string){
-				return rb.elementFromStr(this.interpolateName(string), this.element);
+			getElementsFromString: function(string, element){
+				return rb.elementFromStr(this.interpolateName(string), element || this.element);
 			},
 
 			/*
@@ -2334,7 +2357,14 @@ if(!window.rb){
 
 			_super: function(){
 				this.log('no _super');
-			}
+			},
+			/**
+			 * Passes args to `console.log` if isDebug option is `true.
+			 * @param {...*} args
+			 */
+			log: function(){
+
+			},
 		}
 	);
 
@@ -2387,12 +2417,14 @@ if(!window.rb){
 			 * @property {Object} defaults
 			 * @property {String} defaults.target="" String that references the target element. Is processed by rb.elementFromStr.
 			 * @property {String} defaults.type="toggle" Method name to invoke on target component.
+			 * @property {Boolean} defaults.preventDefault=false Whether the default click action should prevented.
 			 * @property {*} defaults.args=null Arguments to be used to invoke target method.
 			 */
 			defaults: {
 				target: '',
 				type: 'toggle',
 				args: null,
+				switchedOff: false,
 			},
 			/**
 			 * @constructs
@@ -2416,24 +2448,75 @@ if(!window.rb){
 
 				this._super(element);
 
+				this._isFakeBtn = !this.element.matches('input, button');
+				this._resetPreventClick = this._resetPreventClick.bind(this);
+				this._switchOff = rb.rAF(this._switchOff, {throttle: true});
+				this._switchOn = rb.rAF(this._switchOn, {throttle: true});
+
 				this._setTarget = rb.rAF(this._setTarget, {throttle: true});
 				this.setOption('args', this.options.args);
+
+				if(!this.options.switchedOff){
+					this.setOption('switchedOff', false);
+				}
 			},
 
 			events: {
 				click: '_onClick',
+				keydown: function(e){
+					if(this.options.switchedOff){return;}
+
+					if(e.keyCode == 40 && this.element.getAttribute('aria-haspopup') == 'true'){
+						if(!this.panelComponent){return;}
+
+						if(!this.panelComponent.isOpen){
+							this._onClick(e);
+						} else {
+							this.panelComponent.setComponentFocus();
+						}
+						e.preventDefault();
+					} else {
+						this._delegateFakeClick(e);
+					}
+				},
+				keyup: '_delegateFakeClick',
 			},
-			_onClick: function(){
+			_delegateFakeClick: function(e){
+				if(this.options.switchedOff){return;}
+				if(this._isFakeBtn && (e.keyCode == 32 || e.keyCode == 13)){
+					e.preventDefault();
+
+					if((e.type == 'keyup' && e.keyCode == 32) || (e.type == 'keydown' && e.keyCode == 13)){
+						this._onClick(e);
+						this._preventClick = true;
+						setTimeout(this._resetPreventClick, 33);
+					}
+				}
+			},
+			_resetPreventClick: function(){
+				this._preventClick = false;
+			},
+			_onClick: function(e){
 				var args;
-				var target = this.getTarget() || {};
-				var component = this.component(target);
+				if(this.options.switchedOff || this._preventClick || this.element.disabled){return;}
+				var target = this.getTarget();
+				var component = target && this.component(target);
 
 				if (!component) {
 					return;
 				}
 
+				if(e && this.options.preventDefault && e.preventDefault){
+					e.preventDefault();
+				}
+
 				if(this.options.type in component){
 					args = this.options.args;
+
+					if(this.element != document.activeElement){
+						this.element.focus();
+					}
+
 					component.activeButtonComponent = this;
 					if(typeof component[this.options.type] == 'function'){
 						component[this.options.type].apply(component, args);
@@ -2447,18 +2530,41 @@ if(!window.rb){
 				var dom;
 				this._super(name, value);
 
-				if(name == 'target'){
-					dom = rb.elementFromStr(value, this.element)[0];
-					if(dom){
-						this.setTarget(dom);
-					}
-				} else if(name == 'args'){
-					if(value == null){
-						value = [];
-					} else if(!Array.isArray(value)){
-						value = [value];
-					}
-					this.options.args = value;
+				switch (name) {
+					case 'target':
+						dom = rb.elementFromStr(value, this.element)[0];
+						if(dom){
+							this.setTarget(dom);
+						}
+						break;
+					case 'args':
+						if(value == null){
+							value = [];
+						} else if(!Array.isArray(value)){
+							value = [value];
+						}
+						this.options.args = value;
+						break;
+					case 'switchedOff':
+						if (value) {
+							this._switchOff();
+						} else {
+							this._switchOn();
+						}
+
+						break;
+				}
+			},
+			_switchOff: function(){
+				if(this._isFakeBtn){
+					this.element.removeAttribute('role');
+					this.element.removeAttribute('tabindex');
+				}
+			},
+			_switchOn: function(){
+				if(this._isFakeBtn){
+					this.element.setAttribute('role', 'button');
+					this.element.setAttribute('tabindex', '0');
 				}
 			},
 			_setTarget: function(){

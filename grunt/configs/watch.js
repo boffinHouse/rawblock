@@ -42,12 +42,8 @@ module.exports = {
 		tasks: ['handlebars:dev']
 	},
 	js: {
-		files: ['<%= paths.src %>/js/**/*.js'],
+		files: ['<%= paths.src %>/**/*.{js,es6,es2015}'],
 		tasks: ['webpack:dev'] //
-	},
-	jsmodules: {
-		files: ['<%= paths.src %>/js/*/**/*.js'],
-		tasks: ['newer:jshint', 'sync:dev'] //newer:
 	},
 	//test: {
 	//	files: ['<%= paths.src %>/js/**/*.js'],

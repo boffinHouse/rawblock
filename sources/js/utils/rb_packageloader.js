@@ -109,7 +109,7 @@
 		if(Array.isArray(packageName)){
 			packageName.forEach(addPackage);
 		} else {
-			addPackage(packageName)
+			addPackage(packageName);
 		}
 	};
 
