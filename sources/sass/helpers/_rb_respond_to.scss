@@ -1,6 +1,7 @@
 // ====================================================================
-//  Respond-to
+//  rb-respond-to
 //
+//  Managing responsive breakpoints from breakpointConfig
 //=====================================================================
 @mixin rb-respond-to($breakpoint) {
 	@if map-has-key($breakpointConfigs, $breakpoint) {

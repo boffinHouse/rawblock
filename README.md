@@ -14,12 +14,11 @@ We use flexible, multi-device and human readable syntax to setup the basis of yo
 3. **Components**<br>
 A key aspect of RawBlock is modularity. We archieve this by creating isolated components who are context unaware.
 
-##1. RawBlock Web Starterkit
+##1. RawBlock Starterkit
 It is often a hard and time consuming part to start a new project. To help you with this, we developed the **RawBlock Web Starterkit**. Which gives you a solid base with a selection of tools to help you with this process.
 
 ###One Time Setup Requirements
-RawBlock Web Starterkit relies on [NodeJS](https://nodejs.org/), [NPM](https://www.npmjs.com/), [SASS](http://sass-lang.com/) and [Grunt](http://gruntjs.com/). These tools must be globally installed on your machine. If you finished with this, you can start using RawBlock Web Starterkit in your projects.
-
+RawBlock Web Starterkit relies on [NodeJS](https://nodejs.org/), [NPM](https://www.npmjs.com/), [SASS](http://sass-lang.com/) and [Grunt](http://gruntjs.com/). These tools must be globally installed on your machine.
 
 ####Build Process Tasks
 Node and NMP are used to run [Grunt](http://gruntjs.com/), the task runner. NPM will download the modules needed to perform certain tasks in Grunt. The tasks are stored in the `grunt_tasks` folder inside the `root` and loaded with [load-grunt-configs](https://github.com/creynders/load-grunt-configs/).

@@ -1,53 +1,17 @@
-
-
-
-
-// ====================================================================
-//  Generate Grid
+// RawBlock Gridlayout
 //
-//  variable:
-//  Dependency: [
-//      global-style-config
-//  ]
-//=====================================================================
-@mixin rb-generate-layout-styles($configs) {
-	//Styles breakpoints
-	@each $className, $config in $configs {
-		$gutter: map-get($config, gutter);
-		$flexOrderSize: map-get($config, flexOrderSize);
-
-		@if $className == 'all' {
-			@include rb-layout-styles($className, $gutter, $flexOrderSize);
-			@include rb-generate-layout-columns();
-		} @else {
-			@media #{map-get($config, media)} {
-				@include rb-layout-styles($className, $gutter, $flexOrderSize);
-			}
-		}
-	}
-}
-
-// ====================================================================
-// global-style-config
+// RawBlock provides a layout gridsystem that is flexible, responsive and uses a human readable syntax.
 //
-//  variable:
-//  Dependency: [
-//      size-generator,
-//      gutter-values,
-//      order
-//  ]
-//=====================================================================
-@mixin rb-layout-styles($className, $gutter, $flexOrderSize) {
-	@include rb-size-generator($className);
-	@include rb-size-gutter-generator($className, $gutter);
-	@include rb-flex-order-generator($className, $flexOrderSize);
-	@include rb-layout-offset($className);
-}
+// Styleguide 2
 
-// ====================================================================
-//  Generate layout columns
+// Basic principles
 //
-//=====================================================================
+// The layout structur is defined by the use of modifier classes. Modifiers in RawBlock are flags set on
+// components or elements to represent a different state or version and are are recognizable by the `.is-*` prefix .
+// The layout modifiers are globally defined and can be used on all elements of the page.
+//
+// Styleguide 2.1
+
 @mixin rb-generate-layout-columns() {
 
 	.is-column-group {
@@ -99,13 +63,11 @@
 	.is-offset-center#{$offsetType} {
 		margin: auto;
 	}
-
 }
 
-// ====================================================================
-//  Generate Gutters Columns
 //
-//=====================================================================
+//
+//
 @mixin rb-size-gutter-generator($className, $gutter) {
 
 	@if type-of($gutter) == 'map' {
@@ -117,14 +79,11 @@
 			$gutterVertical: map-get($gutter, vertical);
 		}
 
-
 		.is-gutters {
-			//margin-right: (-$gutterHorizontal / 2);
 			margin-left: (-$gutterHorizontal);
 
 			> [class*=is-size-] {
 				margin-bottom: $gutterVertical;
-				//padding-right: ($gutterHorizontal / 2);
 				padding-left: ($gutterHorizontal);
 			}
 		}
@@ -137,11 +96,9 @@
 		}
 
 		.is-gutters-horizontal {
-			//margin-right: (-$gutterHorizontal / 2);
 			margin-left: (-$gutterHorizontal);
 
 			> [class*=is-size-]  {
-				//padding-right: ($gutterHorizontal / 2);
 				padding-left: ($gutterHorizontal);
 			}
 		}
@@ -149,41 +106,11 @@
 
 	}
 }
-// ====================================================================
-//  Order Generator
-//
-//=====================================================================
-@mixin rb-flex-order-generator($className, $amount: 0) {
-	$i: 1;
 
-	@if type-of($amount) != 'number' {
-		$amount: 0;
-	}
 
-	@if $className == 'all' {
-		$orderType: '';
-	} @else {
-		$orderType: '-' + $className;
-	}
-
-	@while $i <= $amount {
-		.is-order-#{$i}#{$orderType} {
-			order: #{$i}
-		}
-
-		&.is-order-minus-#{$i}#{$orderType} {
-			order: #{-$i}
-		}
-
-		$i: $i + 1;
-	}
-
-}
-
-// ====================================================================
 //  Size Generator
 //
-//=====================================================================
+//
 @mixin rb-size-generator($className) {
 	$i: 5;
 	$steps: 5;
@@ -245,4 +172,29 @@
 		// increment the counter
 		$i: $i + $steps;
 	}
+}
+
+//
+@mixin rb-generate-layout-styles($configs) {
+	//Styles breakpoints
+	@each $className, $config in $configs {
+		$gutter: map-get($config, gutter);
+		$flexOrderSize: map-get($config, flexOrderSize);
+
+		@if $className == 'all' {
+			@include rb-layout-styles($className, $gutter, $flexOrderSize);
+			@include rb-generate-layout-columns();
+		} @else {
+			@media #{map-get($config, media)} {
+				@include rb-layout-styles($className, $gutter, $flexOrderSize);
+			}
+		}
+	}
+}
+
+@mixin rb-layout-styles($className, $gutter, $flexOrderSize) {
+	@include rb-size-generator($className);
+	@include rb-size-gutter-generator($className, $gutter);
+	@include rb-flex-order-generator($className, $flexOrderSize);
+	@include rb-layout-offset($className);
 }
