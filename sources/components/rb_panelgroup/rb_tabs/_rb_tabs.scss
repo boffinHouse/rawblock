@@ -1,0 +1,120 @@
+/*********************************************************
+
+rb-tabs
+----------------------------------------------------------
+
+**********************************************************/
+$tabsJSCFG: (
+	watchCss: false,
+	animation: 'adaptHeight',
+	duration: 500,
+);
+
+.rb-tabs {
+	width: 100%;
+	max-width: 402px;
+	border: 1px solid #000;
+	margin: auto;
+	@include rb-js-export($tabsJSCFG);
+
+	@at-root .tabs- {
+
+		&panel-wrapper {
+			position: relative;
+
+			&.is-fx > .tabs-panel.is-open,
+			&.is-fx > .tabs-panel.is-closing {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				display: block;
+			}
+		}
+
+		&panel {
+
+			display: none;
+
+			&.is-open {
+				display: block;
+			}
+
+			.is-slide & {
+				animation-fill-mode: both;
+				animation-duration: 500ms;
+			}
+		}
+	}
+
+
+	&.is-slide .tabs-panel-wrapper {
+
+		&.is-fx > .tabs-panel.is-open {
+			animation-name: leftIn;
+		}
+
+		&.is-fx > .tabs-panel.is-closing {
+			animation-name: rightOut;
+		}
+
+		&[data-direction="up"].is-fx > .tabs-panel.is-open {
+			animation-name: rightIn;
+		}
+
+		&[data-direction="up"].is-fx > .tabs-panel.is-closing {
+			animation-name: leftOut;
+		}
+	}
+
+	&.is-fade .tabs-panel {
+		animation-name: fadeout;
+		animation-fill-mode: both;
+		animation-duration: 500ms;
+
+		&.is-open {
+			animation-name: fadein;
+		}
+	}
+}
+
+
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; }  }
+@keyframes fadeout { from { opacity: 1; } to { opacity: 0; }  }
+@keyframes leftOut {
+	0% {
+		transform: translateX(0);
+	}
+
+	100% {
+		transform: translateX(-100%);
+	}
+}
+@keyframes leftIn {
+	0% {
+		transform: translateX(-100%);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
+@keyframes rightIn {
+	0% {
+		transform: translateX(100%);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
+@keyframes rightOut {
+	0% {
+		transform: translateX(0);
+	}
+
+	100% {
+		transform: translateX(100%);
+	}
+}
+

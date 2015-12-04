@@ -1,0 +1,73 @@
+$dialogJSCFG: (
+	watchCss: true,
+	closeOnEsc: true,
+	closeOnBackdropClick: false,
+	open: true,
+);
+
+.rb-dialog {
+	@include exportToJS($dialogJSCFG);
+
+	position: relative;
+	background: #fff;
+	max-width: 980px;
+	margin: 40px auto;
+	visibility: hidden;
+	outline: none;
+
+	.dialog-close {
+
+	}
+}
+
+@media (max-width: 480px) {
+	@if function-exists(rbToJSON) {
+		$dialogJSCFG: (
+			closeOnEsc: false,
+			closeOnBackdropClick: false
+		);
+		.rb-dialog {
+			@include exportToJS($dialogJSCFG);
+		}
+	}
+}
+
+.dialog-backdrop {
+	visibility: hidden;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: auto;
+	z-index: 999;
+	opacity: 0;
+	background: rgba(0, 0, 0, 0.6);
+	transition: 400ms all;
+
+	&.is-open {
+		visibility: visible;
+		opacity: 1;
+
+		> .rb-dialog {
+			visibility: visible;
+		}
+	}
+}
+
+.has-open-dialog,
+.has-open-dialog > body {
+	overflow: hidden;
+}
+
+@media (max-width: 620px), (max-height: 320px) {
+	.rb-dialog {
+		margin: 0;
+		width: 100%;
+		min-height: 100%;
+		max-width: none;
+	}
+}

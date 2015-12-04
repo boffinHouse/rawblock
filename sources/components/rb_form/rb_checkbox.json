@@ -1,0 +1,11 @@
+{
+  "standard": {
+    "type": "checkbox",
+    "label": "Checkbox",
+    "invalid": "",
+    "requiredNotion": "",
+    "booleans": [
+
+    ]
+  }
+}

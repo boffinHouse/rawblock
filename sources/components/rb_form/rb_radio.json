@@ -1,0 +1,11 @@
+{
+  "standard": {
+    "type": "radio",
+    "label": "Radiobutton",
+    "invalid": "",
+    "requiredNotion": "",
+    "booleans": [
+
+    ]
+  }
+}

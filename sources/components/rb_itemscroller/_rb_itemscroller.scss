@@ -1,0 +1,166 @@
+/*********************************************************
+
+rb-itemscroller
+----------------------------------------------------------
+
+**********************************************************/
+
+//JS Config
+$itemscrollerJSCFG: (
+	switchedOff: false,
+	centerMode: false,
+	selectedIndex: 0,
+	scrollStep: 'auto', //'auto'|'view'|number (of cells)
+	mouseDrag: true,
+	easing: '(0.3, 0.7, 0.4, 1.04)',
+	duration: 400,
+	carousel: false,
+	mandatorySnap: false,
+	useTransform: true,
+
+	//only with autoplay plugin:
+	autoplay: false,
+	autoplayDelay: 2000,
+	pauseOnHover: true,
+);
+
+.rb-itemscroller {
+	//@include rb-js-export((
+	//	queries: '500:100%, 860:50%, 33.333%'
+	//));
+	display: block;
+	position: relative;
+	transition: 300ms opacity;
+	user-select: none;
+
+	//FOUC prevention
+	.js &:not(.js-rb-attached){
+		max-height: 200px;
+		overflow: hidden;
+		opacity: 0.01;
+
+		.itemscroller-cell:nth-child(1n + 2) {
+			visibility: hidden;
+		}
+	}
+
+	//FOUC prevention
+	//.js & {
+	//	.itemscroller-cell:nth-child(1n + 3) {
+	//		position: absolute;
+	//		left: 200vw;
+	//	}
+	//}
+
+	@at-root .itemscroller- {
+
+		&viewport {
+			position: relative;
+			overflow: hidden;
+			width: 100%;
+		}
+
+		&content {
+			position: relative;
+			left: 0;
+			overflow: visible;
+			width: auto;
+			height: 100%;
+		}
+
+		//Pagination
+		&pagination {
+			position: absolute;
+			width: 100%;
+			bottom: 20px;
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		&pagination-btn  {
+			display: inline-block;
+			height: 15px;
+			width: 15px;
+			border-radius: 50%;
+			margin: 0 4px;
+			background: #fff;
+			transition: background 400ms ease-in;
+			cursor: pointer;
+
+			&.is-selected {
+				background: #666;
+				cursor: not-allowed;
+			}
+		}
+
+		//Buttons
+		&btn-prev,
+		&btn-next {
+			@include rb-hide-text;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			height: 40px;
+			width: 40px;
+			z-index: 2;
+			margin: auto 0;
+			border: none;
+			cursor: pointer;
+			background: #000;
+			transition: background 400ms ease-in;
+			outline: none;
+			border-radius: 50%;
+
+			&:hover,
+			&:focus {
+				background: #666;
+			}
+
+			&.is-disabled {
+				cursor: not-allowed;
+				background: rgba(0,0,0, 0.5);
+			}
+		}
+
+		&btn-prev {
+			left: 30px;
+
+
+			&:after {
+				@include rb-arrow-icon(15px, 15px, 3px, #fff, left);
+				top: 0;
+				left: 15px;
+				bottom: 0;
+				margin: auto;
+			}
+		}
+
+		&btn-next {
+			right: 30px;
+
+			&:after {
+				@include rb-arrow-icon(15px, 15px, 3px, #fff, right);
+				top: 0;
+				right: 15px;
+				bottom: 0;
+				margin: auto;
+			}
+		}
+	}
+}
+
+//Remove
+.dummy-item {
+	height: 200px;
+	border: 2px solid #000;
+	background: #ddd;
+	width: 100%;
+	transition: all 400ms;
+}
+
+
+
+
+
+
+

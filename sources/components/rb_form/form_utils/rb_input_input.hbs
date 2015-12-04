@@ -1,0 +1,15 @@
+<input type="{{#if type}}{{ type }}{{ else }}text{{/if}}" {{#is type "radio"}}name="dummy-input-{{name}}"{{/is}}
+		id="dummy-input-{{ id }}"
+
+	{{#each attrs}}
+		{{@key}}="{{this}}"
+	{{/each}}
+
+	{{#each booleans}}
+		{{this}}="{{this}}"
+	{{/each}}
+
+	{{#if invalid}}
+		class="form-user-error"
+	{{/if}}
+		/>

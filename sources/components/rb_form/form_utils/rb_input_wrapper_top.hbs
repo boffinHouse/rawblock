@@ -1,0 +1,8 @@
+<div class="form-field {{#if type}}is-{{ type }}{{/if}} {{#if invalid}}is-invalid{{/if}}">
+
+	<label for="dummy-input-{{ id }}">
+		{{ label }}
+		{{#if requiredNotion }}
+			<dfn title="Required Input">{{ requiredNotion  }}</dfn>
+		{{/if}}
+	</label>

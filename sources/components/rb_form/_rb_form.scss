@@ -1,0 +1,97 @@
+/*********************************************************
+*
+*    b-forms
+*
+*
+**********************************************************/
+.rb-form {
+
+	//Global Styles
+	width: 100%;
+
+	//Normalize Form Elements
+	fieldset {
+		position: relative;
+		width: 100%;
+		padding: 0;
+		border: none;
+	}
+	//END Normalize
+
+	@at-root .form- {
+		&section {
+			margin: 0 0 20px;
+		}
+
+		&section-legend {
+			margin: 0 0 20px;
+			font: 600 45px/45px sans-serif;
+			color: #333;
+		}
+
+		&subsection {
+			margin: 0 0 20px;
+		}
+
+		&subsection-legend {
+			margin: 0 0 20px;
+			font: 600 18px/24px sans-serif;
+			color: #333;
+		}
+
+
+		&intro {
+			margin: rb-rem-calc(0 0 30);
+			font-size: rb-rem-calc(18);
+			line-height: rb-rem-calc(24);
+		}
+
+		&row {
+			align-items: flex-end;
+		}
+
+		&box {
+			align-items: flex-end;
+		}
+
+		&field {
+			position: relative;
+			width: 100%;
+		}
+
+		&note {
+			padding: 10px;
+			font-family: sans-serif;
+			font-size: rb-rem-calc(12);
+			line-height: rb-rem-calc(18);
+			font-weight: 700;
+			color: #333;
+			margin-bottom: rb-rem-calc(20);
+		}
+
+		&footer {
+			margin: 20px 0 0 0;
+		}
+
+		//Validation
+		&errorbox {
+			display: none;
+
+			.is-invalid & {
+				display: block;
+			}
+		}
+
+		&errormessage {
+			margin: 0;
+			color: red;
+		}
+	}
+
+
+	@include form-field-and-label(true);
+	@include form-selectbox(true);
+	@include form-input-and-textarea(true);
+	@include form_input-state-btn(checkbox, true);
+	@include form_input-state-btn(radio, true);
+}
