@@ -221,6 +221,5 @@
 @mixin rb-layout-styles($className, $gutter, $flexOrderSize) {
 	@include rb-size-generator($className);
 	@include rb-size-gutter-generator($className, $gutter);
-	@include rb-flex-order-generator($className, $flexOrderSize);
 	@include rb-layout-offset($className);
 }

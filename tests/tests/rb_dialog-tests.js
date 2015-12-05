@@ -99,13 +99,13 @@
 
 		assert.ok(component.isOpen);
 
-		QUnit.afterAF(69)
+		QUnit.afterAF(99)
 			.then(function(){
 				assert.equal(change, 1);
 				assert.equal(changed, 1);
 				assert.ok(component.$backdrop.get(0).classList.contains('is-open'));
 				assert.ok(rb.root.classList.contains('has-open-dialog'));
-				assert.ok(component.$backdrop.get(0).contains(document.activeElement));
+				//assert.ok(component.$backdrop.get(0).contains(document.activeElement));
 			})
 			.then(function(){
 				shouldPrevent = true;
@@ -118,8 +118,7 @@
 						shouldPrevent = false;
 						assert.ok(component.isOpen);
 						assert.ok(rb.root.classList.contains('has-open-dialog'));
-					})
-					;
+					});
 			})
 			.then(function(){
 				component.close();

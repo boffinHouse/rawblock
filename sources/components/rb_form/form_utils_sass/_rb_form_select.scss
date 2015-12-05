@@ -1,0 +1,91 @@
+$selectbox-font: 400 24px/24px sans-serif !default;
+$selectbox-color: #555 !default;
+
+$selectbox-height: 60px !default;
+$selectbox-block: false !default;
+$selectbox-padding: rb-rem-calc(5 50 3 10) !default;
+$selectbox-border-radius: 0 !default;
+
+$selectbox-border: 1px solid #aaa !default;
+$selectbox-border-color-hover: #507aff !default;
+$selectbox-bg-color: #eee !default;
+
+$selectbox-deactive-bg-color: #f9f9f9 !default;
+$selectbox-deactive-color: #eee !default;
+
+$selectbox-invalid-border-color: red !default;
+
+//Form Select
+@mixin form-selectbox($custom:true, $block: true) {
+
+	select {
+		position: relative;
+		margin: 0;
+		min-height: $selectbox-height;
+		padding: $selectbox-padding;
+		border: $selectbox-border;
+		border-radius: $selectbox-border-radius;
+		font: $selectbox-font;
+		text-overflow: ellipsis;
+		box-shadow: none;
+		overflow: hidden;
+		background-color: $selectbox-bg-color;
+		white-space: nowrap;
+		color: $selectbox-color;
+		cursor: pointer;
+
+		option {
+
+			&:active,
+			&:focus {
+				background-color: #000088;
+			}
+		}
+
+
+		@if $block {
+			display: block;
+			width: 100%;
+		}
+
+		@if $custom {
+			-webkit-appearance: none !important;
+			-moz-appearance: none !important;
+
+			&::-ms-expand {
+				display: none; //remove arrow in ie
+			}
+		}
+
+		&.user-error {
+			border-color: $selectbox-invalid-border-color;
+		}
+
+		&:focus,
+		&:hover {
+			outline: none;
+			border-color: $selectbox-border-color-hover;
+
+			&.user-error {
+				border-color: $selectbox-border-color-hover;
+			}
+		}
+
+		&[disabled],
+		&[readonly] {
+			border: none;
+			box-shadow: none;
+			color: $selectbox-deactive-color;
+			background-color: $selectbox-deactive-bg-color;
+			background-image: none;
+			cursor: not-allowed;
+
+			&:hover,
+			&:focus {
+				border-color: rgba(0,0,0,0);
+			}
+		}
+	}
+
+}
+

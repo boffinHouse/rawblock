@@ -44,15 +44,11 @@ __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 		require.ensure([], function(require){
 			require('./utils/rb_draggy');
 			require('../components/rb_itemscroller/rb_itemscroller');
+			require('../components/rb_itemscroller/rb_itemscroller-pagination');
+			require('../components/rb_itemscroller/rb_itemscroller-player');
+			require('../components/rb_itemscroller/rb_itemscroller-queries');
 		});
 	});
-
-	addImportHook(['dialog'], function(){
-		require.ensure([], function(require){
-			require('../components/rb_dialog/rb_dialog');
-		});
-	});
-
 
 	addImportHook(['dialog'], function(){
 		require.ensure([], function(require){

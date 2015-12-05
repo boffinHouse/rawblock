@@ -37,10 +37,6 @@ module.exports = {
 		files: ['<%= paths.src %>/img/{,*/}*.{svg, png, jpg}'],
 		tasks: ['sync:js']
 	},
-	clienthbs: {
-		files: ['<%= paths.src %>/assemble/**/*-hybrid.hbs', '<%= paths.src %>/hbs/**/*.hbs'],
-		tasks: ['handlebars:dev']
-	},
 	js: {
 		files: ['<%= paths.src %>/**/*.{js,es6,es2015}'],
 		tasks: ['webpack:dev'] //
@@ -50,7 +46,7 @@ module.exports = {
 	//	tasks: ['test'] //
 	//},
 	templates: {
-		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}'],
+		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}', '<%= paths.src %>/components/**/*.{json,hbs}'],
 		tasks: ['newer:assemble:dev', 'prettify:dev']
 	},
 	ejs: {

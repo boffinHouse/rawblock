@@ -1,0 +1,47 @@
+---
+title: itemscroller
+layout: default_tpl.hbs
+---
+
+<div class="is-column-group is-gutters">
+	<div class="is-size-100">
+		<h2>Normal mode</h2>
+		{{#mergeJSON rb_itemscroller 'selectbox: true'}}
+			{{> rb_itemscroller }}
+		{{/mergeJSON}}
+	</div>
+</div>
+
+<div class="is-column-group is-gutters">
+	<div class="is-size-100">
+		<h2>center mode</h2>
+		{{#mergeJSON rb_itemscroller 'pagination: true, attrs: {"data-center-mode":true}'}}
+			{{> rb_itemscroller }}
+		{{/mergeJSON}}
+	</div>
+</div>
+
+<div class="is-column-group is-gutters">
+	<div class="is-size-100">
+		<h2>carousel normal mode</h2>
+		{{#mergeJSON rb_itemscroller 'itemsIndex: true, attrs: {"data-carousel":true}'}}
+			{{> rb_itemscroller }}
+		{{/mergeJSON}}
+	</div>
+</div>
+
+<div class="is-column-group is-gutters">
+	<div class="is-size-50 is-size-100-m is-size-100-s">
+		<h2>carousel center mode</h2>
+		{{#mergeJSON rb_itemscroller 'attrs: {"data-carousel":true, "data-center-mode":true, "id":"itemscroller-pagination"}'}}
+			{{> rb_itemscroller }}
+		{{/mergeJSON}}
+
+	</div>
+	<div class="is-size-50 is-size-100-m is-size-100-s">
+		<h2>pagination of previous scroller</h2>
+		{{#mergeJSON rb_itemscroller 'attrs: {"data-pagination-for":"itemscroller-pagination"}'}}
+			{{> rb_itemscroller }}
+		{{/mergeJSON}}
+	</div>
+</div>

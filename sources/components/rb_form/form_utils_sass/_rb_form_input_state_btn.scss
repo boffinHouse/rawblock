@@ -1,0 +1,123 @@
+$state-btn-inline-margin: 30px !default;
+$state-btn-padding: 14px 0 14px 55px !default;
+
+//selection styling outer selection
+$state-btn-size: 40px !default;
+$state-btn-position-top: 5px !default;
+$state-btn-position-left: 0 !default;
+$state-btn-border: 1px solid #aaa !default;
+$state-btn-border-color-hover: #507aff !default;
+$state-btn-bg-color: #fff !default;
+$state-btn-padding-inner: 5px !default;
+$state-btn-bg-color-inner: #507aff  !default;
+
+//Deactive (readonly/disabled)
+$state-btn-deactive-color: #eee !default;
+
+//selection invalid colors
+$state-btn-invalid-border-color: red !default;
+
+
+@mixin form-input-state-btn($type: checkbox, $custom:true) {
+
+	@if $custom {
+		input[type="#{$type}"]{
+			overflow: hidden;
+			position: absolute;
+			margin: 0;
+			padding: 0;
+			clip: rect(1px, 1px, 1px, 1px);
+			background : none;
+		}
+	}
+
+	.is-#{$type} {
+
+		label {
+			margin: 0;
+		}
+
+		.label {
+			display: block;
+			padding: $state-btn-padding;
+
+			@if $custom {
+
+				&::before {
+					content: "";
+					position: absolute;
+					top: $state-btn-position-top;
+					left: $state-btn-position-left;
+					width: $state-btn-size;
+					height: $state-btn-size;
+					padding: $state-btn-padding-inner;
+					border: $state-btn-border;
+					background-color: $state-btn-bg-color;
+					background-clip: content-box;
+
+					@if $type == "radio" {
+						border-radius: 50%;
+					}
+				}
+			}
+		}
+
+		//Status Selection buttons
+		input:checked {
+			~ .label {
+				&::before {
+					background-color: $state-btn-bg-color-inner;
+				}
+			}
+		}
+
+		input[disabled] ~ .label,
+		input[readonly] ~ .label {
+			color: $state-btn-deactive-color;
+			cursor: not-allowed;
+
+			&::before {
+				opacity: 0.4;
+				cursor: not-allowed;
+			}
+		}
+
+		input:focus:not([disabled]):not([readonly]),
+		input:hover:not([disabled]):not([readonly]) {
+
+			~ .label {
+				&::before {
+					border-color: $state-btn-border-color-hover;
+				}
+			}
+		}
+
+		&.is-invalid {
+			@include form-input-state-btn-invalid;
+		}
+	}
+
+	.is-invalid  {
+
+		.is-#{$type} {
+			@include form-input-state-btn-invalid;
+		}
+	}
+}
+
+@mixin form-input-state-btn-invalid {
+	.label {
+		&::before {
+			border-color: $state-btn-invalid-border-color;
+		}
+	}
+
+	input:focus,
+	input:hover {
+		~ .label {
+			&::before {
+				border-color: $state-btn-border-color-hover;
+			}
+		}
+	}
+}

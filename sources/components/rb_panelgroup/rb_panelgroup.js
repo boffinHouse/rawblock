@@ -37,11 +37,11 @@
 			 * @property {Boolean}  defaults.switchedOff=false Turns off panelgroup.
 			 * @property {Boolean} defaults.resetSwitchedOff=true Resets panels to initial state on reset switch.
 			 * @property {String} defaults.panelName='{name}-panel' Name of the constructed panels.
-			 * @property {String}  defaults.panelSel='find(.{name}-panel)' Reference to find all panels associated with this component group. For a nested accordion/tab use "children(.js-panel)".
-			 * @property {String}  defaults.btnSel='find(.{name}-btn)' Reference to find all panel buttons associated with this component group. For a nested accordion/tab use "children(.js-panel-btn)".
-			 * @property {String}  defaults.groupBtnSel='find(.{name}-ctrl-btn)' Reference to find all panelgroup buttons associated with this component group. For a nested accordion/tab use "children(.js-panelgroup-btn)".
-			 * @property {String}  defaults.panelWrapperSel='find(.{name}-panel-wrapper):0' Reference to find the panelwrapper(s) associated with this component group. If no panelwrapper is found the component element is used. For a nested accordion/tab use "children(.js-panel-wrapper)".
-			 * @property {String}  defaults.btnWrapperSel='find(.{name}-panel-btn-wrapper):0'  Reference to find the button wrapper(s) associated with this component group. If no button wrapper is found the component element is used. For a nested accordion/tab use "children(.js-panel-btn-wrapper)".
+			 * @property {String}  defaults.panelSel='find(.{name}-panel)' Reference to find all panels associated with this component group. For a nested accordion/tab use "children(.{name}-panel)".
+			 * @property {String}  defaults.btnSel='find(.{name}-btn)' Reference to find all panel buttons associated with this component group. For a nested accordion/tab use "children(.{name}-btn)".
+			 * @property {String}  defaults.groupBtnSel='find(.{name}-ctrl-btn)' Reference to find all panelgroup buttons associated with this component group. For a nested accordion/tab use "children(.{name}-ctrl-btn)".
+			 * @property {String}  defaults.panelWrapperSel='find(.{name}-panel-wrapper):0' Reference to find the panelwrapper(s) associated with this component group. If no panelwrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-wrapper)".
+			 * @property {String}  defaults.btnWrapperSel='find(.{name}-panel-btn-wrapper):0'  Reference to find the button wrapper(s) associated with this component group. If no button wrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-btn-wrapper)".
 			 */
 			defaults: {
 				multiple: false,
@@ -65,9 +65,10 @@
 			statics: {},
 			/**
 			 * @constructs
-			 * @classdesc Class component to create a tab or an accordion component.
+			 * @classdesc Class component to create a tab-like or an accordion-like component.
 			 * @name rb.components.panelgroup
 			 * @extends rb.Component
+			 *
 			 * @param element {Element}
 			 *
 			 * @fires panelgroup#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.

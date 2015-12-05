@@ -1,0 +1,104 @@
+$input-font: 600 24px/28px sans-serif !default;
+$input-font-color: #555 !default;
+
+$input-height: 60px !default;
+$input-block: false !default;
+$input-padding: rb-rem-calc(5 40 3 10) !default;
+$input-border-radius: 0 !default;
+
+$input-border: 1px solid #aaa!default;
+$input-border-color-hover: #507aff !default;
+$input-bg-color: #fff !default;
+
+$input-cursor: pointer !default;
+
+//Deactive (readonly / disabled)
+$input-deactive-bg-color: #f9f9f9 !default;
+$input-deactive-color: #eee !default;
+
+//Invalid
+$input-invalid-border-color: red !default;
+$input-invalid-bg-color: #ffaaaf !default;
+
+$textarea-min-height: 100px !default;
+$textarea-max-height: 100px !default;
+
+
+//Form Select
+@mixin form-input-and-textarea($custom:true, $block: true) {
+
+	input:not([type="radio"]):not([type="checkbox"]) {
+		min-height: $input-height;
+	}
+
+	textarea {
+		min-height: $textarea-min-height;
+		max-height: $textarea-max-height;
+	}
+
+	input:not([type="radio"]):not([type="checkbox"]),
+	textarea {
+		position: relative;
+		margin: 0;
+		padding: $input-padding;
+		border: $input-border;
+		border-radius: $input-border-radius;
+		font: $input-font;
+		box-shadow: none;
+		background-color: $input-bg-color;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: $input-font-color;
+		cursor: $input-cursor;
+
+		@if $block {
+			display: block;
+			width: 100%;
+		}
+
+		@if $custom {
+			-webkit-appearance: none !important;
+			-moz-appearance: none !important;
+		}
+
+		&.user-error {
+			border-color: $input-invalid-border-color;
+		}
+
+		&:focus,
+		&:hover {
+			outline: none;
+			border-color: $input-border-color-hover;
+
+			&.user-error {
+				border-color: $input-border-color-hover;
+			}
+		}
+
+		&[disabled],
+		&[readonly] {
+			border: none;
+			box-shadow: none;
+			color: $input-deactive-color;
+			background-color: $input-deactive-bg-color;
+			background-image: none;
+			cursor: not-allowed;
+		}
+	}
+
+	.is-invalid {
+
+		input:not([type="radio"]):not([type="checkbox"]),
+		textarea {
+			border-color: $input-invalid-border-color;
+			background-color: $input-invalid-bg-color;
+
+			&:hover,
+			&:focus {
+				border-color: $input-border-color-hover;
+			}
+		}
+	}
+}
+
