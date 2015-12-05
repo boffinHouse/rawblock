@@ -1,4 +1,12 @@
-(function(){
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		//optional require
+		//require('../rb__childfx/rb__childfx');
+		module.exports = factory();
+	} else {
+		factory();
+	}
+}(function(){
 	'use strict';
 
 	var rb = window.rb;
@@ -18,7 +26,7 @@
 			 * @prop {Boolean|String} once=false Possible values: true, false, 'entered'. Whether the component should destroy itself after it was executed once.
 			 * @prop {Boolean} restSwitchedOff=true Whether there should be a full reset after switchedOff option change.
 			 * @prop {Number} throttleDelay=0 Delay in ms to check for position change. Setting this to a higher number (50-300) can improve performance.
-			 * @prop {String} defaults.childSel='find(.scrolly-element)' Child elements that should be animated. String is processed by rb.elementFromStr.
+			 * @prop {String} defaults.childSel='find(.{name}-element)' Child elements that should be animated. String is processed by rb.elementFromStr.
 			 */
 			defaults: {
 				switchedOff: false,
@@ -27,7 +35,6 @@
 				once: false,
 				restSwitchedOff: true,
 				throttleDelay: 0,
-				childSel: 'find(.scrolly-element)',
 			},
 			statics: {
 				regWhite: /\s/g,
@@ -281,4 +288,6 @@
 	if(!rb.components._childfx){
 		rb.log('_childfx not included');
 	}
-})();
+
+	return Scrolly;
+}));

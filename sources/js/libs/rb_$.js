@@ -1,6 +1,5 @@
 (function(window, factory) {
 	var dom = factory(window, window.document);
-	window.dom = dom;
 	if(typeof module == 'object' && module.exports){
 		module.exports = dom;
 	}

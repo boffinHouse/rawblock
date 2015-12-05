@@ -1,4 +1,12 @@
-( function() {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		//optional require
+		//require('../rb__childfx/rb__childfx');
+		module.exports = factory();
+	} else {
+		factory();
+	}
+}(	function() {
 	'use strict';
 	/* jshint eqnull: true */
 	var rb = window.rb;
@@ -397,9 +405,6 @@
 					this.$clone.detach();
 				}
 			},
-			onceAttached: function(){
-
-			},
 			attached: function(){
 				this.$scrollEventElem.on('scroll', this.checkPosition);
 				rb.resize.on(this.reflow);
@@ -417,4 +422,6 @@
 	if(!rb.components._childfx){
 		rb.log('_childfx not included');
 	}
-})();
+
+	return Sticky;
+}));

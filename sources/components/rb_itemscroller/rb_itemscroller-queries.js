@@ -1,4 +1,11 @@
-(function() {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		require('./rb_itemscroller');
+		module.exports = factory();
+	} else {
+		factory();
+	}
+} (function() {
 	'use strict';
 	var rb = window.rb;
 	var regComma = /\s*?,\s*?/;
@@ -27,7 +34,7 @@
 		return obj;
 	};
 
-	rb.Component.mixin(rb.components.itemscroller,
+	var ItemScroller = rb.Component.mixin(rb.components.itemscroller,
 		/** @lends rb.components.itemscroller.prototype */
 		{
 			/**
@@ -104,4 +111,6 @@
 			}
 		}
 	);
-})();
+
+	return ItemScroller;
+}));

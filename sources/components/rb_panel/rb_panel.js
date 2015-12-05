@@ -1,8 +1,14 @@
-(function(window, document) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory();
+	} else {
+		factory();
+	}
+}(function() {
 	'use strict';
 	var rb = window.rb;
 
-	rb.Component.extend('panel',
+	var Panel = rb.Component.extend('panel',
 		/** @lends rb.components.panel.prototype */
 		{
 			/**
@@ -380,5 +386,5 @@
 			},
 		}
 	);
-
-})(window, document);
+	return Panel;
+}));

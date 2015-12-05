@@ -1,10 +1,18 @@
-(function(window, document) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		require('../rb_panel/rb_panel');
+		module.exports = factory();
+	} else {
+		factory();
+	}
+}(function() {
 	'use strict';
 
 	var rb = window.rb;
 	var $ = rb.$;
 	var life = rb.life;
 	var componentExpando = life.componentExpando;
+	var components = rb.components;
 
 	var cleanupCSS = function(){
 		var css = {display: ''};
@@ -255,7 +263,7 @@
 				var buttonWrapper = this.getElementsFromString(options.btnWrapperSel)[0];
 				this.$panelWrapper = $(this.getElementsFromString(options.panelWrapperSel));
 
-				rb.components.panel.prototype.name = panelName;
+				components.panel.prototype.name = panelName;
 
 				this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0))).each(function(index){
 					var panel = life.create(this, rb.components.panel);
@@ -265,19 +273,19 @@
 					panel.setOption('resetSwitchedOff', options.resetSwitchedOff);
 				});
 
-				rb.components.panel.prototype.name = 'panel';
+				components.panel.prototype.name = 'panel';
 
 				panels = this.$panels;
 
 				this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper)).each(function(index){
-					var btn = life.create(this, rb.components.panelbutton);
+					var btn = life.create(this, components.panelbutton);
 					btn.setTarget(panels.get(index));
 					btn.setOption('type', (options.toggle) ? 'toggle' : 'open');
 					btn.setOption('preventDefault', options.preventDefault);
 				});
 
 				this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function(index){
-					var btn = life.create(this, rb.components.panelgroupbutton);
+					var btn = life.create(this, components.panelgroupbutton);
 					btn.setTarget(that.element);
 					btn.setOption('preventDefault', options.preventDefault);
 				});
@@ -439,7 +447,7 @@
 	);
 
 
-	rb.components.button.extend('panelgroupbutton', {
+	components.button.extend('panelgroupbutton', {
 		defaults: {}
 	});
 
@@ -471,7 +479,7 @@
 	 *
 	 * rb.$('.rb-tabs').rbComponent().next();
 	 */
-	rb.components.panelgroup.extend('tabs',
+	components.panelgroup.extend('tabs',
 		/** @lends rb.components.tabs.prototype */
 		{
 			/**
@@ -514,7 +522,7 @@
 	 *      console.log(rb.$(this).rbComponent().selectedIndexes);
 	 * });
 	 */
-	rb.components.panelgroup.extend('accordion',
+	components.panelgroup.extend('accordion',
 		/** @lends rb.components.accordion.prototype */
 		{
 			/**
@@ -534,4 +542,6 @@
 			}
 		}
 	);
-})(window, document);
+
+	return components.panelgroup;
+}));

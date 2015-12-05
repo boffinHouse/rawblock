@@ -1,8 +1,14 @@
-(function(window, document) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory();
+	} else {
+		factory();
+	}
+}(function() {
 	'use strict';
 	var $ = rb.$;
 
-	rb.Component.extend('dialog',
+	var Dialog = rb.Component.extend('dialog',
 		/** @lends rb.components.dialog.prototype */
 		{
 			/**
@@ -178,4 +184,5 @@
 		}
 	);
 
-}(window, document));
+	return Dialog;
+}));

@@ -1,4 +1,11 @@
-(function() {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		require('../../js/utils/rb_draggy');
+		module.exports = factory();
+	} else {
+		factory();
+	}
+}(function() {
 	/* jshint eqnull: true */
 	'use strict';
 	var rb = window.rb;
@@ -6,7 +13,7 @@
 	var regIndex = /\{index}/g;
 	var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
 
-	rb.Component.extend('itemscroller',
+	var ItemScroller = rb.Component.extend('itemscroller',
 		/** @lends rb.components.itemscroller.prototype */
 		{
 			/**
@@ -1025,4 +1032,5 @@
 			},
 		}
 	);
-})();
+	return ItemScroller;
+}));
