@@ -20,7 +20,7 @@ __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
 
 (function(addImportHook){
-	addImportHook(['panel'], function(){
+	addImportHook(['panel', 'panelbutton'], function(){
 		require.ensure([], function(require){
 			require('../components/rb_panel/rb_panel');
 		});
@@ -28,21 +28,18 @@ __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
 	addImportHook(['popover'], function(){
 		require.ensure([], function(require){
-			require('../components/rb_panel/rb_panel');
 			require('../components/rb_popover/rb_popover');
 		});
 	});
 
 	addImportHook(['panelgroup', 'tabs', 'accordion'], function(){
 		require.ensure([], function(require){
-			require('../components/rb_panel/rb_panel');
 			require('../components/rb_panelgroup/rb_panelgroup');
 		});
 	});
 
 	addImportHook(['itemscroller'], function(){
 		require.ensure([], function(require){
-			require('./utils/rb_draggy');
 			require('../components/rb_itemscroller/rb_itemscroller');
 			require('../components/rb_itemscroller/rb_itemscroller-pagination');
 			require('../components/rb_itemscroller/rb_itemscroller-player');
@@ -60,6 +57,13 @@ __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 		require.ensure([], function(require){
 			require('../components/rb__childfx/rb__childfx');
 			require('../components/rb_scrolly/rb_scrolly');
+		});
+	});
+
+	addImportHook(['sticky'], function(){
+		require.ensure([], function(require){
+			require('../components/rb__childfx/rb__childfx');
+			require('../components/rb_sticky/rb_sticky');
 		});
 	});
 

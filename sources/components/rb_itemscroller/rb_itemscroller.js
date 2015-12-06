@@ -50,14 +50,16 @@
 			 * @name rb.components.itemscroller
 			 * @extends rb.Component
 			 *
+			 * @fires componentName#change
 			 * @fires componentName#changed
 			 * @fires componentName#changedcompleted
 			 * @fires componentName#pagelengthchange
 			 *
 			 * @prop {Number} pageLength Returns the page length (page length depends on item cells and scrollStep option)
+			 *
 			 * @prop {$.CallbackObject} onslide
-			 * @prop {$.CallbackObject} onslide.add Add a onslide callback function
-			 * @prop {$.CallbackObject} onslide.remove Remove a onslide callback function
+			 * @prop {Function} onslide.add Add a onslide callback function
+			 * @prop {Function} onslide.remove Remove a onslide callback function
 			 *
 			 * @example
 			 * <!--  markup example -->
@@ -552,12 +554,13 @@
 			 * @returns {*|number}
 			 */
 			selectIndex: function(index, noAnimate){
-				var trigger, duration;
+				var trigger, duration, setPos, curIndex;
 				var countIndex = index + this.baseIndex;
 				if(!arguments.length || countIndex < 0 || countIndex >= this.pageData.length || !this.$cells.length){return this._selectedIndex;}
 				if(this.options.switchedOff){return;}
 
-				var setPos = this._getPosition(countIndex);
+				curIndex = this._selectedIndex || 0;
+				setPos = this._getPosition(countIndex);
 
 				if(index < 0){
 					index = this.baseLength + index;
@@ -570,6 +573,14 @@
 				}
 
 				if(setPos != this._pos){
+					if(curIndex != index){
+						if(this._trigger(this._beforeEvtName, {nextIndex: index}).isDefaultPrevented()){
+							return this._selectedIndex;
+						}
+						trigger = true;
+						this._selectedIndex = index;
+					}
+
 					this._animStart = false;
 					this._animEnd = setPos;
 					this.scroller.rbItemscrollerPos = this._pos;
@@ -597,14 +608,10 @@
 						);
 					}
 
-					if(this._selectedIndex != index){
-						this._selectedIndex = index;
-						trigger = true;
-					}
 					this._updateControls(setPos);
 
 					if(trigger){
-						this._trigger();
+						this._trigger({prevIndex: curIndex});
 						if(noAnimate){
 							this._slideComplete();
 						}

@@ -1469,9 +1469,11 @@ if(!window.rb){
 	};
 
 	/**
-	 * Registers a component class with a name and manages its lifecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an attached or detached method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
+	 * Registers a component class with a name and manages its lifecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an `attached` or `detached` instance method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
 	 *
-	 * The markup of a component class should get the class `js-rb-life` and a `data-module` attribute with the name as its value. The `data-module` is split by a "/" and only the last part is used as component name. The part before can be optionally used for [`rb.life.addImportHook`]{@link rb.life.addImportHook}.
+	 * The DOM element/markup of a component class must have a `data-module` attribute with the name as its value. The `data-module` is split by a "/" and only the last part is used as the component name. The part before can be optionally used for [`rb.life.addImportHook`]{@link rb.life.addImportHook}.
+	 *
+	 * Usually the element should also have the class `js-rb-life` to make sure it is constructed as soon as it is attached to the document. If the component element has the class `js-click` instead it will be constructed on first click.
 	 *
 	 * @memberof rb
 	 * @param {String} name The name of your component.
@@ -1648,6 +1650,10 @@ if(!window.rb){
 		return instance;
 	};
 
+	life.deferConstruct = function(){
+
+	};
+
 	life.searchModules = (function() {
 		var removeInitClass = rb.rAF(function(){
 			while (removeElements.length) {
@@ -1662,9 +1668,13 @@ if(!window.rb){
 
 		var findElements = rb.throttle(function() {
 
-			var element, modulePath, moduleId, i, hook;
+			var element, modulePath, moduleId, i, hook, start, deferred;
 
 			var len = elements.length;
+
+			if(!len){return;}
+
+			start = Date.now();
 
 			for ( i = 0; i < len; i++ ) {
 				element = elements[ i ];
@@ -1679,8 +1689,13 @@ if(!window.rb){
 				moduleId = moduleId[ moduleId.length - 1 ];
 
 				if ( rb.components[ moduleId ] ) {
-					life.create( element, rb.components[ moduleId ] );
-					removeElements.push( element );
+
+					if(life.deferConstruct(Date.now() - start, i, moduleId, element)){
+						deferred = true;
+					} else {
+						life.create( element, rb.components[ moduleId ] );
+						removeElements.push( element );
+					}
 				}
 				else if ( life._failed[ moduleId ] ) {
 					failed(element, moduleId);
@@ -1703,6 +1718,9 @@ if(!window.rb){
 
 			removeInitClass();
 			lifeBatch.run();
+			if(deferred){
+				setTimeout(findElements, 99);
+			}
 		}, {delay: 50});
 
 		return findElements;
@@ -1905,7 +1923,9 @@ if(!window.rb){
 		{
 			/**
 			 * constructs the class
-			 * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options, listen and trigger events, react to responsive state changes and establish a11y focus management.
+			 * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
+			 *
+			 * For the life cycle features see [rb.life.register]{@link rb.life.register}.
 			 * @param element
 			 * @constructs
 			 *

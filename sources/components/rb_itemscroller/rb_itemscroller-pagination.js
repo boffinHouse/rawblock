@@ -68,8 +68,6 @@
 
 				this.groupedMainElement = rb.elementFromStr(paginationFor, this.element)[0] || null;
 
-				console.log(paginationFor);
-
 				if(!this.groupedMainElement){
 					return;
 				}
