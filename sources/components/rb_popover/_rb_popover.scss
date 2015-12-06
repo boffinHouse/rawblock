@@ -1,0 +1,128 @@
+/*********************************************************
+
+rb-popover
+----------------------------------------------------------
+
+**********************************************************/
+$popoverJSCFG: ();
+$popover-margin: 30px;
+$popover-bg-color: #333;
+$popover-arrow-pos: 10px;
+
+.rb-popover {
+	//@include rb-js-export($popoverJSCFG);
+	position: absolute;
+	max-width: 300px;
+	visibility: hidden;
+	opacity: 0;
+	transition: 400ms opacity, 400ms visibility;
+
+	@at-root {
+		.popover-inner {
+			position: relative;
+			z-index: 2;
+			padding: 20px;
+			background: #{$popover-bg-color};
+		}
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		height: 40px;
+		width: 40px;
+		background: #{$popover-bg-color};
+		transform: rotate(45deg);
+	}
+
+	&.is-open {
+		visibility: visible;
+		opacity: 1;
+	}
+
+	&.is-popover-top,
+	&.is-popover-bottom.is-flipped-y{
+		margin: 0 0 #{$popover-margin} 0;
+
+		&::after {
+			top: auto;
+			bottom: -#{$popover-arrow-pos};
+			right: 0;
+			left: 0;
+			margin: 0 auto;
+		}
+	}
+
+	&.is-popover-bottom,
+	&.is-popover-top.is-flipped-y {
+		margin: #{$popover-margin} 0 0 0;
+
+		&::after {
+			top: -#{$popover-arrow-pos};
+			bottom: auto;
+			right: 0;
+			left: 0;
+			margin: 0 auto;
+		}
+	}
+
+	&.is-popover-right,
+	&.is-popover-left.is-flipped-x {
+		margin: 0 0 0 #{$popover-margin};
+
+		&::after {
+			top: 0;
+			bottom: 0;
+			right: auto;
+			left: -#{$popover-arrow-pos};
+			margin: auto 0;
+		}
+	}
+
+	&.is-popover-left,
+	&.is-popover-right.is-flipped-x {
+		margin: 0 #{$popover-margin} 0 0;
+
+		&::after {
+			top: 0;
+			bottom: 0;
+			right: -#{$popover-arrow-pos};
+			left: auto;
+			margin: auto 0;
+		}
+	}
+
+	//Popover JS Configs
+	&.is-popover-top {
+		$popoverJSCFG: (
+				my: 'center bottom',
+				at: 'center top'
+		);
+		@include rb-js-export($popoverJSCFG);
+	}
+
+	&.is-popover-bottom {
+		$popoverJSCFG: (
+				my: 'center top',
+				at: 'center bottom'
+		);
+		@include rb-js-export($popoverJSCFG);
+	}
+
+	&.is-popover-right {
+		$popoverJSCFG: (
+				my: 'left middle',
+				at: 'right middle'
+		);
+		@include rb-js-export($popoverJSCFG);
+	}
+
+	&.is-popover-left {
+		$popoverJSCFG: (
+				my: 'right middle',
+				at: 'left middle'
+		);
+		@include rb-js-export($popoverJSCFG);
+	}
+}
+

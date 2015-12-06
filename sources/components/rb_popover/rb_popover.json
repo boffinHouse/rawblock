@@ -1,0 +1,11 @@
+{
+  "btn": {
+    "type": "button",
+    "title": "Panel position top",
+    "action": "js-click"
+  },
+  "panel": {
+    "type": "top"
+  }
+
+}

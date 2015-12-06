@@ -1,0 +1,29 @@
+{
+	"standard": {
+		"type": "select",
+		"label": "Selectbox",
+		"invalid": false,
+		"requiredNotion": "",
+		"booleans": [
+			"required"
+		],
+		"items": [
+			{
+				"label": "Please Choose",
+				"booleans": [
+					"disabled",
+					"selected"
+				]
+			},
+			{
+				"label": "Option 1"
+			},
+			{
+				"label": "Option 2"
+			},
+			{
+				"label": "Option 3"
+			}
+		]
+	}
+}

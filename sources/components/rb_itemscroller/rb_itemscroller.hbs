@@ -1,0 +1,38 @@
+---
+component: rb_itemscroller
+---
+
+<div class="rb-itemscroller js-rb-life" data-module="itemscroller" {{#each attrs}}{{@key}}="{{this}}"{{/each}}>
+	{{#if autoplay}}
+		<button type="button" class="itemscroller-autoplay-btn">autoplay</button>
+	{{/if}}
+	{{#if itemsIndex}}
+		<div>
+			<span class="itemscroller-current-index"> </span>
+			/<span class="itemscroller-page-length"> </span>
+		</div>
+	{{/if}}
+	{{#if selectpagination }}
+		<select class="itemscroller-select"></select>
+	{{/if}}
+	{{#if buttons }}
+		<button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">{{buttons.prev}}</button>
+		<button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">{{buttons.next}}</button>
+	{{/if}}
+	<div class="itemscroller-viewport">
+		<div class="itemscroller-content is-column-group is-gutters-horizontal">
+			{{#each items}}
+				<div class="itemscroller-cell {{sizes}}">
+					<div class="dummy-item">
+						{{@index}}
+					</div>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+	{{#if pagination}}
+		<div class="itemscroller-pagination"></div>
+	{{/if}}
+</div>
+
+

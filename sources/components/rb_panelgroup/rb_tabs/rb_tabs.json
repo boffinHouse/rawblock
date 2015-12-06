@@ -1,0 +1,6 @@
+{
+  "type": "is-fade",
+  "multiple": false,
+  "toggle": false,
+  "hello": "Hello, I'm your tabs content"
+}

@@ -1,0 +1,51 @@
+html {
+	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: subpixel-antialiased;
+	box-sizing: border-box;
+	height: 100%;
+	width: 100%; }
+
+*,
+*::before,
+*::after {
+	box-sizing: inherit; }
+
+.rb-dialog {
+	position: relative;
+	background: #fff;
+	max-width: 980px;
+	margin: 40px auto;
+	visibility: hidden;
+	outline: none; }
+
+
+.dialog-backdrop {
+	visibility: hidden;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	overflow: auto;
+	z-index: 999;
+	opacity: 0;
+	background: rgba(0, 0, 0, 0.6);
+	transition: 400ms all; }
+.dialog-backdrop.is-open {
+	visibility: visible;
+	opacity: 1; }
+.dialog-backdrop.is-open > .rb-dialog {
+	visibility: visible; }
+
+.has-open-dialog,
+.has-open-dialog > body {
+	overflow: hidden; }

@@ -1,0 +1,24 @@
+.rb-panel {
+	@if function-exists(rbToJSON) {
+		$panelJSCFG: (
+			animation: 'slide'
+		);
+
+		@include rb-js-export($panelJSCFG);
+	}
+
+	display: block;
+	overflow: hidden;
+	visibility: hidden;
+	height: 0;
+	opacity: 0;
+	transition: opacity 400ms, visibility 400ms;
+
+	&.is-open {
+		visibility: visible;
+		overflow: visible;
+		height: auto;
+		opacity: 1;
+	}
+}
+

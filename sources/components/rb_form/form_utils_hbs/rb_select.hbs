@@ -1,0 +1,23 @@
+<select id="dummy-input-{{ id }}"
+	{{#each attrs}}
+		{{@key}}="{{this}}"
+	{{/each}}
+
+	{{#each booleans}}
+		{{this}}="{{this}}"
+	{{/each}}
+
+{{#each items }}
+	<option value="{{ label }}"
+		{{#each attrs}}
+			{{@key}}="{{this}}"
+		{{/each}}
+
+		{{#each booleans}}
+			{{this}}="{{this}}"
+		{{/each}}
+			>
+	{{ label }}
+	</option>
+{{/each}}
+</select>
