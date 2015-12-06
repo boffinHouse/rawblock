@@ -3,6 +3,7 @@ build
 dist
 dev
 doc
+jsdoc
 tmp
 bower_components
 styleguide
