@@ -1,0 +1,26 @@
+<table class="<%=name%>-grid is-daygrid" role="grid" aria-label="<%= title %>">
+	<thead>
+		<tr>
+			<% formats.dayNamesShort.forEach(function(dayNamesShort, index){ %>
+				<th>
+					<abbr title="<%=formats.dayNames[index]%>"><%= dayNamesShort %></abbr>
+				</th>
+			<% }); %>
+		</tr>
+	</thead>
+	<tbody>
+		<% body.forEach(function(tds){ %>
+			<tr>
+				<% tds.forEach(function(td){ %>
+					<td class="<%=
+						rb.if(td.otherMonth, 'is-othermonth ')
+					%> day-<%= td.day
+					%> <%=
+						name %>-cell" data-date="<%= td.date %>" role="gridcell" tabindex="-1">
+						<span class="<%=name%>-cellbox"><%= td.date %></span>
+					</td>
+				<% }); %>
+			</tr>
+		<% }); %>
+	</tbody>
+</table>
