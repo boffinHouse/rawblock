@@ -1,5 +1,14 @@
-<footer class="rb-page-footer" role="contentinfo">
-	<div class="page-footer-inner is-column-group">
-
+<footer class="rb-page-footer">
+	<div class="page-footer-inner">
+		<div class="is-size-100">
+			{{#with rb_sitemap }}
+				{{> rb_sitemap }}
+			{{/with}}
+		</div>
+		<div class="is-size-100">
+			{{#with rb_site_info }}
+				{{> rb_site_info }}
+			{{/with}}
+		</div>
 	</div>
 </footer>

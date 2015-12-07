@@ -1,0 +1,45 @@
+/*********************************************************
+
+rb-site-info
+----------------------------------------------------------
+
+**********************************************************/
+.rb-site-info {
+	width: 100%;
+	padding: 20px 40px;
+	background: #444;
+
+	@at-root {
+		.site-info- {
+
+			&copyright {
+				margin: 0;
+				font: 14px/16px $font-sans-serif;
+				color: #ccc;
+			}
+
+			&list {
+				display: flex;
+				flex-wrap: wrap;
+				margin: 0;
+				list-style: none;
+			}
+
+			&item {
+				font: 14px/16px $font-sans-serif;
+				color: #ccc;
+			}
+
+			&link {
+				display: block;
+				padding: 0 10px;
+				color: #ccc;
+
+				&:hover,
+				&:focus {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"boxes": [
+		{
+			"size": "30",
+			"header": {
+				"title": "Hello Header",
+				"link": "#"
+			},
+			"items": [
+				{
+					"title": "Site Use",
+					"link": "#"
+				},
+				{
+					"title": "Your privacy",
+					"link": "#"
+				}
+			]
+		}
+	]
+
+}

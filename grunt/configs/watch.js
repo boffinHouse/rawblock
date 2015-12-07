@@ -26,7 +26,7 @@ module.exports = {
 		]
 	},
 	scss: {
-		files: ['<%= paths.src %>/sass/**/*.scss', '!<%= paths.src %>/sass/tmp_*.scss'],
+		files: ['<%= paths.src %>/sass/**/*.scss', '<%= paths.src %>/components/**/*.scss','!<%= paths.src %>/sass/tmp_*.scss'],
 		tasks: ['scssglobbing', 'sass:dev', 'clean:scssglobbing', 'autoprefixer:dev'],
 		options: {
 			debounceDelay: 100,
