@@ -3,7 +3,6 @@ var assign = require('object-assign');
 
 require('dom4');
 require('es6-promise');
-require('./polyfills/object-assign');
 
 require('array.from');
 require('array.prototype.find');
