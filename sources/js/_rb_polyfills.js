@@ -1,5 +1,5 @@
 var bind = require("function-bind");
-var assign = require('./polyfills/object-assign');
+var assign = require('object-assign');
 
 require('dom4');
 require('es6-promise');
