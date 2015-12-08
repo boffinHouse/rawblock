@@ -52,19 +52,24 @@
 			'watch'
 		]);
 
+		grunt.registerTask('css', [
+			'scssglobbing',
+			'sass:dev',
+			'autoprefixer:dev',
+			'clean:scssglobbing',
+		]);
+
 		grunt.registerTask('dev', [
 			'clean:dev',
 			'clean:tmp',
 			//'svg',
-			'scssglobbing',
+			'css',
 			'concurrent:dev2',
 			'handlebars:dev',
 			'jst',
 			'webpack:dev',
-			'autoprefixer:dev',
 			'sync',
 			'prettify:dev',
-			'clean:scssglobbing',
 		]);
 
 		grunt.registerTask('dist', [
