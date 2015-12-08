@@ -15,6 +15,16 @@ rb-site-info
 				margin: 0 auto;
 			}
 
+			&title {
+
+			}
+
+			&title-link {
+				display: block;
+				padding: 0 0 10px;
+				color: #666;
+			}
+
 			&item {
 				font: 14px/16px $font-sans-serif;
 				color: #ccc;
@@ -22,7 +32,7 @@ rb-site-info
 
 			&link {
 				display: block;
-				//padding: 0 10px;
+				padding: 4px 0;
 				color: #ccc;
 
 				&:hover,

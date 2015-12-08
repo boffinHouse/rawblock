@@ -7,4 +7,13 @@
 
 .rb-page-footer {
 	width: 100%;
+
+	@at-root {
+		.page-footer- {
+
+			&inner {
+				padding: 0 20px;
+			}
+		}
+	}
 }
