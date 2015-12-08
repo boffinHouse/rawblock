@@ -1,14 +1,15 @@
 <div class="rb-sitemap">
-
 	<div class="sitemap-inner">
-		<ul class="sitemap-group is-column-group is-gutters-horizontal">
+		<ul class="sitemap-group is-column-group is-gutters">
 			{{#each boxes}}
-				<li class="sitemap-box is-size-{{ size }}">
+				<li class="sitemap-box {{ sizes }}">
 					{{#if header}}
 						{{#if header.link}}
-							<h3><a href="{{ header.link }}">{{ header.title }}</a></h3>
+							<h3 class="sitemap-title">
+								<a class="sitemap-title-link" href="{{ header.link }}">{{ header.title }}</a>
+							</h3>
 						{{else}}
-							<h3>{{ header.title }}</h3>
+							<h3 class="sitemap-title">{{ header.title }}</h3>
 						{{/if}}
 					{{/if}}
 					{{#if items }}

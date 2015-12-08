@@ -5,6 +5,6 @@
  */
 module.exports = {
 	dev1: [],
-	dev2: ['sass:dev', 'assemble:dev'],
+	dev2: [ 'assemble:dev'],
 	dist: []
 };

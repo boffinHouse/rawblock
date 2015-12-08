@@ -1,18 +1,126 @@
 {
 	"boxes": [
 		{
-			"size": "30",
+			"sizes": "is-size-20",
 			"header": {
-				"title": "Hello Header",
+				"title": "Header Section 1",
 				"link": "#"
 			},
 			"items": [
 				{
-					"title": "Site Use",
+					"title": "Link Content",
 					"link": "#"
 				},
 				{
-					"title": "Your privacy",
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				}
+			]
+		},
+		{
+			"sizes": "is-size-20",
+			"header": {
+				"title": "Header Section 2",
+				"link": "#"
+			},
+			"items": [
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				}
+			]
+		},
+		{
+			"sizes": "is-size-20",
+			"header": {
+				"title": "Header Section 3",
+				"link": "#"
+			},
+			"items": [
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				}
+			]
+		},
+		{
+			"sizes": "is-size-20",
+			"header": {
+				"title": "Header Section 4",
+				"link": "#"
+			},
+			"items": [
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				}
+			]
+		},
+		{
+			"sizes": "is-size-20",
+			"header": {
+				"title": "Header Section 5",
+				"link": "#"
+			},
+			"items": [
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
+					"link": "#"
+				},
+				{
+					"title": "Link Content",
 					"link": "#"
 				}
 			]
