@@ -143,9 +143,8 @@
 				this.reflow = this.throttledCalculateLayout;
 
 				this.setPos = rb.rAF(this._setPos, {that: this, throttle: true});
-				this._writeLayout = rb.rAF(this._writeLayout, {throttle: true});
-				this._createPagination = rb.rAF(this._createPagination, {throttle: true});
-				this._switchOff = rb.rAF(this._switchOff, {throttle: true});
+
+				rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff');
 
 				this._slideProgress = this._slideProgress.bind(this);
 				this._slideComplete = this._slideComplete.bind(this);

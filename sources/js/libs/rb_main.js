@@ -572,6 +572,33 @@ if(!window.rb){
 
 	/* End: rAF helpers */
 
+	/* Begin: rAFs helper */
+
+	/**
+	 * Invokes `rb.rAF` on multiple methods.
+	 * @param {Object} obj
+	 * @param {Object} [options]
+	 * @param {...String} methodNames
+	 *
+	 * @example
+	 * rb.rAFs(this, {throttle: true}, 'renderList', 'renderCircle');
+	 */
+	rb.rAFs = function(obj){
+		var options;
+		var args = Array.from(arguments);
+
+		args.shift();
+
+		if(typeof args[0] == 'object'){
+			options = args.shift();
+		}
+
+		args.forEach(function(fn){
+			obj[fn] = rb.rAF(obj[fn], options);
+		});
+	};
+	/* End: rAFs helper */
+
 	/* Begin: rbComponent */
 
 	/**

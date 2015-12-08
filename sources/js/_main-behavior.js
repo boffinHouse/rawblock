@@ -20,6 +20,13 @@ __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
 
 (function(addImportHook){
+
+	addImportHook(['listbox'], function(){
+		require.ensure([], function(require){
+			require('../components/rb_listbox/rb_listbox');
+		});
+	});
+
 	addImportHook(['panel', 'panelbutton'], function(){
 		require.ensure([], function(require){
 			require('../components/rb_panel/rb_panel');
