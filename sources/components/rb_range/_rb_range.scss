@@ -1,0 +1,185 @@
+/*********************************************************
+
+rb-range
+----------------------------------------------------------
+
+**********************************************************/
+$range-rail-size: 1rem;
+$range-thumb-height: 2rem;
+$range-thumb-width: 2rem;
+$rangeJSCFG: (
+	watchCss: false,
+	animate: true,
+	axis: 'auto', // 'auto' || 'vertical' || 'horizontal' ('auto' does not work, if we are in a display none wrapper and also adds some perf penalty)
+	//either use inputs or values, step, max, min
+	inputs: 'find(input)', // false || 'find(input)' || white space separated ids or
+	values: 50,
+	step: 1, //'any' or number
+	max: 100,
+	min: 0,
+);
+
+.range-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	align-conten: center;
+
+	input {
+		width: 100%;
+	}
+}
+
+.rb-range {
+	@include rb-js-export($rangeJSCFG);
+	border: 0.1rem solid #000;
+
+	/* FOUC */
+	//opacity: 0.1;
+	//transition: 300ms opacity;
+	//
+	//&.js-rb-attached {
+	//	opacity: 1;
+	//}
+
+	input {
+		display: none;
+	}
+
+	@at-root {
+
+		//Range general styling
+		.range- {
+
+			&rail {
+				position: relative;
+				display: block;
+				width: 100%;
+				height: 100%;
+			}
+
+			&track {
+				margin: 0 !important;
+				padding: 0 !important;
+				border: 0 !important;
+				display: block;
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
+
+			&progress {
+				box-sizing: content-box;
+				position: absolute;
+				z-index: -1;
+				display: inline-block;
+				background: #eee;
+			}
+
+			&thumb {
+				position: absolute;
+				border-radius: 50%;
+				height: #{$range-thumb-height};
+				width: #{$range-thumb-width};
+				cursor: pointer;
+				outline: none;
+				background: #666;
+			}
+		}
+
+
+		//Range horizontal styling
+		&:not(.is-range-vertical) {
+			height: $range-rail-size;
+
+			.range- {
+
+				&rail {
+					padding-left: $range-thumb-width / 2;
+					padding-right: $range-thumb-width / 2;
+				}
+
+				&progress {
+					height: 100%;
+					padding-left: $range-thumb-width / 2;
+				}
+
+				&tooltip {
+					position: absolute;
+					bottom: 1rem;
+					display: block;
+					width: 10rem;
+					left: calc(-5rem + #{$range-thumb-width} / 2);
+					text-align: center;
+					visibility: hidden;
+				}
+
+				&progress-min {
+					left: 0;
+					margin-left: -($range-thumb-width / 2);
+				}
+
+				&progress-max {
+					right: 0;
+					margin-right: -($range-thumb-width / 2);
+				}
+
+				&thumb {
+					top: -($range-thumb-height - $range-rail-size) / 2;
+					left: 0;
+					margin-left: -($range-thumb-width / 2);
+				}
+			}
+
+			&.is-active .range-tooltip-value::before {
+				content: attr(data-value);
+				visibility: visible;
+			}
+
+			&.is-animate {
+				.range-progress {
+					transition: 300ms width;
+				}
+				.range-thumb {
+					transition: 300ms left;
+				}
+			}
+		}
+
+
+		//Range vertical styling
+		&.is-range-vertical {
+			width: $range-rail-size;
+			height: 20rem;
+
+			.range- {
+
+				&rail {
+					padding-top: $range-thumb-height / 2;
+					padding-bottom: $range-thumb-height / 2;
+				}
+
+				&progress {
+					width: 100%;
+					padding-top: $range-thumb-height / 2;
+				}
+
+				&progress-min {
+					bottom: 0;
+					margin-bottom: -($range-thumb-height / 2);
+				}
+
+				&progress-max {
+					top: 0;
+					margin-top: -($range-thumb-width / 2);
+				}
+
+				&thumb {
+					bottom: 0;
+					left: -($range-thumb-height - $range-rail-size) / 2;
+					margin-bottom: $range-thumb-width / -2;
+				}
+			}
+		}
+	}
+}
+

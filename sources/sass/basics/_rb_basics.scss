@@ -1,12 +1,8 @@
-//Button
 //
-// Your standard button suitable for clicking.
-//
-// :hover   - Highlights when hovering.
-// .shiny   - Do not press this big, shiny, red button.
+// rb_basics
+// --------------------
 //
 //
-// Style guide: button
 html {
 	 -webkit-font-smoothing: antialiased;
 	 -webkit-font-smoothing: subpixel-antialiased;
@@ -33,10 +29,9 @@ body {
 	outline: none;
 }
 
-/* ---------------------------------------
-	TEXT-SELECTION
 
---------------------------------------- */
+//	Text-Selection
+// ------------------
 ::-moz-selection {
 	color: #fff;
 	text-shadow: none;
