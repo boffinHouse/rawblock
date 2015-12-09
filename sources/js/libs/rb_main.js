@@ -1636,8 +1636,9 @@ if(!window.rb){
 	};
 
 	/**
-	 * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback mathod.
+	 * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback method. This method is normally only used automatically/internally by the mutation observer.
 	 *
+	 * @memberof rb
 	 * @see rb.getComponent
 	 *
 	 * @param element
@@ -1677,7 +1678,24 @@ if(!window.rb){
 		return instance;
 	};
 
-	life.deferConstruct = function(){
+	/**
+	 * Callback method to delay creation of components. Mainly for optimization tasks.
+	 * @memberof rb
+	 *
+	 * @param timeElapsed
+	 * @param componentCounter
+	 * @param moduleId
+	 * @param element
+	 *
+	 * @returns {Boolean|undefined}
+	 *
+	 * @example
+	 *
+	 * rb.life.deferConstruct = function(timeElapsed, componentCounter, moduleId, element){
+	 *      return (timeElapsed > 9 && componentCounter > 3);
+	 * };
+	 */
+	life.deferConstruct = function(timeElapsed, componentCounter, moduleId, element){
 
 	};
 
