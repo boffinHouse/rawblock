@@ -18,8 +18,6 @@ if(!('ASSETBASEPATH' in window)){
 //if webpack is used:
 __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
-require('../components/bla/bla');
-
 (function(addImportHook){
 
 	addImportHook(['listbox'], function(){

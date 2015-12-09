@@ -144,20 +144,6 @@ $itemscrollerJSCFG: (
 	transition: all 400ms;
 }
 
-.rb-itemscroller {
-	@include rb-js-export((
-		queries: '500:100%, 860:50%, 33.333%'
-	));
-}
-
-@media (min-width: 600px) {
-
-	.rb-itemscroller {
-		@include rb-js-export((
-			switchedOff: true
-		));
-	}
-}
 
 
 
