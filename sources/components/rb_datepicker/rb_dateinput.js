@@ -4,7 +4,6 @@
 	var rb = window.rb;
 	var $ = rb.$;
 
-
 	rb.Component.extend('dateinput',
 		/** @lends rb.components.dateinput.prototype */
 		{

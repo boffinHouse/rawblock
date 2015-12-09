@@ -20,10 +20,10 @@
 			/**
 			 * @mixes rb.components._childfx.prototype.defaults
 			 * @prop {{}} defaults
-			 * @prop {String} switchedOff=false Switches the component off.
 			 * @prop {String} from='-100eh' Start point of in range position relative to viewport top. Can be a simple calculation (addition and subtraction) with the following units (vh = viewport height / 100, vw = viewport width / 100, eh = element height  / 100, ew = element width / 100, px). See also 'to'.
 			 * @prop {String} to='100vh' End point of in range position relative to viewport top. Example: '100vh' places the top of the element at the bottom of the viewport. '100vh - 20eh' Means 20% of the elements top is visible at the bottom of the viewport.
 			 * @prop {Boolean|String} once=false Possible values: true, false, 'entered'. Whether the component should destroy itself after it was executed once.
+			 * @prop {String} switchedOff=false Switches the component off.
 			 * @prop {Boolean} restSwitchedOff=true Whether there should be a full reset after switchedOff option change.
 			 * @prop {Number} throttleDelay=0 Delay in ms to check for position change. Setting this to a higher number (50-300) can improve performance.
 			 * @prop {String} defaults.childSel='find(.{name}-element)' Child elements that should be animated. String is processed by rb.elementFromStr.
