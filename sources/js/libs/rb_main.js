@@ -1363,7 +1363,7 @@ if(!window.rb){
 
 					if( element && (instance = element[componentExpando]) && !docElem.contains(element) ){
 						element.classList.add( initClass );
-						life.destroyComponent(instance, i);
+						life.destroyComponent(instance, i, element);
 
 						i--;
 						len--;
@@ -1753,8 +1753,11 @@ if(!window.rb){
 		return findElements;
 	})();
 
-	life.destroyComponent = function(instance, index){
-		var element = instance.element;
+	life.destroyComponent = function(instance, index, element){
+
+		if(!element){
+			element = instance.element;
+		}
 
 		if(index == null){
 			index = life._attached.indexOf(element);
