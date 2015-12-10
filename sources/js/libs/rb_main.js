@@ -575,7 +575,10 @@ if(!window.rb){
 	/* Begin: rAFs helper */
 
 	/**
-	 * Invokes `rb.rAF` on multiple methods.
+	 * Invokes `rb.rAF` on multiple methodnames of on object.
+	 *
+	 * @memberof rb
+	 *
 	 * @param {Object} obj
 	 * @param {Object} [options]
 	 * @param {...String} methodNames
@@ -652,9 +655,10 @@ if(!window.rb){
 	 * @returns {Function} Easing a function
 	 */
 	rb.addEasing = function(easing, name){
-		var bezierArgs;
+		var bezierArgs, BezierEasing;
 		if(typeof easing != 'string'){return;}
-		if(window.BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
+		BezierEasing = window.BezierEasing || rb.BezierEasing;
+		if(BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
 			extendEasing();
 			bezierArgs = bezierArgs.map(function(str){
 				return parseFloat(str);
