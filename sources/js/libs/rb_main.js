@@ -709,6 +709,12 @@ if(!window.rb){
 
 	/* End: ID/Symbol */
 
+	/* Begin: rb.events */
+
+	rb.events = {};
+
+	/* End: rb.events */
+
 	/* Begin: elementResize */
 	var elementResize = {
 		add: function(element, fn, options){
@@ -869,6 +875,17 @@ if(!window.rb){
 			elementResize[action](this, fn, options);
 		});
 	};
+
+	[['elemresize'], ['elemresizewidth', {noHeight: true}], ['elemresizeheight',  {noWidth: true}]].forEach(function(evt){
+		rb.events[evt[0]] = {
+			add: function(elem, fn){
+				elementResize.add(this, fn, evt[1]);
+			},
+			remove: function(elem, fn){
+				elementResize.remove(this, fn, evt[1]);
+			}
+		};
+	});
 	/* End: elementResize */
 
 	/**
@@ -1111,12 +1128,14 @@ if(!window.rb){
 			}
 		};
 		setup = rb.$;
+
 		document.addEventListener('keydown', function(e){
 			var elem = e.target;
 			if((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains('js-click') && elem.getAttribute('data-module')){
 				applyBehavior(elem, e);
 			}
 		}, true);
+
 		document.addEventListener('click', function(e){
 			var clickElem = e.target.closest('.js-click');
 			while(clickElem){
@@ -1903,6 +1922,7 @@ if(!window.rb){
 	var $ = rb.$;
 	var componentExpando = life.componentExpando;
 	var regData = /^data-/;
+	var regWhite = /\s+/g;
 	var regName = /\{name}/g;
 
 	var _setupEventsByEvtObj = function(that){
@@ -1911,7 +1931,7 @@ if(!window.rb){
 
 		for(evt in evts){
 			namedStr = that.interpolateName(evt);
-			selector = namedStr.split(' ');
+			selector = namedStr.split(regWhite);
 			evtName = selector.shift();
 
 			/* jshint loopfunc: true */
@@ -1929,11 +1949,8 @@ if(!window.rb){
 						return method.apply(that, arguments);
 					});
 
-				if(args.length == 2 && evtName.startsWith('elemresize')){
-					that.$element.elementResize('add', args[1], {
-						noWidth: evtName.endsWith('height'),
-						noHeight: evtName.endsWith('width'),
-					});
+				if(rb.events[evtName] && rb.events[evtName].add){
+					rb.events[evtName].add(that.element, args[1], args[2])
 				} else {
 					that.$element.on.apply(that.$element, args);
 				}
