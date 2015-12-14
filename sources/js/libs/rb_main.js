@@ -879,10 +879,10 @@ if(!window.rb){
 	[['elemresize'], ['elemresizewidth', {noHeight: true}], ['elemresizeheight',  {noWidth: true}]].forEach(function(evt){
 		rb.events[evt[0]] = {
 			add: function(elem, fn){
-				elementResize.add(this, fn, evt[1]);
+				elementResize.add(elem, fn, evt[1]);
 			},
 			remove: function(elem, fn){
-				elementResize.remove(this, fn, evt[1]);
+				elementResize.remove(elem, fn, evt[1]);
 			}
 		};
 	});
