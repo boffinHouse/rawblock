@@ -202,7 +202,14 @@ if(!window.rb){
 			}
 
 			opts = Object.assign({}, options, {
+
 				always: function(){
+					var top, left;
+
+					if(options.forcePosition){
+						top = scrollingElement.scrollTop;
+						left = scrollingElement.scrollLeft;
+					}
 					if(options.focus){
 						rb.setFocus(options.focus);
 					}
@@ -214,9 +221,15 @@ if(!window.rb){
 						;
 					}
 
+					if(options.forcePosition){
+						scrollingElement.scrollTop = top;
+						scrollingElement.scrollLeft = left;
+					}
+
 					if(options.always){
 						options.always.call(elem);
 					}
+
 				}
 			});
 
@@ -1110,7 +1123,7 @@ if(!window.rb){
 	rb.addLog(rb, true);
 
 	var cbs = [];
-	var setup = function(){
+	var setupClick = function(){
 		var applyBehavior = function(clickElem, e){
 			var i, len, attr, found;
 			for(i = 0, len = cbs.length; i < len;i++){
@@ -1127,7 +1140,7 @@ if(!window.rb){
 				clickElem.classList.remove('js-click');
 			}
 		};
-		setup = rb.$;
+		setupClick = rb.$.noop;
 
 		document.addEventListener('keydown', function(e){
 			var elem = e.target;
@@ -1172,7 +1185,7 @@ if(!window.rb){
 				fn: fn,
 			});
 			if(cbs.length == 1){
-				setup();
+				setupClick();
 			}
 		}
 	};
