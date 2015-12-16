@@ -7,21 +7,7 @@ rb-itemscroller
 
 //JS Config
 $itemscrollerJSCFG: (
-	switchedOff: false,
-	centerMode: false,
-	selectedIndex: 0,
-	scrollStep: 'auto', //'auto'|'view'|number (of cells)
-	mouseDrag: true,
-	easing: '(0.3, 0.7, 0.4, 1.04)',
-	duration: 400,
-	carousel: false,
-	mandatorySnap: false,
-	useTransform: true,
 
-	//only with autoplay plugin:
-	autoplay: false,
-	autoplayDelay: 2000,
-	pauseOnHover: true,
 );
 
 .rb-itemscroller {

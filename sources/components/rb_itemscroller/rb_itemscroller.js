@@ -1019,6 +1019,7 @@
 				this.baseIndex = this.posPages.left.length;
 			},
 			_createPagination: function(){
+
 				var paginationItems, i;
 				var baseLength = this.pageLength;
 

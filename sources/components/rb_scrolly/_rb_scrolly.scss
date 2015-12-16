@@ -15,7 +15,7 @@ $scrollyJSCFG: (
 );
 
 .rb-scrolly {
-	//@include exportToJS($scrollyJSCFG);
+	@include rb-js-export($scrollyJSCFG);
 
 	position: relative;
 	background: #999;
@@ -54,7 +54,7 @@ $scrollyJSCFG: (
 		transition: 99ms opacity, 99ms top;
 
 		.scrolly-1 {
-			@include exportToJS((
+			@include rb-js-export((
 				opacity: 1,
 				top: 0,
 			));
@@ -66,7 +66,7 @@ $scrollyJSCFG: (
 		}
 
 		.scrolly-2 {
-			@include exportToJS((
+			@include rb-js-export((
 				right: 180,
 				bottom: 0,
 				backgroundColor: 'rgba(200, 230, 0, 0.4)',
@@ -85,7 +85,7 @@ $scrollyJSCFG: (
 			width: 100px;
 			height: 100px;
 			background: #f00;
-			transition: 50ms background-color, 50ms transform, 50ms right, 50ms bottom;
+			//transition: 50ms background-color, 50ms transform, 50ms right, 50ms bottom;
 		}
 	}
 

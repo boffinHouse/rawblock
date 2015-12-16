@@ -202,7 +202,14 @@ if(!window.rb){
 			}
 
 			opts = Object.assign({}, options, {
+
 				always: function(){
+					var top, left;
+
+					if(options.forcePosition){
+						top = scrollingElement.scrollTop;
+						left = scrollingElement.scrollLeft;
+					}
 					if(options.focus){
 						rb.setFocus(options.focus);
 					}
@@ -214,9 +221,15 @@ if(!window.rb){
 						;
 					}
 
+					if(options.forcePosition){
+						scrollingElement.scrollTop = top;
+						scrollingElement.scrollLeft = left;
+					}
+
 					if(options.always){
 						options.always.call(elem);
 					}
+
 				}
 			});
 
@@ -575,7 +588,10 @@ if(!window.rb){
 	/* Begin: rAFs helper */
 
 	/**
-	 * Invokes `rb.rAF` on multiple methods.
+	 * Invokes `rb.rAF` on multiple methodnames of on object.
+	 *
+	 * @memberof rb
+	 *
 	 * @param {Object} obj
 	 * @param {Object} [options]
 	 * @param {...String} methodNames
@@ -652,9 +668,10 @@ if(!window.rb){
 	 * @returns {Function} Easing a function
 	 */
 	rb.addEasing = function(easing, name){
-		var bezierArgs;
+		var bezierArgs, BezierEasing;
 		if(typeof easing != 'string'){return;}
-		if(window.BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
+		BezierEasing = window.BezierEasing || rb.BezierEasing;
+		if(BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4){
 			extendEasing();
 			bezierArgs = bezierArgs.map(function(str){
 				return parseFloat(str);
@@ -704,6 +721,12 @@ if(!window.rb){
 	}
 
 	/* End: ID/Symbol */
+
+	/* Begin: rb.events */
+
+	rb.events = {};
+
+	/* End: rb.events */
 
 	/* Begin: elementResize */
 	var elementResize = {
@@ -865,6 +888,17 @@ if(!window.rb){
 			elementResize[action](this, fn, options);
 		});
 	};
+
+	[['elemresize'], ['elemresizewidth', {noHeight: true}], ['elemresizeheight',  {noWidth: true}]].forEach(function(evt){
+		rb.events[evt[0]] = {
+			add: function(elem, fn){
+				elementResize.add(elem, fn, evt[1]);
+			},
+			remove: function(elem, fn){
+				elementResize.remove(elem, fn, evt[1]);
+			}
+		};
+	});
 	/* End: elementResize */
 
 	/**
@@ -1089,7 +1123,7 @@ if(!window.rb){
 	rb.addLog(rb, true);
 
 	var cbs = [];
-	var setup = function(){
+	var setupClick = function(){
 		var applyBehavior = function(clickElem, e){
 			var i, len, attr, found;
 			for(i = 0, len = cbs.length; i < len;i++){
@@ -1106,13 +1140,15 @@ if(!window.rb){
 				clickElem.classList.remove('js-click');
 			}
 		};
-		setup = rb.$;
+		setupClick = rb.$.noop;
+
 		document.addEventListener('keydown', function(e){
 			var elem = e.target;
 			if((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains('js-click') && elem.getAttribute('data-module')){
 				applyBehavior(elem, e);
 			}
 		}, true);
+
 		document.addEventListener('click', function(e){
 			var clickElem = e.target.closest('.js-click');
 			while(clickElem){
@@ -1149,7 +1185,7 @@ if(!window.rb){
 				fn: fn,
 			});
 			if(cbs.length == 1){
-				setup();
+				setupClick();
 			}
 		}
 	};
@@ -1363,7 +1399,7 @@ if(!window.rb){
 
 					if( element && (instance = element[componentExpando]) && !docElem.contains(element) ){
 						element.classList.add( initClass );
-						life.destroyComponent(instance, i);
+						life.destroyComponent(instance, i, element);
 
 						i--;
 						len--;
@@ -1636,8 +1672,9 @@ if(!window.rb){
 	};
 
 	/**
-	 * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback mathod.
+	 * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback method. This method is normally only used automatically/internally by the mutation observer.
 	 *
+	 * @memberof rb
 	 * @see rb.getComponent
 	 *
 	 * @param element
@@ -1677,7 +1714,24 @@ if(!window.rb){
 		return instance;
 	};
 
-	life.deferConstruct = function(){
+	/**
+	 * Callback method to delay creation of components. Mainly for optimization tasks.
+	 * @memberof rb
+	 *
+	 * @param timeElapsed
+	 * @param componentCounter
+	 * @param moduleId
+	 * @param element
+	 *
+	 * @returns {Boolean|undefined}
+	 *
+	 * @example
+	 *
+	 * rb.life.deferConstruct = function(timeElapsed, componentCounter, moduleId, element){
+	 *      return (timeElapsed > 9 && componentCounter > 3);
+	 * };
+	 */
+	life.deferConstruct = function(timeElapsed, componentCounter, moduleId, element){
 
 	};
 
@@ -1753,8 +1807,11 @@ if(!window.rb){
 		return findElements;
 	})();
 
-	life.destroyComponent = function(instance, index){
-		var element = instance.element;
+	life.destroyComponent = function(instance, index, element){
+
+		if(!element){
+			element = instance.element;
+		}
 
 		if(index == null){
 			index = life._attached.indexOf(element);
@@ -1878,6 +1935,7 @@ if(!window.rb){
 	var $ = rb.$;
 	var componentExpando = life.componentExpando;
 	var regData = /^data-/;
+	var regWhite = /\s+/g;
 	var regName = /\{name}/g;
 
 	var _setupEventsByEvtObj = function(that){
@@ -1886,7 +1944,7 @@ if(!window.rb){
 
 		for(evt in evts){
 			namedStr = that.interpolateName(evt);
-			selector = namedStr.split(' ');
+			selector = namedStr.split(regWhite);
 			evtName = selector.shift();
 
 			/* jshint loopfunc: true */
@@ -1904,11 +1962,8 @@ if(!window.rb){
 						return method.apply(that, arguments);
 					});
 
-				if(args.length == 2 && evtName.startsWith('elemresize')){
-					that.$element.elementResize('add', args[1], {
-						noWidth: evtName.endsWith('height'),
-						noHeight: evtName.endsWith('width'),
-					});
+				if(rb.events[evtName] && rb.events[evtName].add){
+					rb.events[evtName].add(that.element, args[1], args[2])
 				} else {
 					that.$element.on.apply(that.$element, args);
 				}

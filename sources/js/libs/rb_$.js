@@ -6,6 +6,8 @@
 }(typeof window != 'undefined' ? window : this , function(window, document) {
 	'use strict';
 
+	var eventSymbol, dataSymbol;
+	var specialEvents = {};
 	var Dom = function(elements, context){
 
 		if(!(this instanceof Dom)){
@@ -178,6 +180,9 @@
 		},
 		fx: {
 			step: steps
+		},
+		event: {
+			special: specialEvents,
 		},
 		fn: Dom.prototype,
 		cssNumber: {
@@ -580,6 +585,45 @@
 	//	};
 	//});
 
+	function handleSpecialEvents(element, type, action, fn){
+		if(!specialEvents[type]){
+			return;
+		}
+		if(!eventSymbol){
+			eventSymbol = rb.Symbol('_rb$Events');
+		}
+		var eventData = element[eventSymbol];
+
+		if((!eventData || !eventData[type]) && action == 'off'){return;}
+
+		if(action == 'off'){
+			eventData[type].cbs.remove(fn);
+
+			if(!eventData.type.cbs.has()){
+				if(specialEvents[type].teardown){
+					specialEvents[type].teardown.call(element);
+				}
+				eventData.type = null;
+			}
+		} else {
+			if(!eventData){
+				eventData = {};
+				element[eventSymbol] = eventData;
+			}
+			if(!eventData[type]){
+				if(specialEvents[type].setup){
+					specialEvents[type].setup.call(element, null, '', function(e, data){
+						var target = e.target || (data && data.target) || element;
+						eventData[type].cbs.fireWith(target, [{type: e.type || type, target: target}]);
+					});
+				}
+				eventData[type] = {cbs: Dom.Callbacks()};
+			}
+
+			eventData[type].cbs.add(fn);
+		}
+	}
+
 	[['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function(action){
 		Dom.fn[action[0]] = function(type, sel, fn, capture){
 			var useFn;
@@ -603,12 +647,52 @@
 			}
 
 			this.elements.forEach(function(elem){
+				handleSpecialEvents(elem, type, action[0], useFn);
 				elem[action[1]](type, useFn, capture || false);
 			});
 
 			return this;
 		};
 	});
+
+	Dom.data = function(element, name, value){
+		if(!dataSymbol){
+			dataSymbol = rb.Symbol('_rb$data');
+		}
+		var data = element[dataSymbol];
+
+		if(!data){
+			data = {};
+			element[dataSymbol] = data;
+		}
+
+		if(value !== undefined){
+			data[name] = value;
+		}
+
+		return name ? data[name] : data;
+	};
+
+	if ( !('onfocusin' in window) || !('onfocusout' in window) ) {
+		[['focusin', 'focus'], ['focusout', 'blur']].forEach(function(evts){
+			specialEvents[evts[0]] = {
+				setup: function(data, ns, handler){
+					var focusHandler = function(e){
+						handler({type: evts[0], target: e.target});
+					};
+
+					Dom.data(this, '_handler' + evts[0], focusHandler);
+					this.addEventListener(evts[1], focusHandler, true);
+				},
+				teardown: function(){
+					var focusHandler = Dom.data(this, '_handler' + evts[0]);
+					if(focusHandler){
+						this.removeEventListener(evts[1], focusHandler, true);
+					}
+				}
+			};
+		});
+	}
 
 	if(!Dom.isReady){
 		document.addEventListener("DOMContentLoaded", function() {
