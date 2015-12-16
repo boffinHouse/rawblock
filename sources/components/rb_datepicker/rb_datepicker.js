@@ -1,191 +1,191 @@
-( function() {
-	'use strict';
-	/* jshint eqnull: true */
-	var rb = window.rb;
-	var $ = rb.$;
+(function () {
+    'use strict';
+    /* jshint eqnull: true */
+    var rb = window.rb;
+    var $ = rb.$;
 
-	var Datepicker = rb.Component.extend('datepicker',
-		/** @lends rb.components.dateinput.prototype */
-		{
+    var Datepicker = rb.Component.extend('datepicker',
+        /** @lends rb.components.dateinput.prototype */
+        {
 
-			/**
-			 * @static
-			 * @mixes rb.Component.prototype.defaults
-			 * @property {Object} defaults
-			 * //@property {Boolean} defaults.debug=true Log debug messages
-			 */
-			defaults: {
-				debug: true,
-				values: null,
-				multiple: false,
-				range: false,
-				max: NaN,
-				min: NaN,
-				startView: 0,
-				maxView: 3,
-				minView: 0,
-			},
-			/**
-			 * @constructs
-			 * @classdesc Class component to create a dateinput.
-			 * @name rb.components.dateinput
-			 * @extends rb.Component
-			 * @fires dateinput#changed
-			 * @param {Element} element
-			 * @example
-			 * <div class="rb-datepicker js-rb-life" data-module="datepicker">
-			 *
-			 * </div>
-			 * @example
-			 * rb.$('.rb-datepicker').rbComponent();
-			 */
-			init: function(element){
-				this._super(element);
+            /**
+             * @static
+             * @mixes rb.Component.prototype.defaults
+             * @property {Object} defaults
+             * //@property {Boolean} defaults.debug=true Log debug messages
+             */
+            defaults: {
+                debug: true,
+                values: null,
+                multiple: false,
+                range: false,
+                max: NaN,
+                min: NaN,
+                startView: 0,
+                maxView: 3,
+                minView: 0,
+            },
+            /**
+             * @constructs
+             * @classdesc Class component to create a dateinput.
+             * @name rb.components.dateinput
+             * @extends rb.Component
+             * @fires dateinput#changed
+             * @param {Element} element
+             * @example
+             * <div class="rb-datepicker js-rb-life" data-module="datepicker">
+             *
+             * </div>
+             * @example
+             * rb.$('.rb-datepicker').rbComponent();
+             */
+            init: function (element) {
+                this._super(element);
 
-				this._values = [];
-				this.valueData = {};
+                this._values = [];
+                this.valueData = {};
 
-				//this.log(this.element, this.$element, this.options, this);
+                //this.log(this.element, this.$element, this.options, this);
 
-				this.formats = window.rb.i18n.formats.de;
+                this.formats = window.rb.i18n.formats.de;
 
-				this.renderWrapper = rb.rAF(this.renderWrapper, {throttle: true});
-				this.renderMonth = rb.rAF(this.renderMonth, {throttle: true});
+                this.renderWrapper = rb.rAF(this.renderWrapper, {throttle: true});
+                this.renderMonth = rb.rAF(this.renderMonth, {throttle: true});
 
-				this.renderWrapper();
-				this.renderMonth(new Date());
-			},
-			events: {
-				'click .{name}-btn-prev': 'previous',
-				'click .{name}-btn-next': 'next',
-				//'click .{name}-btn': function(e){
-				//	this.log(this);
-				//},
-			},
-			statics: {
-				views: {
-					0: 'Month',
-					1: 'Year',
-					2: 'Decade'
-				},
-			},
-			getPreviousMonth: function(from){
-				return(from.month == 1) ?
-				(from.year - 1) + '-12' :
-				(from.year) + '-' + (from.month - 1);
-			},
-			getNextMonth: function(from){
-				return(from.month == 12) ?
-				(from.year + 1) + '-01' :
-				(from.year) + '-' + (from.month + 1);
-			},
-			previous: function(){
-				this.renderMonth(this.getPreviousMonth(this.selectedDate));
-			},
-			next: function(){
-				this.renderMonth(this.getNextMonth(this.selectedDate));
-			},
-			get value(){
+                this.renderWrapper();
+                this.renderMonth(new Date());
+            },
+            events: {
+                'click .{name}-btn-prev': 'previous',
+                'click .{name}-btn-next': 'next',
+                //'click .{name}-btn': function(e){
+                //	this.log(this);
+                //},
+            },
+            statics: {
+                views: {
+                    0: 'Month',
+                    1: 'Year',
+                    2: 'Decade'
+                },
+            },
+            getPreviousMonth: function (from) {
+                return (from.month == 1) ?
+                (from.year - 1) + '-12' :
+                (from.year) + '-' + (from.month - 1);
+            },
+            getNextMonth: function (from) {
+                return (from.month == 12) ?
+                (from.year + 1) + '-01' :
+                (from.year) + '-' + (from.month + 1);
+            },
+            previous: function () {
+                this.renderMonth(this.getPreviousMonth(this.selectedDate));
+            },
+            next: function () {
+                this.renderMonth(this.getNextMonth(this.selectedDate));
+            },
+            get value() {
 
-			},
-			set value(value){
+            },
+            set value(value) {
 
-			},
-			deselectValue: function(value){
+            },
+            deselectValue: function (value) {
 
-			},
-			selectValue: function(){
+            },
+            selectValue: function () {
 
-			},
-			setOption: function(name, value){
-				this._super(name, value);
-			},
-			getDate: function(date){
-				var dateArray;
+            },
+            setOption: function (name, value) {
+                this._super(name, value);
+            },
+            getDate: function (date) {
+                var dateArray;
 
-				dateArray = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
+                dateArray = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
 
-				return {
-					dateArray: dateArray,
-					yearNumber: dateArray[0],
-					monthNumber: (dateArray[0] + '' + dateArray[1]) * 1,
-					dateNumber: dateArray.join('') * 1,
-					year: dateArray[0],
-					month: dateArray[1],
-					date: dateArray[2],
-					day: date.getDay(),
-				};
-			},
-			renderWrapper: function(){
-				var wrapperHTML = this.render('wrapper',{
-					formats: this.formats,
-				});
+                return {
+                    dateArray: dateArray,
+                    yearNumber: dateArray[0],
+                    monthNumber: (dateArray[0] + '' + dateArray[1]) * 1,
+                    dateNumber: dateArray.join('') * 1,
+                    year: dateArray[0],
+                    month: dateArray[1],
+                    date: dateArray[2],
+                    day: date.getDay(),
+                };
+            },
+            renderWrapper: function () {
+                var wrapperHTML = this.render('wrapper', {
+                    formats: this.formats,
+                });
 
-				this.element.innerHTML = wrapperHTML;
+                this.element.innerHTML = wrapperHTML;
 
-				this.mainElement = this.query('.{name}-main');
-				this.headerElement = this.query('.{name}-btn-header');
-			},
-			renderMonth: function(date){
-				if(!date.getFullYear){
-					date = new Date(date);
-				}
+                this.mainElement = this.query('.{name}-main');
+                this.headerElement = this.query('.{name}-btn-header');
+            },
+            renderMonth: function (date) {
+                if (!date.getFullYear) {
+                    date = new Date(date);
+                }
 
-				var selectedDate = this.getDate(date);
-				var monthData = {
-					title: this.formats.monthNames[selectedDate.month - 1] +' '+ selectedDate.year,
-					formats: this.formats,
-					body: this.getMonthData(date, selectedDate),
-					selected: selectedDate,
-				};
-				var monthHTML = this.render('month', monthData);
+                var selectedDate = this.getDate(date);
+                var monthData = {
+                    title: this.formats.monthNames[selectedDate.month - 1] + ' ' + selectedDate.year,
+                    formats: this.formats,
+                    body: this.getMonthData(date, selectedDate),
+                    selected: selectedDate,
+                };
+                var monthHTML = this.render('month', monthData);
 
-				this.selectedDate = selectedDate;
+                this.selectedDate = selectedDate;
 
-				this.headerElement.innerHTML = monthData.title;
-				this.mainElement.innerHTML = monthHTML;
+                this.headerElement.innerHTML = monthData.title;
+                this.mainElement.innerHTML = monthHTML;
 
-				//console.log(monthHTML, monthData);
-			},
-			getMonthData: function(date, selectedDate){
-				var tmp, i, days, firstDay, curDate;
+                //console.log(monthHTML, monthData);
+            },
+            getMonthData: function (date, selectedDate) {
+                var tmp, i, days, firstDay, curDate;
 
-				var dayRows = [];
+                var dayRows = [];
 
-				date.setDate(1);
+                date.setDate(1);
 
-				firstDay = date.getDay();
+                firstDay = date.getDay();
 
-				if(firstDay != this.formats.firstDay){
-					tmp = firstDay - this.formats.firstDay;
-					if(tmp < 0){
-						tmp += 7;
-					}
-					date.setDate(date.getDate() - tmp);
-				}
+                if (firstDay != this.formats.firstDay) {
+                    tmp = firstDay - this.formats.firstDay;
+                    if (tmp < 0) {
+                        tmp += 7;
+                    }
+                    date.setDate(date.getDate() - tmp);
+                }
 
-				for (i = 0; i < 50; i++) {
-					curDate = this.getDate(date);
-					curDate.otherMonth = (curDate.monthNumber != selectedDate.monthNumber);
+                for (i = 0; i < 50; i++) {
+                    curDate = this.getDate(date);
+                    curDate.otherMonth = (curDate.monthNumber != selectedDate.monthNumber);
 
-					if( !(i % 7) ){/*jshint ignore:line */
-						if(dayRows.length > 5 && curDate.otherMonth &&
-							((curDate.yearNumber > selectedDate.yearNumber) ||
-							(curDate.monthNumber > selectedDate.monthNumber && curDate.yearNumber == selectedDate.yearNumber))){
-							break;
-						}
+                    if (!(i % 7)) {/*jshint ignore:line */
+                        if (dayRows.length > 5 && curDate.otherMonth &&
+                            ((curDate.yearNumber > selectedDate.yearNumber) ||
+                            (curDate.monthNumber > selectedDate.monthNumber && curDate.yearNumber == selectedDate.yearNumber))) {
+                            break;
+                        }
 
-						days = [];
-						dayRows.push(days);
-					}
-					days.push(curDate);
+                        days = [];
+                        dayRows.push(days);
+                    }
+                    days.push(curDate);
 
-					date.setDate(date.getDate() + 1);
-				}
+                    date.setDate(date.getDate() + 1);
+                }
 
-				return dayRows;
-			},
-		}
-	);
+                return dayRows;
+            },
+        }
+    );
 
 })();
