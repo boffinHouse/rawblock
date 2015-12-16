@@ -152,7 +152,7 @@
                 }
             },
             _handleAnimation: function (e) {
-                var $panel, animationComponent, animation, animationOptions;
+                var $panel, animationComponent, animation, animationOptions, animationData;
                 var panel = this;
 
                 if (e.defaultPrevented || !e.detail || e.detail.animationPrevented) {
@@ -177,26 +177,26 @@
                     easing: animationComponent.options.easing
                 };
 
-                switch (animation) {
-                    case 'slide':
-                        $panel.stop();
-                        if (panel.isOpen) {
-                            if (panel.groupComponent && panel.groupComponent.adjustScroll) {
-                                panel.groupComponent.adjustScroll(panel, animationOptions);
-                            }
-                            $panel.rbSlideDown(animationOptions);
-                        } else {
+                animationData = {
+                    animation: animation,
+                    options: animationOptions,
+                    event: e,
+                    panel: panel
+                };
 
-                            $panel.rbSlideUp(animationOptions);
-                        }
-                        break;
-                    case 'adaptHeight':
-                        if (panel.isOpen && panel.groupComponent && panel.groupComponent.animateWrapper) {
-                            panel.groupComponent.animateWrapper(panel.element);
-                        }
+                if(panel.groupComponent && panel.groupComponent._handleAnimation){
+                    panel.groupComponent._handleAnimation(animationData);
                 }
 
-                return {animation: animation, options: animationOptions, event: e};
+                if(animationData.animation == 'slide'){
+                    $panel.stop();
+                    if (panel.isOpen) {
+                        $panel.rbSlideDown(animationData.options);
+                    } else {
+                        $panel.rbSlideUp(animationData.options);
+                    }
+                }
+                return animationData;
             },
             /**
              * Opens the panel

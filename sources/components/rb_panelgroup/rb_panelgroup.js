@@ -130,7 +130,13 @@
                     this.setOption('switchedOff', false);
                 }
             },
-
+            _handleAnimation: function(animationData){
+                if(animationData.animation == 'slide' && animationData.panel.isOpen){
+                    this.adjustScroll(animationData.panel, animationData.options);
+                } else if(animationData.animation == 'adaptHeight' && animationData.panel.isOpen){
+                    this.animateWrapper(animationData.panel.element);
+                }
+            },
             animateWrapper: function (openedPanel) {
                 var end;
 

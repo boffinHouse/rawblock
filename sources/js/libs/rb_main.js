@@ -1479,9 +1479,15 @@ if (!window.rb) {
     var initClickCreate = function () {
         initClickCreate = $.noop;
         rb.click.add('module', function (elem) {
-            rb.getComponent(elem);
+            if(!rb.getComponent(elem)){
+                rb.log('js-click component not found', elem);
+            }
             rb.rAFQueue(function () {
                 elem.classList.remove('js-click');
+                if(!elem.classList.contains(attachedClass)){
+                    elem.classList.add(initClass);
+                    life.searchModules();
+                }
             }, true);
             lifeBatch.run();
         });
