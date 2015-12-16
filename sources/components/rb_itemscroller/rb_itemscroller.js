@@ -144,7 +144,7 @@
 
                 this.setPos = rb.rAF(this._setPos, {that: this, throttle: true});
 
-                rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff');
+                rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff', 'setSwitchedOffClass');
 
                 this._slideProgress = this._slideProgress.bind(this);
                 this._slideComplete = this._slideComplete.bind(this);
@@ -153,6 +153,8 @@
 
                 if (!this.options.switchedOff) {
                     this.setOption('switchedOff', false);
+                } else {
+                    this.setSwitchedOffClass();
                 }
             },
             events: {
@@ -260,11 +262,16 @@
                     overflow: '',
                     height: '',
                 });
+                this.setSwitchedOffClass();
+            },
+            setSwitchedOffClass: function(){
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
             },
             _switchOn: function () {
                 this._mainSetup();
                 this.updateCells();
                 this._setupTouch();
+                this.setSwitchedOffClass();
             },
             _mainSetup: function () {
                 var that = this;

@@ -123,9 +123,10 @@
                 this.scrollingElement = rb.getScrollingElement();
 
                 this.updateChilds = this.updateChilds || $.noop;
-                this.changeState = rb.rAF(this.changeState);
 
-                this.onprogress.fireWith = rb.rAF(this.onprogress.fireWith);
+                rb.rAFs(this, 'changeState', 'setSwitchedOffClass');
+
+                rb.rAFs(this.onprogress, 'fireWith');
 
                 this.checkPosition = this.checkPosition.bind(this);
                 this.calculateLayout = this.calculateLayout.bind(this);
@@ -140,6 +141,10 @@
 
                 this.parseOffsets();
                 this.calculateLayout();
+
+                if(this.options.switchedOff){
+                    this.setSwitchedOffClass();
+                }
             },
             _setupThrottleDelay: function (delay) {
                 if (delay && delay > 30) {
@@ -164,6 +169,13 @@
                         this.attached();
                     }
                 }
+
+                if(name == 'switchedOff'){
+                    this.setSwitchedOffClass();
+                }
+            },
+            setSwitchedOffClass: function(){
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
             },
             parseOffsets: function () {
                 this.parsedFrom = this.parseOffset(this.options.from);

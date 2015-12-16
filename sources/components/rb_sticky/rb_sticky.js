@@ -94,9 +94,10 @@
                 this._throttleOptions = {that: this, unthrottle: true};
 
                 this.updateChilds = this.updateChilds || $.noop;
+
                 this.onprogress.fireWith = rb.rAF(this.onprogress.fireWith, {throttle: true});
-                this.updateLayout = rb.rAF(this.updateLayout, {throttle: true});
-                this._setProgressClass = rb.rAF(this._setProgressClass, {throttle: true});
+
+                this.updateLayout = rb.rAFs(this, {throttle: true}, 'updateLayout', '_setProgressClass', 'setSwitchedOffClass');
 
                 this.calculateLayout = this.calculateLayout.bind(this);
                 this.checkPosition = rb.throttle(this.checkPosition, this._throttleOptions);
@@ -110,6 +111,10 @@
 
                 this._getElements();
                 this.calculateLayout();
+
+                if(this.options.switchedOff){
+                    this.setSwitchedOffClass();
+                }
             },
             statics: {
                 filterPos: function (pos) {
@@ -132,6 +137,13 @@
                 } else if (name == 'autoThrottle' && !value && !this._throttleOptions.unthrottle) {
                     this._throttleOptions.unthrottle = true;
                 }
+
+                if(name == 'switchedOff'){
+                    this.setSwitchedOffClass();
+                }
+            },
+            setSwitchedOffClass: function(){
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
             },
             _getElements: function () {
                 var offsetName;

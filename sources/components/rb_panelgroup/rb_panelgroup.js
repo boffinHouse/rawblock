@@ -118,7 +118,7 @@
                     this.options.toggle = true;
                 }
 
-                rb.rAFs(this, 'setSelectedState');
+                rb.rAFs(this, 'setSelectedState', 'setSwitchedOffClass');
 
                 this._onOutSideInteraction = this._onOutSideInteraction.bind(this);
 
@@ -128,7 +128,12 @@
 
                 if (!this.options.switchedOff) {
                     this.setOption('switchedOff', false);
+                } else {
+                    this.setSwitchedOffClass();
                 }
+            },
+            setSwitchedOffClass: function(){
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
             },
             _handleAnimation: function(animationData){
                 if(animationData.animation == 'slide' && animationData.panel.isOpen){
@@ -414,6 +419,7 @@
                     this.setChildOption(this.$buttons, 'switchedOff', true);
                     this.setChildOption(this.$panels, 'switchedOff', true);
                 }
+                this.setSwitchedOffClass();
             },
             _switchOn: function () {
                 if (!this.$panelWrapper || !this.$panels.length) {
@@ -425,6 +431,7 @@
                 }
 
                 this._updatePanelInformation();
+                this.setSwitchedOffClass();
 
                 if (!this.selectedIndexes.length) {
                     this.selectIndex(this.options.selectedIndex, {animationPrevented: true, setFocus: false});
