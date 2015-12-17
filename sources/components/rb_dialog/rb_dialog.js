@@ -100,7 +100,7 @@
 
                 this.setupOpenEvents();
 
-                rb.$root.addClass('has-open-' + this.name);
+                rb.$root.addClass('is-open-' + this.name +'-within');
 
                 this.setComponentFocus(true);
 
@@ -126,7 +126,7 @@
                 this.restoreFocus(true);
 
                 this.$backdrop.removeClass('is-open');
-                rb.$root.removeClass('has-open-' + this.name);
+                rb.$root.removeClass('is-open-' + this.name +'-within');
                 this._trigger(options);
             },
             /**
