@@ -6,6 +6,7 @@
     }
 }(function () {
     'use strict';
+    var rb = window.rb;
     var $ = rb.$;
 
     var Dialog = rb.Component.extend('dialog',
@@ -15,13 +16,19 @@
              * @static
              * @property {Object} defaults
              * @property {Boolean} defaults.open=false Whether the dialog should be open by default
+             * @property {Boolean} defaults.appendToBody=true
              * @property {Boolean} defaults.closeOnEsc=true Whether the dialog should be closed as soon as the user presses the ESC key.
              * @property {Boolean} defaults.closeOnBackdropClick=false Whether the dialog should be closed as soon as the user clicks on the backdrop.
+             * @property {String} defaults.contentId=''
+             * @property {String} defaults.backdropClass=''
              */
             defaults: {
                 open: false,
                 closeOnEsc: true,
                 closeOnBackdropClick: false,
+                appendToBody: true,
+                contentId: '',
+                backdropClass: ''
             },
             /**
              * @constructs
@@ -57,14 +64,20 @@
 
                 this.$backdrop = $(document.createElement('div')).addClass(this.name + '-backdrop');
 
+                if(this.options.backdropClass){
+                    this.$backdrop.addClass(this.options.backdropClass);
+                }
+
+                this.contentElement = this.query('.{name}-content');
+
                 this._setup = rb.rAF(this._setup, {that: this, throttle: true});
-                this._open = rb.rAF(this._open, {throttle: true});
-                this._close = rb.rAF(this._close, {throttle: true});
+
+                rb.rAFs(this, {throttle: true}, '_open', '_close');
 
                 if (this.options.open) {
                     this._setup();
                 } else {
-                    setTimeout(this._setup, 999 * Math.random());
+                    setTimeout(this._setup, 99 + (999 * Math.random()));
                 }
             },
             events: {
@@ -79,8 +92,14 @@
                     return;
                 }
                 this.isReady = true;
-                this.$element.before(this.$backdrop.get(0));
+
+                if(this.options.appendToBody){
+                    document.body.appendChild(this.$backdrop.get(0));
+                } else {
+                    this.$element.before(this.$backdrop.get(0));
+                }
                 this.$backdrop.append(this.$element.get(0));
+
 
                 if (!this.element.getAttribute('tabindex')) {
                     this.element.setAttribute('tabindex', '-1');
@@ -96,6 +115,12 @@
                 }
             },
             _open: function (options) {
+                var content;
+                if(this.contentElement && options && options.contentId && this._curContentId != options.contentId && (content = document.getElementById(options.contentId))){
+                    this._curContentId = options.contentId;
+                    this.contentElement.innerHTML = content.innerHTML;
+                }
+
                 this.$backdrop.addClass('is-open');
 
                 this.setupOpenEvents();
@@ -108,7 +133,7 @@
             },
             /**
              * Opens the dialog
-             * @param options {Object} options are passed to the change and changed event
+             * @param [options] {Object} options are passed to the change and changed event
              * @returns {boolean}
              */
             open: function (options) {
@@ -131,7 +156,7 @@
             },
             /**
              * Closes the dialog
-             * @param options {Object} options are passed to the change and changed event
+             * @param [options] {Object} options are passed to the change and changed event
              * @returns {boolean}
              */
             close: function (options) {
@@ -148,11 +173,11 @@
 
             /**
              * Toggles the dialog `isOpen` state.
-             * @param options {Object} options are passed to the change and changed event
+             * @param [options] {Object} options are passed to the change and changed event
              * @returns {boolean}
              */
-            toggle: function () {
-                this[this.isOpen ? 'close' : 'open']();
+            toggle: function (options) {
+                this[this.isOpen ? 'close' : 'open'](options);
             },
 
             setupOpenEvents: function () {
@@ -189,6 +214,21 @@
             },
         }
     );
+
+    rb.click.add('dialog', function(element, event, attr){
+        var dialog;
+        var opts = rb.jsonParse(attr);
+
+        if(typeof opts == 'string'){
+            opts = {id: opts};
+        }
+        dialog = document.getElementById(opts.id);
+
+        if(dialog && (dialog = rb.getComponent(dialog))){
+            dialog.open(opts);
+            event.preventDefault();
+        }
+    });
 
     return Dialog;
 }));

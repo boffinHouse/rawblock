@@ -308,17 +308,38 @@
             },
             /**
              * Closes all panels of a group. If a panel is passed as the except argument, this panel won't be closed.
-             * @param {Element|ComponentInstance} [except]
+             * @param {Element|ComponentInstance|Number} [except]
              */
             closeAll: function (except) {
-                this.selectedItems.forEach(function (panel) {
+                this.selectedItems.forEach(function (panel, i) {
                     var component = life.getComponent(panel);
-                    if (component && component != except && panel != except) {
+                    if (component && component != except && panel != except && i !== except) {
                         component.close();
                     }
                 });
             },
-
+            /**
+             * Opens all panels of a group. If a panel is passed as the except argument, this panel won't be opened.
+             * @param {Element|ComponentInstance|Number} [except]
+             */
+            openAll: function(except){
+                this.$panels.get().forEach(function(panel, i){
+                    var component = life.getComponent(panel);
+                    if (component && component != except && panel != except && i !== except) {
+                        component.open();
+                    }
+                });
+            },
+            /**
+             * Toggles all panel isOpen state
+             */
+            toggleAll: function(){
+                if(this.selectedItems.length){
+                    this.closeAll();
+                } else {
+                    this.openAll();
+                }
+            },
             _triggerOnce: function () {
                 var that;
 

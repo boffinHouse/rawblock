@@ -58,8 +58,8 @@ $dialogJSCFG: (
 	}
 }
 
-.has-open-dialog,
-.has-open-dialog > body {
+.is-dialog-within,
+.is-dialog-within > body {
 	overflow: hidden;
 }
 

@@ -1073,20 +1073,62 @@ if (!window.rb) {
      * @param element The element that needs to get focus.
      * @param [delay] {Number} The delay to focus the element.
      */
-    rb.setFocus = rb.rAF(function (element, delay) {
-        if (element !== document.activeElement) {
-            try {
-                if (element.tabIndex < 0 && !element.getAttribute('tabindex')) {
-                    element.setAttribute('tabindex', -1);
+    rb.setFocus = (function(){
+        var element;
+        var scrollableElements = [];
+
+        var calcScrollableElements = function(){
+            var parent = element.parentNode;
+            while(parent){
+                if(parent.offsetHeight < parent.scrollHeight || parent.offsetWidth < parent.scrollWidth){
+                    scrollableElements.push([parent, parent.scrollTop, parent.scrollLeft]);
                 }
-                setTimeout(function () {
-                    element.focus();
-                    rb.$doc.trigger('rbscriptfocus');
-                }, delay || 4);
-            } catch (e) {
+                parent = parent.parentNode;
             }
-        }
-    }, {queue: true, throttle: true});
+            parent = rb.getScrollingElement();
+            scrollableElements.push([parent, parent.scrollTop, parent.scrollLeft]);
+        };
+
+        var restoreScrollPosition = function(){
+            var i;
+
+            for(i = 0; i < scrollableElements.length; i++){
+                scrollableElements[i][0].scrollTop = scrollableElements[i][1];
+                scrollableElements[i][0].scrollLeft = scrollableElements[i][2];
+            }
+            scrollableElements = [];
+        };
+
+        var doFocus = function () {
+            rb.$doc.trigger('rbscriptfocus');
+            calcScrollableElements();
+            if (element.tabIndex < 0 && !element.getAttribute('tabindex')) {
+                element.setAttribute('tabindex', '-1');
+            }
+            try {
+                element.focus();
+            } catch (e){}
+            restoreScrollPosition();
+        };
+
+        var waitForFocus = rb.rAF(function (delay) {
+            if (element !== document.activeElement) {
+                setTimeout(doFocus, delay || 4);
+            }
+        }, {queue: true, throttle: true});
+
+        return function(givenElement, delay){
+            if (givenElement !== document.activeElement) {
+                element = givenElement;
+
+                if((element.offsetHeight || element.offsetWidth) && rb.getStyles(element).visibility != 'hidden'){
+                    doFocus();
+                } else {
+                    waitForFocus(delay);
+                }
+            }
+        };
+    })();
 
     /* Begin: focus-within polyfill */
     var running = false;
@@ -1099,7 +1141,7 @@ if (!window.rb) {
         var parent = document.activeElement;
         var newFocusParents = [];
 
-        while ((parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)) {
+        while (parent && (parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)) {
             newFocusParents.push(parent);
         }
 
@@ -1178,7 +1220,7 @@ if (!window.rb) {
                 _removeChildFocus();
                 keyboardFocusElem = document.activeElement;
 
-                if (keyboardFocusElem) {
+                if (keyboardFocusElem && keyboardFocusElem.classList) {
                     keyboardFocusElem.classList.add('is-keyboardfocus');
                 }
             }
@@ -2404,8 +2446,12 @@ if (!window.rb) {
              * @param [delay] {Number} The delay that should be used to focus an element.
              */
             setComponentFocus: function (element, delay) {
-                this._activeElement = document.activeElement;
                 var focusElement;
+                var activeElement = document.activeElement;
+
+                this._activeElement = (activeElement && activeElement.nodeName) ?
+                    activeElement :
+                    null;
 
                 if (typeof element == 'number') {
                     delay = element;
