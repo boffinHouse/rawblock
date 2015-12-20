@@ -797,11 +797,11 @@
             },
             updateCells: function () {
                 var that = this;
-                this.$cells = this.$scroller.children('.' + this.name + '-cell');
+                this.$cells = this.$scroller.children();
                 this.calculateLayout();
                 if (!this.options.switchedOff) {
                     rb.rAFQueue(function () {
-                        that.$cells.css({position: 'absolute'});
+                        that.$cells.css({position: 'absolute'}).addClass(that.name + '-cell');
                     });
                 }
             },

@@ -1,73 +1,71 @@
 $dialogJSCFG: (
-	watchCss: true,
-	closeOnEsc: true,
-	closeOnBackdropClick: false,
-	open: true,
+    watchCss: true,
+    closeOnEsc: true,
+    closeOnBackdropClick: false,
+    open: true,
 );
 
 .rb-dialog {
-	@include exportToJS($dialogJSCFG);
+    @include rb-js-export($dialogJSCFG);
 
-	position: relative;
-	background: #fff;
-	max-width: 980px;
-	margin: 40px auto;
-	visibility: hidden;
-	outline: none;
+    position: relative;
+    background: #fff;
+    max-width: 980px;
+    margin: auto;
+    visibility: hidden;
+    outline: none;
 
-	.dialog-close {
+    @at-root {
+        .is-open-dialog-within,
+        .is-open-dialog-within > body {
+            overflow: hidden;
+        }
 
-	}
-}
+        .dialog-backdrop {
+            visibility: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: auto;
+            z-index: 999;
+            opacity: 0;
+            background: rgba(0, 0, 0, 0.6);
+            transition: 400ms all;
 
-@media (max-width: 480px) {
-	@if function-exists(rbToJSON) {
-		$dialogJSCFG: (
-			closeOnEsc: false,
-			closeOnBackdropClick: false
-		);
-		.rb-dialog {
-			@include exportToJS($dialogJSCFG);
-		}
-	}
-}
+            &.is-open {
+                visibility: visible;
+                opacity: 1;
 
-.dialog-backdrop {
-	visibility: hidden;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: auto;
-	z-index: 999;
-	opacity: 0;
-	background: rgba(0, 0, 0, 0.6);
-	transition: 400ms all;
+                .rb-dialog {
+                    visibility: visible;
+                }
+            }
+        }
 
-	&.is-open {
-		visibility: visible;
-		opacity: 1;
+        .dialog-backdrop-document {
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
 
-		> .rb-dialog {
-			visibility: visible;
-		}
-	}
-}
+    .dialog-close {
 
-.is-dialog-within,
-.is-dialog-within > body {
-	overflow: hidden;
-}
+    }
 
-@media (max-width: 620px), (max-height: 320px) {
-	.rb-dialog {
-		margin: 0;
-		width: 100%;
-		min-height: 100%;
-		max-width: none;
-	}
+    @media (max-width: 620px), (max-height: 320px) {
+        margin: 0;
+        width: 100%;
+        min-height: 100%;
+        max-width: none;
+
+        @at-root {
+            .dialog-backdrop-document {
+                align-items: stretch;
+            }
+        }
+    }
 }

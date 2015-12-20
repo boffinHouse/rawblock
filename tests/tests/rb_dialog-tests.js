@@ -25,7 +25,7 @@
 		QUnit.afterAF(60)
 			.then(function(){
 				assert.ok(component.$backdrop.get(0).classList.contains('is-open'));
-				assert.ok(rb.root.classList.contains('has-open-dialog'));
+				assert.ok(rb.root.classList.contains('is-open-dialog-within'));
 				assert.ok(component.$backdrop.get(0).contains(document.activeElement));
 			})
 			.then(function(){
@@ -34,7 +34,7 @@
 				return QUnit.afterAF()
 					.then(function(){
 						assert.ok(component.isOpen);
-						assert.ok(rb.root.classList.contains('has-open-dialog'));
+						assert.ok(rb.root.classList.contains('is-open-dialog-within'));
 					})
 				;
 			})
@@ -45,7 +45,7 @@
 				return QUnit.afterAF()
 					.then(function(){
 						assert.notOk(component.isOpen);
-						assert.notOk(rb.root.classList.contains('has-open-dialog'));
+						assert.notOk(rb.root.classList.contains('is-open-dialog-within'));
 					})
 				;
 			})
@@ -67,7 +67,7 @@
 					.then(function(){
 						assert.notOk(component.isOpen);
 						assert.notOk(component.$backdrop.get(0).classList.contains('is-open'));
-						assert.notOk(rb.root.classList.contains('has-open-dialog'));
+						assert.notOk(rb.root.classList.contains('is-open-dialog-within'));
 						assert.notOk(component.$backdrop.get(0).contains(document.activeElement));
 					})
 				;
@@ -104,7 +104,7 @@
 				assert.equal(change, 1);
 				assert.equal(changed, 1);
 				assert.ok(component.$backdrop.get(0).classList.contains('is-open'));
-				assert.ok(rb.root.classList.contains('has-open-dialog'));
+				assert.ok(rb.root.classList.contains('is-open-dialog-within'));
 				//assert.ok(component.$backdrop.get(0).contains(document.activeElement));
 			})
 			.then(function(){
@@ -117,7 +117,7 @@
 						assert.equal(changed, 1);
 						shouldPrevent = false;
 						assert.ok(component.isOpen);
-						assert.ok(rb.root.classList.contains('has-open-dialog'));
+						assert.ok(rb.root.classList.contains('is-open-dialog-within'));
 					});
 			})
 			.then(function(){
@@ -127,7 +127,7 @@
 						assert.equal(change, 3);
 						assert.equal(changed, 2);
 						assert.notOk(component.isOpen);
-						assert.notOk(rb.root.classList.contains('has-open-dialog'));
+						assert.notOk(rb.root.classList.contains('is-open-dialog-within'));
 					})
 					;
 			})

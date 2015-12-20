@@ -8,6 +8,7 @@
     'use strict';
     var rb = window.rb;
     var $ = rb.$;
+    var regInputs = /^(?:input|textarea)$/i;
 
     var Dialog = rb.Component.extend('dialog',
         /** @lends rb.components.dialog.prototype */
@@ -91,15 +92,20 @@
                 if (this.isReady || !this.element.parentNode) {
                     return;
                 }
+                var backdropDocument = document.createElement('div');
                 this.isReady = true;
+
+                backdropDocument.className = this.name + '-backdrop-document';
+
+                this.$backdrop.append(backdropDocument);
 
                 if(this.options.appendToBody){
                     document.body.appendChild(this.$backdrop.get(0));
                 } else {
                     this.$element.before(this.$backdrop.get(0));
                 }
-                this.$backdrop.append(this.$element.get(0));
 
+                backdropDocument.appendChild(this.element);
 
                 if (!this.element.getAttribute('tabindex')) {
                     this.element.setAttribute('tabindex', '-1');
@@ -127,7 +133,9 @@
 
                 rb.$root.addClass('is-open-' + this.name +'-within');
 
-                this.setComponentFocus(true);
+                if(options.focusElement){
+                    this.setComponentFocus(options.focusElement);
+                }
 
                 this._trigger(options);
             },
@@ -137,6 +145,7 @@
              * @returns {boolean}
              */
             open: function (options) {
+
                 if (this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
                     return false;
                 }
@@ -144,7 +153,20 @@
                     this._setup();
                 }
                 this.isOpen = true;
-                this._open(options);
+
+                if(!options){
+                    options = {};
+                }
+
+                if(!options.focusElement){
+                    options.focusElement = this.getFocusElement(true);
+                }
+
+                if(options.focusElement && regInputs.test(options.focusElement.nodeName)){
+                    this._open._rbUnrafedFn.call(this, options);
+                } else {
+                    this._open(options);
+                }
                 return true;
             },
             _close: function (options) {

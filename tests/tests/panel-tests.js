@@ -77,7 +77,6 @@
 
 		rbTest.simulate(button, 'click');
 
-		assert.equal(events.changedIndex, 0);
 		assert.equal(events.changeIndex, 1);
 
 		QUnit.afterAF()

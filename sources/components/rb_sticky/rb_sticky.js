@@ -97,7 +97,7 @@
 
                 this.onprogress.fireWith = rb.rAF(this.onprogress.fireWith, {throttle: true});
 
-                this.updateLayout = rb.rAFs(this, {throttle: true}, 'updateLayout', '_setProgressClass', 'setSwitchedOffClass');
+                rb.rAFs(this, {throttle: true}, 'updateLayout', '_setProgressClass', 'setSwitchedOffClass');
 
                 this.calculateLayout = this.calculateLayout.bind(this);
                 this.checkPosition = rb.throttle(this.checkPosition, this._throttleOptions);
@@ -220,6 +220,7 @@
 
                 if (this.posProp == 'top') {
                     this.minFixedPos = elemOffset + this.offset;
+
                     if (this.options.progress) {
                         this.minProgressPos = this.minFixedPos;
                         this.maxProgressPos = this.minFixedPos + this.options.progress;
@@ -242,14 +243,14 @@
                         this.minScrollPos = this.maxFixedPos - box.height -
                             $.css(this.container, 'padding-bottom', true, this.containerStyles) -
                             $.css(this.element, 'margin-bottom', true, this.elemStyles);
-                        this.maxFixedPos += 9;
+                        this.maxFixedPos += 9 - this.offset;
                         this.maxScrollPos = this.maxFixedPos;
                     } else {
                         this.minFixedPos = containerOffset - docElem.clientHeight - this.offset;
                         this.maxScrollPos = this.minFixedPos + box.height +
                             $.css(this.container, 'padding-top', true, this.containerStyles) +
                             $.css(this.element, 'margin-top', true, this.elemStyles);
-                        this.minFixedPos += 9;
+                        this.minFixedPos += 9 + this.offset;
                         this.minScrollPos = this.minFixedPos;
                     }
                 }

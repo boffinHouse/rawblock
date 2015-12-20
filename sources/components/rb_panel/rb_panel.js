@@ -7,6 +7,7 @@
 }(function () {
     'use strict';
     var rb = window.rb;
+    var regInputs = /^(?:input|textarea)$/i;
 
     var Panel = rb.Component.extend('panel',
         /** @lends rb.components.panel.prototype */
@@ -212,7 +213,12 @@
                 if (this.isOpen) {
                     return false;
                 }
+                var mainOpts = this.options;
                 var changeEvent = this._trigger(this._beforeEvtName, options);
+
+                if(!options){
+                    options = {};
+                }
 
                 if (changeEvent.defaultPrevented) {
                     return false;
@@ -226,7 +232,16 @@
 
                 this.isOpen = true;
                 this._handleAnimation(changeEvent);
-                this._opened(options);
+
+                if (options.setFocus !== false && (mainOpts.setFocus || options.setFocus) && !options.focusElement) {
+                    options.focusElement = this.getFocusElement();
+                }
+
+                if(options.focusElement && regInputs.test(options.focusElement.nodeName)){
+                    this._opened._rbUnrafedFn.call(this, options);
+                } else {
+                    this._opened(options);
+                }
                 return true;
             },
             _getFocusDelay: function (actionOptions) {
@@ -238,7 +253,6 @@
                 return delay || mainOpts.focusDelay || 0;
             },
             _opened: function (options) {
-                var mainOpts = this.options;
                 var delay = this._getFocusDelay(options);
                 this.element.classList.add('is-open');
                 this.element.setAttribute('aria-hidden', 'false');
@@ -247,8 +261,8 @@
                     this.groupComponent.panelChangeCB(this, 'afteropen');
                 }
 
-                if ((!options || options.setFocus !== false) && (mainOpts.setFocus || (options && options.setFocus))) {
-                    this.setComponentFocus(delay || 0);
+                if (options.focusElement) {
+                    this.setComponentFocus(options.focusElement, delay);
                 }
                 clearTimeout(this._closeTimer);
                 if (this.options.closeOnOutsideClick) {
@@ -300,7 +314,6 @@
                 return true;
             },
             _closed: function (options) {
-                var delay = this._getFocusDelay(options);
                 this.element.classList.remove('is-open');
                 this.element.setAttribute('aria-hidden', 'true');
                 if (this.groupComponent) {
@@ -313,7 +326,7 @@
                 }
 
                 if ((!options || options.setFocus !== false) && (this.options.setFocus || (options && options.setFocus))) {
-                    this.restoreFocus(true, delay);
+                    this.restoreFocus(true);
                 }
             },
         }

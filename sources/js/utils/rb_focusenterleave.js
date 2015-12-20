@@ -73,7 +73,7 @@
                     }
                 }
             }
-        }
+        };
     });
 
     return rb.events;

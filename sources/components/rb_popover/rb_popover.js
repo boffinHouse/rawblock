@@ -94,7 +94,7 @@
             initPositionedElement: function () {
                 var that = this;
 
-                this.position = Position(this.element);
+                this.position = new Position(this.element);
 
                 rb.rAFQueue(function () {
                     that.$element.css({display: 'block'});

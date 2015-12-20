@@ -787,7 +787,7 @@ if (!window.rb) {
                     if(!e.delegatedTarget){return;}
                     return handler.apply(this, arguments);
                 };
-                this.proxy(handler, 'delegate', selector, proxy)
+                this.proxy(handler, 'delegate', selector, proxy);
             }
 
             return proxy;
@@ -2441,6 +2441,30 @@ if (!window.rb) {
             setFocus: rb.setFocus,
 
             /**
+             *
+             * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
+             * @returns {undefined|Element}
+             */
+            getFocusElement: function(element){
+                var focusElement;
+
+                if (element && element !== true) {
+                    if (element.nodeType == 1) {
+                        focusElement = element;
+                    } else if (typeof element == 'string') {
+                        focusElement = rb.elementFromStr(element, this.element)[0];
+                    }
+                } else {
+                    focusElement = this.element.querySelector('.js-autofocus');
+                }
+
+                if (!focusElement && (element === true || this.element.classList.contains('js-autofocus'))) {
+                    focusElement = this.element;
+                }
+                return focusElement;
+            },
+
+            /**
              * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with the class `js-autofocus` inside of the component element is focused.
              * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
              * @param [delay] {Number} The delay that should be used to focus an element.
@@ -2458,19 +2482,10 @@ if (!window.rb) {
                     element = null;
                 }
 
-                if (element && element !== true) {
-                    if (element.nodeType == 1) {
-                        focusElement = element;
-                    } else if (typeof element == 'string') {
-                        focusElement = rb.elementFromStr(element, this.element)[0];
-                    }
-                } else {
-                    focusElement = this.element.querySelector('.js-autofocus');
-                }
-
-                if (!focusElement && (element === true || this.element.classList.contains('js-autofocus'))) {
-                    focusElement = this.element;
-                }
+                focusElement = (!element || element.nodeType != 1) ?
+                    this.getFocusElement(element) :
+                    element
+                ;
 
                 if (focusElement) {
                     this.setFocus(focusElement, delay || this.options.focusDelay);
@@ -2813,6 +2828,13 @@ if (!window.rb) {
             _resetPreventClick: function () {
                 this._preventClick = false;
             },
+            _simpleFocus: function(){
+                try {
+                    if (this.element != document.activeElement) {
+                        this.element.focus();
+                    }
+                } catch (e) {}
+            },
             _onClick: function (e) {
                 var args;
                 if (this.options.switchedOff || this._preventClick || this.element.disabled) {
@@ -2832,9 +2854,7 @@ if (!window.rb) {
                 if (this.options.type in component) {
                     args = this.options.args;
 
-                    if (this.element != document.activeElement) {
-                        this.element.focus();
-                    }
+                    this._simpleFocus();
 
                     component.activeButtonComponent = this;
                     if (typeof component[this.options.type] == 'function') {
