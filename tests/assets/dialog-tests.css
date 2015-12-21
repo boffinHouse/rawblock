@@ -43,7 +43,7 @@ html {
 .dialog-backdrop.is-open {
 	visibility: visible;
 	opacity: 1; }
-.dialog-backdrop.is-open > .rb-dialog {
+.dialog-backdrop.is-open .rb-dialog {
 	visibility: visible; }
 
 .has-open-dialog,

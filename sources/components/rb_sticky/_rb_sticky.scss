@@ -5,78 +5,78 @@ rb-sticky
 
 **********************************************************/
 $stickyJSCFG: (
-	container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
-	switchedOff: false,
-	topOffset: false,
-	bottomOffset: false,
-	progress: 0,
-	childSel: 'find(.sticky-element)',
-	setWidth: true,
-	resetSwitchedOff: true,
-	childStyle: '',
+    container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
+    switchedOff: false,
+    topOffset: false,
+    bottomOffset: false,
+    progress: 0,
+    childSel: 'find(.sticky-element)',
+    setWidth: true,
+    resetSwitchedOff: true,
+    childStyle: '',
 );
 
 .rb-sticky {
-	//@include exportToJS($stickyJSCFG);
+    //@include rb-js-export($stickyJSCFG);
 
-	/* important set properties shouldn't be changed, use an outer or inner element to apply does styles */
+    /* important set properties shouldn't be changed, use an outer or inner element to apply does styles */
 
-	float: none !important;
-	left: auto !important;
-	right: auto !important;
-	border: none !important;
-	padding: 0 !important;
-	position: static;
-	backface-visibility: hidden;
+    float: none !important;
+    left: auto !important;
+    right: auto !important;
+    border: none !important;
+    padding: 0 !important;
+    position: static;
+    backface-visibility: hidden;
 
-	top: 0;
-	bottom: auto;
-	margin-left: 0;
-	margin-right: 0;
+    top: 0;
+    bottom: auto;
+    margin-left: 0;
+    margin-right: 0;
 
-	background: #333;
-	color: #f1f1f1;
-	height: 100px;
+    background: #333;
+    color: #f1f1f1;
+    height: 100px;
 
-	&.is-fixed {
-		position: fixed !important;
-	}
+    &.is-fixed {
+        position: fixed !important;
+    }
 
-	&.is-top-15 {
-		top: 15px;
-	}
+    &.is-top-15 {
+        top: 15px;
+    }
 
-	&.is-bottom-15 {
-		top: auto;
-		bottom: 15px;
-	}
+    &.is-bottom-15 {
+        top: auto;
+        bottom: 150px;
+    }
 
-	&.progress-showcase {
+    &.progress-showcase {
 
-		//@include exportToJS(map-merge($stickyJSCFG, (
-		//	progress: 100
-		//)));
-		@include exportToJS((
-			progress: 100
-		));
+        //@include exportToJS(map-merge($stickyJSCFG, (
+        //	progress: 100
+        //)));
+        @include exportToJS((
+            progress: 100
+        ));
 
-		height: auto;
-		transition: 300ms background-color;
+        height: auto;
+        transition: 300ms background-color;
 
-		&.is-fixed-progressed {
-			background: #600;
-		}
+        &.is-fixed-progressed {
+            background: #600;
+        }
 
-		.sticky-element {
-			font-size: 18px;
-			min-height: 100px;
+        .sticky-element {
+            font-size: 18px;
+            min-height: 100px;
 
-			@include exportToJS((
-				fontSize: 12,
-				minHeight: 50,
-			));
+            @include exportToJS((
+                fontSize: 12,
+                minHeight: 50,
+            ));
 
-		}
-	}
+        }
+    }
 }
 

@@ -4,7 +4,7 @@ module.exports = {
 	},
 	js: {
 		files: {
-			src: ['sources/js/**/*.js']
+			src: ['sources/**/*.js']
 		}
 	}
 };
