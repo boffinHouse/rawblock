@@ -1,5 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
+        //optional dependency
+        //require('../../js/utils/rb_fetch');
         module.exports = factory();
     } else {
         factory();
@@ -71,7 +73,7 @@
 
                 this.contentElement = this.query('.{name}-content');
 
-                this._setup = rb.rAF(this._setup, {that: this, throttle: true});
+                rb.rAFs(this, {that: this, throttle: true}, '_setup', '_addContent');
 
                 rb.rAFs(this, {throttle: true}, '_open', '_close');
 
@@ -127,6 +129,11 @@
                     this.contentElement.innerHTML = content.innerHTML;
                 }
 
+                if(this._xhr){
+                    this.contentElement.innerHTML = '';
+                    this.$backdrop.addClass('is-loading');
+                }
+
                 this.$backdrop.addClass('is-open');
 
                 this.setupOpenEvents();
@@ -138,6 +145,13 @@
                 }
 
                 this._trigger(options);
+            },
+            _addContent: function(data){
+                if(this._xhr && this.contentElement){
+                    this.contentElement.innerHTML = data.data;
+                }
+                this.$backdrop.removeClass('is-loading');
+                this._xhr = null;
             },
             /**
              * Opens the dialog
@@ -160,6 +174,10 @@
 
                 if(!options.focusElement){
                     options.focusElement = this.getFocusElement(true);
+                }
+
+                if(options.contentUrl){
+                    this._xhr = rb.fetch({url: options.contentUrl}).then(this._addContent);
                 }
 
                 if(options.focusElement && regInputs.test(options.focusElement.nodeName)){
@@ -186,6 +204,7 @@
                     return false;
                 }
                 this.isOpen = false;
+                this._xhr = null;
 
                 this.teardownOpenEvents();
 
