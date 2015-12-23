@@ -778,23 +778,73 @@ if (!window.rb) {
                 this.proxy(proxy, type, key, proxy);
             }
         },
-        delegateFn: function(handler, selector){
-            var proxy = this.proxy(handler, 'delegate', selector);
+        proxies: {
+            delegate: function(handler, selector){
+                var proxy = rb.events.proxy(handler, 'delegate', selector);
 
-            if(!proxy){
-                proxy = function(e){
-                    e.delegatedTarget = e.target.closest(selector);
-                    if(!e.delegatedTarget){return;}
-                    return handler.apply(this, arguments);
-                };
-                this.proxy(handler, 'delegate', selector, proxy);
+                if(!proxy){
+                    proxy = function(e){
+                        e.delegatedTarget = e.target.closest(selector);
+                        if(!e.delegatedTarget){return;}
+                        return handler.apply(this, arguments);
+                    };
+                    rb.events.proxy(handler, 'delegate', selector, proxy);
+                }
+
+                return proxy;
+            },
+            matches: function(handler, selector){
+                var proxy = rb.events.proxy(handler, 'matches', selector);
+
+                if(!proxy){
+                    proxy = function(e){
+                        if(e.target.matches(selector)){
+                            e.delegatedTarget = e.target;
+                            return handler.apply(this, arguments);
+                        }
+                    };
+                    rb.events.proxy(handler, 'matches', selector, proxy);
+                }
+
+                return proxy;
+            },
+            keycodes: function(handler, keycodes){
+                var keycodesObj;
+                var proxy = rb.events.proxy(handler, 'keycodes', keycodes);
+
+                if(!proxy){
+                    proxy = function(e){
+                        if(!keycodesObj){
+                            keycodesObj = keycodes.trim().split(regSplit).reduce(function(obj, value){
+                                obj[value] = true;
+                                return obj;
+                            }, {});
+                        }
+
+                        if(keycodesObj[e.keyCode]){
+                            return handler.apply(this, arguments);
+                        }
+                    };
+                    rb.events.proxy(handler, 'keycodes', keycodes, proxy);
+                }
+
+                return proxy;
+
+            }
+        },
+        applyProxies: function(handler, opts){
+            var proxy;
+            if(opts){
+                for(proxy in opts){
+                    if(this.proxies[proxy]){
+                        handler = this.proxies[proxy](handler, opts[proxy], opts);
+                    }
+                }
             }
 
-            return proxy;
+            return handler;
         },
-        special: {
-
-        }
+        special: {},
     };
 
     [['add', 'addEventListener'], ['remove', 'removeEventListener']].forEach(function(action){
@@ -818,12 +868,12 @@ if (!window.rb) {
          */
         rb.events[action[0]] = function(element, type, handler, opts){
             if(this.special[type]){
+                if(this.special[type].applyProxies){
+                    handler = rb.events.applyProxies(handler, opts);
+                }
                 this.special[type][action[0]](element, handler, opts);
             } else {
-
-                if(opts && opts.delegate){
-                    handler = this.delegateFn(handler, opts.delegate);
-                }
+                handler = rb.events.applyProxies(handler, opts);
 
                 element[action[1]](type, handler, !!(opts && opts.capture));
             }
@@ -1076,6 +1126,7 @@ if (!window.rb) {
     rb.setFocus = (function(){
         var element;
         var scrollableElements = [];
+        var regKeyboadElements = /^(?:input|textarea)$/i;
 
         var calcScrollableElements = function(){
             var parent = element.parentNode;
@@ -1121,7 +1172,7 @@ if (!window.rb) {
             if (givenElement !== document.activeElement) {
                 element = givenElement;
 
-                if((element.offsetHeight || element.offsetWidth) && rb.getStyles(element).visibility != 'hidden'){
+                if(regKeyboadElements.test(element.nodeName) && rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)){
                     doFocus();
                 } else {
                     waitForFocus(delay);
@@ -2340,6 +2391,8 @@ if (!window.rb) {
              *
              * The key specifies the event type and optional a selector (separated by a whitespace) for event delegation. The key will be interpolated with [`this.interpolateName`]{@link rb.Component#interpolateName}.
              *
+             * The key also allows comma separated multiple events as also modifiers (`'event1,event2:modifier()'`). As modifier `"event:capture()"`, `"event:keycodes(13 32)"`, `"event:matches(.selector)"` and `"event:delegate(.selector)"` (alias for `"event .selector"`) are known.
+             *
              * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
              *
              * As events the following special events can also be used: 'elemresize', 'elemresizewidth' and 'elemresizeheight'.
@@ -2361,7 +2414,11 @@ if (!window.rb) {
 			 *              'elemresizewidth': function(){
 			 *                  this.readLayout();
 			 *                  this.setLayout();
-			 *              }
+			 *              },
+			 *              'focus:capture():matches(input, select)': '_onFocus',
+			 *              'mouseenter:capture():matches(.teaser)': '_delegatedMouseenter',
+			 *              'click .ok-btn': '_ok',
+			 *              'keypress:keycodes(13 32):matches(.ok-btn)': '_ok',
 			 *          }
 			 *      }
 			 * }
