@@ -1,0 +1,30 @@
+@mixin rb-fadetabs(){
+    @keyframes rb-tabsfadein { from { opacity: 0; } to { opacity: 1; }  }
+    @keyframes rb-tabsfadeout { from { opacity: 1; } to { opacity: 0; }  }
+
+    &panel-wrapper {
+        position: relative;
+        min-height: 340px;
+    }
+
+    &panel {
+        display: none;
+        animation-name: rb-tabsfadeout;
+        animation-fill-mode: both;
+        animation-duration: 400ms;
+
+        .is-fx > &.is-open,
+        .is-fx > &.is-closing {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: block;
+        }
+
+        &.is-open {
+            display: block;
+            animation-name: rb-tabsfadein;
+        }
+    }
+}
