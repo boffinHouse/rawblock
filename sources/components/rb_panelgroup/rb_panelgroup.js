@@ -133,7 +133,7 @@
                 }
             },
             setSwitchedOffClass: function(){
-                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched-off');
             },
             _handleAnimation: function(animationData){
                 if(animationData.animation == 'slide' && animationData.panel.isOpen){
@@ -175,7 +175,7 @@
                 openedPanel.style.display = '';
                 openedPanel.style.position = '';
 
-                $(closingPanels).addClass('is-closing');
+                $(closingPanels).addClass(rb.statePrefix + 'closing');
 
                 this.$panelWrapper
                     .attr({'data-direction': nextIndex > curIndex ? 'up' : 'down'})
@@ -187,15 +187,15 @@
                         duration: this.options.duration,
                         easing: this.options.easing,
                         always: function () {
-                            that.$panels.removeClass('is-closing');
+                            that.$panels.removeClass(rb.statePrefix + 'closing');
                             that.$panelWrapper
-                                .removeClass('is-fx')
+                                .removeClass(rb.statePrefix + 'fx')
                                 .attr({'data-direction': ''})
                             ;
                             cleanupCSS.call(this);
                         }
                     })
-                    .addClass('is-fx')
+                    .addClass(rb.statePrefix + 'fx')
                 ;
 
             },
@@ -236,7 +236,7 @@
                 }
             },
             setSelectedState: function () {
-                this.element.classList[this.selectedIndexes.length ? 'add' : 'remove']('is-selected-within');
+                this.element.classList[this.selectedIndexes.length ? 'add' : 'remove'](rb.statePrefix + 'selected-within');
             },
             _updatePanelInformation: function () {
                 var that = this;

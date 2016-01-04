@@ -418,7 +418,7 @@
                 });
             },
             _setActivateClass: function () {
-                this.element.classList[this.isActivated ? 'add' : 'remove']('is-active');
+                this.element.classList[this.isActivated ? 'add' : 'remove'](rb.statePrefix + 'active');
             },
             _activate: function (index) {
                 if (!this.isActivated) {
@@ -438,7 +438,7 @@
                 }
             },
             _setAnimateClass: function () {
-                this.element.classList[this.isAnimated ? 'add' : 'remove']('is-animate');
+                this.element.classList[this.isAnimated ? 'add' : 'remove'](rb.statePrefix + 'animate');
             },
             _setAnimate: function (animate) {
                 animate = !!animate;

@@ -17,12 +17,11 @@ Main Stylesheet
 //Layout Grid
 @include rb-generate-layout-styles($breakpointConfigs);
 
-//@include rb-export-globaljs(
-//		(
-//			mqs: $breakpointConfigs,
-//		),
-//		$asideBreakpoints
-//);
+@include rb-export-globaljs(
+		(
+			mqs: $breakpointConfigs,
+		)
+);
 
 // All Components
 @import "../components/**/*.scss";

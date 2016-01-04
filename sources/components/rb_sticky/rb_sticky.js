@@ -330,7 +330,7 @@
                 }
             },
             _setProgressClass: function () {
-                this.element.classList[this.isProgressDone ? 'add' : 'remove']('is-fixed-progressed');
+                this.element.classList[this.isProgressDone ? 'add' : 'remove'](rb.statePrefix + 'fixed-progressed');
             },
             updateLayout: function (shouldFix, shouldScroll, shouldWidth) {
                 var offset, trigger;
@@ -379,7 +379,7 @@
                 }
                 this.isFixed = false;
                 this.isScrollFixed = false;
-                this.element.classList.remove('is-fixed');
+                this.element.classList.remove(rb.statePrefix + 'fixed');
                 this.detachClone();
                 this.element.style.position = '';
                 this.element.style.width = '';
@@ -392,7 +392,7 @@
                 this.isFixed = true;
                 this.isScrollFixed = false;
                 this.attachClone();
-                this.element.classList.add('is-fixed');
+                this.element.classList.add(rb.statePrefix + 'fixed');
                 this.element.style.position = 'fixed';
 
                 if (this.options.setWidth) {

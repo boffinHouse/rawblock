@@ -78,7 +78,7 @@
             },
             _getElements: function () {
                 this.$items = $(this.queryAll('.{name}-item'));
-                this.checkedItems = this.$items.filter('.is-checked').get(0) || null;
+                this.checkedItems = this.$items.filter('.' + rb.statePrefix + 'checked').get(0) || null;
                 this.checkedIndex = (this.checkedItems) ? this.$items.index(this.checkedItems) : -1;
             },
             _onkeyboardInput: function (e) {
@@ -141,10 +141,10 @@
                 this._selectCheck(index, 'select');
             },
             _changeSelected: function () {
-                this.$items.removeClass('is-selected');
+                this.$items.removeClass(rb.statePrefix + 'selected');
 
                 if (this.selectedItem) {
-                    this.selectedItem.classList.add('is-selected');
+                    this.selectedItem.classList.add(rb.statePrefix + 'selected');
                     this.focusElement.setAttribute('aria-activedescendant', this.getId(this.selectedItem));
                 }
                 this._trigger('selectedchanged');
@@ -165,10 +165,10 @@
                 }
             },
             _changeChecked: function () {
-                this.$items.removeClass('is-checked');
+                this.$items.removeClass(rb.statePrefix + 'checked');
 
                 if (this.checkedItem) {
-                    this.checkedItem.classList.add('is-checked');
+                    this.checkedItem.classList.add(rb.statePrefix + 'checked');
                 }
                 this._trigger();
             },

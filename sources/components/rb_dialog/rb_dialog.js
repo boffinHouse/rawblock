@@ -131,14 +131,14 @@
 
                 if(this._xhr){
                     this.contentElement.innerHTML = '';
-                    this.$backdrop.addClass('is-loading');
+                    this.$backdrop.addClass(rb.statePrefix + 'loading');
                 }
 
-                this.$backdrop.addClass('is-open');
+                this.$backdrop.addClass(rb.statePrefix + 'open');
 
                 this.setupOpenEvents();
 
-                rb.$root.addClass('is-open-' + this.name +'-within');
+                rb.$root.addClass(rb.statePrefix + 'open-' + this.name +'-within');
 
                 if(options.focusElement){
                     this.setComponentFocus(options.focusElement);
@@ -150,7 +150,7 @@
                 if(this._xhr && this.contentElement){
                     this.contentElement.innerHTML = data.data;
                 }
-                this.$backdrop.removeClass('is-loading');
+                this.$backdrop.removeClass(rb.statePrefix + 'loading');
                 this._xhr = null;
             },
             /**
@@ -190,8 +190,8 @@
             _close: function (options) {
                 this.restoreFocus(true);
 
-                this.$backdrop.removeClass('is-open');
-                rb.$root.removeClass('is-open-' + this.name +'-within');
+                this.$backdrop.removeClass(rb.statePrefix + 'open');
+                rb.$root.removeClass(rb.statePrefix + 'open-' + this.name +'-within');
                 this._trigger(options);
             },
             /**
