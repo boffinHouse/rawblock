@@ -198,6 +198,7 @@
 		// increment the counter
 		$i: $i + $steps;
 	}
+
 }
 
 //
@@ -223,3 +224,4 @@
 	@include rb-size-gutter-generator($className, $gutter);
 	@include rb-layout-offset($className);
 }
+

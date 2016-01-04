@@ -6,21 +6,21 @@
         {{> app_icons }}
         {{> head_assets }}
     </head>
-    <body>
-        <div class="rb-page-wrapper">
-            <header class="rb-page-header" role="banner">
-                <div class="use-column-group use-gutter">
+    <body class="rb-page">
+        <div class="page-wrapper">
+            <header class="page-header" role="banner">
+                <div class="page-header-inner use-column-group use-gutter">
                     <div class="use-size-auto">
                         <h1>RawBlock</h1>
                     </div>
                 </div>
             </header>
 
-            <main class="rb-page-main" id="main-content" role="main" tabindex="-1">
+            <main class="page-main" id="main-content" role="main" tabindex="-1">
                 {{> body }}
             </main>
 
-            <footer class="rb-page-footer">
+            <footer class="page-footer">
                 <div class="page-footer-inner">
                     <div class="use-size-100">
                         {{#with rb_sitemap }}

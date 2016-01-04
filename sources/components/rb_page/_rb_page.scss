@@ -1,0 +1,54 @@
+/*********************************************************
+
+rb-page
+----------------------------------------------------------
+
+**********************************************************/
+.rb-page {
+    width: 100%;
+
+    @at-root .page- {
+
+        //Main wrapper page
+        &wrapper {
+            width: 100%;
+        }
+
+        //Main header page
+        &header {
+            width: 100%;
+
+            &-inner {
+                max-width: $grid-max-width;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+        }
+
+        //Main content page
+        &main {
+            width: 100%;
+            max-width: $grid-max-width;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        //Main footer page
+        &footer {
+
+            &-inner {
+                max-width: $grid-max-width;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+        }
+
+        //Main section page
+        &section {
+
+            &-inner {
+                margin: 0 auto;
+            }
+        }
+    }
+}
