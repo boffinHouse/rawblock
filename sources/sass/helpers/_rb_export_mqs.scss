@@ -1,4 +1,4 @@
-@mixin rb-export-globaljs($mainconfig, $asidebreakpoints){
+@mixin rb-export-globaljs($mainconfig, $asidebreakpoints: ()){
 	$rbExportMqMap: ();
 	$mainbreakpoints: map-get($mainconfig, 'mqs');
 

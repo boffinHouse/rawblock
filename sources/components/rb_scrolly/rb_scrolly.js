@@ -282,7 +282,7 @@
                 var once = this.options.once;
                 if (this.entered != shouldEnter) {
                     this.entered = shouldEnter;
-                    this.element.classList[shouldEnter ? 'add' : 'remove']('is-in-scrollrange');
+                    this.element.classList[shouldEnter ? 'add' : 'remove'](rb.statePrefix + 'in-scrollrange');
                     this._trigger();
 
                     if (once == 'entered' || (once && (!this.childs || !this.childs.length))) {

@@ -1,77 +1,76 @@
 @function rb-escape-quotes($string, $prepend: '') {
-	$newstring: $string;
-	$length: str_length($string);
-	$index: str_index($string, '"');
+    $newstring: $string;
+    $length: str_length($string);
+    $index: str_index($string, '"');
 
-	@if $index and $index > 0 {
-		@if $prepend == '' {
-			@warn 'doubble quote found in "' + $string + '" will convert to single quote.';
-		}
-		$prepend: str_slice($string, 0, $index - 1) + "'";
-		$newstring: rb-escape-quotes((str_slice($string, $index + 1, $length + 1)), $prepend);
-	}
+    @if $index and $index > 0 {
+        @if $prepend == '' {
+            @warn 'doubble quote found in "' + $string + '" will convert to single quote.';
+        }
+        $prepend: str_slice($string, 0, $index - 1) + "'";
+        $newstring: rb-escape-quotes((str_slice($string, $index + 1, $length + 1)), $prepend);
+    }
 
-	@return $prepend + $newstring;
+    @return $prepend + $newstring;
 }
 
 @function rb-stringify($data) {
-	$string: "";
-	$type: type-of($data);
+    $string: "";
+    $type: type-of($data);
 
-	@if type-of($data) == 'color' {
-		$data: inspect($data);
-		$type: 'string';
-	}
+    @if type-of($data) == 'color' {
+        $data: inspect($data);
+        $type: 'string';
+    }
 
-	@if $type == "map" {
-		$string: $string + "{";
+    @if $type == "map" {
+        $string: $string + "{";
 
-		@each $key, $value in $data {
-			$string: $string + '"' + $key + '":' + rb-stringify($value) +',';
-		}
+        @each $key, $value in $data {
+            $string: $string + '"' + $key + '":' + rb-stringify($value) +',';
+        }
 
-		$string: str-slice($string, 0, str-length($string) - 1) + '}';
-	}
-	@else if $type == "list" {
-		$string: $string + "[";
+        $string: str-slice($string, 0, str-length($string) - 1) + '}';
+    } @else if $type == "list" {
+        $string: $string + "[";
 
-		@for $i from 1 through length($data) {
-			$string: $string + rb-stringify(nth($data, $i)) +',';
-		}
+        @if length($data) != 0 {
+            @for $i from 1 through length($data) {
+                $string: $string + rb-stringify(nth($data, $i)) +',';
+            }
+        }
 
-		$string: str-slice($string, 0, str-length($string) - 1)  + ']';
-	}
-	@else if $type == "number" {
-		$string: $string + $data;
-	}
-	@else if type-of($data) == "string" {
-		$string: $string + ' "' + rb-escape-quotes($data) + '"';
-	} @else if $type == "bool" {
-		$string: $string + $data;
-	} @else {
-		$string: $string + 'null';
-	}
+        $string: str-slice($string, 0, str-length($string) - 1)  + ']';
+    } @else if $type == "number" {
+        $string: $string + $data;
+    } @else if type-of($data) == "string" {
+        $string: $string + ' "' + rb-escape-quotes($data) + '"';
+    } @else if $type == "bool" {
+        $string: $string + $data;
+    } @else {
+        $string: $string + 'null';
+    }
 
-	@return $string;
+    @return $string;
 }
 
-@mixin rb-js-export($data){
-	&::before {
-		$string: rb-stringify($data);
-		content: $string !important;
-		visibility: hidden !important;
-		display: block !important;
-		height: 0 !important;
-		width: 100%;
-		clear: both;
-	}
+@mixin rb-js-export($data) {
+    &::before {
+        $string: rb-stringify($data);
+        content: $string !important;
+        visibility: hidden !important;
+        display: block !important;
+        height: 0 !important;
+        width: 100%;
+        clear: both;
+    }
 }
 
 /* old/deprecated API: */
-@function rbToJSON($data){
-	@return rb-stringify($data);
+@function rbToJSON($data) {
+    @return rb-stringify($data);
 }
 
-@mixin exportToJS($data){
-	@include rb-js-export($data);
+@mixin exportToJS($data) {
+    @include rb-js-export($data);
 }

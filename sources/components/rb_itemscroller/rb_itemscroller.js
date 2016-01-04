@@ -199,7 +199,7 @@
                             this.$element
                                 .find('.' + this.name + '-btn-next, .' + this.name + '-btn-prev')
                                 .prop({disabled: false})
-                                .removeClass('is-disabled')
+                                .removeClass(rb.statePrefix + 'disabled')
                             ;
                         }
                         break;
@@ -240,10 +240,10 @@
                 }
                 this.$cells
                     .css({left: '', position: ''})
-                    .removeClass('is-active-done')
-                    .removeClass('is-active')
-                    .removeClass('is-activated-done')
-                    .removeClass('is-activated')
+                    .removeClass(rb.statePrefix + 'active-done')
+                    .removeClass(rb.statePrefix + 'active')
+                    .removeClass(rb.statePrefix + 'activated-done')
+                    .removeClass(rb.statePrefix + 'activated')
                 ;
                 this.$scroller.css({
                     position: '',
@@ -265,7 +265,7 @@
                 this.setSwitchedOffClass();
             },
             setSwitchedOffClass: function(){
-                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched-off');
             },
             _switchOn: function () {
                 this._mainSetup();
@@ -311,7 +311,7 @@
                     that.viewport.scrollLeft = 0;
                 };
                 var scrollIntoView = function (e) {
-                    var cell;
+                    var cell, pageIndex;
                     if (that.options.switchedOff) {
                         return;
                     }
@@ -319,7 +319,10 @@
                     if (!isTestStopped) {
                         cell = ((e.type == 'focus') ? e.target : document.activeElement).closest(cellSel);
                         if (cell && that.isCellVisible(cell) !== true) {
-                            that.selectCell(cell);
+                            pageIndex = that.getPageIndexOfCell(cell);
+                            if(pageIndex != that._selectedIndex){
+                                that.selectedIndex(pageIndex);
+                            }
                         }
                     }
                     setTimeout(resetScrollLeft);
@@ -530,12 +533,13 @@
             },
             _slideComplete: function () {
                 var curPage = this.pageData[this._selectedIndex + this.baseIndex];
-                this.$cells.removeClass('is-active-done');
+                this.isAnimated = false;
+                this.$cells.removeClass(rb.statePrefix + 'active-done');
 
                 if (curPage) {
                     ( curPage.$cellElems || (curPage.$cellElems = $(curPage.cellElems)) )
-                        .addClass('is-active-done')
-                        .addClass('is-activated-done')
+                        .addClass(rb.statePrefix + 'active-done')
+                        .addClass(rb.statePrefix + 'activated-done')
                     ;
                 }
                 this._trigger(this._evtName + 'completed');
@@ -609,7 +613,9 @@
 
                     if (noAnimate) {
                         this.setPos(setPos);
+                        this.isAnimated = false;
                     } else {
+                        this.isAnimated = true;
                         this._animStart = this._pos;
                         this.$scroller
                             .animate(
@@ -672,12 +678,12 @@
                     this.$element
                         .find('.' + this.name + '-btn-next')
                         .prop({disabled: isEnd})
-                        [isEnd ? 'addClass' : 'removeClass']('is-disabled')
+                        [isEnd ? 'addClass' : 'removeClass'](rb.statePrefix + 'disabled')
                     ;
                     this.$element
                         .find('.' + this.name + '-btn-prev')
                         .prop({disabled: isStart})
-                        [isStart ? 'addClass' : 'removeClass']('is-disabled')
+                        [isStart ? 'addClass' : 'removeClass'](rb.statePrefix + 'disabled')
                     ;
                 }
 
@@ -685,18 +691,18 @@
 
                 this.$currentIndex.html(this._selectedIndex + 1);
 
-                this.$cells.removeClass('is-active');
+                this.$cells.removeClass(rb.statePrefix + 'active');
                 if (curPage) {
                     ( curPage.$cellElems || (curPage.$cellElems = $(curPage.cellElems)) )
-                        .addClass('is-activated')
-                        .addClass('is-active')
+                        .addClass(rb.statePrefix + 'activated')
+                        .addClass(rb.statePrefix + 'active')
                     ;
                 }
 
                 this.$paginationBtns
-                    .removeClass('is-selected')
+                    .removeClass(rb.statePrefix + 'selected')
                     .eq(this._selectedIndex)
-                    .addClass('is-selected')
+                    .addClass(rb.statePrefix + 'selected')
                 ;
             },
             _setupTouch: function () {
@@ -710,6 +716,7 @@
                     vertical: false,
 
                     start: function () {
+                        that.isAnimated = false;
                         $scrollerElem.stop();
                     },
                     end: function (draggy) {
@@ -1061,7 +1068,7 @@
                     }
                     this.$pagination.html(paginationItems.join(''));
                     this.$paginationBtns = this.$pagination.find('.' + this.name + '-pagination-btn');
-                    this.$paginationBtns.eq(this._selectedIndex).addClass('is-selected');
+                    this.$paginationBtns.eq(this._selectedIndex).addClass(rb.statePrefix + 'selected');
                 }
             },
         }

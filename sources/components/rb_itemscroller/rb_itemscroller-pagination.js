@@ -57,9 +57,9 @@
                     return;
                 }
 
-                this.$cells.removeClass('is-selected-pagination');
+                this.$cells.removeClass(rb.statePrefix + 'selected-pagination');
 
-                cell = this.$cells.eq(selectedIndex).addClass('is-selected-pagination').get(0);
+                cell = this.$cells.eq(selectedIndex).addClass(rb.statePrefix + 'selected-pagination').get(0);
 
                 if (this.isCellVisible(cell) !== true) {
                     this.selectCell(selectedIndex);

@@ -62,9 +62,21 @@ if (!window.rb) {
      */
     rb.templates = {};
 
+    rb.statePrefix = 'is-';
+
     /* End: global vars end */
 
     /* Begin: rbSlideUp / rbSlideDown */
+
+    /**
+     * Changes state class of an element.
+     * @param element
+     * @param state
+     * @param action
+     */
+    rb.changeState = function(element, state, action){
+        element.classList[action ? 'add' : 'remove'](rb.statePrefix + state);
+    };
 
     /**
      * A jQuery/rb.$ plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
@@ -1079,42 +1091,49 @@ if (!window.rb) {
         return $(elem || []);
     };
 
-    /* Begin: is-teaser delegate */
-    var getSelection = window.getSelection || function () {
-            return {};
-        };
-    var regInputs = /^(?:input|select|textarea|button|a)$/i;
+    /* Begin: clickarea delegate */
+    var initClickArea = function(){
 
-    document.addEventListener('click', function (e) {
+        var clickAreaSel = rb.statePrefix + 'clickarea';
+        var clickAreaactionSel = rb.statePrefix + 'clickarea-action';
+        var abortSels = 'a[href], a[href] *, ' + clickAreaSel + ', ' + clickAreaSel + ' *';
 
-        if (e.defaultPrevented || regInputs.test(e.target.nodeName || '') || !e.target.matches('.is-clickarea, .is-clickarea *') || e.target.matches('a[href], a[href] *, .is-clickarea-action, .is-clickarea-action *')) {
-            return;
-        }
-        var event, selection;
-        var item = e.target.closest('.is-clickarea');
-        var link = item && item.querySelector('.is-clickarea-action');
+        var getSelection = window.getSelection || function () {
+                return {};
+            };
+        var regInputs = /^(?:input|select|textarea|button|a)$/i;
 
-        if (link) {
-            selection = getSelection();
-            if (selection.anchorNode && !selection.isCollapsed && item.contains(selection.anchorNode)) {
+        document.addEventListener('click', function (e) {
+
+            if (e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches(abortSels)) {
                 return;
             }
-            if (window.MouseEvent && link.dispatchEvent) {
-                event = new MouseEvent('click', {
-                    cancelable: true,
-                    bubbles: true,
-                    shiftKey: e.shiftKey,
-                    altKey: e.altKey,
-                    ctrlKey: e.ctrlKey,
-                    metaKey: e.metaKey
-                });
-                link.dispatchEvent(event);
-            } else if (link.click) {
-                link.click();
+            var event, selection;
+            var item = e.target.closest(clickAreaSel);
+            var link = item && item.querySelector(clickAreaactionSel);
+
+            if (link) {
+                selection = getSelection();
+                if (selection.anchorNode && !selection.isCollapsed && item.contains(selection.anchorNode)) {
+                    return;
+                }
+                if (window.MouseEvent && link.dispatchEvent) {
+                    event = new MouseEvent('click', {
+                        cancelable: true,
+                        bubbles: true,
+                        shiftKey: e.shiftKey,
+                        altKey: e.altKey,
+                        ctrlKey: e.ctrlKey,
+                        metaKey: e.metaKey
+                    });
+                    link.dispatchEvent(event);
+                } else if (link.click) {
+                    link.click();
+                }
             }
-        }
-    });
-    /* End: is-teaser delegate */
+        });
+    };
+    /* End: clickarea delegate */
 
     /**
      * Sets focus to an element. Note element has to be focusable
@@ -1127,6 +1146,7 @@ if (!window.rb) {
         var element;
         var scrollableElements = [];
         var regKeyboadElements = /^(?:input|textarea)$/i;
+        var btns = {button: 1, submit: 1, reset: 1, image: 1, file: 1};
 
         var calcScrollableElements = function(){
             var parent = element.parentNode;
@@ -1151,6 +1171,7 @@ if (!window.rb) {
         };
 
         var doFocus = function () {
+            rb.isScriptFocus = true;
             rb.$doc.trigger('rbscriptfocus');
             calcScrollableElements();
             if (element.tabIndex < 0 && !element.getAttribute('tabindex')) {
@@ -1160,6 +1181,7 @@ if (!window.rb) {
                 element.focus();
             } catch (e){}
             restoreScrollPosition();
+            rb.isScriptFocus = false;
         };
 
         var waitForFocus = rb.rAF(function (delay) {
@@ -1172,7 +1194,7 @@ if (!window.rb) {
             if (givenElement !== document.activeElement) {
                 element = givenElement;
 
-                if(regKeyboadElements.test(element.nodeName) && rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)){
+                if(regKeyboadElements.test(element.nodeName) && !btns[element.type] && rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)){
                     doFocus();
                 } else {
                     waitForFocus(delay);
@@ -1182,124 +1204,134 @@ if (!window.rb) {
     })();
 
     /* Begin: focus-within polyfill */
-    var running = false;
-    var isClass = 'is-focus-within';
-    var isClassSelector = '.' + isClass;
+    var initFocusWithin = function(){
+        var running = false;
+        var isClass = rb.statePrefix + 'focus-within';
+        var isClassSelector = '.' + isClass;
 
-    var updateFocus = function () {
-        var oldFocusParents, i, len;
+        var updateFocus = function () {
+            var oldFocusParents, newFocusParents, i, len;
 
-        var parent = document.activeElement;
-        var newFocusParents = [];
+            var parent = document.activeElement;
 
-        while (parent && (parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)) {
-            newFocusParents.push(parent);
-        }
+            if(parent){
+                newFocusParents = [];
 
-        if ((oldFocusParents = parent.querySelectorAll && parent.querySelectorAll(isClassSelector))) {
-            for (i = 0, len = oldFocusParents.length; i < len; i++) {
-                oldFocusParents[i].classList.remove(isClass);
+                while (parent && (parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)) {
+                    newFocusParents.push(parent);
+                }
+
+                if ((oldFocusParents = parent.querySelectorAll && parent.querySelectorAll(isClassSelector))) {
+                    for (i = 0, len = oldFocusParents.length; i < len; i++) {
+                        oldFocusParents[i].classList.remove(isClass);
+                    }
+                }
+                for (i = 0, len = newFocusParents.length; i < len; i++) {
+                    newFocusParents[i].classList.add(isClass);
+                }
             }
-        }
-        for (i = 0, len = newFocusParents.length; i < len; i++) {
-            newFocusParents[i].classList.add(isClass);
-        }
 
-        running = false;
+            running = false;
+        };
+
+        var update = function () {
+            if (!running) {
+                running = true;
+                rb.rAFQueue(updateFocus, true);
+            }
+        };
+
+        document.addEventListener('focus', update, true);
+        document.addEventListener('blur', update, true);
+        update();
     };
-
-    var update = function () {
-        if (!running) {
-            running = true;
-            rb.rAFQueue(updateFocus, true);
-        }
-    };
-
-    document.addEventListener('focus', update, true);
-    document.addEventListener('blur', update, true);
-    update();
     /* End: focus-within polyfill */
 
 
     /* * * Begin: keyboard-focus * * */
-    var keyboardBlocktimer, keyboardFocusElem;
-    var hasKeyboardFocus = false;
-    var isKeyboardBlocked = false;
-    var root = rb.root;
 
-    var unblockKeyboardFocus = function () {
-        isKeyboardBlocked = false;
-    };
+    var initKeyboardFocus = function(){
+        var keyboardBlocktimer, keyboardFocusElem;
+        var hasKeyboardFocus = false;
+        var isKeyboardBlocked = false;
+        var root = rb.root;
+        var isClass = rb.statePrefix + 'keyboardfocus';
+        var isWithinClass = rb.statePrefix + 'keyboardfocus';
 
-    var blockKeyboardFocus = function () {
-        isKeyboardBlocked = true;
-        clearTimeout(keyboardBlocktimer);
-        keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 99);
-    };
+        var unblockKeyboardFocus = function () {
+            isKeyboardBlocked = false;
+        };
 
-    var _removeChildFocus = function () {
-        if (keyboardFocusElem && keyboardFocusElem != document.activeElement) {
-            keyboardFocusElem.classList.remove('is-keyboardfocus');
-            keyboardFocusElem = null;
-        }
-    };
+        var blockKeyboardFocus = function () {
+            isKeyboardBlocked = true;
+            clearTimeout(keyboardBlocktimer);
+            keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 99);
+        };
 
-    var removeChildFocus = function () {
-        if (keyboardFocusElem) {
-            rb.rAFQueue(_removeChildFocus);
-        }
-    };
+        var _removeChildFocus = function () {
+            if (keyboardFocusElem && keyboardFocusElem != document.activeElement) {
+                keyboardFocusElem.classList.remove(isClass);
+                keyboardFocusElem = null;
+            }
+        };
 
-    var _removeKeyBoardFocus = rb.rAF(function () {
-        hasKeyboardFocus = false;
-        _removeChildFocus();
-        root.classList.remove('is-keyboardfocus-within');
-    }, {throttle: true});
+        var removeChildFocus = function () {
+            if (keyboardFocusElem) {
+                rb.rAFQueue(_removeChildFocus);
+            }
+        };
 
-    var removeKeyBoardFocus = function () {
-        if (hasKeyboardFocus) {
-            _removeKeyBoardFocus();
-        }
-        blockKeyboardFocus();
-    };
+        var _removeKeyBoardFocus = rb.rAF(function () {
+            hasKeyboardFocus = false;
+            _removeChildFocus();
+            root.classList.remove(isWithinClass);
+        }, {throttle: true});
 
-    var setKeyboardFocus = rb.rAF(function () {
+        var removeKeyBoardFocus = function () {
+            if (hasKeyboardFocus) {
+                _removeKeyBoardFocus();
+            }
+            blockKeyboardFocus();
+        };
 
-        if (!isKeyboardBlocked || hasKeyboardFocus) {
+        var setKeyboardFocus = rb.rAF(function () {
 
-            if (keyboardFocusElem != document.activeElement) {
-                _removeChildFocus();
-                keyboardFocusElem = document.activeElement;
+            if (!isKeyboardBlocked || hasKeyboardFocus) {
 
-                if (keyboardFocusElem && keyboardFocusElem.classList) {
-                    keyboardFocusElem.classList.add('is-keyboardfocus');
+                if (keyboardFocusElem != document.activeElement) {
+                    _removeChildFocus();
+                    keyboardFocusElem = document.activeElement;
+
+                    if (keyboardFocusElem && keyboardFocusElem.classList) {
+                        keyboardFocusElem.classList.add(isClass);
+                    }
                 }
+
+                if (!hasKeyboardFocus) {
+                    root.classList.add(isWithinClass);
+                }
+                hasKeyboardFocus = true;
             }
+        }, {throttle: true});
 
-            if (!hasKeyboardFocus) {
-                root.classList.add('is-keyboardfocus-within');
-            }
-            hasKeyboardFocus = true;
-        }
-    }, {throttle: true});
+        var pointerEvents = (window.PointerEvent) ?
+                ['pointerdown', 'pointerup'] :
+                ['mousedown', 'mouseup', 'touchstart', 'touchend']
+            ;
 
-    var pointerEvents = (window.PointerEvent) ?
-            ['pointerdown', 'pointerup'] :
-            ['mousedown', 'mouseup', 'touchstart', 'touchend']
-        ;
+        root.addEventListener('blur', removeChildFocus, true);
+        root.addEventListener('focus', setKeyboardFocus, true);
 
-    root.addEventListener('blur', removeChildFocus, true);
-    root.addEventListener('focus', setKeyboardFocus, true);
+        pointerEvents.forEach(function (eventName) {
+            document.addEventListener(eventName, removeKeyBoardFocus, true);
+        });
 
-    pointerEvents.forEach(function (eventName) {
-        document.addEventListener(eventName, removeKeyBoardFocus, true);
-    });
+        document.addEventListener('click', blockKeyboardFocus, true);
+        window.addEventListener('focus', blockKeyboardFocus);
+        document.addEventListener('focus', blockKeyboardFocus);
 
-    document.addEventListener('click', blockKeyboardFocus, true);
-    window.addEventListener('focus', blockKeyboardFocus);
-    document.addEventListener('focus', blockKeyboardFocus);
-
-    rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
+        rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
+    };
     /* End: keyboard-focus */
 
     var console = window.console || {};
@@ -1531,6 +1563,12 @@ if (!window.rb) {
     rb.if = function (condition, yes, no) {
         return condition ? yes : (no || '');
     };
+
+    rb._uitilsInit = function(){
+        initClickArea();
+        initFocusWithin();
+        rb._uitilsInit = rb.$.noop;
+    };
 })(window, document);
 
 (function (window, document) {
@@ -1739,9 +1777,17 @@ if (!window.rb) {
             useMutationEvents = options.useMutationEvents || false;
         }
 
+        if(options && options.statePrefix){
+            rb.statePrefix = options.statePrefix;
+        } else if(rb.cssConfig.statePrefix) {
+            rb.statePrefix = rb.cssConfig.statePrefix;
+        }
+
         elements = document.getElementsByClassName(initClass);
 
         lifeBatch = createBatch();
+
+        rb._uitilsInit();
 
         initObserver();
         life.searchModules();
@@ -2391,7 +2437,7 @@ if (!window.rb) {
              *
              * The key specifies the event type and optional a selector (separated by a whitespace) for event delegation. The key will be interpolated with [`this.interpolateName`]{@link rb.Component#interpolateName}.
              *
-             * The key also allows comma separated multiple events as also modifiers (`'event1,event2:modifier()'`). As modifier `"event:capture()"`, `"event:keycodes(13 32)"`, `"event:matches(.selector)"` and `"event:delegate(.selector)"` (alias for `"event .selector"`) are known.
+             * The key also allows comma separated multiple events as also modifiers (`'event1,event2:modifier()'`). As modifier `"event:capture()"`, `"event:keycodes(13 32)"`, `"event:matches(.selector)"` and `"event:delegate(.selector)"` (alias for `"event .selector"`) are known. The delegated element is available through the `delegatedTarget` property.
              *
              * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
              *
@@ -2404,7 +2450,7 @@ if (!window.rb) {
 			 *          super(element);
 			 *          this.child = this.query('.{name}__close-button');
 			 *
-			 *          this.setLayout = rb.rAF(this.setLayout);
+			 *          rb.rAFs(this, 'setLayout');
 			 *      }
 			 *
 			 *      static get events(){

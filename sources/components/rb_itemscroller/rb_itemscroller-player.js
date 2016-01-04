@@ -31,7 +31,7 @@
                 this._super(element);
 
                 this._setAutoplayUI = rb.rAF(function () {
-                    this.$element[this.options.autoplay ? 'addClass' : 'removeClass']('is-autoplay');
+                    this.$element[this.options.autoplay ? 'addClass' : 'removeClass'](rb.statePrefix + 'autoplay');
                 }, {that: this});
             },
             events: {

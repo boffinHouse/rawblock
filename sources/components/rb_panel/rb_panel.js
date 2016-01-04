@@ -59,7 +59,7 @@
             init: function (element) {
                 this._super(element);
 
-                this.isOpen = this.element.classList.contains('is-open');
+                this.isOpen = this.element.classList.contains(rb.statePrefix + 'open');
 
                 this.isDefaultOpen = this.isOpen;
 
@@ -73,7 +73,7 @@
                     this.setOption('switchedOff', false);
                 } else {
                     rb.rAFQueue(function () {
-                        element.classList.add('is-switched-off');
+                        element.classList.add(rb.statePrefix + 'switched-off');
                     });
                 }
             },
@@ -96,10 +96,10 @@
                 }
 
                 if (!this.isDefaultOpen) {
-                    this.element.classList.remove('is-open');
+                    this.element.classList.remove(rb.statePrefix + 'open');
                 }
 
-                this.element.classList.add('is-switched-off');
+                this.element.classList.add(rb.statePrefix + 'switched-off');
 
                 this.$element.css({
                     visibility: '',
@@ -110,10 +110,10 @@
             },
             _switchOn: function () {
                 if (this.isOpen) {
-                    this.element.classList.add('is-open');
+                    this.element.classList.add(rb.statePrefix + 'open');
                 }
 
-                this.element.classList.remove('is-switched-off');
+                this.element.classList.remove(rb.statePrefix + 'switched-off');
 
                 this.element.setAttribute('aria-hidden', '' + (!this.isOpen));
                 this.$element.attr({'role': 'group', tabindex: '-1'});
@@ -254,7 +254,7 @@
             },
             _opened: function (options) {
                 var delay = this._getFocusDelay(options);
-                this.element.classList.add('is-open');
+                this.element.classList.add(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'false');
 
                 if (this.groupComponent) {
@@ -314,7 +314,7 @@
                 return true;
             },
             _closed: function (options) {
-                this.element.classList.remove('is-open');
+                this.element.classList.remove(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'true');
                 if (this.groupComponent) {
                     this.groupComponent.panelChangeCB(this, 'afterclose');
