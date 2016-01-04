@@ -7,7 +7,7 @@
 // Basic principles
 //
 // The layout structur is defined by the use of modifier classes. Modifiers in RawBlock are flags set on
-// components or elements to represent a different state or version and are are recognizable by the `.is-*` prefix .
+// components or elements to represent a different state or version and are are recognizable by the `.use-*` prefix .
 // The layout modifiers are globally defined and can be used on all elements of the page.
 //
 // Styleguide 2.1
@@ -35,6 +35,7 @@
 // Columns
 //
 // RawBlock uses 22 width units that are starting with `.use-size-%` ranging from **5%** to **100%** with **5%** increments.
+// Three expections are: .use-size-16 (16.6666%), .use-size-33 (33.3333%) and .use-size-66 (66.6666%)
 //
 // Styleguide 2.3
 
@@ -44,13 +45,13 @@
 		display: flex;
 		flex-wrap: wrap;
 
-		.is-column-group {
+		.use-column-group {
 			flex: 1;
 		}
 	}
 
 	.use-equal-heights {
-		> [class*=is-size-]  {
+		> [class*=use-size-]  {
 			display: flex;
 			flex-wrap: wrap;
 		}
@@ -172,21 +173,21 @@
 		// create width: 33%
 		@if $i > 30 and $i <= 35 {
 			.use-size-33#{$colomnType} {
-				width: 33.33%;
+				width: 33.3333%;
 			}
 		}
 
 		// create width: 66%
 		@if $i > 65 and $i <= 70 {
 			.use-size-66#{$colomnType} {
-				width: 66.66%;
+				width: 66.6666%;
 			}
 		}
 
 		// create width: 16%
 		@if $i > 15 and $i <= 20 {
 			.use-size-16#{$colomnType} {
-				width: 16.66%;
+				width: 16.6666%;
 			}
 		}
 
