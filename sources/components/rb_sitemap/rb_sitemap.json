@@ -1,7 +1,7 @@
 {
 	"boxes": [
 		{
-			"sizes": "is-size-20",
+			"sizes": "use-size-20",
 			"header": {
 				"title": "Header Section 1",
 				"link": "#"
@@ -26,7 +26,7 @@
 			]
 		},
 		{
-			"sizes": "is-size-20",
+			"sizes": "use-size-20",
 			"header": {
 				"title": "Header Section 2",
 				"link": "#"
@@ -51,7 +51,7 @@
 			]
 		},
 		{
-			"sizes": "is-size-20",
+			"sizes": "use-size-20",
 			"header": {
 				"title": "Header Section 3",
 				"link": "#"
@@ -76,7 +76,7 @@
 			]
 		},
 		{
-			"sizes": "is-size-20",
+			"sizes": "use-size-20",
 			"header": {
 				"title": "Header Section 4",
 				"link": "#"
@@ -101,7 +101,7 @@
 			]
 		},
 		{
-			"sizes": "is-size-20",
+			"sizes": "use-size-20",
 			"header": {
 				"title": "Header Section 5",
 				"link": "#"
