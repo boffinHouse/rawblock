@@ -7,9 +7,6 @@ module.exports = function(grunt) {
 	var path = require('path')
 	var collectJson = require('collect-json');
 
-
-
-
 	/**
 	 * EJS grunt task
 	 */

@@ -9,7 +9,9 @@ module.exports = {
 			indent: 1,
 			indent_char: '	',
 			indent_inner_html: false,
-			max_preserve_newlines: 1,
+			indent_scripts: 'normal',
+			brace_style: 'keep',
+			max_preserve_newlines: 0,
 			preserve_newlines: true,
 			unformatted: [
 			"a",
@@ -19,13 +21,10 @@ module.exports = {
 			"i",
 			"mark",
 			"strong",
-			"pre"
+			"pre",
 		]
 	},
 	dev: {
-		options: {
-			brace_style: 'expand'
-		},
 		files: [
 			{
 				cwd: '<%= paths.dev %>/',
@@ -37,9 +36,6 @@ module.exports = {
 		]
 	},
 	dist: {
-		options: {
-			brace_style: 'expand'
-		},
 		files: [
 			{
 				cwd: '<%= paths.dist %>/',

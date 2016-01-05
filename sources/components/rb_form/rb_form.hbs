@@ -11,94 +11,94 @@ component: rb_form
 			<legend class="form-subsection-legend">Standard Form Components</legend>
 			<p class="form-intro">Some optional subsection-intro-text …</p>
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-100">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-100">
 					{{#mergeJSON rb_input.standard 'label: "default input 100", booleans: ["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
 			</div>
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-100">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-100">
 					{{#mergeJSON rb_select.standard 'label: "default select", booleans: ["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
 			</div>
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-50">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-50">
 					{{#mergeJSON rb_input.standard 'label: "default input 50"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-50">
-					{{#mergeJSON rb_input.standard 'label: "default input 50"'}}
-						{{> rb_input}}
-					{{/mergeJSON}}
-				</div>
-			</div>
-
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-25">
-					{{#mergeJSON rb_input.standard 'label: "default input 25"'}}
-						{{> rb_input}}
-					{{/mergeJSON}}
-				</div>
-				<div class="form-box is-size-25">
-					{{#mergeJSON rb_input.standard 'label: "default input 25"'}}
-						{{> rb_input}}
-					{{/mergeJSON}}
-				</div>
-				<div class="form-box is-size-50">
+				<div class="form-box use-size-50">
 					{{#mergeJSON rb_input.standard 'label: "default input 50"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
 			</div>
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-33">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-25">
+					{{#mergeJSON rb_input.standard 'label: "default input 25"'}}
+						{{> rb_input}}
+					{{/mergeJSON}}
+				</div>
+				<div class="form-box use-size-25">
+					{{#mergeJSON rb_input.standard 'label: "default input 25"'}}
+						{{> rb_input}}
+					{{/mergeJSON}}
+				</div>
+				<div class="form-box use-size-50">
+					{{#mergeJSON rb_input.standard 'label: "default input 50"'}}
+						{{> rb_input}}
+					{{/mergeJSON}}
+				</div>
+			</div>
+
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-33">
 					{{#mergeJSON rb_input.standard 'label: "default input 33", booleans: ["readonly"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-33">
-					{{#mergeJSON rb_input.standard 'label: "default input 33", booleans: ["disabled"], attrs:
+				<div class="form-box use-size-33">
+					{{#mergeJSON rb_input.standard 'label: "default input 33", booleans: ["duseabled"], attrs:
 					{value: "value text"}'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-33">
+				<div class="form-box use-size-33">
 					{{#mergeJSON rb_input.standard 'label: "default input 33"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
 			</div>
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-20">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-20">
 					{{#mergeJSON rb_input.standard 'label: "default input 20"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-20">
+				<div class="form-box use-size-20">
 					{{#mergeJSON rb_input.standard 'label: "default input 20"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-20">
+				<div class="form-box use-size-20">
 					{{#mergeJSON rb_input.standard 'label: "default input 20"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-20">
+				<div class="form-box use-size-20">
 					{{#mergeJSON rb_input.standard 'label: "default input 20", '}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-20">
+				<div class="form-box use-size-20">
 					{{#mergeJSON rb_input.standard 'label: "default input 20"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
@@ -110,13 +110,13 @@ component: rb_form
 
 			{{> rb_grouped_begin}}
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-50">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-50">
 					{{#mergeJSON 'label: "Default group input 50",  booleans: ["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-50">
+				<div class="form-box use-size-50">
 					{{#mergeJSON  'label: "Default group input 50",  booleans: ["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
@@ -131,13 +131,13 @@ component: rb_form
 
 			{{> rb_grouped_begin}}
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-50">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-50">
 					{{#mergeJSON 'label: "Default group input 50"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-50">
+				<div class="form-box use-size-50">
 					{{#mergeJSON rb_select.standard 'label: "default select"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
@@ -184,18 +184,18 @@ component: rb_form
 
 			{{> rb_grouped_begin}}
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-auto">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-auto">
 					{{#mergeJSON rb_checkbox.standard 'label: "Checkbox Grouped 1", booleans: ["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-auto">
+				<div class="form-box use-size-auto">
 					{{#mergeJSON rb_checkbox.standard 'label: "Checkbox Grouped 2", booleans: ["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-auto">
+				<div class="form-box use-size-auto">
 					{{#mergeJSON rb_checkbox.standard 'label: "Checkbox Grouped 3", booleans: ["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
@@ -210,8 +210,8 @@ component: rb_form
 			<legend class="form-subsection-legend">
 				Single Checkbox
 			</legend>
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-100">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-100">
 					{{#mergeJSON rb_checkbox.standard 'label: "Single Checkbox", booleans:["required"]'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
@@ -257,29 +257,29 @@ component: rb_form
 
 			{{> rb_grouped_begin}}
 
-			<div class="form-row is-column-group is-gutters">
-				<div class="form-box is-size-33">
+			<div class="form-row use-column-group use-gutters">
+				<div class="form-box use-size-33">
 					{{#mergeJSON rb_radio.standard 'label: "Radio Grouped inline 1", name:
 					"dummy-radio-grouped-inline"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-33">
+				<div class="form-box use-size-33">
 					{{#mergeJSON rb_radio.standard 'label: "Radio Grouped inline 2", name:"dummy-radio-grouped-inline"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-33">
+				<div class="form-box use-size-33">
 					{{#mergeJSON rb_radio.standard 'label: "Radio Grouped inline 3", name:"dummy-radio-grouped-inline"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-33">
+				<div class="form-box use-size-33">
 					{{#mergeJSON rb_radio.standard 'label: "Radio Grouped inline 3", name:"dummy-radio-grouped-inline"'}}
 						{{> rb_input}}
 					{{/mergeJSON}}
 				</div>
-				<div class="form-box is-size-33">
+				<div class="form-box use-size-33">
 					{{#mergeJSON rb_radio.standard 'label: "Radio Grouped inline 4",
 					name:"dummy-radio-grouped-inline"'}}
 						{{> rb_input}}
