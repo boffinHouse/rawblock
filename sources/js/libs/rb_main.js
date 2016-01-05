@@ -1191,7 +1191,7 @@ if (!window.rb) {
         }, {queue: true, throttle: true});
 
         return function(givenElement, delay){
-            if (givenElement !== document.activeElement) {
+            if (givenElement !== document.activeElement && element !== givenElement) {
                 element = givenElement;
 
                 if(regKeyboadElements.test(element.nodeName) && !btns[element.type] && rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)){
@@ -2574,11 +2574,6 @@ if (!window.rb) {
              */
             setComponentFocus: function (element, delay) {
                 var focusElement;
-                var activeElement = document.activeElement;
-
-                this._activeElement = (activeElement && activeElement.nodeName) ?
-                    activeElement :
-                    null;
 
                 if (typeof element == 'number') {
                     delay = element;
@@ -2590,9 +2585,28 @@ if (!window.rb) {
                     element
                 ;
 
+                this.storeActiveElement();
+
                 if (focusElement) {
                     this.setFocus(focusElement, delay || this.options.focusDelay);
                 }
+            },
+
+            /**
+             * stores the activeElement for later restore.
+             *
+             * @returns {Element}
+             *
+             * @see rb.Component.prototype.restoreFocus
+             */
+            storeActiveElement: function(){
+                var activeElement = document.activeElement;
+
+                this._activeElement = (activeElement && activeElement.nodeName) ?
+                    activeElement :
+                    null;
+
+                return this._activeElement;
             },
 
             /**
@@ -2602,6 +2616,7 @@ if (!window.rb) {
              */
             restoreFocus: function (checkInside, delay) {
                 var activeElem = this._activeElement;
+
                 if (!activeElem) {
                     return;
                 }
@@ -2613,6 +2628,7 @@ if (!window.rb) {
 
                 this._activeElement = null;
                 if (!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)) {
+                    console.log(activeElem);
                     this.setFocus(activeElem, delay || this.options.focusDelay);
                 }
             },

@@ -254,6 +254,7 @@
             },
             _opened: function (options) {
                 var delay = this._getFocusDelay(options);
+
                 this.element.classList.add(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'false');
 
@@ -263,6 +264,8 @@
 
                 if (options.focusElement) {
                     this.setComponentFocus(options.focusElement, delay);
+                } else {
+                    this.storeActiveElement();
                 }
                 clearTimeout(this._closeTimer);
                 if (this.options.closeOnOutsideClick) {

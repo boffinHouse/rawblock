@@ -253,6 +253,7 @@
                 if (this.options.closeOnFocusout) {
                     this._addRemoveFocusOut();
                 }
+                this.setSelectedState();
             },
             _addRemoveFocusOut: function () {
                 var shouldInstall = this.options.closeOnFocusout && this.selectedItems.length;
