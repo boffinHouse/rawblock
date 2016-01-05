@@ -142,16 +142,11 @@
 
                 if(options.focusElement){
                     this.setComponentFocus(options.focusElement);
+                } else {
+                    this.storeActiveElement();
                 }
 
                 this._trigger(options);
-            },
-            _addContent: function(data){
-                if(this._xhr && this.contentElement){
-                    this.contentElement.innerHTML = data.data;
-                }
-                this.$backdrop.removeClass(rb.statePrefix + 'loading');
-                this._xhr = null;
             },
             /**
              * Opens the dialog
@@ -220,7 +215,13 @@
             toggle: function (options) {
                 this[this.isOpen ? 'close' : 'open'](options);
             },
-
+            _addContent: function(data){
+                if(this._xhr && this.contentElement){
+                    this.contentElement.innerHTML = data.data;
+                }
+                this.$backdrop.removeClass(rb.statePrefix + 'loading');
+                this._xhr = null;
+            },
             setupOpenEvents: function () {
                 var that = this;
                 if (!this.closeOnEsc) {
