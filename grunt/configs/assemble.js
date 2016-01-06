@@ -15,7 +15,7 @@ module.exports = {
 		partials: [
 			'<%= paths.src %>/assemble/partials/**/*.hbs',
 			'<%= paths.src %>/components/**/*.hbs',
-			'!<%= paths.src %>/components/**/*-page.hbs'
+			'!<%= paths.src %>/components/**/*_page.hbs'
 		],
 		plugins: ['assemble-middleware-kssnode']
 	},
@@ -29,7 +29,7 @@ module.exports = {
 				dest: '<%= paths.dev %>/',
 				expand: true,
 				flatten: true,
-				src: ['**/*-page.hbs']
+				src: ['**/*_page.hbs']
 			},
 			{
 				cwd: '<%= paths.src %>/assemble/pages/',
@@ -50,7 +50,7 @@ module.exports = {
 				dest: '<%= paths.dev %>/components/',
 				expand: true,
 				flatten: true,
-				src: ['**/*-page.hbs']
+				src: ['**/*_page.hbs']
 			},
 			{
 				cwd: '<%= paths.src %>/assemble/pages/',
