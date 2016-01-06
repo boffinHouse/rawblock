@@ -321,7 +321,7 @@
                         if (cell && that.isCellVisible(cell) !== true) {
                             pageIndex = that.getPageIndexOfCell(cell);
                             if(pageIndex != that._selectedIndex){
-                                that.selectedIndex(pageIndex);
+                                that.selectedIndex = pageIndex;
                             }
                         }
                     }

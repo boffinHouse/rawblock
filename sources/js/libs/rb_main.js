@@ -210,7 +210,7 @@ if (!window.rb) {
             }
 
             if (!options.duration) {
-                options.duration = Math.min(1700, Math.max(99, distance * 0.6));
+                options.duration = Math.min(999, Math.max(200, distance * 0.4));
             }
 
             opts = Object.assign({}, options, {
@@ -1143,7 +1143,7 @@ if (!window.rb) {
      * @param [delay] {Number} The delay to focus the element.
      */
     rb.setFocus = (function(){
-        var element;
+        var element, attempts, abort;
         var scrollableElements = [];
         var regKeyboadElements = /^(?:input|textarea)$/i;
         var btns = {button: 1, submit: 1, reset: 1, image: 1, file: 1};
@@ -1170,31 +1170,57 @@ if (!window.rb) {
             scrollableElements = [];
         };
 
-        var doFocus = function () {
-            rb.isScriptFocus = true;
-            rb.$doc.trigger('rbscriptfocus');
-            calcScrollableElements();
-            if (element.tabIndex < 0 && !element.getAttribute('tabindex')) {
-                element.setAttribute('tabindex', '-1');
-            }
-            try {
-                element.focus();
-            } catch (e){}
-            restoreScrollPosition();
-            rb.isScriptFocus = false;
+        var setAbort = function(){
+            abort = true;
         };
 
-        var waitForFocus = rb.rAF(function (delay) {
+        var cleanup = function(){
+            element = null;
+            attempts = 0;
+            abort = false;
+            document.removeEventListener('focus', setAbort, true);
+        };
+
+        var doFocus = function () {
+
+            if(abort || attempts > 9){
+                cleanup();
+            } else if(rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)){
+                rb.isScriptFocus = true;
+                rb.$doc.trigger('rbscriptfocus');
+                calcScrollableElements();
+
+                if (element.tabIndex < 0 && !element.getAttribute('tabindex')) {
+                    element.setAttribute('tabindex', '-1');
+                }
+                try {
+                    element.focus();
+                } catch (e){}
+                restoreScrollPosition();
+                rb.isScriptFocus = false;
+                cleanup();
+            } else {
+                if(attempts == 1){
+                    document.addEventListener('focus', setAbort, true);
+                }
+                attempts++;
+                waitForFocus(99);
+            }
+        };
+
+        var waitForFocus = function (delay) {
             if (element !== document.activeElement) {
                 setTimeout(doFocus, delay || 4);
             }
-        }, {queue: true, throttle: true});
+        };
 
         return function(givenElement, delay){
-            if (givenElement !== document.activeElement) {
+            if (givenElement !== document.activeElement && element !== givenElement) {
+                cleanup();
+
                 element = givenElement;
 
-                if(regKeyboadElements.test(element.nodeName) && !btns[element.type] && rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)){
+                if(regKeyboadElements.test(element.nodeName) && !btns[element.type]){
                     doFocus();
                 } else {
                     waitForFocus(delay);
@@ -2574,11 +2600,6 @@ if (!window.rb) {
              */
             setComponentFocus: function (element, delay) {
                 var focusElement;
-                var activeElement = document.activeElement;
-
-                this._activeElement = (activeElement && activeElement.nodeName) ?
-                    activeElement :
-                    null;
 
                 if (typeof element == 'number') {
                     delay = element;
@@ -2590,9 +2611,28 @@ if (!window.rb) {
                     element
                 ;
 
+                this.storeActiveElement();
+
                 if (focusElement) {
                     this.setFocus(focusElement, delay || this.options.focusDelay);
                 }
+            },
+
+            /**
+             * stores the activeElement for later restore.
+             *
+             * @returns {Element}
+             *
+             * @see rb.Component.prototype.restoreFocus
+             */
+            storeActiveElement: function(){
+                var activeElement = document.activeElement;
+
+                this._activeElement = (activeElement && activeElement.nodeName) ?
+                    activeElement :
+                    null;
+
+                return this._activeElement;
             },
 
             /**
@@ -2602,6 +2642,7 @@ if (!window.rb) {
              */
             restoreFocus: function (checkInside, delay) {
                 var activeElem = this._activeElement;
+
                 if (!activeElem) {
                     return;
                 }
