@@ -1,5 +1,27 @@
 {
-  "multiple": false,
-  "toggle": false,
-  "hello": "Hello, I'm your tabs content"
+  "default": {
+    "multiple": false,
+    "toggle": false,
+    "buttons": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "items": [
+      {
+        "open": true,
+        "title": "Hello",
+        "content": [
+          "Hello everybody"
+        ]
+      },
+      {
+        "id": "hello",
+        "title": "Hello",
+        "content": [
+          "Hello everybody"
+        ]
+      }
+
+    ]
+  }
 }

@@ -35,7 +35,7 @@
             },
             /**
              * @constructs
-             * @classdesc Class component to create a panel. The visibility should be handled using CSS. The component mainly toogles the class `is-open`.
+             * @classdesc Class component to create a panel. The visibility should be handled using CSS. The component mainly toggles the class `is-open`.
              * @name rb.components.panel
              * @extends rb.Component
              * @param element {Element}

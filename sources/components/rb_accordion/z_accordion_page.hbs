@@ -3,5 +3,12 @@ title: accordion
 layout: default_tpl.hbs
 ---
 
-{{> rb_accordion }}
+<section class="page-section">
+    <div class="page-section-inner">
+        {{#with rb_accordion.default }}
+            {{> rb_accordion }}
+        {{/with}}
+    </div>
+</section>
+
 
