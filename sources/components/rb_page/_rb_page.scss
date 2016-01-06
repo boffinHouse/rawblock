@@ -17,38 +17,37 @@ rb-page
         //Main header page
         &header {
             width: 100%;
+        }
 
-            &-inner {
-                max-width: $grid-max-width;
-                margin: 0 auto;
-                padding: 0 20px;
-            }
+        &header-inner {
+            padding: 0 20px;
         }
 
         //Main content page
         &main {
             width: 100%;
+        }
+
+        //Main footer page
+        &footer {
+            width: 100%;
+        }
+
+        &footer-inner {
             max-width: $grid-max-width;
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        //Main footer page
-        &footer {
-
-            &-inner {
-                max-width: $grid-max-width;
-                margin: 0 auto;
-                padding: 0 20px;
-            }
-        }
-
         //Main section page
         &section {
+            width: 100%
+        }
 
-            &-inner {
-                margin: 0 auto;
-            }
+        &section-inner {
+            max-width: $grid-max-width;
+            margin: 0 auto;
+            padding: 0 20px;
         }
     }
 }
