@@ -2,26 +2,23 @@
 component: rb_accordion
 ---
 
-<div class="rb-accordion js-click" data-module="accordion">
-	<button type="button" class="accordion-ctrl-btn" data-type="next">&gt;</button>
-	<div class="accordion-item">
-		<button type="button" class="accordion-btn" aria-expanded="true">1</button>
-		<div class="accordion-panel is-open">
-			<div style="overflow: hidden">
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-			</div>
-		</div>
-	</div>
-	<div class="accordion-item">
-		<button type="button" class="accordion-btn">2</button>
-		<div class="accordion-panel">Panel 2</div>
-	</div>
-	<div class="accordion-item">
-		<button type="button" class="accordion-btn">3</button>
-		<div class="accordion-panel" id="bla">Panel 3</div>
-	</div>
+<div class="rb-accordion js-rb-life" data-module="accordion">
+    {{#if buttons }}
+        {{#if buttons.prev}}
+            <button type="button" class="accordion-ctrl-btn" data-type="prev">{{ buttons.prev }}</button>
+        {{/if}}
+        {{#if buttons.next}}
+            <button type="button" class="accordion-ctrl-btn" data-type="next">{{ buttons.next }}</button>
+        {{/if}}
+    {{/if}}
+    {{#each items }}
+        <div class="accordion-item">
+            <button type="button" class="accordion-btn" aria-expanded="true">{{ title }}</button>
+            <div class="accordion-panel {{#if open}}is-open{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
+                {{#each content}}
+                    <p>{{ this }}</p>
+                {{/each}}
+            </div>
+        </div>
+    {{/each}}
 </div>
