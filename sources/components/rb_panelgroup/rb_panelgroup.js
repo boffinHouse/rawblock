@@ -288,6 +288,7 @@
                     panel.groupComponent = that;
                     panel.name = panelName;
                     panel.setOption('resetSwitchedOff', options.resetSwitchedOff);
+                    panel.setOption('setFocus', options.setFocus);
                 });
 
                 components.panel.prototype.name = 'panel';
