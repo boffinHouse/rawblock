@@ -2,58 +2,15 @@
 title: Index – Project-Overview
 layout: default_tpl.hbs
 ---
-<section class="page-section">
-	<div class="page-section-inner">
-		<div class="use-column-group use-gutters">
-			<div class="use-size-25">
-				<div style="background: #888; height: 400px; width: 100%;">
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                </div>
-			</div>
-			<div class="use-size-25">
-				<div style="background: #888; height: 400px; width: 100%;">
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                </div>
-			</div>
-			<div class="use-size-50">
-				<div style="background: #888; height: 400px; width: 100%;">
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                </div>
-			</div>
-			<div class="use-size-30">
-				<div style="background: #888; height: 400px; width: 100%;"><p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
-                    <p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p><p>dlfjlasjfljaldjflajfljalsfdja ljlsdjfljalfja;ljdf;ajfl;aj;fljal;fj;ldajs lsjdflajs;fja;ljf;lajfl;jdl;afjl asl;fj;aljfl;adjfl</p>
+<div class="page-section">
+    <div class="page-section-inner">
+        <ul>
+            {{#each pages }}
+                {{#isnt basename "index"}}
+                    <li><a href ="{{ basename }}.html">{{data.title}}</a></li >
+                {{/isnt}}
+            {{/each  }}
+        </ul>
+    </div>
+</div>
 
-                </div>
-			</div>
-		</div>
-	</div>
-</section>
-
-
-<section class="page-section">
-	<div class="page-section-inner">
-		<div class="use-column-group use-gutters-horizontal">
-			<div class="use-size-100 use-size-50-l">
-				<div class="use-column-group use-gutters">
-					<div class="use-size-50 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-					<div class="use-size-50 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-					<div class="use-size-100 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-					<div class="use-size-100 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
