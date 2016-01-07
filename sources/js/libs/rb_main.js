@@ -791,8 +791,8 @@ if (!window.rb) {
             }
         },
         proxies: {
-            delegate: function(handler, selector){
-                var proxy = rb.events.proxy(handler, 'delegate', selector);
+            closest: function(handler, selector){
+                var proxy = rb.events.proxy(handler, 'closest', selector);
 
                 if(!proxy){
                     proxy = function(e){
@@ -800,7 +800,7 @@ if (!window.rb) {
                         if(!e.delegatedTarget){return;}
                         return handler.apply(this, arguments);
                     };
-                    rb.events.proxy(handler, 'delegate', selector, proxy);
+                    rb.events.proxy(handler, 'closest', selector, proxy);
                 }
 
                 return proxy;
@@ -858,6 +858,8 @@ if (!window.rb) {
         },
         special: {},
     };
+
+    rb.events.proxies.delegate = rb.events.proxies.closest;
 
     [['add', 'addEventListener'], ['remove', 'removeEventListener']].forEach(function(action){
         /**
