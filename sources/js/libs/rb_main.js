@@ -1094,9 +1094,9 @@ if (!window.rb) {
     /* Begin: clickarea delegate */
     var initClickArea = function(){
 
-        var clickAreaSel = rb.statePrefix + 'clickarea';
-        var clickAreaactionSel = rb.statePrefix + 'clickarea-action';
-        var abortSels = 'a[href], a[href] *, ' + clickAreaSel + ', ' + clickAreaSel + ' *';
+        var clickAreaSel = '.' + rb.statePrefix + 'clickarea';
+        var clickAreaactionSel = '.' + rb.statePrefix + 'clickarea-action';
+        var abortSels = 'a[href], a[href] *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
 
         var getSelection = window.getSelection || function () {
                 return {};
@@ -1286,7 +1286,7 @@ if (!window.rb) {
         var isKeyboardBlocked = false;
         var root = rb.root;
         var isClass = rb.statePrefix + 'keyboardfocus';
-        var isWithinClass = rb.statePrefix + 'keyboardfocus';
+        var isWithinClass = rb.statePrefix + 'keyboardfocus-within';
 
         var unblockKeyboardFocus = function () {
             isKeyboardBlocked = false;
@@ -1599,6 +1599,7 @@ if (!window.rb) {
     rb._uitilsInit = function(){
         initClickArea();
         initFocusWithin();
+        initKeyboardFocus();
         rb._uitilsInit = rb.$.noop;
     };
 })(window, document);

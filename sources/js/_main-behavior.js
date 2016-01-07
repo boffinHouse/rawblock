@@ -18,68 +18,27 @@ if(!('ASSETBASEPATH' in window)){
 //if webpack is used:
 __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
-(function(addImportHook){
+require('../components/rb_listbox/rb_listbox');
 
-	addImportHook(['listbox'], function(){
-		require.ensure([], function(require){
-			require('../components/rb_listbox/rb_listbox');
-		});
-	});
+require('../components/rb_panel/rb_panel');
+require('../components/rb_popover/rb_popover');
+require('../components/rb_panelgroup/rb_panelgroup');
 
-	addImportHook(['panel', 'panelbutton'], function(){
-		require.ensure([], function(require){
-			require('../components/rb_panel/rb_panel');
-		});
-	});
+require('../components/rb_itemscroller/rb_itemscroller');
+require('../components/rb_itemscroller/rb_itemscroller-pagination');
+require('../components/rb_itemscroller/rb_itemscroller-player');
+require('../components/rb_itemscroller/rb_itemscroller-queries');
 
-	addImportHook(['popover'], function(){
-		require.ensure([], function(require){
-			require('../components/rb_popover/rb_popover');
-		});
-	});
+require('../components/rb_dialog/rb_dialog');
 
-	addImportHook(['panelgroup', 'tabs', 'accordion'], function(){
-		require.ensure([], function(require){
-			require('../components/rb_panelgroup/rb_panelgroup');
-		});
-	});
+require('../components/rb__childfx/rb__childfx');
 
-	addImportHook(['itemscroller'], function(){
-		require.ensure([], function(require){
-			require('../components/rb_itemscroller/rb_itemscroller');
-			require('../components/rb_itemscroller/rb_itemscroller-pagination');
-			require('../components/rb_itemscroller/rb_itemscroller-player');
-			require('../components/rb_itemscroller/rb_itemscroller-queries');
-		});
-	});
+require('../components/rb_scrolly/rb_scrolly');
+require('../components/rb_sticky/rb_sticky');
 
-	addImportHook(['dialog'], function(){
-		require.ensure([], function(require){
-			require('../components/rb_dialog/rb_dialog');
-		});
-	});
+require('./utils/i18n/rb_form-de');
+require('../components/rb_form/rb_validate');
 
-	addImportHook(['scrolly'], function(){
-		require.ensure([], function(require){
-			require('../components/rb__childfx/rb__childfx');
-			require('../components/rb_scrolly/rb_scrolly');
-		});
-	});
-
-	addImportHook(['sticky'], function(){
-		require.ensure([], function(require){
-			require('../components/rb__childfx/rb__childfx');
-			require('../components/rb_sticky/rb_sticky');
-		});
-	});
-
-	addImportHook(['validate'], function(){
-		require.ensure([], function(require){
-			require('./utils/i18n/rb_form-de');
-			require('../components/rb_form/rb_validate');
-		});
-	});
-})(rb.life.addImportHook);
 
 /* init after all modules are loaded or imports are configured. */
 rb.life.init();
