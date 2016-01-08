@@ -1,0 +1,9 @@
+---
+component: rb_button
+---
+
+{{#if link }}
+    <a class="rb-button {{type}}" href="{{ link }}">{{ title }}</a>
+{{else }}
+    <button class="rb-button {{type}}" {{#isnt submit true}}type="button"{{/isnt}}>{{ title }}</button>
+{{/if}}

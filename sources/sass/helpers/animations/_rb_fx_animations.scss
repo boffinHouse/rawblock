@@ -1,7 +1,7 @@
 @mixin rb-activate-animation($configs) {
     @each $animation, $config in $configs {
         @if $config {
-           @include rb-fx-#{$animation};
+           //@include rb-fx-#{$animation};
         }
     }
 }

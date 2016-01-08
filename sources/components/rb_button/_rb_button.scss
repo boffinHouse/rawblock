@@ -1,0 +1,64 @@
+//
+// rb-button
+// Main call-to-action button.
+//
+.rb-button {
+    padding: rb-em-calc(20);
+    color: #fff;
+    font-size: rb-rem-calc(16);
+    font-weight: 600;
+    transition: background 400ms ease-in;
+
+    &.is-primary {
+        background: #0000ff;
+
+        &:hover,
+        &:focus {
+            background: #00007e;
+        }
+    }
+
+    &.is-secondary {
+        background: #00aaff;
+
+        &:hover,
+        &:focus {
+            background: #007fba;
+        }
+    }
+
+    &.is-success {
+        background: #2f8;
+
+        &:hover,
+        &:focus {
+            background: #22bd5e;
+        }
+    }
+
+    &.is-error {
+        background: #f01;
+
+        &:hover,
+        &:focus {
+            background: #bb0011;
+        }
+    }
+
+    &.is-warning {
+        background: #faa732;
+
+        &:hover,
+        &:focus {
+            background: #b37827;
+        }
+    }
+
+    &.is-block {
+        display: block;
+    }
+
+    @at-root .button- {
+
+    }
+}

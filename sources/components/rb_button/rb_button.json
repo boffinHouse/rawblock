@@ -1,0 +1,6 @@
+{
+    "type": "is-block is-primary",
+    "title": "Main button",
+    "submit": false,
+    "link": "#"
+}
