@@ -1,11 +1,21 @@
+////
+/// Accordion
+/// Just another annotations
+///
+/// @group Poster
+///
+//// -------------------------
+
+$accordionJSCFG: (
+	watchCss: false,
+	multiple: false,
+	adjustScroll: 10,
+	animation: 'slide',
+);
+
 .rb-accordion {
 
-	$accordionJSCFG: (
-		watchCss: false,
-		multiple: false,
-		adjustScroll: 10,
-		animation: 'slide',
-	);
+
 
 	@include rb-js-export($accordionJSCFG);
 

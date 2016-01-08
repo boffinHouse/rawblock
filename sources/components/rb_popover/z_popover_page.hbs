@@ -3,32 +3,28 @@ title: Popover Page
 layout: default_tpl.hbs
 ---
 <br><br><br><br><br><br><br><br>
-<section class="page-section">
-    <div class="page-section-inner">
-        {{#mergeJSON rb_popover}}
-            {{> rb_popover }}
-        {{/mergeJSON}}
-    </div>
-</section>
-        <p>This is a parapgrah, yea</p>
 
-        {{#mergeJSON rb_popover 'btn: {title:"Panel position bottom"}, panel: {type: "bottom"}'}}
-            {{> rb_popover }}
-        {{/mergeJSON}}
+{{#mergeJSON rb_popover}}
+    {{> rb_popover }}
+{{/mergeJSON}}
 
-        <p>This is a parapgrah, yea</p>
+<p>This is a parapgrah, yea</p>
 
+{{#mergeJSON rb_popover 'btn: {title:"Panel position bottom"}, panel: {type: "bottom"}'}}
+    {{> rb_popover }}
+{{/mergeJSON}}
 
-        {{#mergeJSON rb_popover 'btn: {title:"Panel position left"}, panel: {type: "left"}'}}
-            {{> rb_popover }}
-        {{/mergeJSON}}
+<p>This is a parapgrah, yea</p>
 
-        <p>This is a parapgrah, yea</p>
+{{#mergeJSON rb_popover 'btn: {title:"Panel position left"}, panel: {type: "left"}'}}
+    {{> rb_popover }}
+{{/mergeJSON}}
 
+<p>This is a parapgrah, yea</p>
 
-        {{#mergeJSON rb_popover 'btn: {title:"Panel position right"}, panel: {type: "right"}'}}
-            {{> rb_popover }}
-        {{/mergeJSON}}
+{{#mergeJSON rb_popover 'btn: {title:"Panel position right"}, panel: {type: "right"}'}}
+    {{> rb_popover }}
+{{/mergeJSON}}
 
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 

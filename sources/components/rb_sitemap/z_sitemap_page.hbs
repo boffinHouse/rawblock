@@ -1,9 +1,11 @@
 ---
-title: Site Info Page
+title: Sitemap Page
 layout: default_tpl.hbs
 ---
 <section class="page-section">
     <div class="page-section-inner">
-        {{> rb_site_info }}
+        {{#with rb_sitemap }}
+            {{> rb_sitemap }}
+        {{/with}}
     </div>
 </section>
