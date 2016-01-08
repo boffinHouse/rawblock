@@ -1,56 +1,52 @@
 ////
 /// Accordion
-/// Just another annotations
+/// List of headers that can be clicked to hide or reveal additional content
 ///
 /// @group Poster
 ///
 //// -------------------------
-
 $accordionJSCFG: (
-	watchCss: false,
-	multiple: false,
-	adjustScroll: 10,
-	animation: 'slide',
+    watchCss: false,
+    multiple: false,
+    adjustScroll: 10,
+    animation: 'slide',
 );
 
 .rb-accordion {
+    @include rb-js-export($accordionJSCFG);
 
+    .accordion-btn {
+        display: block;
+    }
 
+    .accordion-panel {
+        display: block;
+        height: 0;
+        overflow: hidden;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 400ms, visibility 400ms;
 
-	@include rb-js-export($accordionJSCFG);
-
-	.accordion-btn {
-		display: block;
-	}
-
-	.accordion-panel {
-		display: block;
-		height: 0;
-		overflow: hidden;
-		visibility: hidden;
-		opacity: 0;
-		transition: opacity 400ms, visibility 400ms;
-
-		&.is-open {
-			visibility: visible;
-			overflow: visible;
-			height: auto;
-			opacity: 1;
-		}
-	}
+        &.is-open {
+            visibility: visible;
+            overflow: visible;
+            height: auto;
+            opacity: 1;
+        }
+    }
 }
 
 @media (max-width: 500px) {
-	.rb-accordion {
-		@include rb-js-export((
-			switchedOff: true
-		));
+    .rb-accordion {
+        @include rb-js-export((
+            switchedOff: true
+        ));
 
-		.accordion-panel {
-			visibility: visible;
-			overflow: visible;
-			height: auto;
-			opacity: 1;
-		}
-	}
+        .accordion-panel {
+            visibility: visible;
+            overflow: visible;
+            height: auto;
+            opacity: 1;
+        }
+    }
 }
