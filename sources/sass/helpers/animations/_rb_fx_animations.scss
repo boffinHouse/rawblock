@@ -1,7 +1,23 @@
-@mixin rb-activate-animation($configs) {
-    @each $animation, $config in $configs {
-        @if $config {
-           //@include rb-fx-#{$animation};
+$rb-included-animations: ();
+
+@mixin rb-fx-options($options: ()){
+    $propMap: (
+        fillMode: animation-fill-mode,
+        duration: animation-duration,
+        count: animation-iteration-count,
+        iterationCount: animation-iteration-count,
+        delay: animation-delay,
+        easing: animation-timing-function,
+        timingFunction: animation-timing-function,
+    );
+
+    $options: map_merge((fillMode: both, duration: 400ms), $options);
+
+    @each $key, $value in $options {
+        $keyname: map_get($propMap, $key);
+
+        @if $keyname {
+            #{$keyname}: $value;
         }
     }
 }
