@@ -15,7 +15,6 @@ Main Stylesheet
 @import "basics/rb_basics";
 
 //Layout Grid
-@include rb-activate-animation($animationConfigs);
 @include rb-generate-layout-styles($breakpointConfigs);
 
 @include rb-export-globaljs(

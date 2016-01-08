@@ -1,44 +1,116 @@
-@mixin rb-fx-slideLeftIn() {
-    @keyframes rb-fx-slideLeftIn {
-        0% {
-            transform: translateX(-100%);
-        }
 
-        100% {
-            transform: translateX(0);
+@mixin rb-fx-slideLeftIn($options: ()) {
+    $animationName: slideLeftIn;
+
+    @mixin _tmp-rb-animationProps(){
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @mixin _tmp-rb-animationKeyframe(){
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: translateX(-100%);
+                }
+
+                100% {
+                    transform: translateX(0);
+                }
+            }
+
+            .use-fx-#{$animationName},
+            %use-fx-#{$animationName} {
+                @include _tmp-rb-animationProps;
+            }
         }
     }
 
-    .use-fx-slideLeftIn {
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        @include _tmp-rb-animationProps;
+    }
 
+    @if not map-has-key($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        @include _tmp-rb-animationKeyframe;
+    }
+
+
+}
+
+@mixin rb-fx-slideLeftOut($options: ()) {
+    $animationName: slideLeftOut;
+
+    @mixin rb-animationProps(){
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map-has-key($rb-included-animations, $animationName) {
+
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-100%);
+                }
+            }
+
+            .use-fx-#{$animationName},
+            %use-fx-#{$animationName} {
+                @include rb-animationProps;
+            }
+        }
+    }
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        @include rb-animationProps;
     }
 }
 
-@mixin rb-fx-slideLeftOut() {
-    @keyframes rb-fx-slideLefOut {
-        0% {
-            transform: translateX(0);
-        }
+@mixin rb-fx-slideRightIn($options: ()) {
 
-        100% {
-            transform: translateX(-100%);
+    $animationName: slideRightIn;
+
+    @mixin rb-animationProps(){
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map-has-key($rb-included-animations, $animationName) {
+
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: translateX(100%);
+                }
+
+                100% {
+                    transform: translateX(0);
+                }
+            }
+
+            .use-fx-#{$animationName},
+            %use-fx-#{$animationName} {
+                @include rb-animationProps;
+            }
         }
+    }
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        @include rb-animationProps;
     }
 }
 
-@mixin rb-fx-slideRightIn() {
-    @keyframes rb-fx-slideRightIn {
-        0% {
-            transform: translateX(100%);
-        }
-
-        100% {
-            transform: translateX(0);
-        }
-    }
-}
-
-@mixin rb-fx-slideRightOut() {
+@mixin rb-fx-slideRightOut($options: ()) {
     @keyframes rb-fx-slideRightOut {
         0% {
             transform: translateX(0);
