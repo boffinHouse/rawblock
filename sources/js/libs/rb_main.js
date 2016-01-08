@@ -791,8 +791,8 @@ if (!window.rb) {
             }
         },
         proxies: {
-            delegate: function(handler, selector){
-                var proxy = rb.events.proxy(handler, 'delegate', selector);
+            closest: function(handler, selector){
+                var proxy = rb.events.proxy(handler, 'closest', selector);
 
                 if(!proxy){
                     proxy = function(e){
@@ -800,7 +800,7 @@ if (!window.rb) {
                         if(!e.delegatedTarget){return;}
                         return handler.apply(this, arguments);
                     };
-                    rb.events.proxy(handler, 'delegate', selector, proxy);
+                    rb.events.proxy(handler, 'closest', selector, proxy);
                 }
 
                 return proxy;
@@ -858,6 +858,8 @@ if (!window.rb) {
         },
         special: {},
     };
+
+    rb.events.proxies.delegate = rb.events.proxies.closest;
 
     [['add', 'addEventListener'], ['remove', 'removeEventListener']].forEach(function(action){
         /**
@@ -1094,9 +1096,9 @@ if (!window.rb) {
     /* Begin: clickarea delegate */
     var initClickArea = function(){
 
-        var clickAreaSel = rb.statePrefix + 'clickarea';
-        var clickAreaactionSel = rb.statePrefix + 'clickarea-action';
-        var abortSels = 'a[href], a[href] *, ' + clickAreaSel + ', ' + clickAreaSel + ' *';
+        var clickAreaSel = '.' + rb.statePrefix + 'clickarea';
+        var clickAreaactionSel = '.' + rb.statePrefix + 'clickarea-action';
+        var abortSels = 'a[href], a[href] *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
 
         var getSelection = window.getSelection || function () {
                 return {};
@@ -1143,7 +1145,7 @@ if (!window.rb) {
      * @param [delay] {Number} The delay to focus the element.
      */
     rb.setFocus = (function(){
-        var element, attempts, abort;
+        var element, attempts, abort, focusTimer;
         var scrollableElements = [];
         var regKeyboadElements = /^(?:input|textarea)$/i;
         var btns = {button: 1, submit: 1, reset: 1, image: 1, file: 1};
@@ -1179,11 +1181,15 @@ if (!window.rb) {
             attempts = 0;
             abort = false;
             document.removeEventListener('focus', setAbort, true);
+            if(focusTimer){
+                clearTimeout(focusTimer);
+                focusTimer = null;
+            }
         };
 
         var doFocus = function () {
 
-            if(abort || attempts > 9){
+            if(!element || abort || attempts > 9){
                 cleanup();
             } else if(rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)){
                 rb.isScriptFocus = true;
@@ -1210,7 +1216,7 @@ if (!window.rb) {
 
         var waitForFocus = function (delay) {
             if (element !== document.activeElement) {
-                setTimeout(doFocus, delay || 4);
+                focusTimer = setTimeout(doFocus, delay || 4);
             }
         };
 
@@ -1282,7 +1288,7 @@ if (!window.rb) {
         var isKeyboardBlocked = false;
         var root = rb.root;
         var isClass = rb.statePrefix + 'keyboardfocus';
-        var isWithinClass = rb.statePrefix + 'keyboardfocus';
+        var isWithinClass = rb.statePrefix + 'keyboardfocus-within';
 
         var unblockKeyboardFocus = function () {
             isKeyboardBlocked = false;
@@ -1469,7 +1475,7 @@ if (!window.rb) {
      * @param element {Element} The element that should be used as starting point for the jQuery traversal method.
      * @returns {Element[]}
      */
-    rb.elementFromStr = function (targetStr, element) {
+    rb.getElementsByString = function (targetStr, element) {
         var i, len, target, temp, num, match;
 
         if (targetStr) {
@@ -1505,6 +1511,8 @@ if (!window.rb) {
 
         return target || [];
     };
+
+    rb.elementFromStr = rb.getElementsByString;
 
     var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
@@ -1593,6 +1601,7 @@ if (!window.rb) {
     rb._uitilsInit = function(){
         initClickArea();
         initFocusWithin();
+        initKeyboardFocus();
         rb._uitilsInit = rb.$.noop;
     };
 })(window, document);
@@ -2554,13 +2563,13 @@ if (!window.rb) {
             },
 
             /**
-             * Uses [`rb.elementFromStr`]{@link rb.elementFromStr} with this.element as the element argument and interpolates string using `this.interpolateName`.
+             * Uses [`rb.getElementsByString`]{@link rb.getElementsByString} with this.element as the element argument and interpolates string using `this.interpolateName`.
              * @param {String} string
              * @param {Element} [element=this.element]
              * @returns {Element[]}
              */
-            getElementsFromString: function (string, element) {
-                return rb.elementFromStr(this.interpolateName(string), element || this.element);
+            getElementsByString: function (string, element) {
+                return rb.getElementsByString(this.interpolateName(string), element || this.element);
             },
 
             /*
@@ -2837,6 +2846,8 @@ if (!window.rb) {
             },
         }
     );
+
+    rb.Component.prototype.getElementsFromString = rb.Component.prototype.getElementsByString;
 
     /**
      * Logs arguments to the console, if debug option of the component is turned on.

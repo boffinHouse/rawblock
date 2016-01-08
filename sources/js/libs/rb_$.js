@@ -584,7 +584,7 @@
             }
 
             if (sel) {
-                useFn = rb.events.delegateFn(fn, sel);
+                useFn = rb.events.proxies.delegate(fn, sel);
             } else {
                 useFn = fn;
             }
