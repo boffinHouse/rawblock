@@ -1,28 +1,14 @@
-/*********************************************************
-*
-*    b-forms
-*
-*
-**********************************************************/
-
+//
+// rb-forms
+//
+// @
 @import "form_utils_sass/rb_form_label";
 @import "form_utils_sass/rb_form_input_and_textarea";
 @import "form_utils_sass/rb_form_input_state_btn";
 @import "form_utils_sass/rb_form_select";
 
 .rb-form {
-
-	//Global Styles
 	width: 100%;
-
-	//Normalize Form Elements
-	fieldset {
-		position: relative;
-		width: 100%;
-		padding: 0;
-		border: none;
-	}
-	//END Normalize
 
 	@at-root .form- {
 		&section {
@@ -44,7 +30,6 @@
 			font: 600 18px/24px sans-serif;
 			color: #333;
 		}
-
 
 		&intro {
 			margin: rb-rem-calc(0 0 30);
@@ -93,7 +78,6 @@
 			color: red;
 		}
 	}
-
 
 	@include form-field-and-label(true);
 	@include form-selectbox(true);

@@ -1,53 +1,53 @@
 $root-value: 16px !default;
 @function rb-convert-px-to-unit($value, $base-value: $root-value, $unit: rem)  {
 
-	@if($value == "auto") {
-		@return $value;
-	}
+    @if($value == "auto") {
+        @return $value;
+    }
 
-	@if (unitless($value)) {
-		$value: $value * 1px;
-	}
+    @if (unitless($value)) {
+        $value: $value * 1px;
+    }
 
-	@if (unitless($base-value)) {
-		$base-value: $base-value * 1px;
-	}
+    @if (unitless($base-value)) {
+        $base-value: $base-value * 1px;
+    }
 
-	$value: ($value / $base-value) + $unit;
+    $value: ($value / $base-value) + $unit;
 
-	@if ($value == "0rem") {
-		$value: 0;  // Turn 0rem into 0
-	}
+    @if ($value == ("0" + $unit)) {
+        $value: 0;  // Turn 0rem into 0
+    }
 
-	@return $value;
+    @return $value;
 }
 
 @function rb-rem-calc($values, $base-value: $root-value) {
-	$value-length: length($values);
-	$remValues: ();
+    $value-length: length($values);
+    $remValues: ();
 
-	@if $value-length == 1 {
-		@return rb-convert-px-to-unit(nth($values, 1));
-	}
+    @if $value-length == 1 {
+        @return rb-convert-px-to-unit(nth($values, 1));
+    }
 
-	@for $i from 1 through $value-length {
-		$remValues: append($remValues, rb-convert-px-to-unit(nth($values, $i), $base-value));
-	}
+    @for $i from 1 through $value-length {
+        $remValues: append($remValues, rb-convert-px-to-unit(nth($values, $i), $base-value));
+    }
 
-	@return $remValues;
+    @return $remValues;
 }
 
 @function rb-em-calc($values, $base-value: $root-value) {
-	$value-length: length($values);
-	$emValues: ();
+    $value-length: length($values);
+    $emValues: ();
 
-	@if $value-length == 1 {
-		@return rb-convert-px-to-unit(nth($values, 1));
-	}
+    @if $value-length == 1 {
+        @return rb-convert-px-to-unit(nth($values, 1), $base-value, em);
+    }
 
-	@for $i from 1 through $value-length {
-		$emValues: append($emValues, rb-convert-px-to-unit(nth($values, $i), $base-value, em));
-	}
+    @for $i from 1 through $value-length {
+        $emValues: append($emValues, rb-convert-px-to-unit(nth($values, $i), $base-value, em));
+    }
 
-	@return $emValues;
+    @return $emValues;
 }

@@ -5,8 +5,74 @@ layout: default_tpl.hbs
 
 <section class="page-section">
     <div class="page-section-inner">
-        {{#with rb_button }}
-            {{> rb_button }}
-        {{/with}}
+        <div class="use-gutters">
+            <div class="use-size-100">
+                <div class="rb-richtext">
+{{#markdown}}
+#rb-button
+Buttons can be created with several markup elements, but `<button>`
+and `<a>` are the most deserved.
+- If you want to link to another page or place within a page, use the `<a>` element. Mainly JavaScript is not necessary.
+- If you want to perform an action to change something, use the `<button>` element. JavaScript is mainly
+
+##@modifiers colors
+- **.is-primary**: button that represent most important action
+- **.is-secondary**: button for less utilized action.
+- **.is-disabled**: button that is disabled for calling action
+
+{{/markdown}}
+                </div>
+            </div>
+            <div class="use-size-33">
+                {{#mergeJSON rb_button 'type: "is-primary", title: "Primary button"'}}
+                    {{> rb_button }}
+                {{/mergeJSON}}
+            </div>
+            <div class="use-size-33">
+                {{#mergeJSON rb_button 'type: "is-secondary", title: "Secondary button"'}}
+                    {{> rb_button }}
+                {{/mergeJSON}}
+            </div>
+            <div class="use-size-33">
+                {{#mergeJSON rb_button 'type: "is-primary is-stretched", title: "Primary button"'}}
+                    {{> rb_button }}
+                {{/mergeJSON}}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="page-section-inner">
+        <div class="use-gutters">
+            <div class="use-size-100">
+                <div class="rb-richtext">
+{{#markdown}}
+##
+
+- **.is-success**: button that represent an successfull action.
+- **.is-error**: button that represent that something is wrong.
+- **.is-warning**: button that represent a warning action
+
+{{/markdown}}
+
+                </div>
+            </div>
+            <div class="use-size-33">
+                {{#mergeJSON rb_button 'type: "is-success", title: "Success button"'}}
+                    {{> rb_button }}
+                {{/mergeJSON}}
+            </div>
+            <div class="use-size-33">
+                {{#mergeJSON rb_button 'type: "is-error", title: "Error button"'}}
+                    {{> rb_button }}
+                {{/mergeJSON}}
+            </div>
+            <div class="use-size-33">
+                {{#mergeJSON rb_button 'type: "is-warning", title: "Warning button"'}}
+                    {{> rb_button }}
+                {{/mergeJSON}}
+            </div>
+        </div>
     </div>
 </section>

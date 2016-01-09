@@ -1,6 +1,7 @@
 {
   "standard": {
     "type": "radio",
+    "name": "dummy-radio-name",
     "label": "Radiobutton",
     "invalid": "",
     "requiredNotion": "",

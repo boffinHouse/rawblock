@@ -1,31 +1,29 @@
-$input-font: 600 24px/28px sans-serif !default;
-$input-font-color: #555 !default;
-
-$input-height: 60px !default;
-$input-block: false !default;
-$input-padding: rb-rem-calc(5 40 3 10) !default;
-$input-border-radius: 0 !default;
-
-$input-border: 1px solid #aaa!default;
-$input-border-color-hover: #507aff !default;
-$input-bg-color: #fff !default;
-
-$input-cursor: pointer !default;
-
-//Deactive (readonly / disabled)
-$input-deactive-bg-color: #f9f9f9 !default;
-$input-deactive-color: #eee !default;
-
-//Invalid
-$input-invalid-border-color: red !default;
-$input-invalid-bg-color: #ffaaaf !default;
-
-$textarea-min-height: 100px !default;
-$textarea-max-height: 100px !default;
-
-
 //Form Select
 @mixin form-input-and-textarea($custom:true, $block: true) {
+	$input-font: 600 24px/28px sans-serif !default;
+	$input-font-color: #555 !default;
+
+	$input-height: 60px !default;
+	$input-block: false !default;
+	$input-padding: rb-rem-calc(5 40 3 10) !default;
+	$input-border-radius: 0 !default;
+
+	$input-border: 1px solid #aaa!default;
+	$input-border-color-hover: #507aff !default;
+	$input-bg-color: #fff !default;
+
+	$input-cursor: pointer !default;
+
+	//Deactive (readonly / disabled)
+	$input-deactive-bg-color: #f9f9f9 !default;
+	$input-deactive-color: #eee !default;
+
+	//Invalid
+	$input-invalid-border-color: red !default;
+	$input-invalid-bg-color: #ffaaaf !default;
+
+	$textarea-min-height: 100px !default;
+	$textarea-max-height: 100px !default;
 
 	input:not([type="radio"]):not([type="checkbox"]) {
 		min-height: $input-height;

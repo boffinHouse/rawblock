@@ -1,8 +1,8 @@
 {
   "standard": {
-    "type": "checkbox",
-    "name": "dummy-checkbox-name",
-    "label": "Checkbox",
+    "type": "text",
+    "name": "dummy-text-name",
+    "label": "Radiobutton",
     "invalid": "",
     "requiredNotion": "",
     "booleans": [
