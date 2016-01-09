@@ -1,0 +1,130 @@
+@mixin rb-fx-flip($options: ()) {
+    $animationName: flip;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        backface-visibility: visible;
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
+                    animation-timing-function: ease-out;
+                }
+
+                40% {
+                    transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
+                    animation-timing-function: ease-out;
+                }
+
+                50% {
+                    transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
+                    animation-timing-function: ease-in;
+                }
+
+                80% {
+                    transform: perspective(400px) scale3d(.95, .95, .95);
+                    animation-timing-function: ease-in;
+                }
+
+                100% {
+                    transform: perspective(400px);
+                    animation-timing-function: ease-in;
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-flipInX($options: ()) {
+    $animationName: flipInX;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        backface-visibility: visible;
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+                    animation-timing-function: ease-in;
+                    opacity: 0;
+                }
+
+                40% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+                    animation-timing-function: ease-in;
+                }
+
+                60% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+                    opacity: 1;
+                }
+
+                80% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+                }
+
+                100% {
+                    transform: perspective(400px);
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-flipOutX($options: ()) {
+    $animationName: flipOutX;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        backface-visibility: visible;
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+                    animation-timing-function: ease-in;
+                    opacity: 0;
+                }
+
+                40% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+                    animation-timing-function: ease-in;
+                }
+
+                60% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+                    opacity: 1;
+                }
+
+                80% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+                }
+
+                100% {
+                    transform: perspective(400px);
+                }
+            }
+        }
+    }
+}
+

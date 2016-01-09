@@ -21,14 +21,14 @@
              * @property {Boolean} defaults.open=false Whether the dialog should be open by default
              * @property {Boolean} defaults.appendToBody=true
              * @property {Boolean} defaults.closeOnEsc=true Whether the dialog should be closed as soon as the user presses the ESC key.
-             * @property {Boolean} defaults.closeOnBackdropClick=false Whether the dialog should be closed as soon as the user clicks on the backdrop.
+             * @property {Boolean} defaults.closeOnBackdropClick=true Whether the dialog should be closed as soon as the user clicks on the backdrop.
              * @property {String} defaults.contentId=''
              * @property {String} defaults.backdropClass=''
              */
             defaults: {
                 open: false,
                 closeOnEsc: true,
-                closeOnBackdropClick: false,
+                closeOnBackdropClick: true,
                 appendToBody: true,
                 contentId: '',
                 backdropClass: '',
@@ -106,6 +106,8 @@
                     this.$backdrop = $(backdrop);
                     isWrapped = true;
                 }
+
+                this.backdropDocument = backdropDocument;
 
                 if(this.options.backdropClass){
                     this.$backdrop.addClass(this.options.backdropClass);
@@ -277,7 +279,7 @@
 
                 this.$backdrop
                     .on('click', function (e) {
-                        if (that.options.closeOnBackdropClick && e.target == e.currentTarget) {
+                        if (that.options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == that.backdropDocument)) {
                             that.close();
                             e.preventDefault();
                             e.stopPropagation();

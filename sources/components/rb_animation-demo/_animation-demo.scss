@@ -47,4 +47,40 @@ html {
             @include rb-fx-slideBottomOut;
         }
     }
+
+    &[data-anim-in="rotateIn"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-rotateIn;
+        }
+    }
+
+    &[data-anim-out="rotateOut"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-rotateOut;
+        }
+    }
+
+    &[data-anim-in="flip"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flip;
+        }
+    }
+
+    &[data-anim-out="flip"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flip;
+        }
+    }
+
+    &[data-anim-in="flipInX"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-flipInX;
+        }
+    }
+
+    &[data-anim-out="flipOutX"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flipOutX;
+        }
+    }
 }
