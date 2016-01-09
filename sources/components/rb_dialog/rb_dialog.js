@@ -67,9 +67,6 @@
 
                 this.$backdrop = $(document.createElement('div')).addClass(this.name + '-backdrop');
 
-                if(this.options.backdropClass){
-                    this.$backdrop.addClass(this.options.backdropClass);
-                }
 
                 this.contentElement = this.query('.{name}-content');
 
@@ -94,20 +91,34 @@
                 if (this.isReady || !this.element.parentNode) {
                     return;
                 }
-                var backdropDocument = document.createElement('div');
+                var backdrop, isWrapped;
+                var backdropDocument = this.element.parentNode;
+                var backdropDocumentName = this.name + '-backdrop-document';
+
                 this.isReady = true;
 
-                backdropDocument.className = this.name + '-backdrop-document';
+                if(!backdropDocument || !backdropDocument.classList.contains(backdropDocumentName)){
+                    backdropDocument = document.createElement('div');
+                    backdropDocument.className = backdropDocumentName;
+                    this.$backdrop.append(backdropDocument);
+                } else if(backdropDocument && (backdrop = backdropDocument.parentNode) && backdrop.classList.contains(this.name + '-backdrop')) {
+                    this.$backdrop = $(backdrop);
+                    isWrapped = true;
+                }
 
-                this.$backdrop.append(backdropDocument);
+                if(this.options.backdropClass){
+                    this.$backdrop.addClass(this.options.backdropClass);
+                }
 
                 if(this.options.appendToBody){
                     document.body.appendChild(this.$backdrop.get(0));
-                } else {
+                } else if(!isWrapped) {
                     this.$element.before(this.$backdrop.get(0));
                 }
 
-                backdropDocument.appendChild(this.element);
+                if(!isWrapped){
+                    backdropDocument.appendChild(this.element);
+                }
 
                 if (!this.element.getAttribute('tabindex')) {
                     this.element.setAttribute('tabindex', '-1');

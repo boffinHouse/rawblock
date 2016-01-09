@@ -8,11 +8,11 @@ $dialogJSCFG: (
 .rb-dialog {
     @include rb-js-export($dialogJSCFG);
 
+    display: none;
     position: relative;
     background: #fff;
     max-width: 980px;
     margin: auto;
-    visibility: hidden;
     outline: none;
 
     @at-root {
@@ -33,6 +33,10 @@ $dialogJSCFG: (
             opacity: 0;
             background: rgba(0, 0, 0, 0.6);
             transition: 400ms all;
+
+            .rb-dialog {
+                display: block;
+            }
 
             &.is-open {
                 visibility: visible;

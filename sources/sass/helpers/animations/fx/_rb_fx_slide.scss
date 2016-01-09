@@ -13,11 +13,12 @@
         @at-root {
             @keyframes rb-fx-#{$animationName} {
                 0% {
-                    transform: translateX(-100%);
+                    visibility: visible;
+                    transform: translate3d(-100%, 0, 0);
                 }
 
                 100% {
-                    transform: translateX(0);
+                    transform: translate3d(0, 0, 0);
                 }
             }
         }
@@ -40,11 +41,12 @@
         @at-root {
             @keyframes rb-fx-#{$animationName} {
                 0% {
-                    transform: translateX(0);
+                    transform: translate3d(0, 0, 0);
                 }
 
                 100% {
-                    transform: translateX(-100%);
+                    visibility: hidden;
+                    transform: translate3d(-100%, 0, 0);
                 }
             }
         }
@@ -68,11 +70,12 @@
         @at-root {
             @keyframes rb-fx-#{$animationName} {
                 0% {
-                    transform: translateX(100%);
+                    visibility: visible;
+                    transform: translate3d(100%, 0, 0);
                 }
 
                 100% {
-                    transform: translateX(0);
+                    transform: translate3d(0, 0, 0);
                 }
             }
         }
@@ -96,11 +99,117 @@
         @at-root {
             @keyframes rb-fx-#{$animationName} {
                 0% {
-                    transform: translateX(0);
+                    transform: translate3d(0, 0, 0);
                 }
 
                 100% {
-                    tranform: translateX(100%);
+                    transform: translate3d(100%, 0, 0);
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-slideTopIn($options: ()) {
+    $animationName: slideTopIn;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    visibility: visible;
+                    transform: translate3d(0, -100%, 0);
+                }
+
+                100% {
+                    transform: translate3d(0, 0, 0);
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-slideTopOut($options: ()) {
+    $animationName: slideTopOut;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+
+                100% {
+                    transform: translate3d(0, -100%, 0);
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-slideBottomIn($options: ()) {
+    $animationName: slideBottomIn;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    visibility: visible;
+                    transform: translate3d(0, 100%, 0);
+                }
+
+                100% {
+                    transform: translate3d(0, 0, 0);
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-slideBottomOut($options: ()) {
+    $animationName: slideBottomOut;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+
+                100% {
+                    transform: translate3d(0, 100%, 0);
                 }
             }
         }
