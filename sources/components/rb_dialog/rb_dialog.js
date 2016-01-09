@@ -31,7 +31,8 @@
                 closeOnBackdropClick: false,
                 appendToBody: true,
                 contentId: '',
-                backdropClass: ''
+                backdropClass: '',
+                setDisplay: true,
             },
             /**
              * @constructs
@@ -70,7 +71,7 @@
 
                 this.contentElement = this.query('.{name}-content');
 
-                rb.rAFs(this, {that: this, throttle: true}, '_setup', '_addContent');
+                rb.rAFs(this, {that: this, throttle: true}, '_setup', '_addContent', '_setDisplay');
 
                 rb.rAFs(this, {throttle: true}, '_open', '_close');
 
@@ -131,6 +132,8 @@
 
                 if (this.options.open) {
                     this.open();
+                } else if(this.options.setDisplay){
+                    this.$backdrop.css({display: 'none'});
                 }
             },
             _open: function (options) {
@@ -186,7 +189,15 @@
                     this._xhr = rb.fetch({url: options.contentUrl}).then(this._addContent);
                 }
 
-                if(options.focusElement && regInputs.test(options.focusElement.nodeName)){
+                if(this.options.setDisplay){
+                    this.$backdrop.css({display: 'block'});
+                    if(this._displayTimer){
+                        clearTimeout(this._displayTimer);
+                        this._displayTimer = null;
+                    }
+                }
+
+                if(!this.options.setDisplay && options.focusElement && regInputs.test(options.focusElement.nodeName)){
                     this._open._rbUnrafedFn.call(this, options);
                 } else {
                     this._open(options);
@@ -198,6 +209,11 @@
 
                 this.$backdrop.removeClass(rb.statePrefix + 'open');
                 rb.$root.removeClass(rb.statePrefix + 'open-' + this.name +'-within');
+
+                if(this.options.setDisplay){
+                    clearTimeout(this._displayTimer);
+                    this._displayTimer = setTimeout(this._setDisplay, 2000);
+                }
                 this._trigger(options);
             },
             /**
@@ -232,6 +248,10 @@
                 }
                 this.$backdrop.removeClass(rb.statePrefix + 'loading');
                 this._xhr = null;
+            },
+            _setDisplay: function(){
+                this.$backdrop.css({display: this.isOpen ? 'block' : 'none'});
+                this._displayTimer = null;
             },
             setupOpenEvents: function () {
                 var that = this;
