@@ -24,7 +24,13 @@
     font-size: rb-rem-calc(16);
     font-weight: 600;
     color: #fff;
+    background: #aaa;
     transition: background 400ms ease-in;
+
+    &:hover,
+    &:focus {
+        background: #888;
+    }
 
     &.is-stretched {
         display: block;
@@ -77,9 +83,16 @@
         }
     }
 
+    &[disabled],
     &.is-disabled {
         cursor: not-allowed;
-        background: #eee;
+        opacity: 0.3;
+
+        &:hover,
+        &:focus {
+            opacity: 0.3;
+        }
+
     }
 
 }
