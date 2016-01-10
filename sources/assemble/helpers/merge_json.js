@@ -32,7 +32,6 @@ module.exports.register = function (Handlebars, options) {
             }
 
             args.unshift({});
-
             return options.fn(_.merge.apply(_, args));
         };
     })());

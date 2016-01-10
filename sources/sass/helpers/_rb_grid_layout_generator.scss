@@ -114,11 +114,20 @@
 			}
 		}
 
+		> [class*=use-size-].use-gutter {
+			margin-bottom: $gutterVertical;
+			padding-left: ($gutterHorizontal);
+		}
+
 		.use-gutters-vertical {
 
 			> [class*=use-size-]  {
 				margin-bottom: $gutterVertical;
 			}
+		}
+
+		> [class*=use-size-].use-gutter-vertical {
+			margin-bottom: $gutterVertical;
 		}
 
 		.use-gutters-horizontal {
@@ -129,6 +138,17 @@
 			}
 		}
 
+		> [class*=use-size-].use-gutter-horizontal {
+			padding-left: ($gutterHorizontal);
+		}
+
+		//Destroy gutter
+		[class*=use-size-].use-gutter-vertical-destroy {
+			margin-bottom: 0;
+		}
+		//[class*=use-size-].use-gutter-horizontal-destroy {
+		//	padding-left: 0;
+		//}
 
 	}
 }

@@ -1,5 +1,5 @@
-<input type="{{#if type}}{{ type }}{{ else }}text{{/if}}" {{#is type "radio"}}name="dummy-input-{{name}}"{{/is}}
-		id="dummy-input-{{ id }}"
+<input type="{{#if type}}{{ type }}{{ else }}text{{/if}}" {{#is type "radio"}}name="{{name}}"{{/is}}
+		id="{{name}}-{{ id }}"
 
 	{{#each attrs}}
 		{{@key}}="{{this}}"
