@@ -21,17 +21,18 @@
              * @property {Boolean} defaults.open=false Whether the dialog should be open by default
              * @property {Boolean} defaults.appendToBody=true
              * @property {Boolean} defaults.closeOnEsc=true Whether the dialog should be closed as soon as the user presses the ESC key.
-             * @property {Boolean} defaults.closeOnBackdropClick=false Whether the dialog should be closed as soon as the user clicks on the backdrop.
+             * @property {Boolean} defaults.closeOnBackdropClick=true Whether the dialog should be closed as soon as the user clicks on the backdrop.
              * @property {String} defaults.contentId=''
              * @property {String} defaults.backdropClass=''
              */
             defaults: {
                 open: false,
                 closeOnEsc: true,
-                closeOnBackdropClick: false,
+                closeOnBackdropClick: true,
                 appendToBody: true,
                 contentId: '',
-                backdropClass: ''
+                backdropClass: '',
+                setDisplay: true,
             },
             /**
              * @constructs
@@ -67,13 +68,10 @@
 
                 this.$backdrop = $(document.createElement('div')).addClass(this.name + '-backdrop');
 
-                if(this.options.backdropClass){
-                    this.$backdrop.addClass(this.options.backdropClass);
-                }
 
                 this.contentElement = this.query('.{name}-content');
 
-                rb.rAFs(this, {that: this, throttle: true}, '_setup', '_addContent');
+                rb.rAFs(this, {that: this, throttle: true}, '_setup', '_addContent', '_setDisplay');
 
                 rb.rAFs(this, {throttle: true}, '_open', '_close');
 
@@ -94,20 +92,36 @@
                 if (this.isReady || !this.element.parentNode) {
                     return;
                 }
-                var backdropDocument = document.createElement('div');
+                var backdrop, isWrapped;
+                var backdropDocument = this.element.parentNode;
+                var backdropDocumentName = this.name + '-backdrop-document';
+
                 this.isReady = true;
 
-                backdropDocument.className = this.name + '-backdrop-document';
+                if(!backdropDocument || !backdropDocument.classList.contains(backdropDocumentName)){
+                    backdropDocument = document.createElement('div');
+                    backdropDocument.className = backdropDocumentName;
+                    this.$backdrop.append(backdropDocument);
+                } else if(backdropDocument && (backdrop = backdropDocument.parentNode) && backdrop.classList.contains(this.name + '-backdrop')) {
+                    this.$backdrop = $(backdrop);
+                    isWrapped = true;
+                }
 
-                this.$backdrop.append(backdropDocument);
+                this.backdropDocument = backdropDocument;
+
+                if(this.options.backdropClass){
+                    this.$backdrop.addClass(this.options.backdropClass);
+                }
 
                 if(this.options.appendToBody){
                     document.body.appendChild(this.$backdrop.get(0));
-                } else {
+                } else if(!isWrapped) {
                     this.$element.before(this.$backdrop.get(0));
                 }
 
-                backdropDocument.appendChild(this.element);
+                if(!isWrapped){
+                    backdropDocument.appendChild(this.element);
+                }
 
                 if (!this.element.getAttribute('tabindex')) {
                     this.element.setAttribute('tabindex', '-1');
@@ -120,6 +134,8 @@
 
                 if (this.options.open) {
                     this.open();
+                } else if(this.options.setDisplay){
+                    this.$backdrop.css({display: 'none'});
                 }
             },
             _open: function (options) {
@@ -175,7 +191,15 @@
                     this._xhr = rb.fetch({url: options.contentUrl}).then(this._addContent);
                 }
 
-                if(options.focusElement && regInputs.test(options.focusElement.nodeName)){
+                if(this.options.setDisplay){
+                    this.$backdrop.css({display: 'block'});
+                    if(this._displayTimer){
+                        clearTimeout(this._displayTimer);
+                        this._displayTimer = null;
+                    }
+                }
+
+                if(!this.options.setDisplay && options.focusElement && regInputs.test(options.focusElement.nodeName)){
                     this._open._rbUnrafedFn.call(this, options);
                 } else {
                     this._open(options);
@@ -187,6 +211,11 @@
 
                 this.$backdrop.removeClass(rb.statePrefix + 'open');
                 rb.$root.removeClass(rb.statePrefix + 'open-' + this.name +'-within');
+
+                if(this.options.setDisplay){
+                    clearTimeout(this._displayTimer);
+                    this._displayTimer = setTimeout(this._setDisplay, 2000);
+                }
                 this._trigger(options);
             },
             /**
@@ -222,6 +251,10 @@
                 this.$backdrop.removeClass(rb.statePrefix + 'loading');
                 this._xhr = null;
             },
+            _setDisplay: function(){
+                this.$backdrop.css({display: this.isOpen ? 'block' : 'none'});
+                this._displayTimer = null;
+            },
             setupOpenEvents: function () {
                 var that = this;
                 if (!this.closeOnEsc) {
@@ -246,7 +279,7 @@
 
                 this.$backdrop
                     .on('click', function (e) {
-                        if (that.options.closeOnBackdropClick && e.target == e.currentTarget) {
+                        if (that.options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == that.backdropDocument)) {
                             that.close();
                             e.preventDefault();
                             e.stopPropagation();

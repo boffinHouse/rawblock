@@ -1,18 +1,18 @@
 $dialogJSCFG: (
-    watchCss: true,
-    closeOnEsc: true,
-    closeOnBackdropClick: false,
-    open: true,
+    //watchCss: true,
+    //closeOnEsc: true,
+    //closeOnBackdropClick: false,
+    //open: true,
 );
 
 .rb-dialog {
     @include rb-js-export($dialogJSCFG);
 
+    display: none;
     position: relative;
     background: #fff;
     max-width: 980px;
     margin: auto;
-    visibility: hidden;
     outline: none;
 
     @at-root {
@@ -22,6 +22,7 @@ $dialogJSCFG: (
         }
 
         .dialog-backdrop {
+            display: none;
             visibility: hidden;
             position: fixed;
             top: 0;
@@ -34,7 +35,12 @@ $dialogJSCFG: (
             background: rgba(0, 0, 0, 0.6);
             transition: 400ms all;
 
+            .rb-dialog {
+                display: block;
+            }
+
             &.is-open {
+                display: block;
                 visibility: visible;
                 opacity: 1;
 

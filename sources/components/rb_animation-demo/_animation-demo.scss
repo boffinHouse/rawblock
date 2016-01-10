@@ -1,0 +1,86 @@
+
+html {
+    &[data-anim-in="slideLeftIn"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideLeftIn;
+        }
+    }
+
+    &[data-anim-out="slideLeftOut"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideLeftOut;
+        }
+    }
+
+    &[data-anim-in="slideRightIn"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideRightIn;
+        }
+    }
+
+    &[data-anim-out="slideRightOut"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideRightOut;
+        }
+    }
+
+    &[data-anim-in="slideTopIn"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideTopIn;
+        }
+    }
+
+    &[data-anim-out="slideTopOut"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideTopOut;
+        }
+    }
+
+    &[data-anim-in="slideBottomIn"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideBottomIn;
+        }
+    }
+
+    &[data-anim-out="slideBottomOut"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideBottomOut;
+        }
+    }
+
+    &[data-anim-in="rotateIn"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-rotateIn;
+        }
+    }
+
+    &[data-anim-out="rotateOut"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-rotateOut;
+        }
+    }
+
+    &[data-anim-in="flip"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flip;
+        }
+    }
+
+    &[data-anim-out="flip"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flip;
+        }
+    }
+
+    &[data-anim-in="flipInX"] {
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-flipInX;
+        }
+    }
+
+    &[data-anim-out="flipOutX"] {
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flipOutX;
+        }
+    }
+}

@@ -1,0 +1,60 @@
+@mixin rb-fx-rotateIn($options: ()) {
+    $animationName: rotateIn;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    visibility: visible;
+                    transform-origin: center;
+                    transform: rotate3d(0, 0, 1, -200deg);
+                    opacity: 0;
+                }
+
+                100% {
+                    transform-origin: center;
+                    transform: none;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-rotateOut($options: ()) {
+    $animationName: rotateOut;
+
+    @if not map_get($options, onlyInstall){
+        @include rb-fx-options($options);
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    transform-origin: center;
+                    opacity: 1;
+                }
+
+                100% {
+                    transform-origin: center;
+                    transform: rotate3d(0, 0, 1, 200deg);
+                    opacity: 0;
+                }
+            }
+        }
+    }
+}
+

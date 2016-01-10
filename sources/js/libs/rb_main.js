@@ -1466,7 +1466,7 @@ if (!window.rb) {
     };
 
     var regNum = /:(\d)+\s*$/;
-    var regTarget = /^\s*?\.?([a-z0-9_]+)\((.*?)\)\s*?/i;
+    var regTarget = /^\s*?\.?([a-z0-9_\$]+)\((.*?)\)\s*?/i;
 
     /**
      * Returns an array of elements based on a string.
