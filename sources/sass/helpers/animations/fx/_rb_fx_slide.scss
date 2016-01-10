@@ -2,7 +2,9 @@
     $animationName: slideLeftIn;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -29,7 +31,9 @@
     $animationName: slideLeftOut;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -58,7 +62,9 @@
     $animationName: slideRightIn;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -87,7 +93,9 @@
     $animationName: slideRightOut;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -114,7 +122,9 @@
     $animationName: slideTopIn;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -141,7 +151,9 @@
     $animationName: slideTopOut;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -167,7 +179,9 @@
     $animationName: slideBottomIn;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -194,7 +208,9 @@
     $animationName: slideBottomOut;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 

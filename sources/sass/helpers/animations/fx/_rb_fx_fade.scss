@@ -1,0 +1,114 @@
+@mixin rb-fx-fadeIn($options: ()) {
+    $animationName: fadeIn;
+
+    @if not map_get($options, onlyInstall){
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    opacity: 0;
+                }
+
+                100% {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-fadeOut($options: ()) {
+    $animationName: fadeOut;
+
+    @if not map_get($options, onlyInstall){
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    opacity: 1;
+                }
+
+                100% {
+                    opacity: 0;
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-fadeInDown($options: ()) {
+    $animationName: fadeInDown;
+
+    @if not map_get($options, onlyInstall){
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    opacity: 1;
+                    transform: translate3d(0, -100%, 0);
+                }
+
+                100% {
+                    opacity: 0;
+                    transform: none;
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-fadeOutDown($options: ()) {
+    $animationName: fadeOutDown;
+
+    @if not map_get($options, onlyInstall){
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                0% {
+                    opacity: 1;
+                }
+
+                100% {
+                    opacity: 0;
+                    transform: translate3d(0, 100%, 0);
+                }
+            }
+        }
+    }
+}

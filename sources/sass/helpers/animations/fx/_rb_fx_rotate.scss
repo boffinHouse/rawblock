@@ -2,7 +2,9 @@
     $animationName: rotateIn;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
@@ -33,7 +35,9 @@
     $animationName: rotateOut;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         animation-name: rb-fx-#{$animationName};
     }
 
