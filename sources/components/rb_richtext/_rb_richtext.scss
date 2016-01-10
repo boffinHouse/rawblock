@@ -104,10 +104,10 @@ rb-richtext
         }
     }
 
-    .underline {
+    .is-underline {
         text-decoration: underline;
     }
-    .strike {
+    .is-strike {
         text-decoration: line-through;
     }
     strong, b {
@@ -161,12 +161,10 @@ rb-richtext
             font-weight: 400;
 
             &::before {
-                content: ' - '
+                content:'- \00a9';
+                padding: 0 4px 0 2px;
             }
 
-            &::after {
-                content: ' \00a9'; //copyright sign
-            }
         }
 
         &.is-floated-left {

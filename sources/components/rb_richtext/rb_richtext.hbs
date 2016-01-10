@@ -3,51 +3,198 @@ component: rb_richtext
 ---
 
 <div class="rb-richtext">
-	<h1>Header h1</h1>
-	{{> paragraph-with-link-richtext }}
+	<h1>Text align Left (default)</h1>
+    {{#with rb_richtext.default}}
+        <p>{{this}}</p>
+    {{/with}}
 
-	<h2>Header h2</h2>
-	{{> paragraph-with-link-richtext }}
+    <h2>Text align right</h2>
+    {{#with rb_richtext.default}}
+        <p class="is-align-right">{{this}}</p>
+    {{/with}}
+
+    <h2>Text align center</h2>
+    {{#with rb_richtext.default}}
+        <p class="is-align-center">{{this}}</p>
+    {{/with}}
+
+    <h2>Text align justify</h2>
+    {{#with rb_richtext.default}}
+        <p class="is-align-justify">{{this}}</p>
+    {{/with}}
+
+    <h2>Diffenrent Styling</h2>
+    <p><a href="#">Textlink</a></p>
+    <p><span class="is-underline">Underline</span></p>
+    <p><span class="is-strike">Line Through</span></p>
+    <p><strong>Bold</strong></p>
+    <p><em>Italic</em></p>
+    <p><sup>Sup</sup> dummy text</p>
+    <p><sub>Sub</sub> Dummy text</p>
+    <p><code>.is-code-example</code></p>
 
 	<h2>Unordered List</h2>
-	{{> unordered-list-richtext }}
+    <ul>
+        <li>List level - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+        <li>List level 1</li>
+        <li><a href="#">List level 1 - Link</a></li>
+    </ul>
 
 	<h2>Ordered List</h2>
-	{{> ordered-list-richtext }}
+    <ol>
+        <li>List level 1 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+        <li>List level 1 </li>
+        <li><a href="#">List level 1  - Link</a></li>
+    </ol>
 
 	<h2>Mix ordered and unordered list</h2>
-	{{> mix-ordered-and-unordered-list-richtext }}
+    <ol>
+        <li>List level 1</li>
+        <li>List level 1
+            <ol>
+                <li>List level 2 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                <li>List level 2
+                    <ol>
+                        <li>List level 3 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                        <li>List level 3</li>
+                    </ol>
+                </li>
+                <li>List level 2</li>
+            </ol>
+        </li>
+        <li>List level 1</li>
+        <li>List level 1
+            <ul>
+                <li>List level 2 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                <li>List level 2
+                    <ol>
+                        <li>List level 3 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                        <li>List level 3</li>
+                    </ol>
+                </li>
+                <li>UnList level 2</li>
+            </ul>
+        </li>
+    </ol>
 
 	<h2>Mix unordered and ordered list</h2>
-	{{> mix-unordered-and-ordered-list-richtext }}
+    <ul>
+        <li>List level 1</li>
+        <li>List level 1
+            <ol>
+                <li>List level 2 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                <li>List level 2
+                    <ol>
+                        <li>List level 3 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                        <li>List level 3</li>
+                    </ol>
+                </li>
+                <li>List level 2</li>
+            </ol>
+        </li>
+        <li>List level 1</li>
+        <li>List level 1
+            <ul>
+                <li>List level 2 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                <li>List level 2
+                    <ol>
+                        <li>List level 3 - {{#with rb_richtext.default}}{{this}}{{/with}}</li>
+                        <li>List level 3</li>
+                    </ol>
+                </li>
+                <li>List level 2</li>
+            </ul>
+        </li>
+    </ul>
 
 	<h2>Image full</h2>
-	{{> image-full-richtext }}
+    <figure class="richtext-mediabox use-size-100">
+        <img src="http://lorempixel.com/800/600/" alt="Dummy text" />
+        <figcaption>
+            This is a figcaption and and thus a description of the image
+        </figcaption>
+    </figure>
 
-	<h2>Align image Left</h2>
-	{{> align-image-left-richtext }}
 
-	<h2>Align Image Right</h2>
-	{{> align-image-right-richtext }}
+    <h2>Align image Left</h2>
+    <div>
+        <figure class="richtext-mediabox is-floated-left use-size-55">
+            <img src="http://lorempixel.com/800/600/" alt="Dummy text" />
+            <figcaption>
+                This is a figcaption and and thus a description of the image
+                <span class="richtext-copyright">Copyright</span>
+            </figcaption>
+        </figure>
+        {{#with rb_richtext.default}}
+            <p>{{this}}{{this}}</p>
+        {{/with}}
 
-	<h2>Diffenrent Styling</h2>
-	{{> different-stylings-richtext }}
+        {{#with rb_richtext.default}}
+            <p>{{this}}{{this}}</p>
+        {{/with}}
+    </div>
 
-	<h2>Text align Left (default)</h2>
-	{{> paragraph-richtext }}
 
-	<h2>Text align right</h2>
-	{{> paragraph-align-right-richtext }}
+    <h2>Align Image Right</h2>
+    <div>
+        <figure class="richtext-mediabox is-floated-right use-size-55">
+            <img src="http://lorempixel.com/800/600/" alt="Dummy text" />
+            <figcaption>
+                This is a figcaption and and thus a description of the image
+            </figcaption>
+        </figure>
 
-	<h2>Text align center</h2>
-	{{> paragraph-align-center-richtext }}
+        {{#with rb_richtext.default}}
+            <p>{{this}}{{this}}</p>
+        {{/with}}
 
-	<h2>Text align justify</h2>
-	{{> paragraph-align-justify-richtext }}
+        {{#with rb_richtext.default}}
+            <p>{{this}}{{this}}</p>
+        {{/with}}
+    </div>
+
 
 	<h2>Blockquote</h2>
-	{{> blockquote-richtext }}
+    <blockquote>
+        <p>Blockquote: 30% aller Patienten Lorem ipsum dolor sit amat quantum de salem.</p>
+        <cite>Your Name</cite>
+    </blockquote>
 
 	<h2>Table</h2>
-	{{> table-4col-richtext }}
+    <table>
+        <thead>
+        <tr>
+            <th><strong>Title 1</strong></th>
+            <th><strong>Title 2</strong></th>
+            <th><strong>Title 3</strong></th>
+            <th><strong>Title 4</strong></th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <td>Footer of table</td>
+        </tr>
+        </tfoot>
+        <tbody>
+        <tr>
+            <td><a href="#">Ipsum dolor amet,</a> consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td><span class="underline">Ipsum dolor amet</span>, consetetu sadipsci elitr, sed diam</td>
+        </tr>
+        <tr>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+        </tr>
+        <tr>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+        </tr>
+        </tbody>
+    </table>
+
 </div>
