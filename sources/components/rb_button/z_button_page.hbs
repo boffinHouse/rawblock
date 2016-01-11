@@ -5,104 +5,177 @@ layout: default_tpl.hbs
 
 <section class="page-section">
     <div class="page-section-inner">
-        <div class="use-column-group use-gutters">
-            <div class="use-size-100 use-gutter-vertical-destroy">
-                <div class="rb-richtext">
+
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+                <div class="rb-docu">
+
+
 {{#markdown}}
 #rb-button
-Buttons can be created with several markup elements, but `<button>`
-and `<a>` are the most deserved.
+<p class="docu-intro">Buttons can be created by adding the component class `.rb-button` to a `<button>` or `<a>` element. </p>
+
 - If you want to link to another page or place within a page, use the `<a>` element. Mainly JavaScript is not necessary.
 - If you want to perform an action to carry out something, use the `<button>` element. JavaScript is mainly necssary
+{{/markdown}}
 
 
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
+                        <div class="use-column-group docu-gutters">
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'title: "Home ", link:"#"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'title: "Start"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Markup Example</h3>
+
+{{#markdown}}
     <!-- Anchor (link) -->
-    <a href="index.html" class="rb-button is-primary">Home</a>
+    <a href="index.html" class="rb-button">Home</a>
 
     <!-- Button (action) -->
-    <button type="button" class="rb-button is-error">Start</button>
+    <button type="button" class="rb-button">Start</button>
 {{/markdown}}
-                </div>
-            </div>
-            <div class="use-size-15">
-                {{#mergeJSON rb_button 'title: "Home ", link:"#"'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-            <div class="use-size-15">
-                {{#mergeJSON rb_button 'title: "Start"'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-        </div>
 
-        <div class="use-column-group use-gutters">
-            <div class="use-size-100 use-gutter-vertical-destroy">
-                <div class="rb-richtext">
+                    </div>
+
+                    <hr>
 {{#markdown}}
-##CSS Classes
-| Class name | Description
-| ------------- |-------------|
-| `.rb-button` | Button component class (required) |
-| `.is-primary`<br>`.is-secondary`<br> `.is-success`<br> `.is-error`<br>`.is-warning`<br>| Button color modifiers  |
-| `.is-stretched`| Additional class take up 100% of the width of their container.
-
 ##Color modifier classes
 These classes gives the buttons additional meaning.
 {{/markdown}}
-                </div>
-            </div>
-            <div class="use-size-20">
-                {{#mergeJSON rb_button 'type: "is-primary", title: "Primary"'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-            <div class="use-size-20">
-                {{#mergeJSON rb_button 'type: "is-secondary", title: "Secondary "'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-            <div class="use-size-20">
-                {{#mergeJSON rb_button 'type: "is-success", title: "Success"'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-            <div class="use-size-20">
-                {{#mergeJSON rb_button 'type: "is-error", title: "Error"'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-            <div class="use-size-20">
-                {{#mergeJSON rb_button 'type: "is-warning", title: "Warning"'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-        </div>
-        <div class="use-column-group use-gutters">
-            <div class="use-size-100">
-                <div class="rb-richtext">
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">CSS Classes</h3>
+
+{{#markdown}}
+| Modifier class | Description
+| ------------- |-------------|
+| `.is-primary` | Indicates primary action  |
+| `.is-secondary`| Indicates secondary action  |
+|`.is-success`| Indicates succesfull or positive action  |
+| `.is-danger` | Indicates dangerous or negative action  |
+| `.is-warning` | Indicates warning or informative action  |
+| `.is-disabled`| Additional class thats indicate action is disabled. |
+{{/markdown}}
+
+
+                    </div>
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
+                        <div class="use-column-group docu-gutters">
+                            <h4 class="docu-demo-title">Anchor button</h4>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-primary", title: "Primary", link:"#"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-secondary", title: "Secondary", link:"#"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-success", title: "Success", link:"#"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-danger", title: "Danger", link:"#"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-warning", title: "Warning", link:"#"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                        </div>
+                        <div class="use-column-group docu-gutters">
+                            <h4 class="docu-demo-title">Action button</h4>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-primary", title: "Primary"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-secondary", title: "Secondary "'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-success", title: "Success"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-danger", title: "Danger"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'type: "is-warning", title: "Warning"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                        </div>
+                        <div class="use-column-group docu-gutters">
+                            <h4 class="docu-demo-title">Disabled</h4>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'title: "Disabled anchor", disabled: true, link:"#"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-auto">
+                                {{#mergeJSON rb_button 'title: "Disabled button", disabled: true'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
 {{#markdown}}
 ##Additional modifier classes
 These classes changes the shape of a button.
-
-    <!-- Anchor (link) -->
-    <a href="index.html" class="rb-button is-primary">Home</a>
-
-    <!-- Button (action) -->
-    <button type="button" class="rb-button is-error">Cancel</button>
 {{/markdown}}
-                </div>
-            </div>
-            <div class="use-size-50">
-                {{#mergeJSON rb_button 'type: "is-secondary is-stretched", title: "Secondary "'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
-            </div>
-            <div class="use-size-50">
-                {{#mergeJSON rb_button 'type: "is-primary is-stretched", title: "Primary"'}}
-                    {{> rb_button }}
-                {{/mergeJSON}}
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">CSS Classes</h3>
+
+{{#markdown}}
+| Modifier class | Description
+| ------------- |-------------|
+| `.is-stretched`| Additional class take up 100% of the width of their container.
+{{/markdown}}
+
+                    </div>
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">CSS Classes</h3>
+                        <div class="use-column-group docu-gutters">
+                            <div class="use-size-50">
+                                {{#mergeJSON rb_button 'type: "is-primary is-stretched", title: "Primary"'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                            <div class="use-size-50">
+                                {{#mergeJSON rb_button 'type: "is-secondary is-stretched", title: "Secondary "'}}
+                                    {{> rb_button }}
+                                {{/mergeJSON}}
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end rb-docu -->
             </div>
         </div>
+
     </div>
 </section>
