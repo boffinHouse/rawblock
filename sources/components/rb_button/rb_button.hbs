@@ -5,5 +5,5 @@ component: rb_button
 {{#if link }}
     <a class="rb-button {{type}} {{#if disabled}}is-disabled{{/if}}" href="{{ link }}" {{#if disabled}}aria-disabled="true" tabindex="-1"{{/if}}>{{ title }}</a>
 {{else }}
-    <button class="rb-button {{type}} {{#if disabled}}is-disabled{{/if}}" {{#isnt submit true}}type="button"{{/isnt}} {{#if disabled}}disabled="true"{{/if}}>{{ title }}</button>
+    <button class="rb-button {{type}} {{#if disabled}}is-disabled{{/if}}" {{#isnt submit true}}type="button"{{/isnt}} {{#if disabled}}disabled="disabled"{{/if}}>{{ title }}</button>
 {{/if}}

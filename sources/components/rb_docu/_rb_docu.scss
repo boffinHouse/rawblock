@@ -218,14 +218,16 @@ $docu-example-border: 1px solid #f1f1f1;
         }
 
         &example-title {
-            margin: 0 0 -6px 25px;
+            position: relative;
+            z-index: 2;
+            margin: 0 0 -6px 20px;
             font-size: rb-em-calc(30);
             color: #dbdbdb;
         }
 
         &demo-title {
-            width: 100%;
             margin-bottom: 10px;
+            width: 100%;
             color: #555;
         }
 

@@ -55,10 +55,10 @@ layout: default_tpl.hbs
 These classes gives the buttons additional meaning.
 {{/markdown}}
                     <div class="docu-example">
-                        <h3 class="docu-example-title">CSS Classes</h3>
+                        <h3 class="docu-example-title">Modifier Classes</h3>
 
 {{#markdown}}
-| Modifier class | Description
+| Class name | Description
 | ------------- |-------------|
 | `.is-primary` | Indicates primary action  |
 | `.is-secondary`| Indicates secondary action  |
@@ -73,7 +73,7 @@ These classes gives the buttons additional meaning.
                     <div class="docu-example is-demo">
                         <h3 class="docu-example-title">Demo</h3>
                         <div class="use-column-group docu-gutters">
-                            <h4 class="docu-demo-title">Anchor button</h4>
+                            <h4 class="docu-demo-title">Anchor button (Link)</h4>
                             <div class="use-size-auto">
                                 {{#mergeJSON rb_button 'type: "is-primary", title: "Primary", link:"#"'}}
                                     {{> rb_button }}
@@ -143,23 +143,50 @@ These classes gives the buttons additional meaning.
                         </div>
                     </div>
 
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Markup Example</h3>
+
+{{#markdown}}
+    <!-- Anchor (link) -->
+    <a href="index.html" class="rb-button is-primary">
+        Primary Anchor Button
+    </a>
+
+    <!-- Disabled Anchor (link) -->
+    <a href="index.html" class="rb-button is-primary" aria-disabled="true" tabindex="-1">
+        Disabled Anchor
+    </a>
+
+    <!-- Button (action) -->
+    <button type="button" class="rb-button is-primary">
+        Primary Action Button
+    </button>
+
+    <!-- Disable Button (action) -->
+    <button type="button" class="rb-button is-primary is-disabled" disabled="disabled">
+        Disabled Button
+    </button>
+{{/markdown}}
+
+                    </div>
+
                     <hr>
 {{#markdown}}
-##Additional modifier classes
+##Additional classes
 These classes changes the shape of a button.
 {{/markdown}}
                     <div class="docu-example">
-                        <h3 class="docu-example-title">CSS Classes</h3>
+                        <h3 class="docu-example-title">Modifier Classes</h3>
 
 {{#markdown}}
-| Modifier class | Description
+| Class name | Description
 | ------------- |-------------|
-| `.is-stretched`| Additional class take up 100% of the width of their container.
+| `.is-stretched`| Additional class take up 100% of the width of their parent container.
 {{/markdown}}
 
                     </div>
                     <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">CSS Classes</h3>
+                        <h3 class="docu-example-title">Demo</h3>
                         <div class="use-column-group docu-gutters">
                             <div class="use-size-50">
                                 {{#mergeJSON rb_button 'type: "is-primary is-stretched", title: "Primary"'}}
