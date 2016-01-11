@@ -721,6 +721,7 @@
                     },
                     end: function (draggy) {
                         if (!draggy.movedPos.x) {
+                            that.selectNearest();
                             return;
                         }
                         var dir = draggy.lastPos.x - draggy.velPos.x;
@@ -837,6 +838,10 @@
                 }
 
                 this._calculateCellLayout();
+
+                this._calculatePages();
+
+                this._writeLayout();
             },
             _calculateCellLayout: function () {
                 var that = this;
@@ -861,9 +866,6 @@
 
                 this.maxWrapRight = (lastWidth - this.viewportWidth) * -1;
 
-                this._calculatePages();
-
-                this._writeLayout();
             },
             _writeLayout: function () {
                 var wasPos = this._pos;
@@ -936,7 +938,7 @@
                 for (i = 0, len = this.cellData.length - 1; i < len; i++) {
                     roundingTolerance = (i * 0.5) + 0.5;
                     cellData = this.cellData[i];
-                    if (this.cellData[i + 1].l >= nextPageLeft + roundingTolerance) {
+                    if (!curPage || this.cellData[i + 1].l >= nextPageLeft + roundingTolerance) {
 
                         if (!this.options.centerMode && curPage && overScrollPos - roundingTolerance < curPage.l) {
                             overkillLength++;

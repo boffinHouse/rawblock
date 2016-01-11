@@ -470,6 +470,12 @@
             }
             return this.elements.indexOf(elem);
         },
+        add: function(elem){
+            if(this.elements && this.elements.indexOf(elem) == -1){
+                this.elements.push(elem);
+            }
+            return this;
+        }
     });
 
     [['find', 'querySelectorAll', true], ['children', 'children']].forEach(function (action, test) {
