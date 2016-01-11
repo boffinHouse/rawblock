@@ -6,10 +6,90 @@ layout: default_tpl.hbs
     <div class="page-section-inner">
         <div class="use-column-group">
             <div class="use-size-100">
+                <article class="rb-richtext">
+                    <h1>rb-richtext</h1>
+                    <p>Creates styling for formatted text that mainly has no additonal style classes.
+Like markup created by a plain text/wysiwyg editor.</p>
+
+{{#markdown}}
+    <div class="rb-richtext">
+        ...
+    </div>
+{{/markdown}}
+                    <h3>Parapgraphs</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Modifier classes</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>.is-align-right</code></td>
+                            <td>Text is aligned right</td>
+                        </tr>
+                        <tr>
+                            <td><code>.is-align-center</code></td>
+                            <td>Text is aligned center.</td>
+                        </tr>
+                        <tr>
+                            <td><code>.is-align-justify</code></td>
+                            <td>Text is aligned justify</td>
+                        </tr>
+                        </tbody>
+                    </table>
+{{#markdown}}
+    <p class="is-align-right">Paragraph text here...</p>
+    <p class="is-align-center">Paragraph text here...</p>
+    <p class="is-align-justify">Paragraph text here...</p>
+{{/markdown}}
+                    <h3>Text align Left (default)</h3>
+                    {{#with rb_richtext.default}}
+                        <p>{{this}}</p>
+                    {{/with}}
+
+                    <h3>Text align right</h3>
+                    {{#with rb_richtext.default}}
+                        <p class="is-align-right">{{this}}</p>
+                    {{/with}}
+
+                    <h3>Text align center</h3>
+                    {{#with rb_richtext.default}}
+                        <p class="is-align-center">{{this}}</p>
+                    {{/with}}
+
+                    <h3>Text align justify</h3>
+                    {{#with rb_richtext.default}}
+                        <p class="is-align-justify">{{this}}</p>
+                    {{/with}}
+
+                    <hr>
+
+                    <h2>Headings</h2>
+{{#markdown}}
+    <h1>This is heading h1</h1>
+    <h2>This is heading h2</h2>
+    <h3>This is heading h3</h3>
+    <h4>This is heading h4</h4>
+    <h5>This is heading h5</h5>
+    <h6>This is heading h6</h6>
+{{/markdown}}
+                    <h1>This is heading h1</h1>
+                    <h2>This is heading h2</h2>
+                    <h3>This is heading h3</h3>
+                    <h4>This is heading h4</h4>
+                    <h5>This is heading h5</h5>
+                    <h6>This is heading h6</h6>
+
+                    <hr>
+
+                    <h2>Lists</h2>
+
+                </article>
+
 
             </div>
         </div>
-
-        {{> rb_richtext }}
     </div>
 </section>
