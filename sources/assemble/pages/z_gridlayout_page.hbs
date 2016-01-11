@@ -1,0 +1,62 @@
+---
+title: Gridlayout page
+layout: default_tpl.hbs
+---
+<div class="page-section">
+    <div class="page-section-inner">
+
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+                <div class="rb-docu">
+{{#markdown}}
+#Layout System
+<p class="docu-intro">
+    RawBlock provides a layout system that is flexible, responsive and uses a human readable syntax.
+    The layout classes are defined with `.use-*` prefix and can be used on all markup elements.
+</p>
+##The Grid
+
+The grid is a fully responsive, fluid and nestable grid layout. It uses an other approach then many other frameworks by not using a 12 columns or 16 columns grid, but **percentage** as base units.
+
+Inside file `_rb_layout_config.scss` in directory `sources/sass/variables` you can find the variable `$breakpointConfig`
+where you can declare your breakpoints and define the specific property. The property is also `breakpoint-class`, which will be suffixed to the `use-size-%` modifier.
+
+The default and  **required**  property is `all`. This property defines the layout styles for all screensizes.
+The other properties can be changed or complemented to your own requirement.
+{{/markdown}}
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Code Example</h3>
+{{#markdown}}
+    $breakpointConfigs: (
+        all: (
+            gutter: (
+                vertical: 40px,
+                horizontal: 40px
+            ),
+            flex-order-amount: 5
+        ),
+        l: (
+            media:'(min-width: 1240px)',
+            ),
+        m: (
+            media:'(min-width: 569px) and (max-width: 1239px)',
+            flex-order-amount: 2
+        ),
+        s: (
+            media: '(max-width: 568px)',
+            gutter: (
+                vertical: 20px,
+                horizontal: 20px
+            )
+        )
+    );
+{{/markdown}}
+                    </div>
+
+
+                </div><!-- end rb-docu -->
+            </div>
+        </div>
+    </div>
+</div>
+
