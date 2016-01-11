@@ -1,84 +1,123 @@
 
 html {
+
+    .rb-tabs {
+        @at-root .tabs- {
+            @include rb-tabs-common();
+        }
+
+        .tabs-panel {
+            animation-name: none;
+        }
+    }
+
+    &[data-anim-in="fadeIn"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-fadeIn;
+        }
+    }
+
+    &[data-anim-out="fadeOut"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-fadeOut;
+        }
+    }
+
     &[data-anim-in="slideLeftIn"] {
+        .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
             @include rb-fx-slideLeftIn;
         }
     }
 
     &[data-anim-out="slideLeftOut"] {
+        .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-slideLeftOut;
         }
     }
 
     &[data-anim-in="slideRightIn"] {
+        .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
             @include rb-fx-slideRightIn;
         }
     }
 
     &[data-anim-out="slideRightOut"] {
+        .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-slideRightOut;
         }
     }
 
     &[data-anim-in="slideTopIn"] {
+        .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
             @include rb-fx-slideTopIn;
         }
     }
 
     &[data-anim-out="slideTopOut"] {
+        .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-slideTopOut;
         }
     }
 
     &[data-anim-in="slideBottomIn"] {
+        .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
             @include rb-fx-slideBottomIn;
         }
     }
 
     &[data-anim-out="slideBottomOut"] {
+        .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-slideBottomOut;
         }
     }
 
     &[data-anim-in="rotateIn"] {
+        .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
             @include rb-fx-rotateIn;
         }
     }
 
     &[data-anim-out="rotateOut"] {
+        .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-rotateOut;
         }
     }
 
     &[data-anim-in="flip"] {
+        .is-fx .tabs-panel.is-open,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-flip;
         }
     }
 
     &[data-anim-out="flip"] {
+        .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-flip;
         }
     }
 
     &[data-anim-in="flipInX"] {
+        .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
             @include rb-fx-flipInX;
         }
     }
 
     &[data-anim-out="flipOutX"] {
+        .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
             @include rb-fx-flipOutX;
         }

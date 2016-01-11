@@ -8,6 +8,7 @@ layout: default_tpl.hbs
             <div>
                 <select name="anim-in">
                     <option value="">none</option>
+                    <option>fadeIn</option>
                     <option>slideLeftIn</option>
                     <option>slideRightIn</option>
                     <option>slideTopIn</option>
@@ -20,6 +21,7 @@ layout: default_tpl.hbs
             <div>
                 <select name="anim-out">
                     <option value="">none</option>
+                    <option>fadeOut</option>
                     <option>slideLeftOut</option>
                     <option>slideRightOut</option>
                     <option>slideTopOut</option>
@@ -44,5 +46,7 @@ layout: default_tpl.hbs
         </script>
         <button type="button" data-module="button" class="js-click" data-target="$(.rb-dialog)">open dialog</button>
         {{> rb_dialog }}
+
+        {{> rb_tabs}}
     </div>
 </section>
