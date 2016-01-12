@@ -25,7 +25,6 @@
 				@media #{$mq}{
 					&::after {
 						content: '#{$name}';
-						//display: none !important;
 					}
 				}
 			}

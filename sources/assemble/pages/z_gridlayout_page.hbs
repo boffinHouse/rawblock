@@ -12,38 +12,40 @@ layout: default_tpl.hbs
 #Layout System
 <p class="docu-intro">
     RawBlock provides a layout system that is responsive, fluid and uses a human readable syntax.
-    Layout classes are defined with the `.use-*` prefix.
+    Layout classes are recognizable by the prefix `.use-*` for example `.use-size-50` or `.use-gutters`.
 </p>
-##The Grid
-RawBlock grid is not build a 12 columns or 16 columns grid, but **percentage** as base units.
 {{/markdown}}
 
 {{#markdown}}
-##Layout breakpoint config & classes
+##Layout breakpoints
+RawBlock uses breakpoints who only come to effect at certain screen sizes.
+These names can be created/changed in `$breakpointConfig` and all have an media property where you can set your value.
+An exception is the `all` name. This name defines the layout styles for all screen sizes and therefore has no media property. This name is **required** and
+may not be changed.
 
-Inside file `_rb_layout_config.scss` in directory `sources/sass/variables` you can find the variable `$breakpointConfig`
-where you can declare your breakpoints and define the specific property. The property is also `breakpoint-class`, which will be suffixed to the `use-size-%` modifier.
 
-The default and  **required**  property is `all`. This property defines the layout styles for all screensizes.
-The other properties can be changed or complemented to your own requirement.
 {{/markdown}}
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Default Breakpoints</h3>
+ {{#markdown}}
+| breakpoint name | Description
+| ------------- |-------------|
+| `all`  | Affects all screen sizes. No suffix is needed. ex. `.use-size-50` (**required**)|
+|`l`| Affects screen sizes above 1240px. ex. `.use-size-50-l`  |
+| `m` | Affects screen sizes between 569px and 1239px. ex. `.use-size-50-m` |
+| `s`| Affects screen sizes up to 568px. ex `.use-size-50-s`  |
+
+Next to the property media there are 3 more options All breakpoint name has additional properties,
+ {{/markdown}}
+                    </div>
+
                     <div class="docu-example">
                         <h3 class="docu-example-title">Code Example</h3>
 {{#markdown}}
     $breakpointConfigs: (
-        all: (
-            gutter: (
-                vertical: 40px,
-                horizontal: 40px
-            ),
-            flex-order-amount: 5
-        ),
-        l: (
-            media:'(min-width: 1240px)',
-            ),
-        m: (
-            media:'(min-width: 569px) and (max-width: 1239px)',
-            flex-order-amount: 2
+        all: (),
+        l: (media:'(min-width: 1240px)'),
+        m: (media:'(min-width: 569px) and (max-width: 1239px)'
         ),
         s: (
             media: '(max-width: 568px)',
@@ -55,6 +57,12 @@ The other properties can be changed or complemented to your own requirement.
     );
 {{/markdown}}
                     </div>
+                    <hr>
+{{#markdown}}
+###The Grid (sizes)
+RawBlock follows a flexible approach by using **percentage** as column size. The size
+
+{{/markdown}}
 
 
                 </div><!-- end rb-docu -->

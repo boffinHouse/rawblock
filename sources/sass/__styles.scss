@@ -14,15 +14,6 @@ Main Stylesheet
 @import "basics/normalize";
 @import "basics/rb_basics";
 
-//Layout Grid
-@include rb-generate-layout-styles($breakpointConfigs);
-
-@include rb-export-globaljs(
-		(
-			mqs: $breakpointConfigs,
-		)
-);
-
 // All Components
 @import "../components/**/*.scss";
 

@@ -143,7 +143,7 @@
 		}
 
 		//Destroy gutter
-		[class*=use-size-].use-gutter-vertical-destroy {
+		[class*=use-size-].use-no-gutter-vertical {
 			margin-bottom: 0;
 		}
 		//[class*=use-size-].use-gutter-horizontal-destroy {
@@ -163,7 +163,6 @@
 
 	@if $className == 'all' {
 		$colomnType: '';
-
 	} @else {
 		$colomnType: '-' + $className;
 	}
