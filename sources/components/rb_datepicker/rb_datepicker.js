@@ -16,14 +16,11 @@
              */
             defaults: {
                 debug: true,
-                values: null,
+                value: null,
                 multiple: false,
                 range: false,
                 max: NaN,
                 min: NaN,
-                startView: 0,
-                maxView: 3,
-                minView: 0,
             },
             /**
              * @constructs
@@ -49,8 +46,7 @@
 
                 this.formats = window.rb.i18n.formats.de;
 
-                this.renderWrapper = rb.rAF(this.renderWrapper, {throttle: true});
-                this.renderMonth = rb.rAF(this.renderMonth, {throttle: true});
+                rb.rAFs(this, {throttle: true}, 'renderWrapper', 'renderMonth');
 
                 this.renderWrapper();
                 this.renderMonth(new Date());
@@ -89,12 +85,6 @@
 
             },
             set value(value) {
-
-            },
-            deselectValue: function (value) {
-
-            },
-            selectValue: function () {
 
             },
             setOption: function (name, value) {

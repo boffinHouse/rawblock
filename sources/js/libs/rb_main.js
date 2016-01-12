@@ -2245,7 +2245,7 @@ if (!window.rb) {
     var $ = rb.$;
     var componentExpando = life.componentExpando;
     var regData = /^data-/;
-    var regWhite = /\s+/g;
+    var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
     var regName = /\{name}/g;
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
 
