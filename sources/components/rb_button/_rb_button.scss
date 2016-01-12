@@ -27,8 +27,8 @@
     background: #aaa;
     transition: background 400ms ease-in;
 
-    &:hover,
-    &:focus {
+    &:hover:not(.is-disabled),
+    &:focus:not(.is-disabled) {
         background: #888;
     }
 
@@ -41,8 +41,8 @@
     &.is-primary {
         background: #0000ff;
 
-        &:hover,
-        &:focus {
+        &:hover:not(.is-disabled),
+        &:focus:not(.is-disabled) {
             background: #00007e;
         }
     }
@@ -50,8 +50,8 @@
     &.is-secondary {
         background: #00aaff;
 
-        &:hover,
-        &:focus {
+        &:hover:not(.is-disabled),
+        &:focus:not(.is-disabled) {
             background: #007fba;
         }
     }
@@ -59,17 +59,17 @@
     &.is-success {
         background: #22bd5e;
 
-        &:hover,
-        &:focus {
+        &:hover:not(.is-disabled),
+        &:focus:not(.is-disabled)  {
             background: #1b8643;
         }
     }
 
-    &.is-error {
+    &.is-danger {
         background: #f01;
 
-        &:hover,
-        &:focus {
+        &:hover:not(.is-disabled),
+        &:focus:not(.is-disabled) {
             background: #bb0011;
         }
     }
@@ -77,8 +77,8 @@
     &.is-warning {
         background: #faa732;
 
-        &:hover,
-        &:focus {
+        &:hover:not(.is-disabled),
+        &:focus:not(.is-disabled) {
             background: #b37827;
         }
     }
@@ -87,12 +87,7 @@
     &.is-disabled {
         cursor: not-allowed;
         opacity: 0.3;
-
-        &:hover,
-        &:focus {
-            opacity: 0.3;
-        }
-
+        outline: none;
     }
 
 }

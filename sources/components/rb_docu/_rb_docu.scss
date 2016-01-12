@@ -1,27 +1,23 @@
-/*********************************************************
-
-rb-richtext
-----------------------------------------------------------
-
-**********************************************************/
-.rb-richtext {
+$docu-example-bg-color: #f9f9f9;
+$docu-example-border: 1px solid #f1f1f1;
+.rb-docu {
     //Global Styles
     width: 100%;
 
     //Header
-    h1 {
-        margin: rb-rem-calc(0 0 25);
-        font: 600 55px/64px sans-serif;
+    > h1 {
+        margin: rb-rem-calc(0 0 20);
+        font: 600 rb-em-calc(44)/rb-rem-calc(44) sans-serif;
         color: #666;
     }
 
-    h2 {
+    > h2 {
         margin: rb-rem-calc(0 0 10);
         font: 400 29px/32px sans-serif;
         color: #666;
     }
 
-    h3 {
+    > h3 {
         margin: rb-rem-calc(0 0 10);
         font: 400 24px/39px sans-serif;
         color: #666;
@@ -29,8 +25,8 @@ rb-richtext
 
     //Paragraph
     p {
-        margin: rb-rem-calc(0 0 30);
-        font: 400 18px/24px sans-serif;
+        margin: rb-rem-calc(0 0 20);
+        font: 400 16px/20px sans-serif;
         color: #666;
     }
 
@@ -51,7 +47,7 @@ rb-richtext
     > ol,
     > ul {
         margin: rb-rem-calc(0 0 30);
-        font: 400 18px/24px sans-serif;
+        font: 400 16px/20px sans-serif;
         color: #666;
     }
 
@@ -96,12 +92,15 @@ rb-richtext
     }
 
     //Different Stylings
-    a {
-        color: #1a90bb;
+    > p,
+    > li {
+        > a {
+            color: #1a90bb;
 
-        &:hover,
-        &:focus {
-            text-decoration: underline;
+            &:hover,
+            &:focus {
+                text-decoration: underline;
+            }
         }
     }
 
@@ -120,17 +119,20 @@ rb-richtext
     }
 
     code {
-        border: 1px solid #c1c1c1;
+        border: $docu-example-border;
         padding: 3px 7px;
         font-size: 14px;
+        font-weight: 400;
         color: #008cd5;
-        background: #e8e8e8;
+        background: $docu-example-bg-color;
     }
 
     pre {
-        border: 1px solid #c1c1c1;
+        margin: 0 0 20px;
+        border: $docu-example-border;
         padding: 12px 10px;
-        background: #e8e8e8;
+        background: $docu-example-bg-color;
+
         code {
             border: none;
             padding: 0;
@@ -143,90 +145,23 @@ rb-richtext
         margin-bottom: 20px;
     }
 
-    //Mediabox
-    .richtext-mediabox {
-        position: relative;
-        margin: 0 0 20px;
-
-        img {
-            width: 100%;
-        }
-
-        figcaption {
-            position: relative;
-            width: 100%;
-            padding: rb-rem-calc(10 0);
-            font: 400 14px/20px sans-serif;
-            color: #aaa;
-        }
-
-        .richtext-copyright {
-            position: relative;
-            margin-left: 5px;
-            padding-right: rb-rem-calc(20);
-            font-weight: 400;
-
-            &::before {
-                content:'- \00a9';
-                padding: 0 4px 0 2px;
-            }
-
-        }
-
-        &.is-floated-left {
-            float: left;
-            top: 6px;
-            margin: 0;
-            padding: 0 20px 20px 0;
-        }
-
-        &.is-floated-right {
-            float: right;
-            top: 6px;
-            margin: 0;
-            padding: 0 0 20px 20px;
-        }
-    }
-
-    //Blockquote
-    blockquote {
-        margin: rb-rem-calc(0 0 40);
-
-        p {
-            position: relative;
-            font: italic 600 42px/52px serif;
-        }
-
-        &::before {
-            content: '';
-            position: absolute;
-            left: -30px;
-            width: 100px;
-            height: 200px;
-            font-size: rb-rem-calc(60);
-        }
-
-        cite {
-            font-style: normal;
-            color: #666;
-        }
-    }
-
     //Table
     table {
         width: 100%;
         margin: rb-rem-calc(0 0 30);
+        border: $docu-example-border;
+        background: $docu-example-bg-color;
     }
 
     thead {
 
         tr {
-            border-bottom: 2px solid #666;
+            border-bottom: 1px solid #d6d6d6;
         }
 
         th {
-            padding: rb-rem-calc(5 20);
-            font-size: 16px;
+            padding: rb-rem-calc(10 20);
+            font-size: rb-em-calc(18);
             text-align: left;
             color: #666;
         }
@@ -235,7 +170,7 @@ rb-richtext
     tbody {
 
         tr {
-            border-bottom: 2px solid #666;
+            border-bottom: 1px solid #d6d6d6;
         }
 
         tr:nth-child(odd) {
@@ -243,7 +178,7 @@ rb-richtext
         }
 
         tr:nth-child(even) {
-            background: #fff;
+            //background: #fff;
         }
 
         td,
@@ -254,22 +189,52 @@ rb-richtext
         }
 
         td {
-            border-right: 2px solid #666;
             color: #666;
-
-            &:first-child {
-                border-left: 2px solid #666;
-            }
         }
     }
 
-    tfoot {
-        td,
-        th {
-            padding: rb-rem-calc(10 20);
-            font-size: 16px;
-            line-height: 24px;
-            color: #1a90bb;
+    .docu- {
+        &intro {
+            margin-bottom: rb-em-calc(25);
+            font-size: rb-em-calc(18);
+            font-weight: 600
         }
+
+        &example {
+            position: relative;
+            margin-bottom: rb-em-calc(40);
+
+            &.is-demo {
+                > div {
+                    border: $docu-example-border;
+                    padding: 20px 20px 10px;
+                    background: $docu-example-bg-color;
+
+                    &:nth-child(2n+1) {
+                        border-top: none;
+                    }
+                }
+            }
+        }
+
+        &example-title {
+            margin: 0 0 -6px 25px;
+            font-size: rb-em-calc(30);
+            color: #dbdbdb;
+        }
+
+        &demo-title {
+            width: 100%;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        &gutters {
+            > [class*=use-size-] {
+                padding-right: 10px;
+                margin-bottom: 10px;
+            }
+        }
+
     }
 }
