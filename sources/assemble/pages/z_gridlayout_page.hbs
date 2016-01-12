@@ -11,12 +11,15 @@ layout: default_tpl.hbs
 {{#markdown}}
 #Layout System
 <p class="docu-intro">
-    RawBlock provides a layout system that is flexible, responsive and uses a human readable syntax.
-    The layout classes are defined with `.use-*` prefix and can be used on all markup elements.
+    RawBlock provides a layout system that is responsive, fluid and uses a human readable syntax.
+    Layout classes are defined with the `.use-*` prefix.
 </p>
 ##The Grid
+RawBlock grid is not build a 12 columns or 16 columns grid, but **percentage** as base units.
+{{/markdown}}
 
-The grid is a fully responsive, fluid and nestable grid layout. It uses an other approach then many other frameworks by not using a 12 columns or 16 columns grid, but **percentage** as base units.
+{{#markdown}}
+##Layout breakpoint config & classes
 
 Inside file `_rb_layout_config.scss` in directory `sources/sass/variables` you can find the variable `$breakpointConfig`
 where you can declare your breakpoints and define the specific property. The property is also `breakpoint-class`, which will be suffixed to the `use-size-%` modifier.
