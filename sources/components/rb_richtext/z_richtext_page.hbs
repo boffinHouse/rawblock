@@ -6,63 +6,73 @@ layout: default_tpl.hbs
     <div class="page-section-inner">
         <div class="use-column-group">
             <div class="use-size-100">
-                <article class="rb-richtext">
-                    <h1>rb-richtext</h1>
-                    <p>Creates styling for formatted text that mainly has no additonal style classes.
-Like markup created by a plain text/wysiwyg editor.</p>
-
+                <article class="rb-docu">
 {{#markdown}}
-    <div class="rb-richtext">
+#rb-richtext
+<p class=docu-intro>Richtext creates styling for formatted text that mainly has no additonal style classes.
+Like markup created by a text/wysiwyg editor. </p>
+
+##Usage
+To create a richtext component, add the class `.rb-richtext` to a container element and add your markup inside it.
+{{/markdown}}
+
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Code</h3>
+{{#markdown}}
+    <article class="rb-richtext">
         ...
-    </div>
+    </article>
 {{/markdown}}
-                    <h3>Parapgraphs</h3>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Modifier classes</th>
-                            <th>Description</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><code>.is-align-right</code></td>
-                            <td>Text is aligned right</td>
-                        </tr>
-                        <tr>
-                            <td><code>.is-align-center</code></td>
-                            <td>Text is aligned center.</td>
-                        </tr>
-                        <tr>
-                            <td><code>.is-align-justify</code></td>
-                            <td>Text is aligned justify</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    </div>
+
 {{#markdown}}
-    <p class="is-align-right">Paragraph text here...</p>
-    <p class="is-align-center">Paragraph text here...</p>
-    <p class="is-align-justify">Paragraph text here...</p>
+##Text align
+Align text by adding align class to an element. Default value of text is left align.
 {{/markdown}}
-                    <h3>Text align Left (default)</h3>
-                    {{#with rb_richtext.default}}
-                        <p>{{this}}</p>
-                    {{/with}}
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Classes</h3>
+{{#markdown}}
+| Class name | Description
+| ------------- |-------------|
+| `.richtext-align-right`  |Text is aligned right|
+|`.richtext-align-center`| Text is aligned center.  |
+| `.richtext-align-justify` | Text is aligned justify |
+{{/markdown}}
+                        </div>
 
-                    <h3>Text align right</h3>
-                    {{#with rb_richtext.default}}
-                        <p class="is-align-right">{{this}}</p>
-                    {{/with}}
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
 
-                    <h3>Text align center</h3>
-                    {{#with rb_richtext.default}}
-                        <p class="is-align-center">{{this}}</p>
-                    {{/with}}
+                        <div class="rb-richtext">
+                            <h3>Text align Left (default)</h3>
+                            {{#with rb_richtext.default}}
+                                <p>{{this}}</p>
+                            {{/with}}
 
-                    <h3>Text align justify</h3>
-                    {{#with rb_richtext.default}}
-                        <p class="is-align-justify">{{this}}</p>
-                    {{/with}}
+                            <h3>Text align right</h3>
+                            {{#with rb_richtext.default}}
+                                <p class="richtext-align-right">{{this}}</p>
+                            {{/with}}
+
+                            <h3>Text align center</h3>
+                            {{#with rb_richtext.default}}
+                                <p class="richtext-align-center">{{this}}</p>
+                            {{/with}}
+
+                            <h3>Text align justify</h3>
+                            {{#with rb_richtext.default}}
+                                <p class="richtext-align-justify">{{this}}</p>
+                            {{/with}}
+                        </div>
+                    </div>
+                    <div class="docu-exampl">
+                        <h3 class="docu-example-title">Code</h3>
+{{#markdown}}
+    <p class="richtext-align-right">Paragraph text here...</p>
+    <p class="richtext-align-center">Paragraph text here...</p>
+    <p class="richtext-align-justify">Paragraph text here...</p>
+{{/markdown}}
+                    </div>
 
                     <hr>
 
