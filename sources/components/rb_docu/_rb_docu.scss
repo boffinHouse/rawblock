@@ -239,5 +239,15 @@ $docu-example-border: 1px solid #f1f1f1;
             }
         }
 
+        &column {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #aaa;
+            min-height: 150px;
+            color: #444;
+            background: #dbdbdb;
+        }
+
     }
 }

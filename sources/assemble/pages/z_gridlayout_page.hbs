@@ -20,7 +20,7 @@ layout: default_tpl.hbs
 ##Layout breakpoints
 RawBlock uses breakpoints who only come to effect at certain screen sizes.
 These names can be created/changed in `$breakpointConfig` and all have an media property where you can set your value.
-An exception is the `all` name. This name defines the layout styles for all screen sizes and therefore has no media property. This name is **required** and
+An exception is the `all`. This name defines the layout styles for all screen sizes and therefore has no media property. This name is **required** and
 may not be changed.
 
 
@@ -35,7 +35,15 @@ may not be changed.
 | `m` | Affects screen sizes between 569px and 1239px. ex. `.use-size-50-m` |
 | `s`| Affects screen sizes up to 568px. ex `.use-size-50-s`  |
 
-Next to the property media there are 3 more options All breakpoint name has additional properties,
+Next to the property media there are more properties you can set.
+
+<h3 class="docu-example-title">Breakpoint Options</h3>
+
+| property name | Description
+| ------------- |-------------|
+| `media`  | Set values media querie for breakpoint name  |
+|`gutter: horizontal / vertical`| Creates horizontal and vertical gutter on `.use-size-*` columns |
+
  {{/markdown}}
                     </div>
 
@@ -43,9 +51,21 @@ Next to the property media there are 3 more options All breakpoint name has addi
                         <h3 class="docu-example-title">Code Example</h3>
 {{#markdown}}
     $breakpointConfigs: (
-        all: (),
-        l: (media:'(min-width: 1240px)'),
-        m: (media:'(min-width: 569px) and (max-width: 1239px)'
+        all: (
+            gutter: (
+                vertical: 40px,
+                horizontal: 40px
+            )
+        ),
+        l: (
+            media:'(min-width: 1240px)'
+        ),
+        m: (
+            media:'(min-width: 569px) and (max-width: 1239px)',
+            gutter: (
+                vertical: 20px,
+                horizontal: 20px
+            )
         ),
         s: (
             media: '(max-width: 568px)',
@@ -60,10 +80,31 @@ Next to the property media there are 3 more options All breakpoint name has addi
                     <hr>
 {{#markdown}}
 ###The Grid (sizes)
-RawBlock follows a flexible approach by using **percentage** as column size. The size
-
+Rawblock uses 22 width units, who are named `.use-size-%`. Ranging from **5%** to **100%** with **5%** increments.
+Additional there are 3 extra classes: `.use-size-16` (16.6666%), `.use-size-33` (33.3333%) and `.use-size-66` (66.6666%).
 {{/markdown}}
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
 
+                        <div class="use-column-group">
+                            <div class="use-size-40 docu-column">40%</div>
+                            <div class="use-size-40 docu-column">40%</div>
+                            <div class="use-size-20 docu-column">20%</div>
+                        </div>
+                    </div>
+{{#markdown}}
+The `.use-size-*` classes only define the width of an element. If you want to create vertical columns you must wrap them inside an `use-column-group` element.
+{{/markdown}}
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Code</h3>
+    {{#markdown}}
+        <div class="use-column-group">
+            <div class="use-size-40">...</div>
+            <div class="use-size-40">...</div>
+            <div class="use-size-20">...</div>
+        </div>
+    {{/markdown}}
+                    </div>
 
                 </div><!-- end rb-docu -->
             </div>
