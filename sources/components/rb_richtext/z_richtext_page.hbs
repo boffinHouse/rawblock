@@ -24,6 +24,71 @@ To create a richtext component, add the class `.rb-richtext` to a container elem
     </article>
 {{/markdown}}
                     </div>
+{{#markdown}}
+##Headings
+To define headings use `<h1>` to `<h6>` elements.
+{{/markdown}}
+
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Example</h3>
+
+                        <div class="rb-richtext">
+{{#markdown}}
+#This is heading h1
+##This is heading h2
+###This is heading h3
+####This is heading h4
+#####This is heading h5
+######This is heading h6
+{{/markdown}}
+                        </div>
+                     </div>
+                    <hr>
+{{#markdown}}
+##Paragraphs
+To define paragraphs use `<p>` element.
+{{/markdown}}
+                <div class="docu-example is-demo">
+                    <h3 class="docu-example-title">Example</h3>
+
+                    <div class="rb-richtext">
+                        <p>This is a paragraph.  Paragraphs are usually represented in visual media by blocks of text that are  separated from adjacent blocks by vertical blank space or first-line indention</p>
+                        <p>This is a paragraph.  Paragraphs are usually represented in visual media by blocks of text that are  separated from adjacent blocks by vertical blank space or first-line indention</p>
+
+                    </div>
+                </div>
+                <hr>
+
+{{#markdown}}
+##Text level semantics
+The following shows some commonly used text-level semantics or inline text element and how to use them.
+{{/markdown}}
+                <div class="docu-example is-demo">
+                    <h3 class="docu-example-title">Text Elements</h3>
+                    <div class="rb-richtext">
+
+
+{{#markdown}}
+
+`<a>` element: Turns text into a => <a href="#">Link or anchor element</a>.
+
+`<em>` element: Emphasize text using the => <em>em element</em>.
+
+`<strong>` element: Gives text extra importance using the => <strong>strong element</strong>.
+
+`<code>` element: Define inline code snippets using the => <code>code element</code>.
+
+`<del>` element: Mark document changes as deleted using the => <del>code element</del>.
+
+`<ins>` element: Mark document changes as inserted text using the => <ins>code element</ins>.
+
+`<mark>` element: Highlicht text with no semantic meaning using the => <mark>mark element</mark>.
+
+`<q>` element: Define inline quotations using the => <q>q element inside <q>q</q> element</q>.
+{{/markdown}}
+                    </div>
+                </div>
+
 
 {{#markdown}}
 ##Text align
@@ -76,23 +141,6 @@ Align text by adding align class to an element. Default value of text is left al
 
                     <hr>
 
-                    <h2>Headings</h2>
-{{#markdown}}
-    <h1>This is heading h1</h1>
-    <h2>This is heading h2</h2>
-    <h3>This is heading h3</h3>
-    <h4>This is heading h4</h4>
-    <h5>This is heading h5</h5>
-    <h6>This is heading h6</h6>
-{{/markdown}}
-                    <h1>This is heading h1</h1>
-                    <h2>This is heading h2</h2>
-                    <h3>This is heading h3</h3>
-                    <h4>This is heading h4</h4>
-                    <h5>This is heading h5</h5>
-                    <h6>This is heading h6</h6>
-
-                    <hr>
 
                     <h2>Lists</h2>
 
