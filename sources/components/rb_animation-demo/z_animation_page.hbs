@@ -4,34 +4,52 @@ layout: default_tpl.hbs
 ---
 <section class="page-section">
     <div class="page-section-inner">
-        <form id="anim-config">
-            <div>
-                <select name="anim-in">
-                    <option value="">none</option>
-                    <option>fadeIn</option>
-                    <option>slideLeftIn</option>
-                    <option>slideRightIn</option>
-                    <option>slideTopIn</option>
-                    <option>slideBottomIn</option>
-                    <option>rotateIn</option>
-                    <option>flip</option>
-                    <option>flipInX</option>
-                </select>
+
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+                <article class="rb-docu">
+{{#markdown}}
+#Animations
+
+{{/markdown}}
+                    <form id="anim-config">
+                        <div>
+                            <select name="anim-in">
+                                <option value="">none</option>
+                                <option>fadeIn</option>
+                                <option>slideLeftIn</option>
+                                <option>slideRightIn</option>
+                                <option>slideTopIn</option>
+                                <option>slideBottomIn</option>
+                                <option>rotateIn</option>
+                                <option>flip</option>
+                                <option>flipInX</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select name="anim-out">
+                                <option value="">none</option>
+                                <option>fadeOut</option>
+                                <option>slideLeftOut</option>
+                                <option>slideRightOut</option>
+                                <option>slideTopOut</option>
+                                <option>slideBottomOut</option>
+                                <option>rotateOut</option>
+                                <option>flip</option>
+                                <option>flipOutX</option>
+                            </select>
+                        </div>
+                    </form>
+                    <button type="button" data-module="button" class="js-click" data-target="$(.rb-dialog)">open dialog</button>
+
+                    {{> rb_dialog }}
+
+                    {{> rb_tabs}}
+                </article><!-- end rb-docu -->
             </div>
-            <div>
-                <select name="anim-out">
-                    <option value="">none</option>
-                    <option>fadeOut</option>
-                    <option>slideLeftOut</option>
-                    <option>slideRightOut</option>
-                    <option>slideTopOut</option>
-                    <option>slideBottomOut</option>
-                    <option>rotateOut</option>
-                    <option>flip</option>
-                    <option>flipOutX</option>
-                </select>
-            </div>
-        </form>
+        </div>
+
+
         <script>
             document.querySelector('#anim-config').addEventListener('change', function(){
                 rb.$(this.elements).each(function(){
@@ -44,9 +62,6 @@ layout: default_tpl.hbs
                 });
             });
         </script>
-        <button type="button" data-module="button" class="js-click" data-target="$(.rb-dialog)">open dialog</button>
-        {{> rb_dialog }}
 
-        {{> rb_tabs}}
     </div>
 </section>

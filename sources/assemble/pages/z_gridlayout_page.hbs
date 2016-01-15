@@ -81,7 +81,7 @@ Next to the property media there are more properties you can set.
 {{#markdown}}
 ###The Grid (sizes)
 Rawblock uses 22 width units, who are named `.use-size-%`. Ranging from **5%** to **100%** with **5%** increments.
-Additional there are 3 extra classes: `.use-size-16` (16.6666%), `.use-size-33` (33.3333%) and `.use-size-66` (66.6666%).
+Additional there are 4 extra classes: `.use-size-16` (16.6666%), `.use-size-33` (33.3333%), `.use-size-66` (66.6666%) and `.use-size-auto` (Takes width content).
 
 The `.use-size-*` classes only define the width of an element. If you want to create vertical columns you can wrap them inside an `.use-column-group` element.
 
@@ -118,6 +118,8 @@ Best practice is to put the component always inside an `use-size-*` column. This
 Gutters are the space between layout columns. Gutters are set by adding the `use-gutters`
 on the parent element of `use-size-*` columns, usualy the `use-column-group`. If you only
 want horizontal gutters use `use-gutters-horizontal` and only vertical use `use-gutters-vertical`.
+
+Gutters are only applied on `use-size-*` direct children. Nested children are untouched.
 {{/markdown}}
                     <div class="docu-example">
                         <h3 class="docu-example-title">Classes</h3>

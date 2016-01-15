@@ -4,7 +4,20 @@ layout: default_tpl.hbs
 ---
 <section class="page-section">
     <div class="page-section-inner">
-        <button type="button" data-module="button" class="js-click" data-target="$(.rb-dialog)">open dialog</button>
-        {{> rb_dialog }}
+
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+                <article class="rb-docu">
+{{#markdown}}
+#Dialog
+{{/markdown}}
+                    <button type="button" data-module="button" class="js-click" data-target="$(.rb-dialog)">open dialog</button>
+                    {{> rb_dialog }}
+                </article><!-- end rb-docu -->
+            </div>
+        </div>
+
+
+
     </div>
 </section>

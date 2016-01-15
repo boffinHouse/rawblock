@@ -5,9 +5,21 @@ layout: default_tpl.hbs
 
 <section class="page-section">
     <div class="page-section-inner">
-        {{#with rb_accordion.default }}
-            {{> rb_accordion }}
-        {{/with}}
+
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+                <article class="rb-docu">
+{{#markdown}}
+#Accordion
+List of items, allowing each item to hide or reveal additional content by clicking the header/button
+{{/markdown}}
+                    {{#with rb_accordion.default }}
+                        {{> rb_accordion }}
+                    {{/with}}
+                </article><!-- end rb-docu -->
+            </div>
+         </div>
+
     </div>
 </section>
 
