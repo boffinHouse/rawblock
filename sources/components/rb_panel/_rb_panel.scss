@@ -15,7 +15,7 @@
 	transition: opacity 400ms, visibility 400ms;
 
 	&.is-open {
-		visibility: visible;
+		visibility: inherit;
 		overflow: visible;
 		height: auto;
 		opacity: 1;

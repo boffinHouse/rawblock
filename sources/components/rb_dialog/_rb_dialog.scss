@@ -41,11 +41,11 @@ $dialogJSCFG: (
 
             &.is-open {
                 display: block;
-                visibility: visible;
+                visibility: inherit;
                 opacity: 1;
 
                 .rb-dialog {
-                    visibility: visible;
+                    visibility: inherit;
                 }
             }
         }
