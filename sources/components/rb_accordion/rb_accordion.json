@@ -1,21 +1,30 @@
 {
   "default": {
-    "multiple": false,
+    "multiple": true,
     "toggle": false,
     "buttons": false,
     "items": [
       {
         "open": true,
-        "title": "Hello",
+        "title": "Heading 1",
         "content": [
-          "Hello everybody"
+          "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+          "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>"
         ]
       },
       {
         "id": "hello",
-        "title": "Hello",
+        "title": "Heading 2",
         "content": [
-          "Hello everybody"
+          "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>"
+        ]
+      },
+      {
+        "title": "Heading 3",
+        "content": [
+          "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+          "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+          "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>"
         ]
       }
 

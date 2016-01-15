@@ -8,23 +8,19 @@ layout: default_tpl.hbs
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
                 <div class="rb-docu">
-                    #Accordion
-{{#markdown}}
-<p class="docu-intro">
-    RawBlock provides a layout system that is responsive, fluid and uses a human readable syntax.
-    Layout classes are recognizable by the prefix `.use-*` for example `.use-size-50` or `.use-gutters`.
-</p>
-{{/markdown}}
+                    <h1 class="docu-title">{{ title }}</h1>
+                    <p class="docu-intro">
+                        RawBlock provides a layout system that is responsive, fluid and uses a human readable syntax.
+                        Layout classes are recognizable by the prefix `.use-*` for example `.use-size-50` or `.use-gutters`.
+                    </p>
+                    <h2>Layout breakpoints</h2>
+                    <p>
+                        RawBlock uses breakpoints who only come to effect at certain screen sizes.
+                        These names can be created/changed in `$breakpointConfig` and all have an media property where you can set your value.
+                        An exception is the `all`. This name defines the layout styles for all screen sizes and therefore has no media property. This name is **required** and
+                        may not be changed.
+                    </p>
 
-{{#markdown}}
-##Layout breakpoints
-RawBlock uses breakpoints who only come to effect at certain screen sizes.
-These names can be created/changed in `$breakpointConfig` and all have an media property where you can set your value.
-An exception is the `all`. This name defines the layout styles for all screen sizes and therefore has no media property. This name is **required** and
-may not be changed.
-
-
-{{/markdown}}
                     <div class="docu-example">
                         <h3 class="docu-example-title">Default Breakpoints</h3>
  {{#markdown}}
@@ -34,16 +30,16 @@ may not be changed.
 |`l`| Affects screen sizes above 1240px. ex. `.use-size-50-l`  |
 | `m` | Affects screen sizes between 569px and 1239px. ex. `.use-size-50-m` |
 | `s`| Affects screen sizes up to 568px. ex `.use-size-50-s`  |
-
-Next to the property media there are more properties you can set.
-
-<h3 class="docu-example-title">Breakpoint Options</h3>
-
+ {{/markdown}}
+                        <p>
+                            Next to the property media there are more properties you can set.
+                        </p>
+                        <h3 class="docu-example-title">Breakpoint Options</h3>
+{{#markdown}}
 | property name | Description
 | ------------- |-------------|
 | `media`  | Set values media querie for breakpoint name  |
 |`gutter: horizontal / vertical`| Set horizontal/vertical gutter space for `.use-size-*` columns |
-
  {{/markdown}}
                     </div>
 
@@ -78,8 +74,8 @@ Next to the property media there are more properties you can set.
 {{/markdown}}
                     </div>
                     <hr>
+                    <h2>The Grid (sizes)</h2>
 {{#markdown}}
-###The Grid (sizes)
 Rawblock uses 22 width units, who are named `.use-size-%`. Ranging from **5%** to **100%** with **5%** increments.
 Additional there are 4 extra classes: `.use-size-16` (16.6666%), `.use-size-33` (33.3333%), `.use-size-66` (66.6666%) and `.use-size-auto` (Takes width content).
 
@@ -112,7 +108,7 @@ Best practice is to put the component always inside an `use-size-*` column. This
     </div>
 {{/markdown}}
                     </div>
-
+                    <hr>
 {{#markdown}}
 ##Gutters
 Gutters are the space between layout columns. Gutters are set by adding the `use-gutters`
