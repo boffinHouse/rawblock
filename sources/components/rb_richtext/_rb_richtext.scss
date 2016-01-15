@@ -63,7 +63,7 @@ rb-richtext
         text-align: center;
     }
 
-    .richtext-justify {
+    .richtext-align-justify {
         text-align: justify;
     }
 
@@ -112,6 +112,7 @@ rb-richtext
 
         > li {
             margin-bottom: rb-rem-calc(10);
+            list-style: decimal;
         }
     }
 

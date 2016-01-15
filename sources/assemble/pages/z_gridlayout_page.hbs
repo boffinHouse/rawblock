@@ -42,7 +42,7 @@ Next to the property media there are more properties you can set.
 | property name | Description
 | ------------- |-------------|
 | `media`  | Set values media querie for breakpoint name  |
-|`gutter: horizontal / vertical`| Creates horizontal and vertical gutter on `.use-size-*` columns |
+|`gutter: horizontal / vertical`| Set horizontal/vertical gutter space for `.use-size-*` columns |
 
  {{/markdown}}
                     </div>
@@ -82,28 +82,84 @@ Next to the property media there are more properties you can set.
 ###The Grid (sizes)
 Rawblock uses 22 width units, who are named `.use-size-%`. Ranging from **5%** to **100%** with **5%** increments.
 Additional there are 3 extra classes: `.use-size-16` (16.6666%), `.use-size-33` (33.3333%) and `.use-size-66` (66.6666%).
+
+The `.use-size-*` classes only define the width of an element. If you want to create vertical columns you can wrap them inside an `.use-column-group` element.
+
+Best practice is to put the component always inside an `use-size-*` column. This prevents strange side effect and will be better maintainable for future improvements.
 {{/markdown}}
                     <div class="docu-example is-demo">
                         <h3 class="docu-example-title">Demo</h3>
 
                         <div class="use-column-group">
-                            <div class="use-size-40 docu-column">40%</div>
-                            <div class="use-size-40 docu-column">40%</div>
-                            <div class="use-size-20 docu-column">20%</div>
+                            <div class="use-size-40">
+                                <div class="docu-item">40%</div>
+                            </div>
+                            <div class="use-size-40">
+                                <div class="docu-item">40%</div>
+                            </div>
+                            <div class="use-size-20">
+                                <div class="docu-item">20%</div>
+                            </div>
                         </div>
                     </div>
-{{#markdown}}
-The `.use-size-*` classes only define the width of an element. If you want to create vertical columns you must wrap them inside an `use-column-group` element.
-{{/markdown}}
                     <div class="docu-example">
                         <h3 class="docu-example-title">Code</h3>
-    {{#markdown}}
-        <div class="use-column-group">
-            <div class="use-size-40">...</div>
-            <div class="use-size-40">...</div>
-            <div class="use-size-20">...</div>
-        </div>
-    {{/markdown}}
+{{#markdown}}
+    <div class="use-column-group">
+        <div class="use-size-40">...</div>
+        <div class="use-size-40">...</div>
+        <div class="use-size-20">...</div>
+    </div>
+{{/markdown}}
+                    </div>
+
+{{#markdown}}
+##Gutters
+Gutters are the space between layout columns. Gutters are set by adding the `use-gutters`
+on the parent element of `use-size-*` columns, usualy the `use-column-group`. If you only
+want horizontal gutters use `use-gutters-horizontal` and only vertical use `use-gutters-vertical`.
+{{/markdown}}
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Classes</h3>
+
+{{#markdown}}
+| Class name | Description
+| ------------- |-------------|
+| `use-gutters`  | Creates horizontal/vertical space between layout columns. |
+|`use-gutters-horizontal`| Creates horizontal space between columns.  |
+| `use-gutters-vertical` | Creates vertical (bottom only) space between columns. |
+{{/markdown}}
+                    </div>
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
+
+                        <div>
+                            <div class="use-column-group use-gutters-horizontal">
+                                <div class="use-size-40">
+                                    <div class="docu-item">40%</div>
+                                </div>
+                                <div class="use-size-40">
+                                    <div class="docu-item">40%</div>
+                                </div>
+                                <div class="use-size-20">
+                                    <div class="docu-item">20%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Code</h3>
+
+{{#markdown}}
+    <div class="use-column-group use-gutters-horizontal">
+        <div class="use-size-40">...</div>
+        <div class="use-size-40">...</div>
+        <div class="use-size-20">...</div>
+    </div>
+{{/markdown}}
+
                     </div>
 
                 </div><!-- end rb-docu -->

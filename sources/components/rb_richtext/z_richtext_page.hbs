@@ -104,13 +104,14 @@ The following shows some commonly used text-level semantics or inline text eleme
 
 {{#markdown}}
 ##Text align
-Align text by adding align class to an element. Default value of text is left align.
+Align text by adding `.richtext-align-*` to an element (for example `<p>`, `<li`> or `<h2>` ect). Text default alignment is left.
 {{/markdown}}
                     <div class="docu-example">
                         <h3 class="docu-example-title">Classes</h3>
 {{#markdown}}
 | Class name | Description
 | ------------- |-------------|
+| `.richtext-align-left`  |Text is aligned left|
 | `.richtext-align-right`  |Text is aligned right|
 |`.richtext-align-center`| Text is aligned center.  |
 | `.richtext-align-justify` | Text is aligned justify |
@@ -121,40 +122,111 @@ Align text by adding align class to an element. Default value of text is left al
                         <h3 class="docu-example-title">Demo</h3>
 
                         <div class="rb-richtext">
-                            <h3>Text align Left (default)</h3>
-                            {{#with rb_richtext.default}}
-                                <p>{{this}}</p>
-                            {{/with}}
-
-                            <h3>Text align right</h3>
-                            {{#with rb_richtext.default}}
-                                <p class="richtext-align-right">{{this}}</p>
-                            {{/with}}
-
-                            <h3>Text align center</h3>
-                            {{#with rb_richtext.default}}
-                                <p class="richtext-align-center">{{this}}</p>
-                            {{/with}}
-
-                            <h3>Text align justify</h3>
-                            {{#with rb_richtext.default}}
-                                <p class="richtext-align-justify">{{this}}</p>
-                            {{/with}}
+                            <p class="richtext-align-left">Paragraph text is aligned left</p>
+                            <p class="richtext-align-right">Paragraph text is aligned right</p>
+                            <p class="richtext-align-center">Paragraph text is aligned center</p>
+                            <p class="richtext-align-justify">Paragraph text is aligned justify</p>
                         </div>
                     </div>
                     <div class="docu-exampl">
                         <h3 class="docu-example-title">Code</h3>
 {{#markdown}}
-    <p class="richtext-align-right">Paragraph text here...</p>
-    <p class="richtext-align-center">Paragraph text here...</p>
-    <p class="richtext-align-justify">Paragraph text here...</p>
+    <p class="richtext-align-left">...</p>
+    <p class="richtext-align-right">...</p>
+    <p class="richtext-align-center">...</p>
+    <p class="richtext-align-justify">...</p>
 {{/markdown}}
                     </div>
 
                     <hr>
 
+{{#markdown}}
+##List
+Display content in a list. Create an unordered list using the `<ul>` and ordered list using `<ol>`.
+Inside create an list item with `<li>` element.
+{{/markdown}}
 
-                    <h2>Lists</h2>
+            <div class="use-column-group use-gutters-horizontal">
+                <div class="use-size-50">
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Unordered List</h3>
+
+                        <div class="rb-richtext">
+                            <ul>
+                                <li>Level 1</li>
+                                <li>...
+                                    <ul>
+                                        <li>Level 2</li>
+                                    </ul>
+                                </li>
+                                <li>...
+                                    <ol>
+                                        <li>Level 2</li>
+                                    </ol>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Code</h3>
+{{#markdown}}
+    <ul>
+        <li>Level 1</li>
+        <li>...
+            <ul>
+                <li>Level 2</li>
+            </ul>
+        </li>
+        <li>...
+            <ol>
+                <li>Level 2</li>
+            </ol>
+        </li>
+    </ul>
+{{/markdown}}
+                    </div>
+                </div>
+                <div class="use-size-50">
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Ordered List</h3>
+
+                        <div class="rb-richtext">
+                            <ol>
+                                <li>Level 1</li>
+                                <li>...
+                                    <ul>
+                                        <li>Level 2</li>
+                                    </ul>
+                                </li>
+                                <li>...
+                                    <ol>
+                                        <li>Level 2</li>
+                                    </ol>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Code</h3>
+{{#markdown}}
+    <ol>
+        <li>Level 1</li>
+        <li>...
+            <ul>
+                <li>Level 2</li>
+            </ul>
+        </li>
+        <li>...
+            <ol>
+                <li>Level 2</li>
+            </ol>
+        </li>
+    </ol>
+{{/markdown}}
+                    </div>
+                </div>
+            </div>
+
 
                 </article>
 
@@ -162,4 +234,5 @@ Align text by adding align class to an element. Default value of text is left al
             </div>
         </div>
     </div>
+
 </section>
