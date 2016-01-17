@@ -25,6 +25,7 @@
              * @property {String} defaults.contentId=''
              * @property {String} defaults.backdropClass=''
              * @property {Boolean} defaults.setDisplay=true
+             * @property {String|Boolean} defaults.scrollPadding='paddingRight' Whether to set a paddingRight/paddingLeft value to the body.
              */
             defaults: {
                 open: false,
@@ -34,6 +35,7 @@
                 contentId: '',
                 backdropClass: '',
                 setDisplay: true,
+                scrollPadding: 'paddingRight',
             },
             /**
              * @constructs
@@ -47,8 +49,10 @@
              *
              * @example
              * <button aria-controls="dialog-1" data-module="button" type="button" class="js-click">button</button>
-             * <div id="dialog-1" data-module="dialog">
-             *    {{dialogContent}}
+             * <div id="dialog-1" class="rb-dialog" data-module="dialog">
+             *     <div class="dialog-content">
+             *      {{dialogContent}}
+             *    </div>
              *    <button type="button" class="dialog-close">close</button>
              * </div>
              * @example
@@ -159,6 +163,10 @@
 
                 rb.$root.addClass(rb.statePrefix + 'open-' + this.name +'-within');
 
+                if(this._setScrollPadding && this.options.scrollPadding){
+                    document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
+                }
+
                 if(options.focusElement){
                     this.setComponentFocus(options.focusElement);
                 } else {
@@ -173,6 +181,7 @@
              * @returns {boolean}
              */
             open: function (options) {
+                var scrollbarWidth;
 
                 if (this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
                     return false;
@@ -180,6 +189,7 @@
                 if (!this.isReady) {
                     this._setup();
                 }
+
                 this.isOpen = true;
 
                 if(!options){
@@ -199,6 +209,15 @@
                     this._displayTimer = null;
                 }
 
+                this._setScrollPadding = this.options.scrollPadding && rb.root.clientHeight + 1 < rb.root.scrollHeight &&
+                    (scrollbarWidth = rb.scrollbarWidth) &&
+                        parseFloat(rb.getStyles(document.body)[this.options.scrollPadding]) + scrollbarWidth
+                ;
+
+                if(this._setScrollPadding){
+                    this._oldPaddingValue = document.body.style[this.options.scrollPadding];
+                }
+
                 if(!this.options.setDisplay && options.focusElement && regInputs.test(options.focusElement.nodeName)){
                     this._open._rbUnrafedFn.call(this, options);
                 } else {
@@ -208,6 +227,12 @@
             },
             _close: function (options) {
                 this.restoreFocus(true);
+
+                if(this._setScrollPadding && this._oldPaddingValue != null){
+                    document.body.style[this.options.scrollPadding] = this._oldPaddingValue;
+                    this._setScrollPadding = 0;
+                    this._oldPaddingValue = null;
+                }
 
                 this.$backdrop.removeClass(rb.statePrefix + 'open');
                 rb.$root.removeClass(rb.statePrefix + 'open-' + this.name +'-within');
