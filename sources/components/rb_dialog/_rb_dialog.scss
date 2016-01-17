@@ -22,7 +22,7 @@ $dialogJSCFG: (
         }
 
         .dialog-backdrop {
-            display: none;
+            @include rb-fx-fadeOut();
             visibility: hidden;
             position: fixed;
             top: 0;
@@ -40,6 +40,7 @@ $dialogJSCFG: (
             }
 
             &.is-open {
+                @include rb-fx-fadeIn();
                 display: block;
                 visibility: inherit;
                 opacity: 1;

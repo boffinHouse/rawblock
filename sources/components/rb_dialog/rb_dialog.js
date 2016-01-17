@@ -24,6 +24,7 @@
              * @property {Boolean} defaults.closeOnBackdropClick=true Whether the dialog should be closed as soon as the user clicks on the backdrop.
              * @property {String} defaults.contentId=''
              * @property {String} defaults.backdropClass=''
+             * @property {Boolean} defaults.setDisplay=true
              */
             defaults: {
                 open: false,
@@ -140,6 +141,7 @@
             },
             _open: function (options) {
                 var content;
+
                 if(this.contentElement && options && options.contentId && this._curContentId != options.contentId && (content = document.getElementById(options.contentId))){
                     this._curContentId = options.contentId;
                     this.contentElement.innerHTML = content.innerHTML;
@@ -150,6 +152,7 @@
                     this.$backdrop.addClass(rb.statePrefix + 'loading');
                 }
 
+                this.$backdrop.css({display: 'block'});
                 this.$backdrop.addClass(rb.statePrefix + 'open');
 
                 this.setupOpenEvents();
@@ -191,12 +194,9 @@
                     this._xhr = rb.fetch({url: options.contentUrl}).then(this._addContent);
                 }
 
-                if(this.options.setDisplay){
-                    this.$backdrop.css({display: 'block'});
-                    if(this._displayTimer){
-                        clearTimeout(this._displayTimer);
-                        this._displayTimer = null;
-                    }
+                if(this.options.setDisplay && this._displayTimer){
+                    clearTimeout(this._displayTimer);
+                    this._displayTimer = null;
                 }
 
                 if(!this.options.setDisplay && options.focusElement && regInputs.test(options.focusElement.nodeName)){

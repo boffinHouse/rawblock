@@ -44,11 +44,13 @@
     }
 }
 
-@mixin rb-fx-flipInX($options: ()) {
+@mixin rb-fx-flipInX($options: (duration: 800ms)) {
     $animationName: flipInX;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         backface-visibility: visible;
         animation-name: rb-fx-#{$animationName};
     }
@@ -87,11 +89,13 @@
     }
 }
 
-@mixin rb-fx-flipOutX($options: ()) {
+@mixin rb-fx-flipOutX($options: (duration: 800ms)) {
     $animationName: flipOutX;
 
     @if not map_get($options, onlyInstall){
-        @include rb-fx-options($options);
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
         backface-visibility: visible;
         animation-name: rb-fx-#{$animationName};
     }
@@ -102,28 +106,98 @@
         //keyframe begin:
         @at-root {
             @keyframes rb-fx-#{$animationName} {
-                0% {
+                from {
+                    transform: perspective(400px);
+                }
+
+                30% {
+                    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+                    opacity: 1;
+                }
+
+                to {
                     transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+                    opacity: 0;
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-flipInY($options: (duration: 800ms)) {
+    $animationName: flipInY;
+
+    @if not map_get($options, onlyInstall){
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
+        backface-visibility: visible;
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                from {
+                    transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
                     animation-timing-function: ease-in;
                     opacity: 0;
                 }
 
                 40% {
-                    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+                    transform: perspective(400px) rotate3d(0, 1, 0, -20deg);
                     animation-timing-function: ease-in;
                 }
 
                 60% {
-                    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+                    transform: perspective(400px) rotate3d(0, 1, 0, 10deg);
                     opacity: 1;
                 }
 
                 80% {
-                    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+                    transform: perspective(400px) rotate3d(0, 1, 0, -5deg);
                 }
 
-                100% {
+                to {
                     transform: perspective(400px);
+                }
+            }
+        }
+    }
+}
+
+@mixin rb-fx-flipOutY($options: (duration: 800ms)) {
+    $animationName: flipOutY;
+
+    @if not map_get($options, onlyInstall){
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
+        backface-visibility: visible;
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                from {
+                    transform: perspective(400px);
+                }
+
+                30% {
+                    transform: perspective(400px) rotate3d(0, 1, 0, -15deg);
+                    opacity: 1;
+                }
+
+                to {
+                    transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
+                    opacity: 0;
                 }
             }
         }
