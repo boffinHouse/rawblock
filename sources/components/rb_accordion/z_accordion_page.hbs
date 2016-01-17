@@ -14,12 +14,44 @@ layout: default_tpl.hbs
 
 {{#markdown}}
 ##Usage
+To apply the accordion component add the `rb-accordion` class and attribute `data-module="accordion"` to an container element.
 
+Add items in this container with `accordion-item` class. Each item has an header/button `accordion-btn` which open/close the according panel `accordion-panel`.
 {{/markdown}}
 
-                    {{#with rb_accordion.default }}
-                        {{> rb_accordion }}
-                    {{/with}}
+
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">demo</h3>
+                        <div>
+                            {{#with rb_accordion.default }}
+                                {{> rb_accordion }}
+                            {{/with}}
+                        </div>
+                    </div>
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Markup</h3>
+{{#markdown}}
+    <div class="rb-accordion js-rb-life" data-module="accordion" >
+        <div class="accordion-item">
+            <button type="button" class="accordion-btn">Heading 1</button>
+            <div class="accordion-panel is-open">
+                <div class="accordion-content">
+                   <p>Your Cont</p>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <button type="button" class="accordion-btn">Heading 2</button>
+            <div class="accordion-panel">
+                <div class="accordion-content">
+                    ...
+                </div>
+            </div>
+        </div>
+        ....
+    </div>
+{{/markdown}}
+                    </div>
                 </article><!-- end rb-docu -->
             </div>
          </div>

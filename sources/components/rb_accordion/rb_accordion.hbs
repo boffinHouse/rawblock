@@ -13,7 +13,7 @@ component: rb_accordion
     {{/if}}
     {{#each items }}
         <div class="accordion-item">
-            <button type="button" class="accordion-btn" aria-expanded="true">{{ title }}</button>
+            <button type="button" class="accordion-btn">{{ title }}</button>
             <div class="accordion-panel {{#if open}}is-open{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
                 <div class="accordion-content">
                     {{#each content}}
