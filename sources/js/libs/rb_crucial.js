@@ -21,11 +21,14 @@ if (!window.rb) {
      * @param str
      * @returns {Object}
      */
-    rb.jsonParse = function (str) {
+    rb.jsonParse = function (str, errorLog) {
         var ret = null;
         try {
             ret = JSON.parse(str);
         } catch (e) {
+            if(errorLog && str){
+                rb.log(errorLog, str, e);
+            }
         }
         return ret;
     };
@@ -43,7 +46,7 @@ if (!window.rb) {
                 element :
                 rb.getStyles(element, pseudo || '::before').content
             ;
-        ret = rb.jsonParse(removeLeadingQuotes(value));
+        ret = rb.jsonParse(removeLeadingQuotes(value), 'pseudo parse');
         return ret;
     };
 

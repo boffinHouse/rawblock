@@ -1,30 +1,47 @@
 ---
-title: Popover Page
+title: Popover
 layout: default_tpl.hbs
 ---
-<br><br><br><br><br><br><br><br>
 
-{{#mergeJSON rb_popover}}
-    {{> rb_popover }}
-{{/mergeJSON}}
+<section class="page-section">
+    <div class="page-section-inner">
 
-<p>This is a parapgrah, yea</p>
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+                <article class="rb-docu">
+                    <h1 class="doc-title">{{ title }}</h1>
+{{#markdown}}
+#Popover
+{{/markdown}}
 
-{{#mergeJSON rb_popover 'btn: {title:"Panel position bottom"}, panel: {type: "bottom"}'}}
-    {{> rb_popover }}
-{{/mergeJSON}}
+                    {{#mergeJSON rb_popover}}
+                        {{> rb_popover }}
+                    {{/mergeJSON}}
 
-<p>This is a parapgrah, yea</p>
+                    <p>This is a parapgrah, yea</p>
 
-{{#mergeJSON rb_popover 'btn: {title:"Panel position left"}, panel: {type: "left"}'}}
-    {{> rb_popover }}
-{{/mergeJSON}}
+                    {{#mergeJSON rb_popover 'btn: {title:"Panel position bottom"}, panel: {type: "bottom"}'}}
+                        {{> rb_popover }}
+                    {{/mergeJSON}}
 
-<p>This is a parapgrah, yea</p>
+                    <p>This is a parapgrah, yea</p>
 
-{{#mergeJSON rb_popover 'btn: {title:"Panel position right"}, panel: {type: "right"}'}}
-    {{> rb_popover }}
-{{/mergeJSON}}
+                    {{#mergeJSON rb_popover 'btn: {title:"Panel position left"}, panel: {type: "left"}'}}
+                        {{> rb_popover }}
+                    {{/mergeJSON}}
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                    <p>This is a parapgrah, yea</p>
+
+                    {{#mergeJSON rb_popover 'btn: {title:"Panel position right"}, panel: {type: "right"}'}}
+                        {{> rb_popover }}
+                    {{/mergeJSON}}
+
+                    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                </article><!-- end rb-docu -->
+            </div>
+        </div>
+    </div>
+</section>
+
+
 

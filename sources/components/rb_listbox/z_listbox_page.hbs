@@ -1,12 +1,18 @@
 ---
-title: Listbox Page
+title: Listbox
 layout: default_tpl.hbs
 ---
 
 <section class="page-section">
     <div class="page-section-inner">
 
-
-        {{> rb_listbox }}
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+            <article class="rb-docu">
+                <h1 class="docu-title">{{ title }}</h1>
+                {{> rb_listbox }}
+                </article><!-- end rb-docu -->
+            </div>
+        </div>
     </div>
 </section>

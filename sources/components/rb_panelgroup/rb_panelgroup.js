@@ -109,14 +109,14 @@
             init: function (element) {
                 this._super(element);
 
+                if (this.options.multiple && !this.options.toggle) {
+                    this.options.toggle = true;
+                }
+
                 this.$element = $(element);
 
                 this.selectedIndexes = [];
                 this.selectedItems = [];
-
-                if (this.options.multiple && !this.options.toggle) {
-                    this.options.toggle = true;
-                }
 
                 rb.rAFs(this, 'setSelectedState', 'setSwitchedOffClass');
 
@@ -461,6 +461,7 @@
                 }
             },
             setOption: function (name, value) {
+                var that;
                 if (name == 'multiple' && value && !this.options.toggle) {
                     this.setOption('toggle', true);
                 } else if (name == 'toggle' && value != this.options.toggle) {
@@ -483,6 +484,16 @@
                 }
 
                 this._super(name, value);
+
+
+                if ((name == 'toggle' || name == 'multiple') && this.options.multiple && !this.options.toggle) {
+                    that = this;
+                    setTimeout(function(){
+                        if (that.options.multiple && !that.options.toggle) {
+                            that.setOption('toggle', true);
+                        }
+                    });
+                }
             },
         }
     );

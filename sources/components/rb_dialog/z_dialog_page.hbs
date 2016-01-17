@@ -1,5 +1,5 @@
 ---
-title: Dialog Page
+title: Dialog
 layout: default_tpl.hbs
 ---
 <section class="page-section">
@@ -8,9 +8,8 @@ layout: default_tpl.hbs
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
                 <article class="rb-docu">
-{{#markdown}}
-#Dialog
-{{/markdown}}
+                    <h1 class="docu-title">{{ title }}</h1>
+
                     <button type="button" data-module="button" class="js-click" data-target="$(.rb-dialog)">open dialog</button>
                     {{> rb_dialog }}
                 </article><!-- end rb-docu -->

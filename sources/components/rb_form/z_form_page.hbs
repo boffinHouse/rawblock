@@ -1,5 +1,5 @@
 ---
-title: Form Page
+title: Form
 layout: default_tpl.hbs
 ---
 
@@ -9,9 +9,8 @@ layout: default_tpl.hbs
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
                 <article class="rb-docu">
-{{#markdown}}
-#Form
-{{/markdown}}
+                    <h1 class="docu-title">{{ title }}</h1>
+
                     {{> rb_form }}
                 </article><!-- end rb-docu -->
             </div>
