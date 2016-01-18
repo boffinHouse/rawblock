@@ -1,8 +1,6 @@
 (function(factory) {
-    if(typeof define === 'function' && define.amd){
-        define(factory);
-    }
-    else if(typeof module == 'object' && module.exports){
+    if(typeof module == 'object' && module.exports){
+        require('../../js/utils/rb_scrollintoview');
         module.exports = factory();
     } else {
         factory();

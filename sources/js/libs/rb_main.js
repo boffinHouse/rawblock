@@ -75,7 +75,7 @@ if (!window.rb) {
      * @param action
      */
     rb.changeState = function(element, state, action){
-        element.classList[action ? 'add' : 'remove'](rb.statePrefix + state);
+        element && element.classList && element.classList[action ? 'add' : 'remove'](rb.statePrefix + state);
     };
 
     /**
@@ -93,7 +93,7 @@ if (!window.rb) {
         if (this.length) {
             var opts = Object.assign({}, options, {
                 always: function () {
-                    this.style.display = '';
+                    this.style.display = options.display ? 'none' : '';
                     this.style.visibility = 'hidden';
 
                     if (options.always) {
@@ -158,9 +158,6 @@ if (!window.rb) {
 
     /* End: rbSlideUp / rbSlideDown */
 
-
-    /* Begin: getScrollingElement/scrollIntoView */
-
     /**
      * @memberof rb
      * @returns {Element} The DOM element that scrolls the viewport (either html or body)
@@ -186,75 +183,7 @@ if (!window.rb) {
         return scrollingElement || rb.root;
     };
 
-    /**
-     * A jQuery/rb.$ plugin to scroll an element into the viewort
-     * @function external:"jQuery.fn".scrollIntoView
-     * @param options {object} All jQuery animate options and additional options
-     * @param options.focus {Element} Element that should be focused after animation is done.
-     * @param options.hash {String} Hash to set on the location object
-     *
-     * @returns {jQueryfiedDOMList}
-     */
-    $.fn.scrollIntoView = function (options) {
-        var bbox, distance, scrollingElement, opts;
-        var elem = this.get(0);
 
-        if (elem) {
-            options = options || {};
-            bbox = elem.getBoundingClientRect();
-            distance = Math.max(Math.abs(bbox.top), Math.abs(bbox.left));
-            scrollingElement = rb.getScrollingElement();
-
-            if (options.easing) {
-                rb.addEasing(options.easing);
-            }
-
-            if (!options.duration) {
-                options.duration = Math.min(999, Math.max(200, distance * 0.4));
-            }
-
-            opts = Object.assign({}, options, {
-
-                always: function () {
-                    var top, left;
-
-                    if (options.forcePosition) {
-                        top = scrollingElement.scrollTop;
-                        left = scrollingElement.scrollLeft;
-                    }
-                    if (options.focus) {
-                        rb.setFocus(options.focus);
-                    }
-
-                    if (options.hash) {
-                        location.hash = typeof options.hash == 'string' ?
-                            options.hash :
-                        elem.id || elem.name
-                        ;
-                    }
-
-                    if (options.forcePosition) {
-                        scrollingElement.scrollTop = top;
-                        scrollingElement.scrollLeft = left;
-                    }
-
-                    if (options.always) {
-                        options.always.call(elem);
-                    }
-
-                }
-            });
-
-            $(scrollingElement).animate(
-                {
-                    scrollTop: scrollingElement.scrollTop + bbox.top + (options.offsetTop || 0),
-                    scrollLeft: scrollingElement.scrollLeft + bbox.left + (options.offsetLeft || 0),
-                },
-                opts
-            );
-        }
-        return this;
-    };
     /* End: getScrollingElement/scrollIntoView */
 
     /* Begin: contains */
@@ -685,6 +614,7 @@ if (!window.rb) {
             return;
         }
         BezierEasing = window.BezierEasing || rb.BezierEasing;
+
         if (BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4) {
             extendEasing();
             bezierArgs = bezierArgs.map(function (str) {
@@ -1909,7 +1839,7 @@ if (!window.rb) {
                             }
                         });
                     }
-                });
+                }, 9);
             } else if (elements) {
                 life.searchModules();
             }

@@ -9,6 +9,7 @@ require('./libs/rb_main');
 
 /* configuration */
 rb.isDebug = true;
+rb.life.autoStart = false;
 
 if(!('ASSETBASEPATH' in window)){
 	window.ASSETBASEPATH = '';
@@ -31,6 +32,7 @@ require('../components/rb_itemscroller/rb_itemscroller-player');
 require('../components/rb_itemscroller/rb_itemscroller-queries');
 
 require('../components/rb_dialog/rb_dialog');
+require('../components/rb_range/rb_range');
 
 require('../components/rb__childfx/rb__childfx');
 
@@ -42,7 +44,7 @@ require('../components/rb_form/rb_validate');
 
 
 /* init after all modules are loaded or imports are configured. */
-rb.life.init();
+setTimeout(rb.life.init);
 
 
 
