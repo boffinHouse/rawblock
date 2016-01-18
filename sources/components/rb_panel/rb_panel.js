@@ -23,6 +23,8 @@
              * @property {Boolean} defaults.closeOnOutsideClick=false Whether the component should be closed, if clicked outside the component.
              * @prop {Boolean} defaults.switchedOff=false Turns off panel.
              * @prop {Boolean} defaults.resetSwitchedOff=true Resets panel to initial state on reset switch.
+             * @prop {Boolean} defaults.closeOnEsc=false Whether panel should be closed on esc key.
+             * @prop {String} defaults.itemWrapper='' Wheter the closest itemWrapper should get the class `is-selected-within'.
              */
             defaults: {
                 animation: '', // || 'slide'
@@ -32,6 +34,8 @@
                 closeOnOutsideClick: false,
                 resetSwitchedOff: true,
                 switchedOff: false,
+                closeOnEsc: false,
+                itemWrapper: '',
             },
             /**
              * @constructs
@@ -84,7 +88,12 @@
                         e.stopImmediatePropagation();
                         e.preventDefault();
                     }
-                }
+                },
+                'keydown:keycodes(27)': function(e){
+                    if(this.options.closeOnEsc && !e.defaultPrevented){
+                        this.close();
+                    }
+                },
             },
             _switchOff: function () {
                 this.element.removeAttribute('aria-hidden');
@@ -258,6 +267,10 @@
                 this.element.classList.add(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'false');
 
+                if(this.options.itemWrapper){
+                    rb.changeState(this.element.closest(this.interpolateName(this.options.itemWrapper)), 'selected-within', true);
+                }
+
                 if (this.groupComponent) {
                     this.groupComponent.panelChangeCB(this, 'afteropen');
                 }
@@ -319,6 +332,10 @@
             _closed: function (options) {
                 this.element.classList.remove(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'true');
+                if(this.options.itemWrapper){
+                    rb.changeState(this.element.closest(this.interpolateName(this.options.itemWrapper)), 'selected-within');
+                }
+
                 if (this.groupComponent) {
                     this.groupComponent.panelChangeCB(this, 'afterclose');
                 }

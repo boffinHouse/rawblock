@@ -1,5 +1,6 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
+        require('../../js/utils/rb_scrollbarwidth');
         //optional dependency
         //require('../../js/utils/rb_fetch');
         module.exports = factory();

@@ -42,6 +42,7 @@
              * @property {Boolean|Number}  defaults.adjustScroll=false The adjustScroll option can be combined with the 'slide' animation in a accordion component. So that closing a large panel doesn't move the opening panel out of view. Possible values: `true`, `false`, any Number but not 0.
              * @property {Boolean}  defaults.setFocus=true Whether component should try to focus a `js-autofocus` element inside of an opening panel.
              * @property {Boolean}  defaults.preventDefault=false Whether default click action on "{name}-btn" should be prevented.
+             * @property {String}  defaults.itemWrapper='' Set itemWrapper option of the panel instance.
              * @property {Boolean}  defaults.switchedOff=false Turns off panelgroup.
              * @property {Boolean} defaults.resetSwitchedOff=true Resets panels to initial state on reset switch.
              * @property {String} defaults.panelName='{name}-panel' Name of the constructed panels.
@@ -69,6 +70,7 @@
                 groupBtnSel: 'find(.{name}-ctrl-btn)',
                 panelWrapperSel: 'find(.{name}-panel-wrapper):0',
                 btnWrapperSel: 'find(.{name}-panel-btn-wrapper):0',
+                itemWrapper: '',
             },
             statics: {},
             /**
@@ -278,6 +280,7 @@
                 var panelName = this.panelName;
 
                 var buttonWrapper = this.getElementsFromString(options.btnWrapperSel)[0];
+                var itemWrapper = this.interpolateName(this.options.itemWrapper || '');
                 this.$panelWrapper = $(this.getElementsFromString(options.panelWrapperSel));
 
                 components.panel.prototype.name = panelName;
@@ -289,6 +292,8 @@
                     panel.name = panelName;
                     panel.setOption('resetSwitchedOff', options.resetSwitchedOff);
                     panel.setOption('setFocus', options.setFocus);
+                    panel.setOption('itemWrapper', itemWrapper);
+
                 });
 
                 components.panel.prototype.name = 'panel';
@@ -481,10 +486,12 @@
                 } else if (name == 'preventDefault') {
                     this.setChildOption(this.$groupButtons, name, value);
                     this.setChildOption(this.$buttons, name, value);
+                } else if(name == 'itemWrapper'){
+                    value = this.interpolateName(value);
+                    this.setChildOption(this.$panels, name, value);
                 }
 
                 this._super(name, value);
-
 
                 if ((name == 'toggle' || name == 'multiple') && this.options.multiple && !this.options.toggle) {
                     that = this;
@@ -591,6 +598,7 @@
                 toggle: false,
                 animation: 'slide',
                 adjustScroll: 10,
+                itemWrapper: '.{name}-item',
             }
         }
     );

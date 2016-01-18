@@ -27,6 +27,7 @@
              * @prop {String} anchor='button' The anchor element to position the panel against. 'button' means the associated panelbutton module or if no associated panelbutton is found the opening button module. Accepts als string that are processed with rb.elementFromStr.
              * @prop {Boolean} updateOnResize=true Wether panel position should be updated on resize.
              * @prop {Boolean} closeOnOutsideClick=true Closes panel on outside click.
+             * @prop {Boolean} closeOnEsc=true Closes panel on ESC keydown.
              */
             defaults: {
                 positioned: true,
@@ -36,6 +37,7 @@
                 anchor: 'button', // 'button' || 'activeButton' || 'id' || closest(.bla) || sel(.yo)
                 updateOnResize: true,
                 closeOnOutsideClick: true,
+                closeOnEsc: true,
             },
             statics: {
                 mainbutton: {

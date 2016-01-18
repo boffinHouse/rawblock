@@ -12,7 +12,7 @@ component: rb_accordion
         {{/if}}
     {{/if}}
     {{#each items }}
-        <div class="accordion-item">
+        <div class="accordion-item {{#if open}}is-selected-within{{/if}}">
             <button type="button" class="accordion-btn" aria-expanded="true">{{ title }}</button>
             <div class="accordion-panel {{#if open}}is-open{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
                 <div class="accordion-content">
