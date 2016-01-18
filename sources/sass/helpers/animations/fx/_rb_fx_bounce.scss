@@ -1,0 +1,21 @@
+@mixin rb-fx-($options: ()) {
+    $animationName: fxName;
+
+    @if not map_get($options, onlyInstall){
+        @if not map_get($options, onlyName){
+            @include rb-fx-options($options);
+        }
+        animation-name: rb-fx-#{$animationName};
+    }
+
+    @if not map_get($rb-included-animations, $animationName) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+
+        //keyframe begin:
+        @at-root {
+            @keyframes rb-fx-#{$animationName} {
+                //keyframedefinition
+            }
+        }
+    }
+}

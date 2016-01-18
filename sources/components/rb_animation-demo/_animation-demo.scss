@@ -25,6 +25,146 @@ html {
         }
     }
 
+    &[data-anim-in="bounce"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-bounce;
+        }
+    }
+
+    &[data-anim-out="bounce"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-bounce;
+        }
+    }
+
+    &[data-anim-in="flash"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flash;
+        }
+    }
+
+    &[data-anim-out="flash"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flash;
+        }
+    }
+
+    &[data-anim-in="headShake"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-headShake;
+        }
+    }
+
+    &[data-anim-out="headShake"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-headShake;
+        }
+    }
+
+    &[data-anim-in="jello"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-jello;
+        }
+    }
+
+    &[data-anim-out="jello"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-jello;
+        }
+    }
+
+    &[data-anim-in="pulse"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-pulse;
+        }
+    }
+
+    &[data-anim-out="pulse"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-pulse;
+        }
+    }
+
+    &[data-anim-in="rubberBand"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-rubberBand;
+        }
+    }
+
+    &[data-anim-out="rubberBand"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-rubberBand;
+        }
+    }
+
+    &[data-anim-in="shake"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-shake;
+        }
+    }
+
+    &[data-anim-out="shake"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-shake;
+        }
+    }
+
+    &[data-anim-in="swing"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-swing;
+        }
+    }
+
+    &[data-anim-out="swing"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-swing;
+        }
+    }
+
+    &[data-anim-in="tada"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-tada;
+        }
+    }
+
+    &[data-anim-out="tada"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-tada;
+        }
+    }
+
+    &[data-anim-in="wobble"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-wobble;
+        }
+    }
+
+    &[data-anim-out="wobble"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-wobble;
+        }
+    }
+
     &[data-anim-in="slideLeftIn"] {
         .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
@@ -81,6 +221,62 @@ html {
         }
     }
 
+    &[data-anim-in="slideLeftInSmall"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideLeftInSmall;
+        }
+    }
+
+    &[data-anim-out="slideLeftOutSmall"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideLeftOutSmall;
+        }
+    }
+
+    &[data-anim-in="slideRightInSmall"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideRightInSmall;
+        }
+    }
+
+    &[data-anim-out="slideRightOutSmall"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideRightOutSmall;
+        }
+    }
+
+    &[data-anim-in="slideTopInSmall"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideTopInSmall;
+        }
+    }
+
+    &[data-anim-out="slideTopOutSmall"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideTopOutSmall;
+        }
+    }
+
+    &[data-anim-in="slideBottomInSmall"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-slideBottomInSmall;
+        }
+    }
+
+    &[data-anim-out="slideBottomOutSmall"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-slideBottomOutSmall;
+        }
+    }
+
     &[data-anim-in="rotateIn"] {
         .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
@@ -112,14 +308,112 @@ html {
     &[data-anim-in="flipInX"] {
         .is-fx .tabs-panel.is-open,
         .dialog-backdrop.is-open .rb-dialog {
-            @include rb-fx-flipInX;
+            @include rb-fx-flipInX();
         }
     }
 
     &[data-anim-out="flipOutX"] {
         .is-fx .tabs-panel,
         .dialog-backdrop .rb-dialog {
-            @include rb-fx-flipOutX;
+            @include rb-fx-flipOutX();
+        }
+    }
+
+    &[data-anim-in="flipInY"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-flipInY();
+        }
+    }
+
+    &[data-anim-out="flipOutY"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-flipOutY();
+        }
+    }
+
+    &[data-anim-in="zoomIn"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-zoomIn();
+        }
+    }
+
+    &[data-anim-out="zoomOut"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-zoomOut();
+        }
+    }
+
+    &[data-anim-in="zoomInSmall"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-zoomInSmall();
+        }
+    }
+
+    &[data-anim-out="zoomOutSmall"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-zoomOutSmall();
+        }
+    }
+
+    &[data-anim-in="zoomInUp"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-zoomInUp();
+        }
+    }
+
+    &[data-anim-out="zoomOutUp"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-zoomOutUp();
+        }
+    }
+
+    &[data-anim-in="zoomInDown"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-zoomInDown();
+        }
+    }
+
+    &[data-anim-out="zoomOutDown"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-zoomOutDown();
+        }
+    }
+
+    &[data-anim-in="zoomInLeft"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-zoomInLeft();
+        }
+    }
+
+    &[data-anim-out="zoomOutLeft"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-zoomOutLeft();
+        }
+    }
+
+    &[data-anim-in="zoomInRight"] {
+        .is-fx .tabs-panel.is-open,
+        .dialog-backdrop.is-open .rb-dialog {
+            @include rb-fx-zoomInRight();
+        }
+    }
+
+    &[data-anim-out="zoomOutRight"] {
+        .is-fx .tabs-panel,
+        .dialog-backdrop .rb-dialog {
+            @include rb-fx-zoomOutRight();
         }
     }
 }
