@@ -2,10 +2,7 @@
   "default": {
     "multiple": true,
     "toggle": false,
-    "buttons": {
-      "prev": "prev",
-      "next": "next"
-    },
+    "buttons": false,
     "items": [
       {
         "open": true,
