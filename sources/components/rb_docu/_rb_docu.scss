@@ -120,10 +120,10 @@ $docu-example-border: 1px solid #f1f1f1;
 
     code {
         border: $docu-example-border;
-        padding: 3px 7px;
-        font-size: 14px;
+        padding: 2px 3px;
+        font-size: 13px;
         font-weight: 400;
-        color: #008cd5;
+        color: rgb(198, 20, 20);;
         background: $docu-example-bg-color;
     }
 
@@ -247,6 +247,17 @@ $docu-example-border: 1px solid #f1f1f1;
             min-height: 150px;
             color: #444;
             background: #dbdbdb;
+        }
+
+        &info {
+            margin-bottom: 20px;
+            padding: 20px 20px 10px;
+            border: 10px solid #bcd1fc;
+
+            p {
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
         }
 
     }

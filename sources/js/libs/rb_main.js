@@ -1847,7 +1847,7 @@ if (!window.rb) {
      * class MyButton {
 	 *      constructor(element){
 	 *
-	 *      }
+	 *
 	 * }
      *
      * //<button class="js-rb-life" data-module="my-button"></button>

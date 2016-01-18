@@ -15,9 +15,9 @@ layout: default_tpl.hbs
 {{#markdown}}
 ##Usage
 To apply the accordion component add the `rb-accordion` class and attribute `data-module="accordion"` to an container element.
-
-Add items in this container with `accordion-item` class. Each item has an header/button `accordion-btn` which open/close the according panel `accordion-panel`.
+Inside this container you add items `accordion-item`. Each item has an header/button `accordion-btn` which open/close the according panel `accordion-panel`.
 {{/markdown}}
+{{> docu_js_life }}
                     <div class="docu-example is-demo">
                         <h3 class="docu-example-title">demo</h3>
                         <div>
@@ -26,10 +26,11 @@ Add items in this container with `accordion-item` class. Each item has an header
                             {{/with}}
                         </div>
                     </div>
+
                     <div class="docu-example">
                         <h3 class="docu-example-title">Markup</h3>
 {{#markdown}}
-    <div class="rb-accordion js-rb-life" data-module="accordion" >
+    <div class="rb-accordion js-rb-life" data-module="accordion">
         <div class="accordion-item">
             <button type="button" class="accordion-btn">Heading 1</button>
             <div class="accordion-panel is-open">
@@ -38,18 +39,19 @@ Add items in this container with `accordion-item` class. Each item has an header
                 </div>
             </div>
         </div>
-        <div class="accordion-item">
-            <button type="button" class="accordion-btn">Heading 2</button>
-            <div class="accordion-panel">
-                <div class="accordion-content">
-                    ...
-                </div>
-            </div>
-        </div>
         ....
     </div>
 {{/markdown}}
                     </div>
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">JS Options</h3>
+ {{#markdown}}
+| Option | Value | Default | Description
+| ------------- |-------------|
+| `multiple`  | boolean | false | Allowed multiple panels to be open at the same time. If `true` then `toggle` is also automatically set to `true`.
+| `toggle`  | boolean | false | Whether a panel button toggles the state of a panel.
+ {{/markdown}}
+                     </div>
                 </article><!-- end rb-docu -->
             </div>
          </div>

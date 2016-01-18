@@ -30,7 +30,7 @@ $rangeJSCFG: (
 }
 
 .rb-range {
-	@include rb-js-export($rangeJSCFG);
+	//@include rb-js-export($rangeJSCFG);
 	border: 0.1rem solid #000;
 
 	/* FOUC */
