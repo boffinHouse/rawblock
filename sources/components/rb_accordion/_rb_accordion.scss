@@ -6,7 +6,7 @@
 ///
 //// -------------------------
 $accordionJSCFG: (
-    multiple: true,
+    multiple: false,
     toggle: true,
     adjustScroll: 10,
     animation: 'slide',
@@ -23,6 +23,7 @@ $accordionJSCFG: (
             width: 100%;
             border: none;
             border-bottom: 1px solid #aaa;
+
             padding: rb-em-calc(20);
             text-align: left;
             background: #e6e6e6;
@@ -34,6 +35,7 @@ $accordionJSCFG: (
         }
 
         &panel {
+            @include rb-clearfix;
             display: block;
             height: 0;
             overflow: hidden;
@@ -51,9 +53,8 @@ $accordionJSCFG: (
         }
 
         &content {
-            padding: 20px;
+            padding: 20px 20px 0;
         }
-
     }
 
 }

@@ -20,6 +20,7 @@ if(!('ASSETBASEPATH' in window)){
 __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
 require('../components/rb_listbox/rb_listbox');
+//require('../components/rb_range/rb_range');
 
 require('../components/rb_panel/rb_panel');
 require('../components/rb_popover/rb_popover');

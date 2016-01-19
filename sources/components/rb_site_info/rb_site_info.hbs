@@ -1,24 +1,24 @@
-<div class="rb-site-info" role="contentinfo">
-	<div class="site-info-inner use-column-group use-gutter-horizontal">
+<div class="rb-siteinfo" role="contentinfo">
+	<div class="siteinfo-inner use-column-group use-gutter-horizontal">
 		{{#if copyright}}
 			<div class="use-size-auto">
-				<p class="site-info-copyright">&copy; {{ copyright }}</p>
+				<p class="siteinfo-copyright">&copy; {{ copyright }}</p>
 			</div>
 		{{/if}}
 		{{#if items}}
 			<div class="use-size-auto use-offset-right">
-				<ul class="site-info-list">
+				<ul class="siteinfo-list">
 					{{#each items }}
-						<li class="site-info-item">
+						<li class="siteinfo-item">
 							{{#if link }}
-								<a href="{{ link }}" class="site-info-link">{{ title }}</a>
+								<a href="{{ link }}" class="siteinfo-link">{{ title }}</a>
 							{{else }}
 								{{ title }}
 							{{/if}}
 						</li>
 					{{/each}}
-					<li class="site-info-item">
-						<a href="#" class="site-info-link"></a>
+					<li class="siteinfo-item">
+						<a href="#" class="siteinfo-link"></a>
 					</li>
 				</ul>
 			</div>
