@@ -7,7 +7,7 @@ $dialogJSCFG: (
 
 .rb-dialog {
     @include rb-js-export($dialogJSCFG);
-
+    @include rb-fx-zoomOutSmall;
     display: none;
     position: relative;
     background: #fff;
@@ -33,7 +33,7 @@ $dialogJSCFG: (
             z-index: 999;
             opacity: 0;
             background: rgba(0, 0, 0, 0.6);
-            transition: 400ms all;
+            transition: 400ms visibility;
 
             .rb-dialog {
                 display: block;
@@ -43,9 +43,9 @@ $dialogJSCFG: (
                 @include rb-fx-fadeIn();
                 display: block;
                 visibility: inherit;
-                opacity: 1;
 
                 .rb-dialog {
+                    @include rb-fx-zoomInSmall;
                     visibility: inherit;
                 }
             }

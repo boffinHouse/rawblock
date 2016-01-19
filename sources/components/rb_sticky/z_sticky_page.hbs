@@ -9,9 +9,48 @@ layout: default_tpl.hbs
             <div class="use-size-80">
                 <article class="rb-docu">
                     <h1 class="docu-title">{{ title }}</h1>
-                    <p class="docu-intro">The sticky component, lets elements stick to top or bottom of the viewport or specified container.</p>
+                    <p class="docu-intro">Component creates a sticky element, that can be stuck to the top or the bottom of the viewport. Optionally can animate child elements after it has become stuck according to the scroll position.</p>
 
-                    {{> rb_sticky}}
+{{#markdown}}
+##Usage
+To apply the sticky component add the `rb-sticky` class and attribute `data-module="sticky"` to an element you want to make sticky.
+Top is the default position.
+
+{{/markdown}}
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
+                        <div>
+                            <div class="rb-sticky js-rb-life" data-module="sticky">
+                                <div class="docu-item" style="height: 100px;">
+                                    Sticky to the top
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Markup</h3>
+{{#markdown}}
+    <div class="rb-sticky js-rb-life" data-module="sticky">
+        ...
+    </div>
+{{/markdown}}
+                        {{> docu_js_life }}
+                    </div>
+                    <hr>
+{{#markdown}}
+##Positioning
+Sticky makes its easy to change the sticky position with the use of classes.
+{{/markdown}}
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
+                        <div>
+                            <div class="rb-sticky js-rb-life is-bottom" data-module="sticky">
+                                <div class="docu-item" style="height: 100px;">
+                                    Sticky to the bottom
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </article><!-- end rb-docu -->
             </div>
         </div>
@@ -19,3 +58,4 @@ layout: default_tpl.hbs
     </div>
 </section>
 
+{{> rb_sticky}}

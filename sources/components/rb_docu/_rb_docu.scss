@@ -240,13 +240,15 @@ $docu-example-border: 1px solid #f1f1f1;
         }
 
         &item {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             border: 1px solid #aaa;
-            min-height: 150px;
+            height: 150px;
             color: #444;
             background: #dbdbdb;
+            z-index: 2;
         }
 
         &info {

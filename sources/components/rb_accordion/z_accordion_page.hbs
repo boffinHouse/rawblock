@@ -17,7 +17,7 @@ layout: default_tpl.hbs
 To apply the accordion component add the `rb-accordion` class and attribute `data-module="accordion"` to an container element.
 Inside this container you add items `accordion-item`. Each item has an header/button `accordion-btn` which open/close the according panel `accordion-panel`.
 {{/markdown}}
-{{> docu_js_life }}
+
                     <div class="docu-example is-demo">
                         <h3 class="docu-example-title">Demo</h3>
                         <div>
@@ -26,6 +26,7 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
                             {{/with}}
                         </div>
                     </div>
+
 
                     <div class="docu-example">
                         <h3 class="docu-example-title">Markup</h3>
@@ -43,9 +44,11 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
     </div>
 {{/markdown}}
                     </div>
+                    {{> docu_js_life }}
+                    <hr>
 {{#markdown}}
 ##Panel Controls
-Panels can also be open/closed with control buttons.
+Panels can also be open/closed with control buttons `accordion-ctr-btn`. The direction can be applied with attribute `data-type`
 
 {{/markdown}}
                     <div class="docu-example is-demo">

@@ -1,9 +1,9 @@
-/*********************************************************
-
-rb-sticky
-----------------------------------------------------------
-
-**********************************************************/
+////
+/// rb-sticky
+/// Creates a sticky element, that can be stuck to the top or the bottom of the viewport.
+///
+///
+//// -------------------------
 $stickyJSCFG: (
     container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
     switchedOff: false,
@@ -17,10 +17,9 @@ $stickyJSCFG: (
 );
 
 .rb-sticky {
-    //@include rb-js-export($stickyJSCFG);
+    @include rb-js-export($stickyJSCFG);
 
-    /* important set properties shouldn't be changed, use an outer or inner element to apply does styles */
-
+    //DONT CHANGE: important set properties shouldn't be changed, use an outer or inner element to apply does styles */
     float: none !important;
     left: auto !important;
     right: auto !important;
@@ -28,15 +27,17 @@ $stickyJSCFG: (
     padding: 0 !important;
     position: static;
     backface-visibility: hidden;
+    //DONT CHANGE:
 
+    //Default is top
     top: 0;
     bottom: auto;
-    margin-left: 0;
-    margin-right: 0;
+    z-index: 5;
 
-    background: #333;
-    color: #f1f1f1;
-    height: 100px;
+    &.is-bottom {
+        top: auto;
+        bottom: 0;
+    }
 
     &.is-fixed {
         position: fixed !important;
@@ -52,13 +53,9 @@ $stickyJSCFG: (
     }
 
     &.progress-showcase {
-
-        //@include exportToJS(map-merge($stickyJSCFG, (
-        //	progress: 100
-        //)));
-        @include exportToJS((
-            progress: 100
-        ));
+        @include exportToJS(map-merge($stickyJSCFG, (
+        	progress: 100
+        )));
 
         height: auto;
         transition: 300ms background-color;
