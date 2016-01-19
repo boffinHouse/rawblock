@@ -1,7 +1,6 @@
+
 {
   "default": {
-    "multiple": true,
-    "toggle": false,
     "buttons": false,
     "items": [
       {

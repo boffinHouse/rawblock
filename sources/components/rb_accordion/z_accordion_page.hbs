@@ -19,7 +19,7 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
 {{/markdown}}
 {{> docu_js_life }}
                     <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">demo</h3>
+                        <h3 class="docu-example-title">Demo</h3>
                         <div>
                             {{#with rb_accordion.default }}
                                 {{> rb_accordion }}
@@ -35,7 +35,7 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
             <button type="button" class="accordion-btn">Heading 1</button>
             <div class="accordion-panel is-open">
                 <div class="accordion-content">
-                   <p>Your Cont</p>
+                   <p>Your Content</p>
                 </div>
             </div>
         </div>
@@ -43,15 +43,45 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
     </div>
 {{/markdown}}
                     </div>
+{{#markdown}}
+##Multiple items open
+To allow multiple panels to be open at the same time, add attribute `data-multiple` to the component container.
+
+{{/markdown}}
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
+                        <div>
+                            {{#mergeJSON rb_accordion.default 'attrs: {"multiple": true}'}}
+                                {{> rb_accordion }}
+                            {{/mergeJSON}}
+                        </div>
+                    </div>
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Markup</h3>
+{{#markdown}}
+    <div class="rb-accordion" data-module="accordion" data-multiple="true">
+        ...
+    </div>
+{{/markdown}}
+                    </div>
+
+                    <hr>
+
                     <div class="docu-example">
                         <h3 class="docu-example-title">JS Options</h3>
  {{#markdown}}
 | Option | Value | Default | Description
 | ------------- |-------------|
-| `multiple`  | boolean | false | Allowed multiple panels to be open at the same time. If `true` then `toggle` is also automatically set to `true`.
-| `toggle`  | boolean | false | Whether a panel button toggles the state of a panel.
+| `multiple`  | Boolean | false | Allowed multiple panels to be open at the same time. If `true` then `toggle` is also automatically set to `true`.
+| `toggle`  | Boolean | false | Whether a panel button toggles the state of a panel.
+| `selectedIndex`  | Number | 1 | The initially opened index. If no panel with the class `is-open` was found. If no panel should be opened by default use -1.
+| `animation`  | String | ' ' | Possible animations: `adaptHeight` or `slide`. These should be combined with CSS transitions or animations.
  {{/markdown}}
                      </div>
+
+                    <hr>
+
+
                 </article><!-- end rb-docu -->
             </div>
          </div>

@@ -36,7 +36,7 @@
              * @property {Boolean}  defaults.multiple=false Whether multiple panels are allowed to be open at the same time. If `multiple` is `true` `toggle` is also automatically set to `true`.
              * @property {Number}  defaults.selectedIndex=-1 The initially opened index. If no panel with the class `is-open` was found. If no panel should be opened by default use -1.
              * @property {Boolean}  defaults.closeOnFocusout=false Closes all panels of a group on focusout.
-             * @property {String}  defaults.animation='' Possible animations: 'adaptHeight', 'slide'. These should be combined with CSS transitions or animations.
+             * @property {String}  defaults.animation='' Possible animations: `adaptHeight` or `slide`. These should be combined with CSS transitions or animations.
              * @property {String}  defaults.easing='' Easing function for the animation.
              * @property {Number}  defaults.duration=400 Duration of the animation.
              * @property {Boolean|Number}  defaults.adjustScroll=false The adjustScroll option can be combined with the 'slide' animation in a accordion component. So that closing a large panel doesn't move the opening panel out of view. Possible values: `true`, `false`, any Number but not 0.
