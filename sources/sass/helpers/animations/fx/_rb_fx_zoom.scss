@@ -45,7 +45,7 @@
             @keyframes rb-fx-#{$animationName} {
                 from {
                     opacity: 0;
-                    transform: scale3d(.75, .75, .75);
+                    transform: scale3d(.8, .8, .8);
                 }
 
                 50% {
@@ -111,7 +111,7 @@
 
                 50% {
                     opacity: 0;
-                    transform: scale3d(.75, .75, .75);
+                    transform: scale3d(.8, .8, .8);
                 }
 
                 to {
