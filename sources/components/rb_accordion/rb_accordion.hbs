@@ -8,17 +8,19 @@ component: rb_accordion
     {{/each}}
     >
     {{#if buttons }}
-        {{#if buttons.prev}}
-            <button type="button" class="accordion-ctrl-btn" data-type="prev">{{ buttons.prev }}</button>
-        {{/if}}
-        {{#if buttons.next}}
-            <button type="button" class="accordion-ctrl-btn" data-type="next">{{ buttons.next }}</button>
-        {{/if}}
+        <div class="accordion-controls">
+            {{#if buttons.prev}}
+                <button type="button" class="accordion-ctrl-btn" data-type="prev">{{ buttons.prev }}</button>
+            {{/if}}
+            {{#if buttons.next}}
+                <button type="button" class="accordion-ctrl-btn" data-type="next">{{ buttons.next }}</button>
+            {{/if}}
+        </div>
     {{/if}}
     {{#each items }}
         <div class="accordion-item">
             <button type="button" class="accordion-btn">{{ title }}</button>
-            <div class="accordion-panel {{#if open}}is-selected-within{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
+            <div class="accordion-panel {{#if open}}is-open is-selected-within{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
                 <div class="accordion-content">
                     {{#each content}}
                         {{{ this }}}

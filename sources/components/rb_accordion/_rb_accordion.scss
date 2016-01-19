@@ -7,6 +7,7 @@
 //// -------------------------
 $accordionJSCFG: (
     multiple: false,
+    selectedIndex: -1,
     toggle: true,
     adjustScroll: 10,
     animation: 'slide',
@@ -54,6 +55,21 @@ $accordionJSCFG: (
 
         &content {
             padding: 20px 20px 0;
+        }
+
+        &controls {
+            margin-bottom: rb-em-calc(15);
+        }
+
+        &ctrl-btn {
+            padding: rb-em-calc(7 10);
+            border: none;
+            transition: background 300ms ease-in;
+
+            &:hover,
+            &:focus {
+                background: #777;
+            }
         }
     }
 
