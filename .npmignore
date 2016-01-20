@@ -4,10 +4,12 @@ dist
 dev
 doc
 jsdoc
-jsdoc-md
 tmp
 bower_components
 styleguide
+tests
+jsdoc-md
+grunt
 
 .sass-cache
 .css
