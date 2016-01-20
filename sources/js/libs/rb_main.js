@@ -540,9 +540,10 @@ if (!window.rb) {
      * @example
      * rb.rAFs(this, {throttle: true}, 'renderList', 'renderCircle');
      */
+    var slice = Array.prototype.slice;
     rb.rAFs = function (obj) {
         var options;
-        var args = Array.from(arguments);
+        var args = slice.call(arguments);
 
         args.shift();
 
