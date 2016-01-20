@@ -388,7 +388,7 @@ if (!window.rb) {
     /* Begin: parseValue */
     rb.parseValue = (function () {
         var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
-        var regObj = /^\[.*?]|\{.*?}$/;
+        var regObj = /^\[.*?]$|^\{.*?}$/;
 
         /**
          * Parses a String into another type using JSON.parse, if this fails returns the given string
@@ -410,7 +410,9 @@ if (!window.rb) {
                 attrVal = parseFloat(attrVal);
             }
             else if (regObj.test(attrVal)) {
-                attrVal = rb.jsonParse(attrVal);
+                try {
+                    attrVal = JSON.parse(attrVal);
+                } catch (e) {}
             }
             return attrVal;
         };
