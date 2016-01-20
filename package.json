@@ -1,7 +1,7 @@
 {
-  "name": "RawBlock",
+  "name": "rawblock",
   "description": "The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces. ",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "author": [
     {
