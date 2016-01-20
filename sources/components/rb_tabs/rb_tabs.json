@@ -1,6 +1,40 @@
 {
-  "type": "is-fade",
-  "multiple": false,
-  "toggle": false,
-  "hello": "Hello, I'm your tabs content"
+  "default": {
+    "type": "is-fade js-rb-life",
+    "buttons": false,
+    "items": [
+      {
+        "title": "Heading 1",
+        "content": [
+            "<div class=\"rb-richtext\">",
+            "<h3>This is heading 1</h3>",
+            "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+            "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+            "</div>"
+        ]
+      },
+      {
+        "open": true,
+        "title": "Heading 2",
+        "content": [
+            "<div class=\"rb-richtext\">",
+            "<h3>This is heading 2</h3>",
+            "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+            "</div>"
+        ]
+      },
+      {
+        "title": "Heading 3",
+        "content": [
+            "<div class=\"rb-richtext\">",
+            "<h3>This is heading 3</h3>",
+            "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+            "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+            "<p>Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had peeped into thebook her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures orconversations?</p>",
+            "</div>"
+        ]
+      }
+
+    ]
+  }
 }

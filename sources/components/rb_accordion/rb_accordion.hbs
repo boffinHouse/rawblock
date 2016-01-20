@@ -2,11 +2,7 @@
 component: rb_accordion
 ---
 
-<div class="rb-accordion js-rb-life" data-module="accordion"
-    {{#each attrs}}
-        data-{{@key}}="{{this}}"
-    {{/each}}
-    >
+<div class="rb-accordion js-rb-life" data-module="accordion" {{#each attrs}} data-{{@key}}="{{this}}"{{/each}}>
     {{#if buttons }}
         <div class="accordion-controls">
             {{#if buttons.prev}}
@@ -19,7 +15,7 @@ component: rb_accordion
     {{/if}}
     {{#each items }}
         <div class="accordion-item{{#if open}} is-selected-within{{/if}}">
-            <button type="button" class="accordion-btn">{{ title }}</button>
+            <button type="button" class="accordion-btn" {{#if open}}aria-expanded="true"{{/if}}>{{ title }}</button>
             <div class="accordion-panel {{#if open}}is-open{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
                 <div class="accordion-content">
                     {{#each content}}
