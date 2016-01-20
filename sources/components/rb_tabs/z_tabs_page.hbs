@@ -9,7 +9,10 @@ layout: default_tpl.hbs
             <div class="use-size-80">
                 <article class="rb-docu">
                     <h1 class="docu-title">{{ title }}</h1>
-                    {{> rb_tabs }}
+                    {{#with rb_tabs.default}}
+                        {{> rb_tabs }}
+                    {{/with}}
+
                 </article><!-- end rb-docu -->
             </div>
         </div>

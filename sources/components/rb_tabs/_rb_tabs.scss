@@ -12,38 +12,92 @@ $tabsJSCFG: (
 
 .rb-tabs {
     @include rb-js-export($tabsJSCFG);
-
     width: 100%;
-    max-width: 402px;
-    border: 1px solid #000;
     margin: auto;
 
     @at-root .tabs- {
-        @include rb-tabs-fade();
+
+        //Buttons
+        &nav {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+
+        &nav-item {
+            list-style: none;
+        }
+
+        //Panels
+        &panel-wrapper {
+            position: relative;
+            background: #f7f7f7;
+
+            &.is-fx > {
+                .is-open,
+                .is-closing {
+                    position: absolute;
+                    display: block;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                }
+            }
+        }
+
+        &panel {
+            @include rb-fx-options($options:());
+            display: none;
+
+            &.is-open {
+                display: block;
+            }
+        }
+
+        &content {
+            padding: 20px;
+        }
+
     }
 
-    &.is-slide .tabs-panel-wrapper {
-
+    // Animations
+    // --------------------------
+    &.is-fade {
         .tabs-panel {
-            animation-name: none;
-        }
+            @include rb-fx-fadeOut((onlyName: true));
 
-        &.is-fx > .tabs-panel.is-open {
-            @include rb-fx-slideLeftIn((onlyName: true));
-        }
-
-        &.is-fx > .tabs-panel.is-closing {
-            @include rb-fx-slideRightOut((onlyName: true));
-        }
-
-        &[data-direction="up"].is-fx > .tabs-panel.is-open {
-            @include rb-fx-slideRightIn((onlyName: true));
-        }
-
-        &[data-direction="up"].is-fx > .tabs-panel.is-closing {
-            @include rb-fx-slideLeftOut((onlyName: true));
+            &.is-open {
+                @include rb-fx-fadeIn((onlyName: false));
+            }
         }
     }
+
+
+    &.is-slide {
+        .tabs-panel-wrapper {
+            &.is-fx > {
+                .is-open {
+                    @include rb-fx-slideLeftIn((onlyName: true));
+                }
+
+                .is-closing {
+                    @include rb-fx-slideRightOut((onlyName: true));
+                }
+            }
+
+            &[data-direction="up"].is-fx > {
+                .is-open {
+                    @include rb-fx-slideRightIn((onlyName: true));
+                }
+
+                .is-closing {
+                    @include rb-fx-slideLeftOut((onlyName: true));
+                }
+            }
+        }
+    }
+
+
 }
 
 

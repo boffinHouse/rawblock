@@ -34,6 +34,8 @@ $stickyJSCFG: (
     bottom: auto;
     z-index: 5;
 
+
+
     &.is-bottom {
         top: auto;
         bottom: 0;
@@ -43,8 +45,8 @@ $stickyJSCFG: (
         position: fixed !important;
     }
 
-    &.is-top-15 {
-        top: 15px;
+    &.is-top-150 {
+        top: 150px;
     }
 
     &.is-bottom-15 {
