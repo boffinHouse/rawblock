@@ -6,15 +6,16 @@ layout: default_tpl.hbs
     <div class="page-section-inner">
 
         <div class="use-column-group use-gutters-horizontal">
-            <div class="use-size-80">
-                <article class="rb-docu">
+            <div class="use-size-80 use-size-100-s ">
+                <article class="rb-docu is-sticky-parent">
                     <h1 class="docu-title">{{ title }}</h1>
-                    <p class="docu-intro">Component creates a sticky element, that can be stuck to the top or the bottom of the viewport. Optionally can animate child elements after it has become stuck according to the scroll position.</p>
-                    <div class="is-sticky-parent">
+                    <p class="docu-intro">Creates a sticky element, that can be stuck to the top or the bottom of the viewport. Optionally can animate child elements after it has become stuck according to the scroll position.</p>
+
 {{#markdown}}
 ##Usage
-To apply the sticky component add the `rb-sticky` class and attribute `data-module="sticky"` to an element you want to make sticky.
-Top is the default position.
+To apply the sticky component:
+
+- Add the `rb-sticky` class and attribute `data-module="sticky"` to an element you want to make sticky. Top is the default position.
 
 {{/markdown}}
                     <div class="docu-example is-demo">
@@ -85,7 +86,6 @@ Or if you want to offset the element 150px from the top. Create a class, in this
     </div>
 {{/markdown}}
                     </div>
-                    </div><!--end is-sticky-parent -->
                     <hr>
 
 
