@@ -1,7 +1,6 @@
 {
   "default": {
     "type": "is-slide js-rb-life",
-    "buttons": false,
     "items": [
       {
         "title": "Heading 1",
