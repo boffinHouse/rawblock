@@ -1,6 +1,6 @@
 {
   "default": {
-    "type": "is-fade js-rb-life",
+    "type": "is-slide js-rb-life",
     "buttons": false,
     "items": [
       {
