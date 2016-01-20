@@ -1,6 +1,6 @@
 {
   "default": {
-    "type": "is-slide js-rb-life",
+    "type": "is-fade js-rb-life",
     "items": [
       {
         "title": "Heading 1",

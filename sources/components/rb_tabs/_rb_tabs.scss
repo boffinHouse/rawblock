@@ -7,7 +7,7 @@ rb-tabs
 $tabsJSCFG: (
     watchCss: false,
     animation: 'adaptHeight',
-    duration: 500,
+    duration: 600,
 );
 
 .rb-tabs {
@@ -21,17 +21,42 @@ $tabsJSCFG: (
         &nav {
             display: flex;
             flex-wrap: wrap;
-            list-style: none;
+            position: relative;
         }
 
         &nav-item {
-            list-style: none;
+            flex: 1;
+            margin: 0 0 -1px 1px;
+            text-align: center;
+
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+
+        &btn {
+            width: 100%;
+            position: relative;
+            border: none;
+            border-top: 3px solid transparent;
+            padding: 10px;
+            background: #e7e7e7;
+
+            &:hover:not(:disabled),
+            &:focus:not(:disabled) {
+                background: #dfdfdf;
+            }
+
+            &:disabled {
+                border-color: #dc0f6e;
+                z-index: 10;
+                background: #fff;
+            }
         }
 
         //Panels
         &panel-wrapper {
             position: relative;
-            background: #f7f7f7;
 
             &.is-fx > {
                 .is-open,
@@ -48,6 +73,7 @@ $tabsJSCFG: (
         &panel {
             @include rb-fx-options($options:());
             display: none;
+            background: #fff;
 
             &.is-open {
                 display: block;
@@ -57,7 +83,6 @@ $tabsJSCFG: (
         &content {
             padding: 20px;
         }
-
     }
 
     // Animations
