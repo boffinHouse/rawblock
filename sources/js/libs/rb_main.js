@@ -2187,7 +2187,7 @@ if (!window.rb) {
         var evts = that.constructor.events;
 
         for (evt in evts) {
-            namedStr = that.interpolateName(evt);
+            namedStr = that.interpolateName(evt, true);
             selector = namedStr.split(regWhite);
             evtName = selector.shift();
 
@@ -2329,9 +2329,10 @@ if (!window.rb) {
                 this.parseOptions(this.options);
 
                 this.name = this.options.name || this.name;
+                this.jsName = this.options.keepJsName ? origName : this.name;
 
-                this._evtName = this.name + 'changed';
-                this._beforeEvtName = this.name + 'change';
+                this._evtName = this.jsName + 'changed';
+                this._beforeEvtName = this.jsName + 'change';
 
                 /**
                  * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.
@@ -2354,6 +2355,7 @@ if (!window.rb) {
              * @prop {Boolean} defaults.isDebug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
              * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
              * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used by `interpolateName` and its dependent methods.
+             * @prop {Boolean} defaults.jsName=true If the name is overridden by option. This normally affects only the HTML structure. In case you also want to change the event name, set this to `false`
              *
              * @example
              * <!-- overriding defaults with markup -->
@@ -2398,6 +2400,7 @@ if (!window.rb) {
              */
             defaults: {
                 focusDelay: 0,
+                keepJsName: true,
             },
 
             /**
@@ -2477,8 +2480,8 @@ if (!window.rb) {
                 }
                 if (type == null) {
                     type = this._evtName;
-                } else if (!type.includes(this.name)) {
-                    type = this.name + type;
+                } else if (!type.includes(this.jsName)) {
+                    type = this.jsName + type;
                 }
 
                 opts = {detail: detail || {}};
@@ -2603,14 +2606,15 @@ if (!window.rb) {
             /**
              * Interpolates {name} to the name of the component. Helps to generate BEM-style Class-Structure.
              * @param {String} str
+             * @param {Boolean} isJs=false
              * @returns {string}
              *
              * @example
              * //assume the name of the component is dialog
              * this.interpolateName('.{name}__button'); //return '.dialog__button'
              */
-            interpolateName: function (str) {
-                return str.replace(regName, this.name);
+            interpolateName: function (str, isJs) {
+                return str.replace(regName, isJs ? this.jsName : this.name);
             },
 
             /**

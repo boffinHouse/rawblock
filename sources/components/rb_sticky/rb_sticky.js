@@ -29,6 +29,7 @@
              * @prop {Boolean} switchedOff=false Turns off the stickyness. (to be used in responsive context).
              * @prop {Boolean} resetSwitchedOff=true Whether a switchedOff change fully resets the styles.
              * @prop {Boolean} autoThrottle=true Tries to throttle layout reads if current scroll position is far away from a changing point.
+             * @prop {String} scrollContainer=''
              */
             defaults: {
                 container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
@@ -40,6 +41,7 @@
                 setWidth: true,
                 resetSwitchedOff: true,
                 autoThrottle: true,
+                scrollContainer: '',
             },
             /**
              * @constructs
@@ -136,6 +138,8 @@
                     this.calculateLayout();
                 } else if (name == 'autoThrottle' && !value && !this._throttleOptions.unthrottle) {
                     this._throttleOptions.unthrottle = true;
+                } else if(name == 'scrollContainer'){
+                    this._setScrollingElement();
                 }
 
                 if(name == 'switchedOff'){
@@ -184,12 +188,36 @@
                     }
                 }
 
-                if (this.isContainerScroll) {
-                    this.$scrollEventElem = this.$container;
-                    this.scrollingElement = this.$container.get(0);
-                } else {
-                    this.$scrollEventElem = $(window);
-                    this.scrollingElement = rb.getScrollingElement();
+                this._setScrollingElement();
+
+            },
+            _setScrollingElement: function(){
+                var curScrollingEventElement;
+                var oldEventElement = this.$scrollEventElem && this.$scrollEventElem.get(0);
+
+                if(this.options.scrollContainer){
+                    this.$scrollEventElem = $(this.element).closest(this.options.scrollContainer);
+                    curScrollingEventElement = this.$scrollEventElem.get(0);
+                    this.scrollingElement = curScrollingEventElement;
+                }
+
+                if(!this.options.scrollContainer && this.scrollingElement){
+                    if (this.isContainerScroll) {
+                        this.$scrollEventElem = this.$container;
+                        curScrollingEventElement = this.$container.get(0);
+                        this.scrollingElement = curScrollingEventElement;
+                    } else {
+                        curScrollingEventElement = window;
+                        this.$scrollEventElem = $(curScrollingEventElement);
+                        this.scrollingElement = rb.getScrollingElement();
+                    }
+                }
+
+                if(oldEventElement != curScrollingEventElement){
+                    if(oldEventElement){
+                        $(oldEventElement).off('scroll', this.checkPosition);
+                    }
+                    this.$scrollEventElem.on('scroll', this.checkPosition);
                 }
             },
             calculateLayout: function () {
@@ -427,7 +455,6 @@
                 }
             },
             attached: function () {
-                this.$scrollEventElem.on('scroll', this.checkPosition);
                 rb.resize.on(this.reflow);
                 clearInterval(this.layoutInterval);
                 this.layoutInterval = setInterval(this.reflow, Math.round((999 * Math.random()) + 9999));
@@ -436,6 +463,7 @@
                 this.$scrollEventElem.off('scroll', this.checkPosition);
                 rb.resize.off(this.reflow);
                 clearInterval(this.layoutInterval);
+                this.$scrollEventElem = null;
             },
         }
     );
