@@ -20,12 +20,12 @@
 .rb-button {
     display: inline-block;
     border: none;
-    padding: rb-em-calc(20);
+    padding: rb-em-calc(15 20);
     font-size: rb-rem-calc(16);
     font-weight: 600;
     color: #fff;
     background: #aaa;
-    transition: background 400ms ease-in;
+    transition: background 400ms ease;
 
     &:hover:not(.is-disabled),
     &:focus:not(.is-disabled) {

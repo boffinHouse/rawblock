@@ -3,10 +3,9 @@ component: rb_panel
 ---
 
 {{#uniqueID}}
-	<button type="button" aria-controls="panel-id-{{id}}" class="rb-button js-rb-life" data-module="panelbutton">Toggle</button>
+	<button type="button" aria-controls="panel-{{id}}" class="rb-button js-rb-life" data-module="panelbutton">Toggle</button>
 
-	<div id="panel-id-{{id}}" class="rb-panel" data-module="panel">
-		{{hello}}
+	<div id="panel-{{id}}" class="rb-panel" data-module="panel">
 		<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
 	</div>
 {{/uniqueID}}

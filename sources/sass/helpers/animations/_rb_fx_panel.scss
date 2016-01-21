@@ -1,0 +1,72 @@
+@mixin rb-fx-panel-common($name, $options:()) {
+    @warn $options;
+
+    .#{$name}- {
+        &panel-wrapper {
+
+            &.is-fx > {
+                .is-open,
+                .is-closing {
+                    position: absolute;
+                    display: block;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                }
+            }
+        }
+
+        &panel {
+            @include rb-fx-options($options);
+        }
+    }
+}
+
+@mixin rb-fx-panel($componentName, $animation: '', $options:()){
+
+
+    // Animations classes
+    // --------------------------
+    @if $animation == 'fade' {
+        &.is-fade {
+            @include rb-fx-panel-common($componentName, $options);
+
+            .#{$componentName}-panel {
+                @include rb-fx-fadeOut((onlyName: true));
+
+                &.is-open {
+                    @include rb-fx-fadeIn((onlyName: true));
+                }
+            }
+        }
+    }
+
+    @if $animation == "slide" {
+        &.is-slide {
+            @include rb-fx-panel-common($componentName, $options);
+
+            .#{$componentName}-panel-wrapper {
+                &.is-fx > {
+                    .is-open {
+                        @include rb-fx-slideLeftIn((onlyName: true));
+                    }
+
+                    .is-closing {
+                        @include rb-fx-slideRightOut((onlyName: true));
+                    }
+                }
+
+                &[data-direction="up"].is-fx > {
+                    .is-open {
+                        @include rb-fx-slideRightIn((onlyName: true));
+                    }
+
+                    .is-closing {
+                        @include rb-fx-slideLeftOut((onlyName: true));
+                    }
+                }
+            }
+        }
+    }
+
+}

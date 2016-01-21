@@ -6,8 +6,8 @@ rb-tabs
 **********************************************************/
 $tabsJSCFG: (
     watchCss: false,
-    animation: 'adaptHeight',
-    duration: 600,
+    //animation: 'adaptHeight',
+    duration: 400,
 );
 
 .rb-tabs {
@@ -57,21 +57,9 @@ $tabsJSCFG: (
         //Panels
         &panel-wrapper {
             position: relative;
-
-            &.is-fx > {
-                .is-open,
-                .is-closing {
-                    position: absolute;
-                    display: block;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                }
-            }
         }
 
         &panel {
-            @include rb-fx-options($options:());
             display: none;
             background: #fff;
 
@@ -85,44 +73,9 @@ $tabsJSCFG: (
         }
     }
 
-    // Animations
-    // --------------------------
-    &.is-fade {
-        .tabs-panel {
-            @include rb-fx-fadeOut((onlyName: true));
 
-            &.is-open {
-                @include rb-fx-fadeIn((onlyName: false));
-            }
-        }
-    }
-
-
-    &.is-slide {
-        .tabs-panel-wrapper {
-            &.is-fx > {
-                .is-open {
-                    @include rb-fx-slideLeftIn((onlyName: true));
-                }
-
-                .is-closing {
-                    @include rb-fx-slideRightOut((onlyName: true));
-                }
-            }
-
-            &[data-direction="up"].is-fx > {
-                .is-open {
-                    @include rb-fx-slideRightIn((onlyName: true));
-                }
-
-                .is-closing {
-                    @include rb-fx-slideLeftOut((onlyName: true));
-                }
-            }
-        }
-    }
-
-
+    @include rb-fx-panel(tabs, fade);
+    @include rb-fx-panel(tabs, slide);
 }
 
 
