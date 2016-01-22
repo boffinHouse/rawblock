@@ -9,9 +9,43 @@ layout: default_tpl.hbs
             <div class="use-size-80">
                 <article class="rb-docu">
                     <h1 class="docu-title">{{ title }}</h1>
+                    <p class="docu-intro">The dialog component creates a modal dialog to display additional content.</p>
 
-                    <button type="button" data-module="button" class="js-click" data-target="$(.rb-dialog)">open dialog</button>
-                    {{> rb_dialog }}
+{{#markdown}}
+##Usage
+The component consists of a dialog element, close button and action button.
+
+- To create an dialog add the `rb-dialog` class and attribute `data-module="dialog"` to a container element
+- Add class `dialog-close` to a button inside `rb-dialog` to create a close button.
+- Add attributes `data-module="button"`, `data-target="yourtarget"` and class `js-click` to create an open button.
+{{/markdown}}
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Demo</h3>
+                        <div>
+                            <button class="rb-button js-click" type="button"  data-module="button"  data-target="$(.rb-dialog)">open dialog</button>
+                            {{#with rb_dialog.default }}
+                                {{> rb_dialog }}
+                            {{/with}}
+                        </div>
+                    </div>
+
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Markup</h3>
+{{#markdown}}
+    <!-- Open Button -->
+    <button class="js-click" type="button" data-module="button" data-target="$(.rb-dialog)"></button>
+
+    <!-- Modal Dialog -->
+    <div class="rb-dialog js-rb-life" data-module="dialog">
+        <div class="dialog-content">
+            ...
+        </div>
+        <button class="dialog-close">Close Dialog</button>
+    </div>
+{{/markdown}}
+                    </div>
+                    {{> docu_js_life }}
+                    <hr>
                 </article><!-- end rb-docu -->
             </div>
         </div>

@@ -3,9 +3,10 @@ component: rb-dialog
 ---
 
 <div class="rb-dialog js-rb-life" data-module="dialog">
-    <div class="dialog-inner">
-        <h1 class="dialog-title">{{ title }}</h1>
-        <p>{{ text }}</p>
+    <div class="dialog-content">
+        {{#each content}}
+            {{{ this }}}
+        {{/each}}
     </div>
     <button type="button" class="dialog-close">Close Dialog</button>
 </div>
