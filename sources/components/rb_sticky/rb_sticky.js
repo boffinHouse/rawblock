@@ -438,7 +438,7 @@
                     //ToDo: remove life.initClass
                     this.$clone
                         .css({visibility: 'hidden'})
-                        .removeClass(rb.life.initClass)
+                        .removeClass('js-rb-life')
                         .addClass('sticky-clone')
                         .attr({
                             'data-module': '',
