@@ -111,6 +111,7 @@
                     this.calculateLayout();
                 }, {that: this});
 
+
                 this._getElements();
                 this.calculateLayout();
 
