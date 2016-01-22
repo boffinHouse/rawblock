@@ -202,7 +202,7 @@
                     this.scrollingElement = curScrollingEventElement;
                 }
 
-                if(!this.options.scrollContainer && this.scrollingElement){
+                if(!this.options.scrollContainer || !this.scrollingElement){
                     if (this.isContainerScroll) {
                         this.$scrollEventElem = this.$container;
                         curScrollingEventElement = this.$container.get(0);
