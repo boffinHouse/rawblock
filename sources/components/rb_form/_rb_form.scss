@@ -12,9 +12,6 @@
 	font-size: rb-rem-calc(18);
 
 	@at-root .form- {
-		&section {
-			margin: 0 0 20px;
-		}
 
 		&section-legend {
 			margin: 0 0 20px;
@@ -22,13 +19,10 @@
 			color: #333;
 		}
 
-		&subsection {
-			margin: 0 0 20px;
-		}
 
 		&subsection-legend {
 			margin: 0 0 20px;
-			font: 600 18px/24px sans-serif;
+			font: 600 rb-em-calc(24)/1 sans-serif;
 			color: #333;
 		}
 

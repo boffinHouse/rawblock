@@ -191,6 +191,10 @@ $docu-example-border: 1px solid #f1f1f1;
         td {
             color: #666;
         }
+
+        td:first-child {
+            width: 40%;
+        }
     }
 
     .docu- {

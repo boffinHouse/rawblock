@@ -14,9 +14,9 @@ layout: default_tpl.hbs
 
 {{#markdown}}
 ##Usage
-To apply this component add class `rb-form` to the form element. If validation is needed add also attribute `data-module="validation"` and class `js-rb-life`.
-
-Form element are placed inside container `form-field` and a corresponding modifier class is added to the container. For example when you use element `<select>` you
+To apply this component:
+- Add class `rb-form` to the form element. If validation is needed add also attribute `data-module="validation"` and class `js-rb-life`.
+- Form element are nested inside container `form-field` and a corresponding modifier class is added to the container. For example when you use element `<select>` you
 add class `is-select` the container `form-field`.
 {{/markdown}}
                     <div class="docu-example is-demo">
@@ -84,15 +84,82 @@ add class `is-select` the container `form-field`.
                     </div>
                     <hr>
 {{#markdown}}
-##Sections (fieldset)
-
+##Form layout
+The form layout can be structured with form classes to create sections `form-section` and `form-subsection`,
+rows `form-row`, boxes `form-box` and fields `form-fields`.
 {{/markdown}}
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Classes</h3>
 
-                    <hr>
 {{#markdown}}
-##Layout form
-
+| Class name | Description
+| ------------- |-------------|
+| `.form-section` | Use for main form section (first `fieldset`).|
+| `.form-section-legend` | Use for main title (`legend`) form. |
+| `.form-subsection`| Use to divide form in multiple division. |
+| `.form-subsection-legend`| Use for titles in sub sections. |
+|`.form-intro`| Use for introduction text. |
+| `.form-row` | Use on parent container for boxes `form-box` to group them. Utility class `use-colum-group` and `use-gutter` can be used to set box inline and space.|
+| `.form-box` | Use as column box to divide elements. Utility class `use-size-*` can be used to set width. |
+| `.form-field`| Use as container to group form elements (`<input>`, `<select>`, `<textarea>`) and `<label>`  |
 {{/markdown}}
+
+                    </div>
+                    <div class="docu-example is-demo">
+                        <h3 class="docu-example-title">Markup</h3>
+                        <div>
+                            <form action="#" class="rb-form">
+                                <fieldset class="form-section">
+                                    <legend class="form-section-legend">Section 1</legend>
+                                    <p class="form-intro">Intro text</p>
+                                    <fieldset class="form-subsection">
+                                        <legend class="form-subsection-legend">Section 2</legend>
+                                        <p class="form-intro">Intro text 2</p>
+                                        <div class="form-row use-column-group use-gutters">
+                                            <div class="form-box use-size-50">
+                                                <div class="form-field">
+                                                    {{#mergeJSON rb_input.standard 'label: "Text field"'}}
+                                                        {{> rb_input}}
+                                                    {{/mergeJSON}}
+                                                </div>
+                                            </div>
+                                            <div class="form-box use-size-50">
+                                                <div class="form-field">
+                                                    {{#mergeJSON rb_input.standard 'label: "Text field"'}}
+                                                        {{> rb_input}}
+                                                    {{/mergeJSON}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="docu-example">
+                        <h3 class="docu-example-title">Markup</h3>
+{{#markdown}}
+    <form action="#" class="rb-form">
+        <fieldset class="form-section">
+            <legend class="form-section-legend">...</legend>
+            <p class="form-intro">...</p>
+            <fieldset class="form-subsection">
+                <legend class="form-subsection-legend">...</legend>
+                <p class="form-intro">...</p>
+                <div class="form-row">
+                    <div class="form-box">
+                        <div class="form-field">...</div>
+                    </div>
+                    ...
+                </div>
+            </fieldset>
+        </fieldset>
+    </form>
+{{/markdown}}
+                    </div>
+                    <hr>
+
+
                 </article><!-- end rb-docu -->
             </div>
         </div>
