@@ -9,6 +9,7 @@
 
 .rb-form {
 	width: 100%;
+	font-size: rb-rem-calc(18);
 
 	@at-root .form- {
 		&section {
@@ -17,7 +18,7 @@
 
 		&section-legend {
 			margin: 0 0 20px;
-			font: 600 45px/45px sans-serif;
+			font: 600 32px/1 sans-serif;
 			color: #333;
 		}
 
@@ -58,10 +59,6 @@
 			font-weight: 700;
 			color: #333;
 			margin-bottom: rb-rem-calc(20);
-		}
-
-		&footer {
-			margin: 20px 0 0 0;
 		}
 
 		//Validation
