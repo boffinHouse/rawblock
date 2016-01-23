@@ -202,7 +202,7 @@
                     this.scrollingElement = curScrollingEventElement;
                 }
 
-                if(!this.options.scrollContainer && this.scrollingElement){
+                if(!this.options.scrollContainer || !this.scrollingElement){
                     if (this.isContainerScroll) {
                         this.$scrollEventElem = this.$container;
                         curScrollingEventElement = this.$container.get(0);
@@ -438,7 +438,7 @@
                     //ToDo: remove life.initClass
                     this.$clone
                         .css({visibility: 'hidden'})
-                        .removeClass(rb.life.initClass)
+                        .removeClass('js-rb-life')
                         .addClass('sticky-clone')
                         .attr({
                             'data-module': '',
