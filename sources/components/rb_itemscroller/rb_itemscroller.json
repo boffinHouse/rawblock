@@ -1,5 +1,5 @@
 {
-  "selectbox": false,
+  "selectpagination": false,
   "pagination": false,
   "autoplay": false,
   "itemsIndex": false,

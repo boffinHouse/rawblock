@@ -7,9 +7,9 @@ layout: default_tpl.hbs
 
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
-                <article class="rb-docu">
-                    <h1 class="docu-title">{{ title }}</h1>
-                    <p class="docu-intro">Creates a tab seperated layout, where multiple content panels are displayed in the same space with a intuitive navigation</p>
+                <article class="rb-docs">
+                    <h1 class="docs-title">{{ title }}</h1>
+                    <p class="docs-intro">Creates a tab seperated layout, where multiple content panels are displayed in the same space with a intuitive navigation</p>
 {{#markdown}}
 ##Usage
 
@@ -17,8 +17,8 @@ layout: default_tpl.hbs
 - Panel animations can be applied by adding a additional class to the component, for example `is-fade`.
 {{/markdown}}
 
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
                         <div>
                             {{#with rb_tabs.default}}
                                 {{> rb_tabs }}
@@ -27,8 +27,8 @@ layout: default_tpl.hbs
                     </div>
 
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Markup</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup</h3>
 {{#markdown}}
     <div class="rb-tabs js-rb-life" data-module="tabs">
         <ul class="tabs-nav">
@@ -48,11 +48,11 @@ layout: default_tpl.hbs
     </div>
 {{/markdown}}
                     </div>
-                    {{> docu_js_life }}
+                    {{> docs_js_life }}
 
                     <hr>
 
-                </article><!-- end rb-docu -->
+                </article><!-- end rb-docs -->
             </div>
         </div>
 

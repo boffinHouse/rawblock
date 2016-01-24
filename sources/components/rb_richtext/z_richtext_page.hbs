@@ -6,18 +6,18 @@ layout: default_tpl.hbs
     <div class="page-section-inner">
         <div class="use-column-group">
             <div class="use-size-100">
-                <article class="rb-docu">
-                    <h1 class="docu-title">{{ title }}</h1>
+                <article class="rb-docs">
+                    <h1 class="docs-title">{{ title }}</h1>
 {{#markdown}}
-<p class=docu-intro>Component richtext creates styling for formatted text that mainly has no additonal style classes.
+<p class=docs-intro>Component richtext creates styling for formatted text that mainly has no additonal style classes.
 Like markup created by a text/wysiwyg editor. </p>
 
 ##Usage
 To create a richtext component, add the class `.rb-richtext` to a container element and add your markup inside it.
 {{/markdown}}
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Code</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
 {{#markdown}}
     <article class="rb-richtext">
         ...
@@ -29,8 +29,8 @@ To create a richtext component, add the class `.rb-richtext` to a container elem
 To define headings use `<h1>` to `<h6>` elements.
 {{/markdown}}
 
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Example</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Example</h3>
 
                         <div class="rb-richtext">
 {{#markdown}}
@@ -48,8 +48,8 @@ To define headings use `<h1>` to `<h6>` elements.
 ##Paragraphs
 To define paragraphs use `<p>` element.
 {{/markdown}}
-                <div class="docu-example is-demo">
-                    <h3 class="docu-example-title">Example</h3>
+                <div class="docs-example is-demo">
+                    <h3 class="docs-example-title">Example</h3>
 
                     <div class="rb-richtext">
                         <p>This is a paragraph.  Paragraphs are usually represented in visual media by blocks of text that are  separated from adjacent blocks by vertical blank space or first-line indention</p>
@@ -63,8 +63,8 @@ To define paragraphs use `<p>` element.
 ##Text level semantics
 The following shows some commonly used text-level semantics or inline text element and how to use them.
 {{/markdown}}
-                <div class="docu-example is-demo">
-                    <h3 class="docu-example-title">Text Elements</h3>
+                <div class="docs-example is-demo">
+                    <h3 class="docs-example-title">Text Elements</h3>
                     <div class="rb-richtext">
 
 
@@ -106,8 +106,8 @@ The following shows some commonly used text-level semantics or inline text eleme
 ##Text align
 Align text by adding `.richtext-align-*` to an element (for example `<p>`, `<li`> or `<h2>` ect). Text default alignment is left.
 {{/markdown}}
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Classes</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Classes</h3>
 {{#markdown}}
 | Class name | Description
 | ------------- |-------------|
@@ -118,8 +118,8 @@ Align text by adding `.richtext-align-*` to an element (for example `<p>`, `<li`
 {{/markdown}}
                         </div>
 
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
 
                         <div class="rb-richtext">
                             <p class="richtext-align-left">Paragraph text is aligned left</p>
@@ -128,8 +128,8 @@ Align text by adding `.richtext-align-*` to an element (for example `<p>`, `<li`
                             <p class="richtext-align-justify">Paragraph text is aligned justify</p>
                         </div>
                     </div>
-                    <div class="docu-exampl">
-                        <h3 class="docu-example-title">Code</h3>
+                    <div class="docs-exampl">
+                        <h3 class="docs-example-title">Code</h3>
 {{#markdown}}
     <p class="richtext-align-left">...</p>
     <p class="richtext-align-right">...</p>
@@ -148,8 +148,8 @@ Inside create an list item with `<li>` element.
 
             <div class="use-column-group use-gutters-horizontal">
                 <div class="use-size-50">
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Unordered List</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Unordered List</h3>
 
                         <div class="rb-richtext">
                             <ul>
@@ -167,8 +167,8 @@ Inside create an list item with `<li>` element.
                             </ul>
                         </div>
                     </div>
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Code</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
 {{#markdown}}
     <ul>
         <li>Level 1</li>
@@ -187,8 +187,8 @@ Inside create an list item with `<li>` element.
                     </div>
                 </div>
                 <div class="use-size-50">
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Ordered List</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Ordered List</h3>
 
                         <div class="rb-richtext">
                             <ol>
@@ -206,8 +206,8 @@ Inside create an list item with `<li>` element.
                             </ol>
                         </div>
                     </div>
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Code</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
 {{#markdown}}
     <ol>
         <li>Level 1</li>
