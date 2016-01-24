@@ -1,43 +1,45 @@
 {
-  "selectpagination": false,
-  "pagination": false,
-  "autoplay": false,
-  "itemsIndex": false,
-  "attrs": false,
-  "buttons": {
-    "prev": "previous",
-    "next": "next"
-  },
-  "items": [
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    },
-    {
-      "sizes": "use-size-50"
-    }
-  ]
+  "default": {
+      "selectpagination": false,
+      "pagination": false,
+      "autoplay": false,
+      "itemsIndex": false,
+      "attrs": false,
+      "buttons": {
+          "prev": "previous",
+          "next": "next"
+      },
+      "items": [
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          },
+          {
+              "sizes": "use-size-50"
+          }
+      ]
+  }
 }
