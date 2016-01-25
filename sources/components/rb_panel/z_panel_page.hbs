@@ -7,9 +7,9 @@ layout: default_tpl.hbs
 
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
-                <article class="rb-docu">
-                    <h1 class="docu-title">{{ title }}</h1>
-                    <p class="docu-intro">This component creates an panel, that through the use of an action, hides, shows or switches the appearance of contents.</p>
+                <article class="rb-docs">
+                    <h1 class="docs-title">{{ title }}</h1>
+                    <p class="docs-intro">This component creates an panel, that through the use of an action, hides, shows or switches the appearance of contents.</p>
 {{#markdown}}
 ##Usage
 The panel component consists of an panel element and action button:
@@ -19,8 +19,8 @@ The panel component consists of an panel element and action button:
 
 
 {{/markdown}}
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
                         <div class="use-column-group use-gutters">
                             {{#uniqueID}}
                                 <div class="use-size-50">
@@ -36,8 +36,8 @@ The panel component consists of an panel element and action button:
                         </div>
                     </div>
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Markup</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup</h3>
 {{#markdown}}
     <!-- Panelbutton -->
     <button class="YourButtonClass js-click" type="button" aria-controls="dummy-your-unique-id" data-module="panelbutton">Panel Button</button>
@@ -48,9 +48,9 @@ The panel component consists of an panel element and action button:
     </div>
 {{/markdown}}
                     </div>
-                    {{> docu_js_life }}
+                    {{> docs_js_life }}
 
-                </article><!-- end rb-docu -->
+                </article><!-- end rb-docs -->
             </div>
         </div>
 

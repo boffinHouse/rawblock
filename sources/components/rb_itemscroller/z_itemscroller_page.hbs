@@ -1,73 +1,157 @@
 ---
-title: Itemscroller Page
+title: Itemscroller
 layout: default_tpl.hbs
 ---
 
 <section class="page-section">
     <div class="page-section-inner">
 
-        <div class="use-column-group use-gutters">
-            <div class="use-size-100">
-                <h2>Normal mode</h2>
-                {{#mergeJSON rb_itemscroller 'selectbox: true'}}
-                    {{> rb_itemscroller }}
-                {{/mergeJSON}}
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-80">
+                <div class="rb-docs">
+                    <h1 class="docs-title">{{ title }}</h1>
+                    <p class="docs-intro">The itemscroller component can be used as a responsive scroller with one or more items visible.</p>
+
+{{#markdown}}
+##Usage
+To apply the itemscroller component:
+
+- Add the `rb-itemscroller` class and attribute `data-module="itemscroller"` to a container element.
+- The component contains out of a viewport `itemscroller-viewport`, contentarea `itemscroller-content` and cells 'itemscroller-cells`.
+- Use utility class 'use-size-*` to determine how many cells are visible by giving to cells a width.
+
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            {{#mergeJSON rb_itemscroller.default }}
+                                {{> rb_itemscroller }}
+                            {{/mergeJSON}}
+                        </div>
+                    </div>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup</h3>
+{{#markdown}}
+    <div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+        <div class="itemscroller-viewport">
+            <div class="itemscroller-content use-column-group">
+                <div class="itemscroller-cell use-size-50">...</div>
+            </div>
+        </div>
+    </div>
+{{/markdown}}
+                    </div>
+                    {{> docs_js_life }}
+                    <hr>
+
+{{#markdown}}
+##Navigations
+The component can be scrolled by mouse action (click and drag) or swipped on touch devices. Alternatively you can add more navigation
+elements to navigate, like previous/next buttons or paginations
+{{/markdown}}
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Classes</h3>
+
+{{#markdown}}
+| Class name | Description
+| ------------- |-------------|
+| `.itemscroller-btn-prev` | Button to navigate to previous item or left. |
+| `.itemscroller-btn-next`| Button to navigate to next item or right. |
+| `.itemscroller-navigation` | List of pagination buttons to navigate to selected item |
+{{/markdown}}
+
+
+                    </div>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            {{#mergeJSON rb_itemscroller.default 'pagination: true'}}
+                                {{> rb_itemscroller }}
+                            {{/mergeJSON}}
+                        </div>
+                    </div>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup</h3>
+{{#markdown}}
+    <div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+        <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">prev</button>
+        <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
+        <div class="itemscroller-viewport">
+
+            <div class="itemscroller-content use-column-group">
+                <div class="itemscroller-cell use-size-50">...</div>
+            </div>
+        </div>
+        <div class="itemscroller-pagination"></div>
+    </div>
+{{/markdown}}
+                    </div>
+                    <hr>
+{{#markdown}}
+###Center mode
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            {{#mergeJSON rb_itemscroller.default 'pagination: true, attrs: {"data-center-mode":true}'}}
+                                {{> rb_itemscroller }}
+                            {{/mergeJSON}}
+                        </div>
+                    </div>
+                    <hr>
+{{#markdown}}
+###Carousel
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            {{#mergeJSON rb_itemscroller.default 'attrs: {"data-carousel":true}'}}
+                                {{> rb_itemscroller }}
+                            {{/mergeJSON}}
+                        </div>
+                    </div>
+                    <hr>
+
+{{#markdown}}
+###Index
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            {{#mergeJSON rb_itemscroller.default 'itemsIndex: true'}}
+                                {{> rb_itemscroller }}
+                            {{/mergeJSON}}
+                        </div>
+                    </div>
+                    <hr>
+
+{{#markdown}}
+###Pagination
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div class="use-gutters-vertical">
+                           <div class="use-size-100">
+                               {{#mergeJSON rb_itemscroller.default 'attrs: {"id":"itemscroller-pagination"}'}}
+                                   {{> rb_itemscroller }}
+                               {{/mergeJSON}}
+                           </div>
+                            <div class="use-size-100">
+                                {{#mergeJSON rb_itemscroller.default 'attrs: {"data-pagination-for":"itemscroller-pagination"}'}}
+                                    {{> rb_itemscroller }}
+                                {{/mergeJSON}}
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+
+                </div><!-- end rb-doc -->
             </div>
         </div>
 
     </div>
 </section>
-<section class="page-section">
-    <div class="page-section-inner">
 
-        <div class="use-column-group use-gutters">
-            <div class="use-size-100">
-                <h2>center mode</h2>
-                {{#mergeJSON rb_itemscroller 'pagination: true, attrs: {"data-center-mode":true}'}}
-                    {{> rb_itemscroller }}
-                {{/mergeJSON}}
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<section class="page-section">
-    <div class="page-section-inner">
-
-        <div class="use-column-group use-gutters">
-            <div class="use-size-100">
-                <h2>carousel normal mode</h2>
-                {{#mergeJSON rb_itemscroller 'itemsIndex: true, attrs: {"data-carousel":true}'}}
-                    {{> rb_itemscroller }}
-                {{/mergeJSON}}
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<section class="page-section">
-    <div class="page-section-inner">
-
-
-        <div class="use-column-group use-gutters">
-            <div class="use-size-50 use-size-100-m use-size-100-s">
-                <h2>carousel center mode</h2>
-                {{#mergeJSON rb_itemscroller 'attrs: {"data-carousel":true, "data-center-mode":true, "id":"itemscroller-pagination"}'}}
-                    {{> rb_itemscroller }}
-                {{/mergeJSON}}
-            </div>
-            <div class="use-size-50 use-size-100-m use-size-100-s">
-                <h2>pagination of previous scroller</h2>
-                {{#mergeJSON rb_itemscroller 'attrs: {"data-pagination-for":"itemscroller-pagination"}'}}
-                    {{> rb_itemscroller }}
-                {{/mergeJSON}}
-            </div>
-        </div>
-
-    </div>
-</section>
 
 
 

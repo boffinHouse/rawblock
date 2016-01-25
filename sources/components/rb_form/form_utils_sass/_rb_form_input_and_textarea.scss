@@ -1,9 +1,9 @@
 //Form Select
 @mixin form-input-and-textarea($custom:true, $block: true) {
-	$input-font: 600 24px/28px sans-serif !default;
+	$input-font: 600 18px/1.3 sans-serif !default;
 	$input-font-color: #555 !default;
 
-	$input-height: 60px !default;
+	$input-height: 40px !default;
 	$input-block: false !default;
 	$input-padding: rb-rem-calc(5 40 3 10) !default;
 	$input-border-radius: 0 !default;

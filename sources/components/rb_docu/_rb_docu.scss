@@ -1,6 +1,6 @@
-$docu-example-bg-color: #f9f9f9;
-$docu-example-border: 1px solid #f1f1f1;
-.rb-docu {
+$docs-example-bg-color: #f9f9f9;
+$docs-example-border: 1px solid #f1f1f1;
+.rb-docs {
     //Global Styles
     width: 100%;
 
@@ -119,19 +119,19 @@ $docu-example-border: 1px solid #f1f1f1;
     }
 
     code {
-        border: $docu-example-border;
+        border: $docs-example-border;
         padding: 2px 3px;
         font-size: 13px;
         font-weight: 400;
         color: rgb(198, 20, 20);;
-        background: $docu-example-bg-color;
+        background: $docs-example-bg-color;
     }
 
     pre {
         margin: 0 0 20px;
-        border: $docu-example-border;
+        border: $docs-example-border;
         padding: 12px 10px;
-        background: $docu-example-bg-color;
+        background: $docs-example-bg-color;
 
         code {
             border: none;
@@ -149,8 +149,8 @@ $docu-example-border: 1px solid #f1f1f1;
     table {
         width: 100%;
         margin: rb-rem-calc(0 0 30);
-        border: $docu-example-border;
-        background: $docu-example-bg-color;
+        border: $docs-example-border;
+        background: $docs-example-bg-color;
     }
 
     thead {
@@ -191,9 +191,13 @@ $docu-example-border: 1px solid #f1f1f1;
         td {
             color: #666;
         }
+
+        td:first-child {
+            width: 40%;
+        }
     }
 
-    .docu- {
+    .docs- {
         &intro {
             margin-bottom: rb-em-calc(25);
             font-size: rb-em-calc(18);
@@ -207,9 +211,9 @@ $docu-example-border: 1px solid #f1f1f1;
 
             &.is-demo {
                 > div {
-                    border: $docu-example-border;
+                    border: $docs-example-border;
                     padding: 20px 20px 10px;
-                    background: $docu-example-bg-color;
+                    background: $docs-example-bg-color;
 
                     &:nth-child(2n+1) {
                         border-top: none;

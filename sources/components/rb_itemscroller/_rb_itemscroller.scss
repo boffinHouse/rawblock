@@ -60,6 +60,7 @@ $itemscrollerJSCFG: (
 			width: 100%;
 			bottom: 20px;
 			margin: 0 auto;
+			z-index: 2;
 			text-align: center;
 		}
 
@@ -88,7 +89,7 @@ $itemscrollerJSCFG: (
 			bottom: 0;
 			height: 40px;
 			width: 40px;
-			z-index: 2;
+			z-index: 5;
 			margin: auto 0;
 			border: none;
 			cursor: pointer;
@@ -135,14 +136,6 @@ $itemscrollerJSCFG: (
 	}
 }
 
-//Remove
-.dummy-item {
-	height: 200px;
-	border: 2px solid #000;
-	background: #ddd;
-	width: 100%;
-	transition: all 400ms;
-}
 
 
 

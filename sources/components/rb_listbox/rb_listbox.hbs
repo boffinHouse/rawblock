@@ -1,16 +1,6 @@
-<ul class="js-rb-life rb-listbox" data-module="listbox" tabindex="0">
-	<li class="listbox-item">option 1</li>
-	<li class="listbox-item">option 2</li>
-	<li class="listbox-item">option 3</li>
-	<li class="listbox-item">option 4</li>
-</ul>
-
-<input id="bla" >
-
-<ul data-focus-element="prev()" class="js-rb-life rb-listbox" data-module="listbox">
-	<li class="listbox-item">option 1</li>
-	<li class="listbox-item">option 2</li>
-	<li class="listbox-item">option 3</li>
-	<li class="listbox-item">option 4</li>
+<ul class="rb-listbox {{ type }}" data-module="listbox" {{#each attrs}}{{@key}}="{{this}}"{{/each}}>
+    {{#each items}}
+        <li class="listbox-item">option 1</li>
+    {{/each}}
 </ul>
 

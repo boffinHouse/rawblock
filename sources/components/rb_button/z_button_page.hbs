@@ -8,20 +8,21 @@ layout: default_tpl.hbs
 
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
-                <div class="rb-docu">
-                    <h1 class="docu-title">{{ title }}</h1>
-
+                <div class="rb-docs">
+                    <h1 class="docs-title">{{ title }}</h1>
+                    <p class="docs-intro">Button component easily creates the most common buttons, which come in different styles.</p>
 {{#markdown}}
-<p class="docu-intro">Buttons can be created by adding the component class `.rb-button` to a `<button>` or `<a>` element. </p>
+##Usage
+Apply class `.rb-button` to a `<button>` or `<a>` element to create a button component.
 
 - If you want to link to another page or place within a page, use the `<a>` element. Mainly JavaScript is not necessary.
 - If you want to perform an action to carry out something, use the `<button>` element. JavaScript is mainly necssary
 {{/markdown}}
 
 
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
-                        <div class="use-column-group docu-gutters">
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div class="use-column-group docs-gutters">
                             <div class="use-size-auto">
                                 {{#mergeJSON rb_button 'title: "Home ", link:"#"'}}
                                     {{> rb_button }}
@@ -35,8 +36,8 @@ layout: default_tpl.hbs
                         </div>
                     </div>
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Markup Example</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup Example</h3>
 
 {{#markdown}}
     <!-- Anchor (link) -->
@@ -53,8 +54,8 @@ layout: default_tpl.hbs
 ##Color modifier classes
 These classes gives the buttons additional meaning.
 {{/markdown}}
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Modifier Classes</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Modifier Classes</h3>
 
 {{#markdown}}
 | Class name | Description
@@ -69,10 +70,10 @@ These classes gives the buttons additional meaning.
 
 
                     </div>
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
-                        <div class="use-column-group docu-gutters">
-                            <h4 class="docu-demo-title">Anchor button (Link)</h4>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div class="use-column-group docs-gutters">
+                            <h4 class="docs-demo-title">Anchor button (Link)</h4>
                             <div class="use-size-auto">
                                 {{#mergeJSON rb_button 'type: "is-primary", title: "Primary", link:"#"'}}
                                     {{> rb_button }}
@@ -99,8 +100,8 @@ These classes gives the buttons additional meaning.
                                 {{/mergeJSON}}
                             </div>
                         </div>
-                        <div class="use-column-group docu-gutters">
-                            <h4 class="docu-demo-title">Action button</h4>
+                        <div class="use-column-group docs-gutters">
+                            <h4 class="docs-demo-title">Action button</h4>
                             <div class="use-size-auto">
                                 {{#mergeJSON rb_button 'type: "is-primary", title: "Primary"'}}
                                     {{> rb_button }}
@@ -127,8 +128,8 @@ These classes gives the buttons additional meaning.
                                 {{/mergeJSON}}
                             </div>
                         </div>
-                        <div class="use-column-group docu-gutters">
-                            <h4 class="docu-demo-title">Disabled</h4>
+                        <div class="use-column-group docs-gutters">
+                            <h4 class="docs-demo-title">Disabled</h4>
                             <div class="use-size-auto">
                                 {{#mergeJSON rb_button 'title: "Disabled anchor", disabled: true, link:"#"'}}
                                     {{> rb_button }}
@@ -142,8 +143,8 @@ These classes gives the buttons additional meaning.
                         </div>
                     </div>
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Markup Example</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup Example</h3>
 
 {{#markdown}}
     <!-- Anchor (link) -->
@@ -174,8 +175,8 @@ These classes gives the buttons additional meaning.
 ##Additional classes
 These classes changes the shape of a button.
 {{/markdown}}
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Modifier Classes</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Modifier Classes</h3>
 
 {{#markdown}}
 | Class name | Description
@@ -184,9 +185,9 @@ These classes changes the shape of a button.
 {{/markdown}}
 
                     </div>
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
-                        <div class="use-column-group docu-gutters">
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div class="use-column-group docs-gutters">
                             <div class="use-size-50">
                                 {{#mergeJSON rb_button 'type: "is-primary is-stretched", title: "Primary"'}}
                                     {{> rb_button }}
@@ -199,7 +200,7 @@ These classes changes the shape of a button.
                             </div>
                         </div>
                     </div>
-                </div><!-- end rb-docu -->
+                </div><!-- end rb-docs -->
             </div>
         </div>
 

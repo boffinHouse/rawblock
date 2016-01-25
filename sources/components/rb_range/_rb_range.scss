@@ -4,9 +4,9 @@ rb-range
 ----------------------------------------------------------
 
 **********************************************************/
-$range-rail-size: 1rem;
-$range-thumb-height: 2rem;
-$range-thumb-width: 2rem;
+$range-rail-size: 20px;
+$range-thumb-height: 32px;
+$range-thumb-width: 30px;
 $rangeJSCFG: (
 	watchCss: false,
 	animate: true,
@@ -31,7 +31,7 @@ $rangeJSCFG: (
 
 .rb-range {
 	//@include rb-js-export($rangeJSCFG);
-	border: 0.1rem solid #000;
+	background: #00aaff;
 
 	/* FOUC */
 	//opacity: 0.1;
@@ -68,24 +68,22 @@ $rangeJSCFG: (
 			}
 
 			&progress {
-				box-sizing: content-box;
-				position: absolute;
-				z-index: -1;
 				display: inline-block;
-				background: #eee;
+				position: absolute;
+				box-sizing: content-box;
+				background: #004b80;
 			}
 
 			&thumb {
 				position: absolute;
-				border-radius: 50%;
+				border: 1px solid #c4c4c4;
 				height: #{$range-thumb-height};
 				width: #{$range-thumb-width};
 				cursor: pointer;
 				outline: none;
-				background: #666;
+				background: #fff;
 			}
 		}
-
 
 		//Range horizontal styling
 		&:not(.is-range-vertical) {
@@ -104,13 +102,14 @@ $rangeJSCFG: (
 				}
 
 				&tooltip {
-					position: absolute;
-					bottom: 1rem;
 					display: block;
-					width: 10rem;
+					position: absolute;
+					top: -40px;
+					min-width: 10rem;
 					left: calc(-5rem + #{$range-thumb-width} / 2);
 					text-align: center;
 					visibility: hidden;
+					z-index: 3;
 				}
 
 				&progress-min {
@@ -130,9 +129,15 @@ $rangeJSCFG: (
 				}
 			}
 
-			&.is-active .range-tooltip-value::before {
-				content: attr(data-value);
+			&.is-active .range-tooltip-value {
+				box-shadow: 0 2px 10px rgba(0,0,0, 0.3);
+				padding: 10px;
 				visibility: visible;
+				background: #fff;
+
+				&::before {
+					content: attr(data-value);
+				}
 			}
 
 			&.is-animate {
