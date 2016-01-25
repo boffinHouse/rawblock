@@ -95,6 +95,20 @@ if (!window.rb) {
             }
         };
 
+        var timedDetectMQChange = (function(){
+            var running = false;
+            var run = function(){
+                detectMQChange();
+                run = false;
+            };
+            return function(){
+                if(!running){
+                    running = true;
+                    setTimeout(run, 9);
+                }
+            };
+        })();
+
         Object.defineProperty(rb, 'cssConfig', {
             configurable: true,
             enumerable: true,
@@ -115,9 +129,9 @@ if (!window.rb) {
             },
         });
 
-        document.addEventListener('DOMContentLoaded', detectMQChange);
+        document.addEventListener('DOMContentLoaded', timedDetectMQChange);
 
-        window.addEventListener('load', detectMQChange);
+        window.addEventListener('load', timedDetectMQChange);
         detectMQChange();
     };
 
