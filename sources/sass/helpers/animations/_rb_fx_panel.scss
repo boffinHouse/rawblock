@@ -1,5 +1,4 @@
 @mixin rb-fx-panel-common($name, $options:()) {
-    @warn $options;
 
     .#{$name}- {
         &panel-wrapper {

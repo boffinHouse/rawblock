@@ -1,0 +1,16 @@
+{
+    "default": {
+        "type": "js-rb-life",
+        "attrs": {
+            "tabindex": -1
+        },
+        "items": [
+            {
+                "title": "hello"
+            },
+            {
+                "title": "hello 2"
+            }
+        ]
+    }
+}

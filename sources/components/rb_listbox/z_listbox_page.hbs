@@ -10,7 +10,33 @@ layout: default_tpl.hbs
             <div class="use-size-80">
             <article class="rb-docs">
                 <h1 class="docs-title">{{ title }}</h1>
-                {{> rb_listbox }}
+                <p class="docs-intro">The listbox component turns a list into selectable list, individually or grouped.</p>
+
+{{#markdown}}
+##Usage
+To apply the itemscroller component add class `rb-listbox` and attribute `data-module="listbox"` to a container element.
+
+{{/markdown}}
+                <div class="docs-example is-demo">
+                    <h3 class="docs-example-title">Demo</h3>
+                    <div>
+                        {{#with rb_listbox.default }}
+                            {{> rb_listbox }}
+                        {{/with}}
+                    </div>
+                </div>
+
+                <div class="docs-example">
+                    <h3 class="docs-example-title">Markup</h3>
+{{#markdown}}
+    <ul class="rb-listbox js-rb-life" data-module="listbox">
+        <li class="listbox-item">...</li>
+    </ul>
+{{/markdown}}
+                </div>
+                {{> docs_js_life }}
+                <hr>
+
                 </article><!-- end rb-docs -->
             </div>
         </div>
