@@ -9,7 +9,138 @@ layout: default_tpl.hbs
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
                 <article class="rb-docs">
-                    <h1 class="doc-title">{{ title }}</h1>
+                    <h1 class="docs-title">{{ title }}</h1>
+                    <p class="docs-intro">This component adds on a small overlay of secondary content.</p>
+{{#markdown}}
+##Usage
+The popover component consists of an popover container element and button (`<button>` or `<a>`).
+
+- Add the `rb-popover` class, attribute `data-module="popover"` and an ID `id="your-unique-id"` to a container element you want to control.
+- Add attribute `data-module="panelbutton"` on a button or anchor element. If button element `<button>` add attributes `aria-controls="your-unique-id"` and if
+anchor element `<a>` add the id to href attribute `href="#your-unique-id"`.
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div class="use-column-group use-gutters">
+                            <div class="use-size-50">
+                                <button class="rb-button is-primary js-rb-life" type="button" aria-controls="popover-dummy-1" data-module="panelbutton">Popover Button</button>
+                            </div>
+
+                            <div id="popover-dummy-1" class="rb-popover" data-module="popover">
+                                <div class="popover-content">
+                                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup</h3>
+{{#markdown}}
+    <!-- Panelbutton -->
+    <button class="YourButtonClass js-click" type="button" aria-controls="your-popover-id" data-module="panelbutton">Panel Button</button>
+
+    <a class="YourButtonClass js-click" href="#your-popover-id" data-module="panelbutton">Panel Anchor button</a>
+
+    <!-- Panel -->
+    <div id="your-popover-id" class="rb-popover" data-module="popover">
+        <div class="popover-content">...</div>
+    </div>
+{{/markdown}}
+                    </div>
+                    {{> docs_js_life }}
+                    <hr>
+{{#markdown}}
+##Positions
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Class name</th>
+                                    <th>Description</th>
+                                    <th>Example</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><code>.is-primary</code></td>
+                                    <td>Indicates primary action</td>
+                                    <td>
+                                        <button class="js-click" type="button" aria-controls="popover-dummy-2" data-module="panelbutton">Top</button>
+                                        <div id="popover-dummy-2" class="rb-popover is-top" data-module="popover">
+                                            <div class="popover-content">
+                                                <p>Content Here</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-secondary</code></td>
+                                    <td>Indicates secondary action</td>
+                                    <td>
+                                        <button class="js-click" type="button" aria-controls="popover-dummy-3" data-module="panelbutton">Right</button>
+                                        <div id="popover-dummy-3" class="rb-popover is-right" data-module="popover">
+                                            <div class="popover-content">
+                                                <p>Content Here</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-success</code></td>
+                                    <td>Indicates succesfull or positive action</td>
+                                    <td>
+                                        <button class="js-click" type="button" aria-controls="popover-dummy-4" data-module="panelbutton">Bottom</button>
+                                        <div id="popover-dummy-4" class="rb-popover is-bottom" data-module="popover">
+                                            <div class="popover-content">
+                                                <p>Content Here</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-danger</code></td>
+                                    <td>Indicates dangerous or negative action</td>
+                                    <td>
+                                        <button class="js-click" type="button" aria-controls="popover-dummy-5" data-module="panelbutton">Left</button>
+                                        <div id="popover-dummy-5" class="rb-popover is-left" data-module="popover">
+                                            <div class="popover-content">
+                                                <p>Content Here</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-warning</code></td>
+                                    <td>Indicates warning or informative action</td>
+                                    <td>
+                                        <button class="js-click" type="button" aria-controls="popover-dummy-6" data-module="panelbutton">Bottom</button>
+                                        <div id="popover-dummy-6" class="rb-popover is-bottom" data-module="popover">
+                                            <div class="popover-content">
+                                                <p>Content Here</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-disabled</code></td>
+                                    <td>Additional class thats indicate action is disabled.</td>
+                                    <td>
+                                        <button class="js-click" type="button" aria-controls="popover-dummy-7" data-module="panelbutton">Bottom</button>
+                                        <div id="popover-dummy-7" class="rb-popover is-bottom" data-module="popover">
+                                            <div class="popover-content">
+                                                <p>Content Here</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                     {{#mergeJSON rb_popover}}
                         {{> rb_popover }}
@@ -17,19 +148,19 @@ layout: default_tpl.hbs
 
                     <p>This is a parapgrah, yea</p>
 
-                    {{#mergeJSON rb_popover 'btn: {title:"Panel position bottom"}, panel: {type: "bottom"}'}}
+                    {{#mergeJSON rb_popover 'btn: {title:"Panel position bottom"}, panel: {type: "is-bottom"}'}}
                         {{> rb_popover }}
                     {{/mergeJSON}}
 
                     <p>This is a parapgrah, yea</p>
 
-                    {{#mergeJSON rb_popover 'btn: {title:"Panel position left"}, panel: {type: "left"}'}}
+                    {{#mergeJSON rb_popover 'btn: {title:"Panel position left"}, panel: {type: "is-left"}'}}
                         {{> rb_popover }}
                     {{/mergeJSON}}
 
                     <p>This is a parapgrah, yea</p>
 
-                    {{#mergeJSON rb_popover 'btn: {title:"Panel position right"}, panel: {type: "right"}'}}
+                    {{#mergeJSON rb_popover 'btn: {title:"Panel position right"}, panel: {type: "is-right"}'}}
                         {{> rb_popover }}
                     {{/mergeJSON}}
 

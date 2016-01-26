@@ -13,12 +13,14 @@ $popover-arrow-pos: 10px;
     //@include rb-js-export($popoverJSCFG);
     position: absolute;
     max-width: 300px;
+    z-index: 30;
     visibility: hidden;
     opacity: 0;
     transition: 400ms opacity, 400ms visibility;
 
+
     @at-root {
-        .popover-inner {
+        .popover-content {
             position: relative;
             z-index: 2;
             padding: 20px;
@@ -40,8 +42,9 @@ $popover-arrow-pos: 10px;
         opacity: 1;
     }
 
-    &.is-popover-top,
-    &.is-popover-bottom.is-flipped-y {
+    &.is-flipped-y ,
+    &.is-top,
+    &.is-bottom.is-flipped-y {
         margin: 0 0 #{$popover-margin} 0;
 
         &::after {
@@ -53,8 +56,9 @@ $popover-arrow-pos: 10px;
         }
     }
 
-    &.is-popover-bottom,
-    &.is-popover-top.is-flipped-y {
+    &,
+    &.is-bottom,
+    &.is-top.is-flipped-y {
         margin: #{$popover-margin} 0 0 0;
 
         &::after {
@@ -66,8 +70,8 @@ $popover-arrow-pos: 10px;
         }
     }
 
-    &.is-popover-right,
-    &.is-popover-left.is-flipped-x {
+    &.is-right,
+    &.is-left.is-flipped-x {
         margin: 0 0 0 #{$popover-margin};
 
         &::after {
@@ -79,8 +83,8 @@ $popover-arrow-pos: 10px;
         }
     }
 
-    &.is-popover-left,
-    &.is-popover-right.is-flipped-x {
+    &.is-left,
+    &.is-right.is-flipped-x {
         margin: 0 #{$popover-margin} 0 0;
 
         &::after {
@@ -93,28 +97,28 @@ $popover-arrow-pos: 10px;
     }
 
     //Popover JS Configs
-    &.is-popover-top {
+    &.is-top {
         @include rb-js-export(map_merge($popoverJSCFG, (
             my: 'center bottom',
             at: 'center top'
         )));
     }
 
-    &.is-popover-bottom {
+    &.is-bottom {
         @include rb-js-export(map_merge($popoverJSCFG, (
             my: 'center top',
             at: 'center bottom'
         )));
     }
 
-    &.is-popover-right {
+    &.is-right {
         @include rb-js-export(map_merge($popoverJSCFG, (
             my: 'left middle',
             at: 'right middle'
         )));
     }
 
-    &.is-popover-left {
+    &.is-left {
         @include rb-js-export(map_merge($popoverJSCFG, (
             my: 'right middle',
             at: 'left middle'

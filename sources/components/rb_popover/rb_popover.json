@@ -3,9 +3,13 @@
     "type": "button",
     "title": "Panel position top",
     "action": "js-click"
+
   },
   "panel": {
-    "type": "top"
+    "type": "top",
+    "content": [
+      "<p>Hello everybody, here I am!</p>"
+    ]
   }
 
 }
