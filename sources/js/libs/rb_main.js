@@ -162,21 +162,18 @@ if (!window.rb) {
      * @returns {Element} The DOM element that scrolls the viewport (either html or body)
      */
     rb.getScrollingElement = function () {
-        var bH, dH, isCompat;
+        var isBody;
         var scrollingElement = document.scrollingElement;
 
         if (!scrollingElement && document.body) {
-            bH = document.body.scrollHeight;
-            dH = rb.root.scrollHeight;
-            isCompat = document.compatMode == 'BackCompat';
 
-            scrollingElement = (dH <= bH || isCompat) ?
+            isBody = document.compatMode == 'BackCompat' || Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+
+            scrollingElement = isBody ?
                 document.body :
                 rb.root;
 
-            if (dH != bH || isCompat) {
-                document.scrollingElement = scrollingElement;
-            }
+            document.scrollingElement = scrollingElement;
         }
 
         return scrollingElement || rb.root;
@@ -294,7 +291,7 @@ if (!window.rb) {
             _setup: function () {
                 if (!installed) {
                     installed = true;
-                    setTimeout(function () {
+                    (window.requestIdleCallback || setTimeout)(function () {
                         iWidth = innerWidth;
                         cHeight = docElem.clientHeight;
                     });
