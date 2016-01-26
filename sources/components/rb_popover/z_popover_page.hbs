@@ -66,7 +66,7 @@ anchor element `<a>` add the id to href attribute `href="#your-unique-id"`.
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td><code>.is-primary</code></td>
+                                    <td><code>.is-top</code></td>
                                     <td>Indicates primary action</td>
                                     <td>
                                         {{#mergeJSON rb_popover}}
@@ -75,17 +75,22 @@ anchor element `<a>` add the id to href attribute `href="#your-unique-id"`.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><code>.is-secondary</code></td>
+                                    <td><code>.is-top-right</code></td>
                                     <td>Indicates secondary action</td>
                                     <td>
-                                        {{#mergeJSON rb_popover 'btn: {title:"Right"}, panel: {type: "is-right"}'}}
-                                            {{> rb_popover }}
-                                        {{/mergeJSON}}
+
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><code>.is-success</code></td>
+                                    <td><code>.is-top-left</code></td>
                                     <td>Indicates succesfull or positive action</td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-bottom</code></td>
+                                    <td>Indicates dangerous or negative action</td>
                                     <td>
                                         {{#mergeJSON rb_popover 'btn: {title:"Bottom"}, panel: {type: "is-bottom"}'}}
                                             {{> rb_popover }}
@@ -93,26 +98,35 @@ anchor element `<a>` add the id to href attribute `href="#your-unique-id"`.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><code>.is-danger</code></td>
-                                    <td>Indicates dangerous or negative action</td>
-                                    <td>
-                                        {{#mergeJSON rb_popover 'btn: {title:"Left"}, panel: {type: "is-left"}'}}
-                                            {{> rb_popover }}
-                                        {{/mergeJSON}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><code>.is-warning</code></td>
+                                    <td><code>.is-bottom-right</code></td>
                                     <td>Indicates warning or informative action</td>
                                     <td>
 
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><code>.is-disabled</code></td>
+                                    <td><code>.is-bottom-left</code></td>
                                     <td>Additional class thats indicate action is disabled.</td>
                                     <td>
 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-right</code></td>
+                                    <td>Additional class thats indicate action is disabled.</td>
+                                    <td>
+                                        {{#mergeJSON rb_popover 'btn: {title:"Right"}, panel: {type: "is-right"}'}}
+                                            {{> rb_popover }}
+                                        {{/mergeJSON}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-left</code></td>
+                                    <td>Additional class thats indicate action is disabled.</td>
+                                    <td>
+                                        {{#mergeJSON rb_popover 'btn: {title:"Left"}, panel: {type: "is-left"}'}}
+                                            {{> rb_popover }}
+                                        {{/mergeJSON}}
                                     </td>
                                 </tr>
                                 </tbody>

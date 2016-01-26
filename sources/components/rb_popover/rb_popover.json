@@ -2,13 +2,13 @@
   "btn": {
     "type": "button",
     "title": "Top",
-    "action": "js-click"
+    "action": "js-rb-life"
 
   },
   "panel": {
     "type": "is-top",
     "content": [
-      "<p>Content Here!</p>"
+      "<span>Content Here!</span>"
     ]
   }
 
