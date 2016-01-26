@@ -13,9 +13,9 @@ component: rb_popover
 	</button>
 {{/is}}
 
-<div id="popover-panel-{{id}}" class="rb-popover {{ type }}" data-module="popover" aria-live="polite">
+<div id="popover-panel-{{id}}" class="rb-popover {{ panel.type }}" data-module="popover" aria-live="polite">
 	<div class="popover-content">
-        {{#each content }}
+        {{#each panel.content }}
             {{{ this }}}
         {{/each}}
 	</div>

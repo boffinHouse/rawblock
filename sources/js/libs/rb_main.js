@@ -11,6 +11,7 @@ if (!window.rb) {
 
     /* Begin: global vars end */
     var rb = window.rb;
+    var regSplit = /\s*?,\s*?|\s+?/g;
 
     /**
      * The jQuery or dom.js (rb.$) plugin namespace.
@@ -24,9 +25,7 @@ if (!window.rb) {
      */
     rb.$ = rb.$ || window.jQuery || window.dom;
 
-
     var $ = rb.$;
-    var regSplit = /\s*?,\s*?|\s+?/g;
 
     /**
      * Reference to the root element (mostly html element)
@@ -388,8 +387,6 @@ if (!window.rb) {
     /* Begin: parseValue */
     rb.parseValue = (function () {
         var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
-        var regObj = /^\[.*?]$|^\{.*?}$/;
-
         /**
          * Parses a String into another type using JSON.parse, if this fails returns the given string
          * @alias rb#parseValue
@@ -409,7 +406,7 @@ if (!window.rb) {
             else if (regNumber.test(attrVal)) {
                 attrVal = parseFloat(attrVal);
             }
-            else if (regObj.test(attrVal)) {
+            else if ((attrVal.startsWith('{') && attrVal.endsWith('}')) || (attrVal.startsWith('[') && attrVal.endsWith(']'))) {
                 try {
                     attrVal = JSON.parse(attrVal);
                 } catch (e) {}
@@ -1596,18 +1593,21 @@ if (!window.rb) {
         initWatchCss = $.noop;
         var elements = document.getElementsByClassName(attachedClass);
 
-        rb.resize.on(function () {
+        rb.checkCssCfgs = function () {
             var i, elem, component;
             var len = elements.length;
             for (i = 0; i < len; i++) {
                 elem = elements[i];
                 component = elem && elem[componentExpando];
 
-                if (component && component.parseOptions && component._afterStyle && component._afterStyle.content != component._styleOptsStr) {
+                if (component && component.parseOptions && component._afterStyle &&
+                    component._afterStyle.content != component._styleOptsStr) {
                     component.parseOptions();
                 }
             }
-        });
+        };
+
+        rb.resize.on(rb.checkCssCfgs);
     };
 
     var initObserver = function () {
@@ -2408,7 +2408,7 @@ if (!window.rb) {
              *
              * The key specifies the event type and optional a selector (separated by a whitespace) for event delegation. The key will be interpolated with [`this.interpolateName`]{@link rb.Component#interpolateName}.
              *
-             * The key also allows comma separated multiple events as also modifiers (`'event1,event2:modifier()'`). As modifier `"event:capture()"`, `"event:keycodes(13 32)"`, `"event:matches(.selector)"` and `"event:delegate(.selector)"` (alias for `"event .selector"`) are known. The delegated element is available through the `delegatedTarget` property.
+             * The key also allows comma separated multiple events as also modifiers (`'event1,event2:modifier()'`). As modifier `"event:capture()"`, `"event:keycodes(13 32)"`, `"event:matches(.selector)"` and `"event:closest(.selector)"` (alias for `"event .selector"`) are known. The delegated element is available through the `delegatedTarget` property.
              *
              * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
              *
@@ -2606,7 +2606,7 @@ if (!window.rb) {
             /**
              * Interpolates {name} to the name of the component. Helps to generate BEM-style Class-Structure.
              * @param {String} str
-             * @param {Boolean} isJs=false
+             * @param {Boolean} [isJs=false]
              * @returns {string}
              *
              * @example

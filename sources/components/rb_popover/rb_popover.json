@@ -1,14 +1,14 @@
 {
   "btn": {
     "type": "button",
-    "title": "Panel position top",
+    "title": "Top",
     "action": "js-click"
 
   },
   "panel": {
-    "type": "top",
+    "type": "is-top",
     "content": [
-      "<p>Hello everybody, here I am!</p>"
+      "<p>Content Here!</p>"
     ]
   }
 
