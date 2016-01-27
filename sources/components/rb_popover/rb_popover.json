@@ -1,14 +1,13 @@
 {
   "btn": {
-    "type": "button",
+    "type": "js-click",
     "title": "Top",
-    "action": "js-rb-life"
-
+    "link": false
   },
   "panel": {
-    "type": "is-top",
+    "type": "",
     "content": [
-      "<span>Content Here!</span>"
+      "<span style=\"display: block; color: #fff; text-align: center;\">Content Here!</span>"
     ]
   }
 

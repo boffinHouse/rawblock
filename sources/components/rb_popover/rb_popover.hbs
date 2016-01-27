@@ -2,16 +2,15 @@
 component: rb_popover
 ---
 {{#uniqueID}}
-{{#is btn.type 'anchor' }}
-	<a href="popover-panel-{{id}}" class="{{ bnt.action }}" data-module="panelbutton">
+{{#if btn.link}}
+	<a href="#popover-panel-{{id}}" class="{{ btn.type }}" data-module="panelbutton">
 		{{ btn.title }}
 	</a>
-{{/is}}
-{{#is btn.type 'button'}}
-	<button type="button" aria-controls="popover-panel-{{id}}" class="{{ btn.action }}" data-module="panelbutton">
-		{{ btn.title }}
-	</button>
-{{/is}}
+{{ else }}
+    <button type="button" aria-controls="popover-panel-{{id}}" class="{{ btn.type }}" data-module="panelbutton">
+        {{ btn.title }}
+    </button>
+{{/if}}
 
 <div id="popover-panel-{{id}}" class="rb-popover {{ panel.type }}" data-module="popover" aria-live="polite">
 	<div class="popover-content">

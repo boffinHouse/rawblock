@@ -5,9 +5,9 @@ rb-popover
 
 **********************************************************/
 $popoverJSCFG: ();
-$popover-margin: 30px;
-$popover-bg-color: #333;
-$popover-arrow-pos: 10px;
+$popover-margin: 10px;
+$popover-bg-color: #111;
+$popover-arrow-size: 10px;
 
 .rb-popover {
     //@include rb-js-export($popoverJSCFG);
@@ -18,12 +18,11 @@ $popover-arrow-pos: 10px;
     opacity: 0;
     transition: 400ms opacity, 400ms visibility;
 
-
     @at-root {
         .popover-content {
             position: relative;
             z-index: 2;
-            padding: 20px;
+            padding: 10px;
             background: #{$popover-bg-color};
         }
     }
@@ -31,8 +30,8 @@ $popover-arrow-pos: 10px;
     &::after {
         content: '';
         position: absolute;
-        height: 20px;
-        width: 20px;
+        height: $popover-arrow-size;
+        width: $popover-arrow-size;
         background: #{$popover-bg-color};
         transform: rotate(45deg);
     }
@@ -42,27 +41,28 @@ $popover-arrow-pos: 10px;
         opacity: 1;
     }
 
-    &.is-flipped-y ,
+
+    &,
     &.is-top,
     &.is-bottom.is-flipped-y {
         margin: 0 0 #{$popover-margin} 0;
 
         &::after {
             top: auto;
-            bottom: -#{$popover-arrow-pos};
+            bottom: -$popover-arrow-size / 2;
             right: 0;
             left: 0;
             margin: 0 auto;
         }
     }
 
-    &,
+    &.is-flipped-y,
     &.is-bottom,
     &.is-top.is-flipped-y {
         margin: #{$popover-margin} 0 0 0;
 
         &::after {
-            top: -#{$popover-arrow-pos};
+            top: -$popover-arrow-size / 2;
             bottom: auto;
             right: 0;
             left: 0;
@@ -78,7 +78,7 @@ $popover-arrow-pos: 10px;
             top: 0;
             bottom: 0;
             right: auto;
-            left: -#{$popover-arrow-pos};
+            left: -$popover-arrow-size / 2;
             margin: auto 0;
         }
     }
@@ -90,7 +90,7 @@ $popover-arrow-pos: 10px;
         &::after {
             top: 0;
             bottom: 0;
-            right: -#{$popover-arrow-pos};
+            right: -$popover-arrow-size / 2;
             left: auto;
             margin: auto 0;
         }
