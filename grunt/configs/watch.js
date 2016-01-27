@@ -46,7 +46,7 @@ module.exports = {
 	//	tasks: ['test'] //
 	//},
 	templates: {
-		files: ['<%= paths.src %>/assemble/**/*.{json,hbs}', '<%= paths.src %>/components/**/*.{json,hbs}'],
+		files: ['<%= paths.src %>/templates/**/*.{json,hbs}', '<%= paths.src %>/components/**/*.{json,hbs}'],
 		tasks: ['newer:assemble:dev', 'prettify:dev']
 	},
 	ejs: {

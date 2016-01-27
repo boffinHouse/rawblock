@@ -4,12 +4,11 @@ layout: default_tpl.hbs
 ---
 <div class="page-section">
     <div class="page-section-inner">
-
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
-                <div class="rb-docu">
-                    <h1 class="docu-title">{{ title }}</h1>
-                    <p class="docu-intro">
+                <div class="rb-docs">
+                    <h1 class="docs-title">{{ title }}</h1>
+                    <p class="docs-intro">
                         RawBlock provides a layout system that is responsive, fluid and uses a human readable syntax.
                         This is archieved with the use of utility classes. These classes only provide one functionality and are recognizable by the prefix `.use-*` for example `.use-size-50` or `.use-gutters`.
                     </p>
@@ -21,8 +20,8 @@ layout: default_tpl.hbs
                         may not be changed.
                     </p>
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Default Breakpoints</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Default Breakpoints</h3>
  {{#markdown}}
 | breakpoint name | Description
 | ------------- |-------------|
@@ -34,7 +33,7 @@ layout: default_tpl.hbs
                         <p>
                             Next to the property media there are more properties you can set.
                         </p>
-                        <h3 class="docu-example-title">Breakpoint Options</h3>
+                        <h3 class="docs-example-title">Breakpoint Options</h3>
 {{#markdown}}
 | property name | Description
 | ------------- |-------------|
@@ -43,8 +42,8 @@ layout: default_tpl.hbs
  {{/markdown}}
                     </div>
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Code Example</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code Example</h3>
 {{#markdown}}
     $breakpointConfigs: (
         all: (
@@ -86,23 +85,23 @@ The `.use-size-*` classes only define the width of an element. If you want to cr
 
 Best practice is to put the component always inside an `use-size-*` column. This prevents strange side effect and will be better maintainable for future improvements.
 {{/markdown}}
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
 
                         <div class="use-column-group">
                             <div class="use-size-40">
-                                <div class="docu-item">40%</div>
+                                <div class="docs-item">40%</div>
                             </div>
                             <div class="use-size-40">
-                                <div class="docu-item">40%</div>
+                                <div class="docs-item">40%</div>
                             </div>
                             <div class="use-size-20">
-                                <div class="docu-item">20%</div>
+                                <div class="docs-item">20%</div>
                             </div>
                         </div>
                     </div>
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Code</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
 {{#markdown}}
     <div class="use-column-group">
         <div class="use-size-40">...</div>
@@ -120,8 +119,8 @@ want horizontal gutters use `use-gutters-horizontal` and only vertical use `use-
 
 Gutters are only set in conjunction with `use-size-*` as direct children. Nested children are untouched.
 {{/markdown}}
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Classes</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Classes</h3>
 
 {{#markdown}}
 | Class name | Description
@@ -131,27 +130,27 @@ Gutters are only set in conjunction with `use-size-*` as direct children. Nested
 | `use-gutters-vertical` | Creates vertical (bottom only) space between columns. |
 {{/markdown}}
                     </div>
-                    <div class="docu-example is-demo">
-                        <h3 class="docu-example-title">Demo</h3>
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
 
                         <div>
                             <div class="use-column-group use-gutters-horizontal">
                                 <div class="use-size-40">
-                                    <div class="docu-item">40%</div>
+                                    <div class="docs-item">40%</div>
                                 </div>
                                 <div class="use-size-40">
-                                    <div class="docu-item">40%</div>
+                                    <div class="docs-item">40%</div>
                                 </div>
                                 <div class="use-size-20">
-                                    <div class="docu-item">20%</div>
+                                    <div class="docs-item">20%</div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
 
-                    <div class="docu-example">
-                        <h3 class="docu-example-title">Code</h3>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
 
 {{#markdown}}
     <div class="use-column-group use-gutters-horizontal">
@@ -163,7 +162,7 @@ Gutters are only set in conjunction with `use-size-*` as direct children. Nested
 
                     </div>
 
-                </div><!-- end rb-docu -->
+                </div><!-- end rb-docs -->
             </div>
         </div>
     </div>

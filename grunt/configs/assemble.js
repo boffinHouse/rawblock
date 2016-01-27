@@ -7,13 +7,13 @@ module.exports = {
 
 	options: {
 		data: [
-			'<%= paths.src %>/assemble/data/**/*.{json,yml}',
+			'<%= paths.src %>/templates/data/**/*.{json,yml}',
 			'<%= paths.src %>/components/**/*.{json,yml}',
 			],
-		helpers: ['handlebars-helper-partial', '<%= paths.src %>/assemble/helpers/**/*.js'],
-		layoutdir: '<%= paths.src %>/assemble/layouts/',
+		helpers: ['handlebars-helper-partial', '<%= paths.src %>/templates/helpers/**/*.js'],
+		layoutdir: '<%= paths.src %>/templates/layouts/',
 		partials: [
-			'<%= paths.src %>/assemble/partials/**/*.hbs',
+			'<%= paths.src %>/templates/partials/**/*.hbs',
 			'<%= paths.src %>/components/**/*.hbs',
 			'!<%= paths.src %>/components/**/*_page.hbs'
 		],
@@ -32,7 +32,7 @@ module.exports = {
 				src: ['**/*_page.hbs']
 			},
 			{
-				cwd: '<%= paths.src %>/assemble/pages/',
+				cwd: '<%= paths.src %>/templates/pages/',
 				dest: '<%= paths.dev %>/',
 				expand: true,
 				flatten: true,
@@ -53,7 +53,7 @@ module.exports = {
 				src: ['**/*_page.hbs']
 			},
 			{
-				cwd: '<%= paths.src %>/assemble/pages/',
+				cwd: '<%= paths.src %>/templates/pages/',
 				dest: '<%= paths.dist %>/',
 				expand: true,
 				flatten: true,

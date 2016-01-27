@@ -16,7 +16,6 @@ $scrollyJSCFG: (
 
 .rb-scrolly {
 	@include rb-js-export($scrollyJSCFG);
-
 	position: relative;
 	background: #999;
 	height: 100px;

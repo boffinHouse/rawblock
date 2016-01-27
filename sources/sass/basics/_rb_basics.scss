@@ -114,8 +114,4 @@ fieldset {
 // ---------------------
 @include rb-generate-layout-styles($breakpointConfig);
 
-@include rb-export-globaljs(
-        (
-            mqs: $breakpointConfig,
-        )
-);
+@include rb-export-globaljs((mqs: $breakpointConfig));
