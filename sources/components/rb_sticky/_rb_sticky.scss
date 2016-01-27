@@ -17,7 +17,10 @@ $stickyJSCFG: (
 );
 
 .rb-sticky {
-    @include rb-js-export($stickyJSCFG);
+    @include rb-js-export(map_merge($stickyJSCFG, (
+        topOffset: 0,
+        bottomOffset: false,
+    )));
 
     //DONT CHANGE: important set properties shouldn't be changed, use an outer or inner element to apply does styles */
     float: none !important;
@@ -30,15 +33,17 @@ $stickyJSCFG: (
     //DONT CHANGE:
 
     //Default is top
-    top: 0;
+    top: auto;
     bottom: auto;
     z-index: 5;
 
 
 
     &.is-bottom {
-        top: auto;
-        bottom: 0;
+        @include rb-js-export(map_merge($stickyJSCFG, (
+            bottomOffset: 0,
+            topOffset: false,
+        )));
     }
 
     &.is-fixed {
@@ -46,12 +51,17 @@ $stickyJSCFG: (
     }
 
     &.is-top-150 {
-        top: 150px;
+        @include rb-js-export(map_merge($stickyJSCFG, (
+            topOffset: 150,
+            bottomOffset: false,
+        )));
     }
 
     &.is-bottom-15 {
-        top: auto;
-        bottom: 150px;
+        @include rb-js-export(map_merge($stickyJSCFG, (
+            bottomOffset: 150,
+            topOffset: false,
+        )));
     }
 
     &.progress-showcase {
