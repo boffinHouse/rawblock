@@ -42,7 +42,16 @@ To apply the sticky component:
 
 {{#markdown}}
 ##Positioning
-Positions can be handled using CSS. For example: To create an element thats sticks to bottom, you can create the modifier class `is-bottom` (`bottom: 0; top: auto;`) and add this class to the component container.
+Positions can be handled using CSS. For example: To create an element that sticks to the bottom, you can create a modifier class `is-bottom` and add this class to the component container.
+
+```
+.is-bottom {
+    @include rb-js-export(map_merge($stickyJSCFG, (
+        bottomOffset: 0,
+        topOffset: false,
+    )));
+}
+```
 {{/markdown}}
                     <div class="docs-example is-demo">
                         <h3 class="docs-example-title">Demo</h3>
@@ -58,6 +67,15 @@ Positions can be handled using CSS. For example: To create an element thats stic
 
 {{#markdown}}
 Or if you want to offset the element 150px from the top. Create a class, in this example it's `.is-top-150` and add it to the container.
+
+```
+.is-bottom {
+    @include rb-js-export(map_merge($stickyJSCFG, (
+        topOffset: 159,
+        bottomOffset: false,
+    )));
+}
+```
 {{/markdown}}
                     <div class="docs-example is-demo">
                         <h3 class="docs-example-title">Demo</h3>
@@ -85,6 +103,46 @@ Or if you want to offset the element 150px from the top. Create a class, in this
 {{/markdown}}
                     </div>
                     <hr>
+
+{{#markdown}}
+##Constraining in an area
+
+    <div class="is-sticky-container">
+        <header  class="rb-header js-rb-life" data-module="sticky">
+            <div class="docs-item" style="height: 40px;">
+                Sticky to the top.
+            </div>
+        </header>
+        <main>
+            <div class="docs-item" style="height: 640px;">
+                Main area
+            </div>
+        </main>
+    </div>
+    <footer>
+        <div class="docs-item" style="height: 40px;">
+            Footer
+        </div>
+    </footer>
+{{/markdown}}
+
+                    <div class="is-sticky-container">
+                        <header  class="rb-sticky js-rb-life" data-module="sticky">
+                            <div class="docs-item" style="height: 40px;">
+                                Sticky to the top.
+                            </div>
+                        </header>
+                        <main>
+                            <div class="docs-item" style="height: 440px;">
+                                Main area
+                            </div>
+                        </main>
+                    </div>
+                    <footer>
+                        <div class="docs-item" style="height: 40px;">
+                            Footer
+                        </div>
+                    </footer>
 
 
                 </article><!-- end rb-docs -->

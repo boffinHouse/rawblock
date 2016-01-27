@@ -21,8 +21,8 @@
             /**
              * @prop {{}} defaults
              * @prop {String|Boolean} container=".is-sticky-parent" The container element, that is used to calculate the bounds in wich the element should be sticky to the viewport. If `false` its always sticky. Possible values: `false`, `"parent"`(direct parent element), `"positionedParent"`, `".closest-selector"`.
-             * @prop {Boolean|Number} topOffset=false If a number it sets sticky offset to the number. If neither the `topOffset` nor `bottomOffset` is set. The CSS top/bottom properties are tested. At least one of these have to have a numeric value.
-             * @prop {Boolean|Number} bottomOffset=false If a number it sets sticky offset to the number. If neither the `topOffset` nor `bottomOffset` is set. The CSS top/bottom properties are tested. At least one of these have to have a numeric value.
+             * @prop {Boolean|Number} topOffset=false If a number it sets sticky offset to the number.
+             * @prop {Boolean|Number} bottomOffset=false If a number it sets sticky offset to the number.
              * @prop {Number} progress=0 Defines the distance in pixel a child animation should be added after an animation should be added.
              * @prop {''} childSel="find(.sticky-element)" The elements, which should be animated.
              * @prop {Boolean} setWidth=true Whether the width of the sticky element should be set, while it is stuck.
@@ -37,7 +37,7 @@
                 topOffset: false,
                 bottomOffset: false,
                 progress: 0,
-                childSel: 'find(.sticky-element)',
+                childSel: 'find(.{name}-element)',
                 setWidth: true,
                 resetSwitchedOff: true,
                 autoThrottle: true,
@@ -158,9 +158,7 @@
 
                 this.elemStyles = rb.getStyles(this.element);
 
-                this.isStatic = this.elemStyles.position == 'static';
-
-                this.posProp = (options.bottomOffset !== false || (options.topOffset === false && this.elemStyles.bottom != 'auto')) ?
+                this.posProp = (options.bottomOffset !== false) ?
                     'bottom' :
                     'top'
                 ;
@@ -169,11 +167,6 @@
 
                 this.offset = 0;
                 this.nativeOffset = 0;
-
-                if (this.isStatic) {
-                    this.nativeOffset = $.css(this.element, this.posProp, true, this.elemStyles) || 0;
-                    this.offset -= this.nativeOffset;
-                }
 
                 if (options[offsetName] !== false) {
                     this.offset -= options[offsetName];

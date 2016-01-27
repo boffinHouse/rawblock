@@ -52,7 +52,7 @@
              * @example
              * <style type="sass">
              *     .rb-logos {
-			 *          (at)include exportToJS((
+			 *          (at)include rb-js-export((
 			 *              from: '-50eh',
 			 *              to: '100vh - 50eh',
 			 *              once: true,
@@ -78,20 +78,20 @@
              *
              * @example
              * <style type="sass">
-             *     .rb-logos {
-			 *          (at)include exportToJS((
+             *     .rb-logo {
+			 *          (at)include rb-js-export((
 			 *              from: "-50eh",
 			 *              to: "100vh - 50eh",
 			 *              once: true,
 			 *              throttleDelay: 100,
-			 *              childSel: 'find(.logo)',
+			 *              childSel: 'find(.logo-item)',
 			 *          ));
 			 *
-			 *          .logo {
+			 *          .logo-item {
 			 *              top: 0;
 			 *              transition: all 50ms;
 			 *
-			 *              (at)include exportToJS((
+			 *              (at)include rb-js-export((
 			 *                  top: 50,
 			 *                  //complicated values like transform/backgroundColor...
 			 *                  rotate: (
