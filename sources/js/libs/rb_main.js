@@ -162,24 +162,14 @@ if (!window.rb) {
      * @returns {Element} The DOM element that scrolls the viewport (either html or body)
      */
     rb.getScrollingElement = function () {
-        var isBody;
         var scrollingElement = document.scrollingElement;
 
-        if (!scrollingElement && document.body) {
-
-            isBody = document.compatMode == 'BackCompat' || Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-
-            scrollingElement = isBody ?
-                document.body :
-                rb.root;
-
-            document.scrollingElement = scrollingElement;
+        if (!scrollingElement && (document.compatMode == 'BackCompat' || 'WebkitAppearance' in rb.root.style)) {
+            scrollingElement = document.body;
         }
 
         return scrollingElement || rb.root;
     };
-
-
     /* End: getScrollingElement/scrollIntoView */
 
     /* Begin: contains */

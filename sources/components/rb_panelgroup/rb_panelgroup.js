@@ -262,14 +262,14 @@
 
                 if (shouldInstall && !this._hasFocusOutListener) {
                     document.addEventListener('focusin', this._onOutSideInteraction, true);
-                    document.body.addEventListener('mousedown', this._onOutSideInteraction, true);
+                    document.addEventListener('mousedown', this._onOutSideInteraction, true);
                 } else if (!shouldInstall && this._hasFocusOutListener) {
                     document.removeEventListener('focusin', this._onOutSideInteraction, true);
-                    document.body.removeEventListener('mousedown', this._onOutSideInteraction, true);
+                    document.removeEventListener('mousedown', this._onOutSideInteraction, true);
                 }
             },
             _onOutSideInteraction: function (e) {
-                if (!rb.contains(this.element, e.target)) {
+                if (!rb.contains(this.element, e.target) && document.body.contains(e.target)) {
                     this.closeAll();
                 }
             },
