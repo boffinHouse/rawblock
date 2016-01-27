@@ -21,8 +21,8 @@
              * @mixes rb.components.panel.prototype.defaults
              * @property {Object} defaults
              * @prop {Boolean} positioned=true indicates wether the panel is positioned
-             * @prop {String} my='left top' Indicates the position of the panel. First x than y. Possible values for x 'left', 'center', 'right'. Possible values for y: 'top', 'middle', 'bottom'. Or numeric value: '0' indicates 'left' or 'top' and '50' 'center'/'middle'
-             * @prop {String} at='left bottom' Indicates the position of the anchor element. Same possible values as 'my'
+             * @prop {String} my='center bottom' Indicates the position of the panel. First x than y. Possible values for x 'left', 'center', 'right'. Possible values for y: 'top', 'middle', 'bottom'. Or numeric value: '0' indicates 'left' or 'top' and '50' 'center'/'middle'
+             * @prop {String} at='center top' Indicates the position of the anchor element. Same possible values as 'my'
              * @prop {String} collision='flip' The collision handling. Possible values: 'flip', 'none'. Can be declared separatly for x and y. (i.e. 'flip none')
              * @prop {String} anchor='button' The anchor element to position the panel against. 'button' means the associated panelbutton module or if no associated panelbutton is found the opening button module. Accepts als string that are processed with rb.elementFromStr.
              * @prop {Boolean} updateOnResize=true Wether panel position should be updated on resize.
@@ -31,8 +31,8 @@
              */
             defaults: {
                 positioned: true,
-                my: 'left top',
-                at: 'left bottom',
+                my: 'center bottom',
+                at: 'center top',
                 collision: 'flip',
                 anchor: 'button', // 'button' || 'activeButton' || 'id' || closest(.bla) || sel(.yo)
                 updateOnResize: true,

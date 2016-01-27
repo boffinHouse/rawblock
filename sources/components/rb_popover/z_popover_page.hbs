@@ -9,31 +9,124 @@ layout: default_tpl.hbs
         <div class="use-column-group use-gutters-horizontal">
             <div class="use-size-80">
                 <article class="rb-docs">
-                    <h1 class="doc-title">{{ title }}</h1>
+                    <h1 class="docs-title">{{ title }}</h1>
+                    <p class="docs-intro">This component adds on a small overlay of secondary content.</p>
+{{#markdown}}
+##Usage
+The popover component consists of an popover container element and button (`<button>` or `<a>`).
 
-                    {{#mergeJSON rb_popover}}
-                        {{> rb_popover }}
-                    {{/mergeJSON}}
+- Add the `rb-popover` class, attribute `data-module="popover"` and an ID `id="your-unique-id"` to a container element you want to control.
+- Add attribute `data-module="panelbutton"` on a button or anchor element. If button element `<button>` add attributes `aria-controls="your-unique-id"` and if
+anchor element `<a>` add the id to href attribute `href="#your-unique-id"`.
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            {{#mergeJSON rb_popover 'btn: {type: "rb-button js-click", title:"Default top"}'}}
+                                {{> rb_popover }}
+                            {{/mergeJSON}}
+                        </div>
+                    </div>
 
-                    <p>This is a parapgrah, yea</p>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Markup</h3>
+{{#markdown}}
+    <!-- Panelbutton -->
+    <button class="YourButtonClass js-click" type="button" aria-controls="your-popover-id" data-module="panelbutton">Panel Button</button>
 
-                    {{#mergeJSON rb_popover 'btn: {title:"Panel position bottom"}, panel: {type: "bottom"}'}}
-                        {{> rb_popover }}
-                    {{/mergeJSON}}
+    <a class="YourButtonClass js-click" href="#your-popover-id" data-module="panelbutton">Panel Anchor button</a>
 
-                    <p>This is a parapgrah, yea</p>
+    <!-- Panel -->
+    <div id="your-popover-id" class="rb-popover" data-module="popover">
+        <div class="popover-content">...</div>
+    </div>
+{{/markdown}}
+                    </div>
+                    {{> docs_js_life }}
+                    <hr>
+{{#markdown}}
+##Positions
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+                        <div>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Class name</th>
+                                    <th>Description</th>
+                                    <th>Example</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><code>.is-top</code></td>
+                                    <td>Aligns popover to the top.</td>
+                                    <td>
+                                        {{#mergeJSON rb_popover 'btn: {title:"Top"}, panel: {type: "is-top"}'}}
+                                            {{> rb_popover }}
+                                        {{/mergeJSON}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-top-right</code></td>
+                                    <td>Aligns popover to the top right.</td>
+                                    <td>
 
-                    {{#mergeJSON rb_popover 'btn: {title:"Panel position left"}, panel: {type: "left"}'}}
-                        {{> rb_popover }}
-                    {{/mergeJSON}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-top-left</code></td>
+                                    <td>Aligns popover to the top left.</td>
+                                    <td>
 
-                    <p>This is a parapgrah, yea</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-bottom</code></td>
+                                    <td>Aligns popover to the bottom.</td>
+                                    <td>
+                                        {{#mergeJSON rb_popover 'btn: {title:"Bottom"}, panel: {type: "is-bottom"}'}}
+                                            {{> rb_popover }}
+                                        {{/mergeJSON}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-bottom-right</code></td>
+                                    <td>Aligns popover to the bottom right.</td>
+                                    <td>
 
-                    {{#mergeJSON rb_popover 'btn: {title:"Panel position right"}, panel: {type: "right"}'}}
-                        {{> rb_popover }}
-                    {{/mergeJSON}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-bottom-left</code></td>
+                                    <td>Aligns popover to the bottom left.</td>
+                                    <td>
 
-                    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-right</code></td>
+                                    <td>Aligns popover to the right.</td>
+                                    <td>
+                                        {{#mergeJSON rb_popover 'btn: {title:"Right"}, panel: {type: "is-right"}'}}
+                                            {{> rb_popover }}
+                                        {{/mergeJSON}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>.is-left</code></td>
+                                    <td>Aligns popover to the left.</td>
+                                    <td>
+                                        {{#mergeJSON rb_popover 'btn: {title:"Left"}, panel: {type: "is-left"}'}}
+                                            {{> rb_popover }}
+                                        {{/mergeJSON}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </article><!-- end rb-docs -->
             </div>
         </div>

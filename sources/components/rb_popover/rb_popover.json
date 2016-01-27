@@ -1,11 +1,14 @@
 {
   "btn": {
-    "type": "button",
-    "title": "Panel position top",
-    "action": "js-click"
+    "type": "js-click",
+    "title": "Top",
+    "link": false
   },
   "panel": {
-    "type": "top"
+    "type": "",
+    "content": [
+      "<span style=\"display: block; color: #fff; text-align: center;\">Content Here!</span>"
+    ]
   }
 
 }
