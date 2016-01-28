@@ -8,10 +8,9 @@ layout: default_tpl.hbs
             <div class="use-size-100">
                 <article class="rb-docs">
                     <h1 class="docs-title">{{ title }}</h1>
+                    <p class=docs-intro>Component richtext creates styling for formatted text that mainly has no additonal style classes.
+                        Like markup created by a text/wysiwyg editor. </p>
 {{#markdown}}
-<p class=docs-intro>Component richtext creates styling for formatted text that mainly has no additonal style classes.
-Like markup created by a text/wysiwyg editor. </p>
-
 ##Usage
 To create a richtext component, add the class `.rb-richtext` to a container element and add your markup inside it.
 {{/markdown}}
@@ -226,7 +225,30 @@ Inside create an list item with `<li>` element.
                     </div>
                 </div>
             </div>
+        <hr>
+{{#markdown}}
+##Blockquote
+Quote content from a different source inside your document with the `<blockquote>` element.
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
 
+                        <div class="rb-richtext">
+                            <blockquote>
+                                <p>Your great sentence here</p>
+                                <cite>Your Source</cite>
+                            </blockquote>
+                        </div>
+                    </div>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
+{{#markdown}}
+    <blockquote>
+        <p>Your Content</p>
+        <cite>Your source</cite>
+    </blockquote>
+{{/markdown}}
+                    </div>
 
                 </article>
 
