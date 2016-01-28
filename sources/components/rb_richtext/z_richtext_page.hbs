@@ -227,6 +227,33 @@ Inside create an list item with `<li>` element.
             </div>
         <hr>
 {{#markdown}}
+##Description Lists
+Creates a association list `<dl>` of name-value groups. A name-value group consist out of a name `<dt>` and one or more values `<dd>`.
+{{/markdown}}
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+
+                        <div class="rb-richtext">
+                            <dl>
+                                <dt>Berlin</dt>
+                                <dd>Is the capital of Germany and one of the 16 states of Germany.</dd>
+                                <dt>Amsterdam</dt>
+                                <dd>Is the capital city and most populous city of the Kingdom of the Netherlands.</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
+{{#markdown}}
+    <blockquote>
+        <p>Your Content</p>
+        <cite>Your source</cite>
+    </blockquote>
+{{/markdown}}
+                    </div>
+
+                    <hr>
+{{#markdown}}
 ##Blockquote
 Quote content from a different source inside your document with the `<blockquote>` element.
 {{/markdown}}
@@ -247,6 +274,95 @@ Quote content from a different source inside your document with the `<blockquote
         <p>Your Content</p>
         <cite>Your source</cite>
     </blockquote>
+{{/markdown}}
+                    </div>
+
+                    <hr>
+{{#markdown}}
+##Code blocks
+Use the `<pre>` element if you want to display formatted content (such as source code). A new
+textblock is created that preserves tab indents, double-spaces, newlines, and other typographic formatting.
+{{/markdown}}
+
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
+{{#markdown}}
+    <pre>
+       <code>...</code>
+    </pre>
+{{/markdown}}
+                    </div>
+
+                    <hr>
+{{#markdown}}
+##Tables
+Use tables if you want to arrange data.
+{{/markdown}}
+
+                    <div class="docs-example is-demo">
+                        <h3 class="docs-example-title">Demo</h3>
+
+                        <div class="rb-richtext">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th><strong>Title 1</strong></th>
+                                    <th><strong>Title 2</strong></th>
+                                    <th><strong>Title 3</strong></th>
+                                    <th><strong>Title 4</strong></th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <td>Footer of table</td>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                <tr>
+                                    <td><a href="#">Ipsum dolor amet,</a> consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td><span class="underline">Ipsum dolor amet</span>, consetetu sadipsci elitr, sed diam</td>
+                                </tr>
+                                <tr>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                </tr>
+                                <tr>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="docs-example">
+                        <h3 class="docs-example-title">Code</h3>
+{{#markdown}}
+    <table>
+        <thead>
+            <tr>
+                <th>...</th>
+                ...
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td>...</td>
+            </tr>
+        </tfoot>
+        <tbody>
+            <tr>
+                <td>...</td>
+                ...
+            </tr>
+            ...
+        </tbody>
+    </table>
 {{/markdown}}
                     </div>
 

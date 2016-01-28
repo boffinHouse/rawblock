@@ -116,6 +116,21 @@ rb-richtext
         }
     }
 
+    dl {
+        margin: rb-rem-calc(0 0 0 15px);
+    }
+
+    dt {
+        font: 600 rb-em-calc(16)/1.333 sans-serif;
+        color: #666;
+    }
+
+    dd {
+        margin: 0;
+        font: 400 rb-em-calc(16)/1.333 sans-serif;
+        color: #666;
+    }
+
     //Different Stylings
     a {
         color: #1a90bb;
