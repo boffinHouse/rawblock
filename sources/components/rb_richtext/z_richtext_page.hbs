@@ -1,14 +1,11 @@
 ---
 title: Richtext
-layout: default_tpl.hbs
+layout: docs_tpl.hbs
 ---
-<section class="page-section">
-    <div class="page-section-inner">
-        <div class="use-column-group">
-            <div class="use-size-100">
-                <article class="rb-docs">
-                    <h1 class="docs-title">{{ title }}</h1>
-                    <p class=docs-intro>Component richtext creates styling for formatted text that mainly has no additonal style classes.
+
+<article class="rb-docs">
+    <h1>{{ title }}</h1>
+    <p class=docs-intro>Component richtext creates styling for formatted text that mainly has no additonal style classes.
                         Like markup created by a text/wysiwyg editor. </p>
 {{#markdown}}
 ##Usage
@@ -103,7 +100,7 @@ The following shows some commonly used text-level semantics or inline text eleme
 
 {{#markdown}}
 ##Text align
-Align text by adding `.richtext-align-*` to an element (for example `<p>`, `<li`> or `<h2>` ect). Text default alignment is left.
+Align text by adding `.richtext-align-*` to an element (for example `<p>`, `<li>` or `<h2>` ect). Text default alignment is left.
 {{/markdown}}
                     <div class="docs-example">
                         <h3 class="docs-example-title">Classes</h3>
@@ -368,9 +365,3 @@ Use tables if you want to arrange data.
 
                 </article>
 
-
-            </div>
-        </div>
-    </div>
-
-</section>

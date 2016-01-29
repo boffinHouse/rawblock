@@ -1,15 +1,11 @@
 ---
 title: Panel
-layout: default_tpl.hbs
+layout: docs_tpl.hbs
 ---
-<section class="page-section">
-    <div class="page-section-inner">
 
-        <div class="use-column-group use-gutters-horizontal">
-            <div class="use-size-80">
-                <article class="rb-docs">
-                    <h1 class="docs-title">{{ title }}</h1>
-                    <p class="docs-intro">This component creates an panel, that through the use of an action, hides, shows or switches the appearance of contents.</p>
+<article class="rb-docs">
+    <h1>{{ title }}</h1>
+    <p class="docs-intro">This component creates an panel, that through the use of an action, hides, shows or switches the appearance of contents.</p>
 {{#markdown}}
 ##Usage
 The panel component consists of an panel element and action button:
@@ -50,10 +46,4 @@ The panel component consists of an panel element and action button:
                     </div>
                     {{> docs_js_life }}
                     <hr>
-                </article><!-- end rb-docs -->
-            </div>
-        </div>
-
-
-    </div>
-</section>
+</article><!-- end rb-docs -->

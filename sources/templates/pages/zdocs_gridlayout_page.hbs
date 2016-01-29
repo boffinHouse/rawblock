@@ -1,17 +1,14 @@
 ---
 title: Layout
-layout: default_tpl.hbs
+layout: docs_tpl.hbs
 ---
-<div class="page-section">
-    <div class="page-section-inner">
-        <div class="use-column-group use-gutters-horizontal">
-            <div class="use-size-80">
-                <div class="rb-docs">
-                    <h1 class="docs-title">{{ title }}</h1>
-                    <p class="docs-intro">
-                        RawBlock provides a layout system that is responsive, fluid and uses a human readable syntax.
-                        This is archieved with the use of utility classes. These classes only provide one functionality and are recognizable by the prefix `.use-*` for example `.use-size-50` or `.use-gutters`.
-                    </p>
+
+<div class="rb-docs">
+    <h1>{{ title }}</h1>
+    <p class="docs-intro">
+        RawBlock provides a layout system that is responsive, fluid and uses a human readable syntax.
+        This is archieved with the use of utility classes. These classes only provide one functionality and are recognizable by the prefix `.use-*` for example `.use-size-50` or `.use-gutters`.
+    </p>
 
                     <h2>Sizes</h2>
 {{#markdown}}
@@ -161,9 +158,6 @@ Gutters are only set in conjunction with `use-size-*` as direct children. Nested
                     </div>
                     <hr>
 
-                </div><!-- end rb-docs -->
-            </div>
-        </div>
-    </div>
-</div>
+</div><!-- end rb-docs -->
+
 

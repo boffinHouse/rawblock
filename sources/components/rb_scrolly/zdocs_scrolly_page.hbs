@@ -1,15 +1,11 @@
 ---
 title: Scrolly
-layout: default_tpl.hbs
+layout: docs_tpl.hbs
 ---
-<section class="page-section">
-    <div class="page-section-inner">
 
-        <div class="use-column-group use-gutters-horizontal">
-            <div class="use-size-80">
-                <article class="rb-docs">
-                    <h1 class="docs-title">{{ title }}</h1>
-                    <p class="docs-intro">This component creates simple effects based on the user scroll position.</p>
+<article class="rb-docs">
+    <h1>{{ title }}</h1>
+    <p class="docs-intro">This component creates simple effects based on the user scroll position.</p>
 {{#markdown}}
 ##Usage
 To apply the scrolly component add class `rb-scrolly` and attribute `data-module="scrolly"` to a container element.
@@ -17,9 +13,4 @@ To apply the scrolly component add class `rb-scrolly` and attribute `data-module
 
                     {{> rb_scrolly }}
 
-                </article><!-- end rb-docs -->
-            </div>
-        </div>
-
-    </div>
-</section>
+ </article><!-- end rb-docs -->
