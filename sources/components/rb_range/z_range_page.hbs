@@ -2,37 +2,38 @@
 title: Range
 layout: docs_tpl.hbs
 ---
-                <article class="rb-docs">
-                    <h1>{{ title }}</h1>
-                    <p class="docs-intro">Range component is used to get a value by dragging a handle.</p>
+<article class="rb-docs">
+
 {{#markdown}}
+#{{ title }}
+<p class="docs-intro">Range component is used to get a value by dragging a handle.</p>
+
 ##Usage
 To apply the accordion component add the `rb-range` class and attribute `data-module="range"` to an element.
-{{/markdown}}
-
-                        <h3 class="docs-example-1-title">Demo</h3>
-                        <div class="docs-example-1 is-demo">
-                            <div class="rb-range js-rb-life" data-module="range"></div>
-                        </div>
 
 
-                        <h3 class="docs-example-1-title">Markup</h3>
-                        <div class="docs-example-1">
-{{#markdown}}
+<h3 class="docs-example-1-title">Demo</h3>
+<div class="docs-example-1 is-demo">
     <div class="rb-range js-rb-life" data-module="range"></div>
-{{/markdown}}
-                        </div>
+</div>
 
-                        {{> docs_js_life }}
-                        <hr>
-{{#markdown}}
+
+<h3 class="docs-example-1-title">Markup</h3>
+
+    <div class="rb-range js-rb-life" data-module="range"></div>
+
+{{> docs_js_life }}
+
+<hr>
+
 ##Vertical
+
+<h3 class="docs-example-1-title">Demo</h3>
+
+<div class="docs-example-1 is-demo">
+    <div class="rb-range is-vertical js-rb-life" data-module="range"></div>
+</div>
+    
 {{/markdown}}
-                    <h3 class="docs-example-1-title">Demo</h3>
-                    <div class="docs-example-1 is-demo">
-                        <div class="rb-range is-vertical js-rb-life" data-module="range"></div>
-                    </div>
-                </article><!-- end rb-docs -->
-            </div>
-        </div>
+</article><!-- end rb-docs -->
 
