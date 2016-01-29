@@ -205,6 +205,7 @@ $docs-example-border: 1px solid #f1f1f1;
             font-weight: 600
         }
 
+
         //&example {
         //    position: relative;
         //    margin-bottom: rb-em-calc(40);
@@ -223,6 +224,7 @@ $docs-example-border: 1px solid #f1f1f1;
         //}
 
         &example {
+            display: block!important;
             position: relative;
             margin-bottom: rb-em-calc(40);
             border: $docs-example-border;
@@ -235,6 +237,7 @@ $docs-example-border: 1px solid #f1f1f1;
         }
 
         &example-title {
+            display: block!important;
             position: relative;
             z-index: 2;
             margin: 0 0 -6px 20px;
