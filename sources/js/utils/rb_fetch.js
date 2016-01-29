@@ -47,6 +47,7 @@
         }, options);
 
         var promise = new Promise(function (resolve, reject) {
+            var header;
             var oReq = new XMLHttpRequest();
 
             oReq.addEventListener('load', function () {
@@ -71,6 +72,12 @@
             });
 
             oReq.open(options.type.toUpperCase(), url, true, options.username, options.password);
+
+            if(options.headers){
+                for(header in options.headers){
+                    oReq.setRequestHeader(header, options.headers[header]);
+                }
+            }
 
             if (options.beforeSend) {
                 options.beforeSend(oReq);
