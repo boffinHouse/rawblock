@@ -1,0 +1,55 @@
+{
+    "input": {
+        "type": "text",
+        "name": "dummy-text-name",
+        "label": "Radiobutton",
+        "invalid": "",
+        "requiredNotion": "",
+        "booleans": []
+    },
+    "radio": {
+        "type": "radio",
+        "name": "dummy-radio-name",
+        "label": "Radiobutton",
+        "invalid": "",
+        "requiredNotion": "",
+        "booleans": []
+    },
+    "checkbox": {
+        "type": "checkbox",
+        "name": "dummy-checkbox-name",
+        "label": "Checkbox",
+        "invalid": "",
+        "requiredNotion": "",
+        "booleans": [
+
+        ]
+    },
+    "select": {
+        "type": "select",
+        "name": "dummy-name-select",
+        "label": "Selectbox",
+        "invalid": false,
+        "requiredNotion": "",
+        "booleans": [
+            "required"
+        ],
+        "items": [
+            {
+                "label": "Please Choose",
+                "booleans": [
+                    "selected"
+                ]
+            },
+            {
+                "label": "Option 1"
+            },
+            {
+                "label": "Option 2"
+            },
+            {
+                "label": "Option 3"
+            }
+        ]
+    }
+}
