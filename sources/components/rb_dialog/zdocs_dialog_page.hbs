@@ -4,10 +4,10 @@ layout: docs_tpl.hbs
 ---
 
 <article class="rb-docs">
-    <h1>{{ title }}</h1>
-    <p class="docs-intro">The dialog component creates a modal dialog to display additional content.</p>
-
 {{#markdown}}
+#{{ title }}
+<p class="docs-intro">The dialog component creates a modal dialog to display additional content.</p>
+
 ##Usage
 The component consists of a dialog element, close button and action button.
 
@@ -15,19 +15,18 @@ The component consists of a dialog element, close button and action button.
 - Add class `dialog-close` to a button inside `rb-dialog` to create a close button.
 - Add attributes `data-module="button"`, `data-target="yourtarget"` and class `js-click` to create an open button.
 {{/markdown}}
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Demo</h3>
-                        <div>
-                            <button class="rb-button js-click" type="button" data-module="button"  data-target="$(.rb-dialog)">open dialog</button>
-                            {{#with rb_dialog.default }}
-                                {{> rb_dialog }}
-                            {{/with}}
-                        </div>
-                    </div>
 
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Markup</h3>
+    <h3 class="docs-example-title">Demo</h3>
+    <div class="docs-example">
+        <button class="rb-button js-click" type="button" data-module="button"  data-target="$(.rb-dialog)">open dialog</button>
+        {{#with rb_dialog.default }}
+            {{> rb_dialog }}
+        {{/with}}
+    </div>
+
 {{#markdown}}
+<h3 class="docs-example-title">Markup</h3>
+
     <!-- Open Button -->
     <button class="js-click" type="button" data-module="button" data-target="$(.rb-dialog)"></button>
 
@@ -38,23 +37,22 @@ The component consists of a dialog element, close button and action button.
         </div>
         <button class="dialog-close">Close Dialog</button>
     </div>
-{{/markdown}}
-                    </div>
-                    {{> docs_js_life }}
-                    <hr>
-{{#markdown}}
+
+{{> docs_js_life }}
+<hr>
+
 ##JavaScript Options
 Here you find the most important options settings for this component. The full list of options can be found in the JavaScript documentation.
-{{/markdown}}
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">JS Options</h3>
-{{#markdown}}
+
+<h3 class="docs-example-title">JS Options</h3>
+
 | Option | Value | Default | Description
 | ------------- |-------------|
 | `open`  | Boolean | false | Whether the dialog should be open by default.
 |
-{{/markdown}}
-                    </div>
 
-                    <hr>
+
+<hr>
+{{/markdown}}
+         
 </article><!-- end rb-docs -->

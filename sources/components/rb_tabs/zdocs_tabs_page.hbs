@@ -4,28 +4,26 @@ layout: docs_tpl.hbs
 ---
 
 <article class="rb-docs">
-    <h1>{{ title }}</h1>
-    <p class="docs-intro">Creates a tab seperated layout, where multiple content panels are displayed in the same space with a intuitive navigation</p>
 {{#markdown}}
+#{{ title }}
+<p class="docs-intro">Creates a tab seperated layout, where multiple content panels are displayed in the same space with a intuitive navigation</p>
 ##Usage
 
 - To apply the tab component add the `rb-tab` class and attribute `data-module="tab"` to a container element.
 - Panel animations can be applied by adding an modifier class to the component, for example `is-fade`.
 {{/markdown}}
 
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Demo</h3>
-                        <div>
-                            {{#with rb_tabs.default}}
-                                {{> rb_tabs }}
-                            {{/with}}
-                        </div>
-                    </div>
+    <h3 class="docs-example-title">Demo</h3>
+    <div class="docs-example is-demo">
+        {{#with rb_tabs.default}}
+            {{> rb_tabs }}
+        {{/with}}
+    </div>
 
 
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Markup</h3>
 {{#markdown}}
+<h3 class="docs-example-title">Markup</h3>
+
     <div class="rb-tabs js-rb-life" data-module="tabs">
         <ul class="tabs-nav">
              <li class="tabs-nav-item">
@@ -42,11 +40,10 @@ layout: docs_tpl.hbs
             ...
         </div>
     </div>
+
+{{> docs_js_life }}
+
+<hr>
 {{/markdown}}
-                    </div>
-                    {{> docs_js_life }}
-
-                    <hr>
-
 </article><!-- end rb-docs -->
 

@@ -205,35 +205,32 @@ $docs-example-border: 1px solid #f1f1f1;
             font-weight: 600
         }
 
+        //&example {
+        //    position: relative;
+        //    margin-bottom: rb-em-calc(40);
+        //
+        //    &.is-demo {
+        //        > div {
+        //            border: $docs-example-border;
+        //            padding: 20px 20px 10px;
+        //            background: $docs-example-bg-color;
+        //
+        //            &:nth-child(2n+1) {
+        //                border-top: none;
+        //            }
+        //        }
+        //    }
+        //}
+
         &example {
             position: relative;
             margin-bottom: rb-em-calc(40);
+            border: $docs-example-border;
+            padding: 20px 20px 10px;
+            background: $docs-example-bg-color;
 
-            &.is-demo {
-                > div {
-                    border: $docs-example-border;
-                    padding: 20px 20px 10px;
-                    background: $docs-example-bg-color;
-
-                    &:nth-child(2n+1) {
-                        border-top: none;
-                    }
-                }
-            }
-        }
-
-        &example-1 {
-            position: relative;
-            margin-bottom: rb-em-calc(40);
-
-            &.is-demo {
-                border: $docs-example-border;
-                padding: 20px 20px 10px;
-                background: $docs-example-bg-color;
-
-                &:nth-child(2n+1) {
-                    border-top: none;
-                }
+            &:nth-child(2n+1) {
+                border-top: none;
             }
         }
 

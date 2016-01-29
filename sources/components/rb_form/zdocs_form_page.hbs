@@ -3,50 +3,50 @@ title: Form
 layout: docs_tpl.hbs
 ---
 <article class="rb-docs">
-    <h1>{{ title }}</h1>
-    <p class="docs-intro">The forms component allows you to easily create forms that provide customized form elements and validation.</p>
+
 
 {{#markdown}}
+#{{ title }}
+<p class="docs-intro">The forms component allows you to easily create forms that provide customized form elements and validation.</p>
+
 ##Usage
 To apply this component:
 - Add class `rb-form` to the form element. If validation is needed add also attribute `data-module="validation"` and class `js-rb-life`.
 - Form element are nested inside container `form-field` and a corresponding modifier class is added to the container. For example when you use element `<select>` you
 add class `is-select` the container `form-field`.
 {{/markdown}}
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Demo</h3>
-                        <div>
-                            <form action="#" class="rb-form">
-                                <fieldset  class="form-section">
-                                    <legend class="form-section-legend">Legend title</legend>
 
-                                            {{#mergeJSON rb_input.standard 'label: "input"'}}
-                                                {{> rb_input}}
-                                            {{/mergeJSON}}
+    <h3 class="docs-example-title">Demo</h3>
+    <div class="docs-example">
+        <form action="#" class="rb-form">
+            <fieldset  class="form-section">
+                <legend class="form-section-legend">Legend title</legend>
 
-                                            {{#mergeJSON rb_select.standard 'label: "select"'}}
-                                                {{> rb_input}}
-                                            {{/mergeJSON}}
+                        {{#mergeJSON rb_input.standard 'label: "input"'}}
+                            {{> rb_input}}
+                        {{/mergeJSON}}
 
-                                            {{#mergeJSON rb_checkbox.standard 'label: "Checkbox"'}}
-                                                {{> rb_input}}
-                                            {{/mergeJSON}}
+                        {{#mergeJSON rb_select.standard 'label: "select"'}}
+                            {{> rb_input}}
+                        {{/mergeJSON}}
 
-                                            {{#mergeJSON rb_radio.standard 'label: "Radio"'}}
-                                                {{> rb_input}}
-                                            {{/mergeJSON}}
+                        {{#mergeJSON rb_checkbox.standard 'label: "Checkbox"'}}
+                            {{> rb_input}}
+                        {{/mergeJSON}}
 
+                        {{#mergeJSON rb_radio.standard 'label: "Radio"'}}
+                            {{> rb_input}}
+                        {{/mergeJSON}}
 
-                                        <button class="rb-button is-primary">Submit</button>
+                    <button class="rb-button is-primary">Submit</button>
 
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div>
+            </fieldset>
+        </form>
+    </div>
 
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Markup</h3>
 {{#markdown}}
+<h3 class="docs-example-title">Markup</h3>
+
     <form action="#" class="rb-form">
         <fieldset class="form-section">
             <legend class="form-section-legend">...</legend>
@@ -55,7 +55,7 @@ add class `is-select` the container `form-field`.
                 <label>...</label>
                 <input type="text">
             </div>
-            <div class="form-field is-select ">
+            <div class="form-field is-select">
                 <label>...</label>
                 <select>...</select>
             </div>
@@ -74,18 +74,15 @@ add class `is-select` the container `form-field`.
            <button class="rb-button is-primary">...</button>
         </fieldset>
     </form>
-{{/markdown}}
-                    </div>
-                    <hr>
-{{#markdown}}
+
+<hr>
+
 ##Form layout
 The form layout can be structured with form classes to create sections `form-section` and `form-subsection`,
 rows `form-row`, boxes `form-box` and fields `form-fields`.
-{{/markdown}}
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Classes</h3>
 
-{{#markdown}}
+<h3 class="docs-example-title">Classes</h3>
+
 | Class name | Description
 | ------------- |-------------|
 | `.form-section` | Use for main form section (first `fieldset`).|
@@ -98,41 +95,41 @@ rows `form-row`, boxes `form-box` and fields `form-fields`.
 | `.form-field`| Use as container to group form elements (`<input>`, `<select>`, `<textarea>`) and `<label>`  |
 {{/markdown}}
 
-                    </div>
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Markup</h3>
-                        <div>
-                            <form action="#" class="rb-form">
-                                <fieldset class="form-section">
-                                    <legend class="form-section-legend">Section 1</legend>
-                                    <p class="form-intro">Intro text</p>
-                                    <fieldset class="form-subsection">
-                                        <legend class="form-subsection-legend">Section 2</legend>
-                                        <p class="form-intro">Intro text 2</p>
-                                        <div class="form-row use-column-group use-gutters">
-                                            <div class="form-box use-size-50">
-                                                <div class="form-field">
-                                                    {{#mergeJSON rb_input.standard 'label: "Text field"'}}
-                                                        {{> rb_input}}
-                                                    {{/mergeJSON}}
-                                                </div>
-                                            </div>
-                                            <div class="form-box use-size-50">
-                                                <div class="form-field">
-                                                    {{#mergeJSON rb_input.standard 'label: "Text field"'}}
-                                                        {{> rb_input}}
-                                                    {{/mergeJSON}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                </fieldset>
-                            </form>
+    <h3 class="docs-example-title">Demo</h3>
+    <div class="docs-example">
+        <form action="#" class="rb-form">
+            <fieldset class="form-section">
+                <legend class="form-section-legend">Section 1</legend>
+                <p class="form-intro">Intro text</p>
+                <fieldset class="form-subsection">
+                    <legend class="form-subsection-legend">Section 2</legend>
+                    <p class="form-intro">Intro text 2</p>
+                    <div class="form-row use-column-group use-gutters">
+                        <div class="form-box use-size-50">
+                            <div class="form-field">
+                                {{#mergeJSON rb_input.standard 'label: "Text field"'}}
+                                    {{> rb_input}}
+                                {{/mergeJSON}}
+                            </div>
+                        </div>
+                        <div class="form-box use-size-50">
+                            <div class="form-field">
+                                {{#mergeJSON rb_input.standard 'label: "Text field"'}}
+                                    {{> rb_input}}
+                                {{/mergeJSON}}
+                            </div>
                         </div>
                     </div>
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Markup</h3>
+                </fieldset>
+            </fieldset>
+        </form>
+    </div>
+
+
+
 {{#markdown}}
+<h3 class="docs-example-title">Markup</h3>
+
     <form action="#" class="rb-form">
         <fieldset class="form-section">
             <legend class="form-section-legend">...</legend>
@@ -149,10 +146,8 @@ rows `form-row`, boxes `form-box` and fields `form-fields`.
             </fieldset>
         </fieldset>
     </form>
+
+<hr>
 {{/markdown}}
-                    </div>
-                    <hr>
-
-
 </article><!-- end rb-docs -->
 
