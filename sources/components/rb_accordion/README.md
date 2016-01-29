@@ -1,4 +1,4 @@
-#{{ title }}
+#Accordion
 <p class="docs-intro">List of items, allowing each item to hide or reveal additional content by clicking the header or button</p>
 
 ##Usage
@@ -6,8 +6,8 @@ To apply the accordion component add the `rb-accordion` class and attribute `dat
 Inside this container you add items `accordion-item`. Each item has an header/button `accordion-btn` which open/close the according panel `accordion-panel`.
 
 
-<h3 class="docs-example-title" style="display: none">Demo</h3>
-<div class="docs-example" style="display: none">
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example">
 	{{#with rb_accordion.default }}
 		{{> rb_accordion }}
 	{{/with}}
