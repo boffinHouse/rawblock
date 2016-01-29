@@ -936,7 +936,7 @@ if (!window.rb) {
             });
 
             wrapper.className = 'js-element-resize';
-            wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;');
+            wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;');
             wrapper.innerHTML = '<span style="' + wrapperStyle + 'overflow: scroll;">' +
                 '<span style="' + posStyle + '"><\/span>' +
                 '<\/span>' +
@@ -1825,7 +1825,11 @@ if (!window.rb) {
                     if (!elements && life.autoStart) {
                         $(function () {
                             if (!elements) {
-                                life.init();
+                                setTimeout(function () {
+                                    if (!elements) {
+                                        life.init();
+                                    }
+                                });
                             }
                         });
                     }
