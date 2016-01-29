@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+ <html class="no-js" lang="de">
+    <head>
+        {{> meta_data }}
+        {{> app_icons }}
+        {{> head_assets }}
+    </head>
+    <body class="rb-page">
+        <div class="page-wrapper">
+            <header class="page-header" role="banner">
+                <div class="page-header-inner use-column-group use-gutters-horizontal">
+                    <div class="use-size-auto">
+                        <h1><a href="index.html">RawBlock</a></h1>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-section">
+                <div class="page-section-inner">
+                    <div class="use-column-group use-gutters">
+                        <div class="use-size-30">
+                            <ul>
+                                {{#each pages }}
+                                    {{#isnt basename "index"}}
+                                        <li><a href ="{{ basename }}.html">{{data.title}}</a></li >
+                                    {{/isnt}}
+                                {{/each  }}
+                            </ul>
+                        </div>
+                        <div class="use-size-70">
+                            <main class="page-main" id="main-content" role="main" tabindex="-1">
+                                {{> body }}
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{> body_assets}}
+    </body>
+
+</html>

@@ -222,11 +222,35 @@ $docs-example-border: 1px solid #f1f1f1;
             }
         }
 
+        &example-1 {
+            position: relative;
+            margin-bottom: rb-em-calc(40);
+
+            &.is-demo {
+                border: $docs-example-border;
+                padding: 20px 20px 10px;
+                background: $docs-example-bg-color;
+
+                &:nth-child(2n+1) {
+                    border-top: none;
+                }
+            }
+        }
+
         &example-title {
             position: relative;
             z-index: 2;
             margin: 0 0 -6px 20px;
             font-size: rb-em-calc(30);
+            color: #dbdbdb;
+        }
+
+        &example-1-title {
+            position: relative;
+            z-index: 2;
+            margin: 0 0 -6px 20px;
+            font-size: rb-em-calc(30);
+            font-weight: 600;
             color: #dbdbdb;
         }
 

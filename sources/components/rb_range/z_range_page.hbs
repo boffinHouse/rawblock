@@ -1,37 +1,38 @@
 ---
 title: Range
-layout: default_tpl.hbs
+layout: docs_tpl.hbs
 ---
-<section class="page-section">
-    <div class="page-section-inner">
-
-        <div class="use-column-group use-gutters-horizontal">
-            <div class="use-size-80">
                 <article class="rb-docs">
-                    <h1 class="docs-title">{{ title }}</h1>
+                    <h1>{{ title }}</h1>
                     <p class="docs-intro">Range component is used to get a value by dragging a handle.</p>
 {{#markdown}}
 ##Usage
 To apply the accordion component add the `rb-range` class and attribute `data-module="range"` to an element.
 {{/markdown}}
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Demo</h3>
-                        <div>
+
+                        <h3 class="docs-example-1-title">Demo</h3>
+                        <div class="docs-example-1 is-demo">
                             <div class="rb-range js-rb-life" data-module="range"></div>
                         </div>
-                    </div>
 
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Markup</h3>
+
+                        <h3 class="docs-example-1-title">Markup</h3>
+                        <div class="docs-example-1">
 {{#markdown}}
     <div class="rb-range js-rb-life" data-module="range"></div>
 {{/markdown}}
+                        </div>
+
+                        {{> docs_js_life }}
+                        <hr>
+{{#markdown}}
+##Vertical
+{{/markdown}}
+                    <h3 class="docs-example-1-title">Demo</h3>
+                    <div class="docs-example-1 is-demo">
+                        <div class="rb-range is-vertical js-rb-life" data-module="range"></div>
                     </div>
-                    {{> docs_js_life }}
-                    <hr>
                 </article><!-- end rb-docs -->
             </div>
         </div>
 
-    </div>
-</section>

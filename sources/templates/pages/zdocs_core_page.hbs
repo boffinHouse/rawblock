@@ -1,18 +1,25 @@
 ---
 title: Core
-layout: default_tpl.hbs
+layout: docs_tpl.hbs
 ---
-<div class="page-section">
-    <div class="page-section-inner">
-        <div class="use-column-group use-gutters-horizontal">
-            <div class="use-size-80">
-                <div class="rb-docs">
-                    <h1 class="docs-title">{{ title }}</h1>
-                    <p class="docs-intro">
-                        RawBlock's modular architecture is seperatad in three parts: utility classes, components and a JavaScript framework. This seperation ensures that user interfaces build with RawBlock are highly adjustable, reusable and easy to maitain.
-                    </p>
-                </div> <!-- end rb-docs -->
-            </div>
+
+<div class="rb-docs">
+    <h1 class="docs-title">{{ title }}</h1>
+    <p class="docs-intro">
+        In core everything in RawBlock's is a component, but to obtain greater clarity we differentiate three different areas: layout utilities, components and JavaScript framework.
+    </p>
+    <div class="use-column-group use-gutters">
+        <div class="use-size-50">
+            <h2>Layout utilities</h2>
+            <p>Layout consists of several utitilty classes which form the foundation layer to layout your pages. For example these classes are applied to create a responsive fluid grid system or layout elements of your component. </p>
+        </div>
+        <div class="use-size-50">
+            <h2>Components</h2>
+            <p>Components are the building blocks of RawBlock.</p>
+        </div>
+        <div class="use-size-50">
+            <h2>JavaScript Framework</h2>
+            <p>All JavaScript component are build on top of RawBlocks JavaScript framework. </p>
         </div>
     </div>
-</div>
+</div> <!-- end rb-docs -->

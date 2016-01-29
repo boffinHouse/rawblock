@@ -86,7 +86,7 @@ $rangeJSCFG: (
 		}
 
 		//Range horizontal styling
-		&:not(.is-range-vertical) {
+		&:not(.is-vertical) {
 			height: $range-rail-size;
 
 			.range- {
@@ -152,7 +152,7 @@ $rangeJSCFG: (
 
 
 		//Range vertical styling
-		&.is-range-vertical {
+		&.is-vertical {
 			width: $range-rail-size;
 			height: 20rem;
 
