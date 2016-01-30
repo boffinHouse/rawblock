@@ -82,7 +82,7 @@ Here you find the most important options settings for this component. The full l
 <h3 class="docs-example-title">JS Options</h3>
 
 | Option | Value | Default | Description |
-| ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- |
 | `multiple`  | Boolean | false | Allowed multiple panels to be open at the same time. If `true` then `toggle` is also automatically set to `true`. |
 | `toggle`  | Boolean | false | Whether a panel button toggles the state of a panel. |
 | `selectedIndex`  | Number | 0 | The initially opened index. If no panel with the class `is-open` was found. If no panel should be opened by default use -1. |
