@@ -97,7 +97,6 @@ elements to navigate, like previous/next buttons or paginations.
 ##Carousel
 
 <h3 class="docs-example-title">Demo</h3>
-
 <div class="docs-example">
     {{#mergeJSON rb_itemscroller.default 'attrs: {"data-carousel":true}'}}
         {{> rb_itemscroller }}
@@ -124,7 +123,6 @@ elements to navigate, like previous/next buttons or paginations.
 ##Index
 
 <h3 class="docs-example-title">Demo</h3>
-
 <div class="docs-example">
     {{#mergeJSON rb_itemscroller.default 'itemsIndex: true'}}
         {{> rb_itemscroller }}
@@ -133,18 +131,19 @@ elements to navigate, like previous/next buttons or paginations.
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <div class="rb-itemscroller js-rb-life" data-module="itemscroller">
-        <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">prev</button>
-        <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
-        <div class="itemscroller-viewport">
+```html
+<div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+    <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">prev</button>
+    <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
+    <div class="itemscroller-viewport">
 
-            <div class="itemscroller-content use-column-group">
-                <div class="itemscroller-cell use-size-50">...</div>
-            </div>
+        <div class="itemscroller-content use-column-group">
+            <div class="itemscroller-cell use-size-50">...</div>
         </div>
-        <div class="itemscroller-pagination"></div>
     </div>
-
+    <div class="itemscroller-pagination"></div>
+</div>
+```
 <hr>
 
 ##Pagination
@@ -164,3 +163,6 @@ elements to navigate, like previous/next buttons or paginations.
         </div>
     </div>
 </div>
+
+<h3 class="docs-example-title">Markup</h3>
+
