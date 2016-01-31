@@ -1,5 +1,12 @@
-(function () {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        factory();
+    }
+}(function () {
     'use strict';
+
     if (!window.rb) {
         window.rb = {};
     }
@@ -8,7 +15,8 @@
 
     var getData = function (oReq) {
         var data = oReq.responseXML || oReq.responseText;
-        if (oReq.getResponseHeader('Content-Type') == 'application/json') {
+        var contentType = oReq.getResponseHeader('Content-Type') || '';
+        if (contentType.endsWith('json')) {
             data = rb.jsonParse(oReq.responseText) || data;
         }
         return data;
@@ -30,7 +38,7 @@
      * @example
      *
      * rb.fetch('api/user.json?id=12')
-     *  .then(function(response){
+     *  .then(function(response, xhr){
 	 *      console.log(response.data);
 	 *  });
      */
@@ -58,16 +66,16 @@
                 value = {data: getData(oReq)};
 
                 if (isSuccess) {
-                    resolve(value);
+                    resolve(value, oReq);
                 } else {
-                    reject(value);
+                    reject(value, oReq);
                 }
                 oReq = null;
             });
 
             oReq.addEventListener('error', function () {
                 var value = {data: getData(oReq)};
-                reject(value);
+                reject(value, oReq);
                 oReq = null;
             });
 
@@ -88,4 +96,6 @@
 
         return promise;
     };
-})();
+
+    return rb.fetch;
+}));
