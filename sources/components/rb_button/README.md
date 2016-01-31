@@ -25,11 +25,13 @@ Apply class `.rb-button` to a `<button>` or `<a>` element to create a button com
 
 <h3 class="docs-example-title">Markup Example</h3>
 
-    <!-- Anchor (link) -->
-    <a href="index.html" class="rb-button">Home</a>
+```html
+<!-- Anchor (link) -->
+<a href="index.html" class="rb-button">Home</a>
 
-    <!-- Button (action) -->
-    <button type="button" class="rb-button">Start</button>
+<!-- Button (action) -->
+<button type="button" class="rb-button">Start</button>
+```
 
 <hr>
 
@@ -124,26 +126,27 @@ These classes gives the buttons additional meaning.
 
 <h3 class="docs-example-title">Markup Example</h3>
 
-    <!-- Anchor (link) -->
-    <a href="index.html" class="rb-button is-primary">
-        Primary Anchor Button
-    </a>
+```html
+<!-- Anchor (link) -->
+<a href="index.html" class="rb-button is-primary">
+    Primary Anchor Button
+</a>
 
-    <!-- Disabled Anchor (link) -->
-    <a href="index.html" class="rb-button is-primary" aria-disabled="true" tabindex="-1">
-        Disabled Anchor
-    </a>
+<!-- Disabled Anchor (link) -->
+<a href="index.html" class="rb-button is-primary" aria-disabled="true" tabindex="-1">
+    Disabled Anchor
+</a>
 
-    <!-- Button (action) -->
-    <button type="button" class="rb-button is-primary">
-        Primary Action Button
-    </button>
+<!-- Button (action) -->
+<button type="button" class="rb-button is-primary">
+    Primary Action Button
+</button>
 
-    <!-- Disable Button (action) -->
-    <button type="button" class="rb-button is-primary is-disabled" disabled="disabled">
-        Disabled Button
-    </button>
-
+<!-- Disable Button (action) -->
+<button type="button" class="rb-button is-primary is-disabled" disabled="disabled">
+    Disabled Button
+</button>
+```
 <hr>
 
 ##Additional classes

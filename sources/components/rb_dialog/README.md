@@ -21,16 +21,18 @@ The component consists of a dialog element, close button and action button.
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <!-- Open Button -->
-    <button class="js-click" type="button" data-module="button" data-target="$(.rb-dialog)"></button>
+```html
+<!-- Open Button -->
+<button class="js-click" type="button" data-module="button" data-target="$(.rb-dialog)"></button>
 
-    <!-- Modal Dialog -->
-    <div class="rb-dialog js-rb-life" data-module="dialog">
-        <div class="dialog-content">
-            ...
-        </div>
-        <button class="dialog-close">Close Dialog</button>
+<!-- Modal Dialog -->
+<div class="rb-dialog js-rb-life" data-module="dialog">
+    <div class="dialog-content">
+        ...
     </div>
+    <button class="dialog-close">Close Dialog</button>
+</div>
+```
 
 {{> docs_js_life }}
 <hr>
@@ -41,7 +43,7 @@ Here you find the most important options settings for this component. The full l
 <h3 class="docs-example-title">Options</h3>
 
 | Option | Value | Default | Description
-| ------------- |-------------|
+| ------------- |------------- | ------------- |-------------|
 | `open`  | Boolean | false | Whether the dialog should be open by default.
 
 <hr>

@@ -16,19 +16,22 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <div class="rb-accordion js-rb-life" data-module="accordion">
-        <div class="accordion-item">
-            <button type="button" class="accordion-btn">Heading 1</button>
-            <div class="accordion-panel is-open">
-                <div class="accordion-content">
-                   <p>Your Content</p>
-                </div>
+```html
+<div class="rb-accordion js-rb-life" data-module="accordion">
+    <div class="accordion-item">
+        <button type="button" class="accordion-btn">Heading 1</button>
+        <div class="accordion-panel is-open">
+            <div class="accordion-content">
+               <p>Your Content</p>
             </div>
         </div>
-        ....
     </div>
+    ....
+</div>
+```
 
 {{> docs_js_life }}
+
 <hr>
 
 ##Panel Controls
@@ -44,15 +47,17 @@ Panels can also be open/closed with control buttons `accordion-ctr-btn`. The dir
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <div class="rb-accordion" data-module="accordion">
-        <div class="accordion-controls">
-            <button type="button" class="accordion-ctrl-btn" data-type="prev">prev</button>
-            <button type="button" class="accordion-ctrl-btn" data-type="next">next</button>
-        </div>
-        <div class="accordion-item">...</div>
-        <div class="accordion-item">...</div>
-        <div class="accordion-item">...</div>
+```html
+<div class="rb-accordion" data-module="accordion">
+    <div class="accordion-controls">
+        <button type="button" class="accordion-ctrl-btn" data-type="prev">prev</button>
+        <button type="button" class="accordion-ctrl-btn" data-type="next">next</button>
     </div>
+    <div class="accordion-item">...</div>
+    <div class="accordion-item">...</div>
+    <div class="accordion-item">...</div>
+</div>
+``` 
 
 <hr>
 
@@ -70,9 +75,11 @@ To allow multiple panels to be open at the same time, add attribute `data-multip
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <div class="rb-accordion" data-module="accordion" data-multiple="true">
-        ...
-    </div>
+```html
+<div class="rb-accordion" data-module="accordion" data-multiple="true">
+    ...
+</div>
+```
 
 <hr>
 

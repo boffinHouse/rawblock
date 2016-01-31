@@ -36,34 +36,34 @@ add class `is-select` the container `form-field`.
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <form action="#" class="rb-form">
-        <fieldset class="form-section">
-            <legend class="form-section-legend">...</legend>
-
-            <div class="form-field is-text">
-                <label>...</label>
-                <input type="text">
-            </div>
-            <div class="form-field is-select">
-                <label>...</label>
-                <select>...</select>
-            </div>
-            <div class="form-field is-checkbox">
-                <label>
-                    <input type="checkbox">
-                    <span class="label">...</span>
-                </label>
-            </div>
-            <div class="form-field is-radio">
-                <label>
-                    <input type="radio">
-                    <span class="label">...</span>
-                </label>
-            </div>
-           <button class="rb-button is-primary">...</button>
-        </fieldset>
-    </form>
-
+```html
+<form action="#" class="rb-form">
+    <fieldset class="form-section">
+        <legend class="form-section-legend">...</legend>
+        <div class="form-field is-text">
+            <label>...</label>
+            <input type="text">
+        </div>
+        <div class="form-field is-select">
+            <label>...</label>
+            <select>...</select>
+        </div>
+        <div class="form-field is-checkbox">
+            <label>
+                <input type="checkbox">
+                <span class="label">...</span>
+            </label>
+        </div>
+        <div class="form-field is-radio">
+            <label>
+                <input type="radio">
+                <span class="label">...</span>
+            </label>
+        </div>
+       <button class="rb-button is-primary">...</button>
+    </fieldset>
+</form>
+```
 <hr>
 
 ##Form layout
@@ -117,21 +117,22 @@ rows `form-row`, boxes `form-box` and fields `form-fields`.
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <form action="#" class="rb-form">
-        <fieldset class="form-section">
-            <legend class="form-section-legend">...</legend>
+```html
+<form action="#" class="rb-form">
+    <fieldset class="form-section">
+        <legend class="form-section-legend">...</legend>
+        <p class="form-intro">...</p>
+        <fieldset class="form-subsection">
+            <legend class="form-subsection-legend">...</legend>
             <p class="form-intro">...</p>
-            <fieldset class="form-subsection">
-                <legend class="form-subsection-legend">...</legend>
-                <p class="form-intro">...</p>
-                <div class="form-row">
-                    <div class="form-box">
-                        <div class="form-field">...</div>
-                    </div>
-                    ...
+            <div class="form-row">
+                <div class="form-box">
+                    <div class="form-field">...</div>
                 </div>
-            </fieldset>
+                ...
+            </div>
         </fieldset>
-    </form>
-
+    </fieldset>
+</form>
+```
 <hr>

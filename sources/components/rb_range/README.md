@@ -13,8 +13,9 @@ To apply the accordion component add the `rb-range` class and attribute `data-mo
 
 <h3 class="docs-example-title">Markup</h3>
 
-    <div class="rb-range js-rb-life" data-module="range"></div>
-
+```html
+<div class="rb-range js-rb-life" data-module="range"></div>
+```
 {{> docs_js_life }}
 
 <hr>
