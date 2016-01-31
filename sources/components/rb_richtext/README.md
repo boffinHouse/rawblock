@@ -143,32 +143,32 @@ Inside create an list item with `<li>` element.
     </li>
 </ul>
 ```        
-
 </div>
-                <div class="use-size-50">
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Ordered List</h3>
 
-                        <div class="rb-richtext">
+<div class="use-size-50">
+        <h3 class="docs-example-title">Ordered List</h3>
+        <div class="docs-example">
+                <div class="rb-richtext">
+                    <ol>
+                        <li>Level 1</li>
+                        <li>...
+                            <ul>
+                                <li>Level 2</li>
+                            </ul>
+                        </li>
+                        <li>...
                             <ol>
-                                <li>Level 1</li>
-                                <li>...
-                                    <ul>
-                                        <li>Level 2</li>
-                                    </ul>
-                                </li>
-                                <li>...
-                                    <ol>
-                                        <li>Level 2</li>
-                                    </ol>
-                                </li>
+                                <li>Level 2</li>
                             </ol>
-                        </div>
-                    </div>
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Code</h3>
-
-    <ol>
+                        </li>
+                    </ol>
+                </div>
+        </div>   
+    
+<h3 class="docs-example-title">Code</h3>
+    
+```html    
+<ol>
         <li>Level 1</li>
         <li>...
             <ul>
@@ -180,148 +180,141 @@ Inside create an list item with `<li>` element.
                 <li>Level 2</li>
             </ol>
         </li>
-    </ol>
+</ol>
+```
+</div>
+</div>
 
-                    </div>
-                </div>
-            </div>
-        <hr>
+<hr>
 
 ##Description Lists
 Creates a association list `<dl>` of name-value groups. A name-value group consist out of a name `<dt>` and one or more values `<dd>`.
 
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Demo</h3>
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example rb-richtext">
+    <dl>
+        <dt>Berlin</dt>
+        <dd>Is the capital of Germany and one of the 16 states of Germany.</dd>
+        <dt>Amsterdam</dt>
+        <dd>Is the capital city and most populous city of the Kingdom of the Netherlands.</dd>
+    </dl>
+</div>
 
-                        <div class="rb-richtext">
-                            <dl>
-                                <dt>Berlin</dt>
-                                <dd>Is the capital of Germany and one of the 16 states of Germany.</dd>
-                                <dt>Amsterdam</dt>
-                                <dd>Is the capital city and most populous city of the Kingdom of the Netherlands.</dd>
-                            </dl>
-                        </div>
-                    </div>
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Code</h3>
+<h3 class="docs-example-title">Code</h3>
 
-    <blockquote>
-        <p>Your Content</p>
-        <cite>Your source</cite>
-    </blockquote>
-
-                    </div>
-
-                    <hr>
+```html
+<dl>
+    <dt>Berlin</dt>
+    <dd>Is the capital of Germany and one of the 16 states of Germany.</dd>
+    ....
+</dl>  
+```
+            
+<hr>
 
 ##Blockquote
 Quote content from a different source inside your document with the `<blockquote>` element.
 
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Demo</h3>
+<h3 class="docs-example-title">Demo</h3>
 
-                        <div class="rb-richtext">
-                            <blockquote>
-                                <p>Your great sentence here</p>
-                                <cite>Your Source</cite>
-                            </blockquote>
-                        </div>
-                    </div>
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Code</h3>
-
+<div class="docs-example rb-richtext">
     <blockquote>
-        <p>Your Content</p>
-        <cite>Your source</cite>
+        <p>Your great sentence here</p>
+        <cite>Your Source</cite>
     </blockquote>
+</div>
+                    
+<h3 class="docs-example-title">Code</h3>
 
-                    </div>
-
-                    <hr>
+```html
+<blockquote>
+    <p>Your Content</p>
+    <cite>Your source</cite>
+</blockquote>
+```
+                 
+<hr>
 
 ##Code blocks
 Use the `<pre>` element if you want to display formatted content (such as source code). A new
 textblock is created that preserves tab indents, double-spaces, newlines, and other typographic formatting.
 
+<h3 class="docs-example-title">Code</h3>
 
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Code</h3>
-
+```html
+<div class="docs-example">
     <pre>
        <code>...</code>
     </pre>
+</div>
+```
 
-                    </div>
-
-                    <hr>
+<hr>
 
 ##Tables
 Use tables if you want to arrange data.
-
-
-                    <div class="docs-example is-demo">
-                        <h3 class="docs-example-title">Demo</h3>
-
-                        <div class="rb-richtext">
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th><strong>Title 1</strong></th>
-                                    <th><strong>Title 2</strong></th>
-                                    <th><strong>Title 3</strong></th>
-                                    <th><strong>Title 4</strong></th>
-                                </tr>
-                                </thead>
-                                <tfoot>
-                                <tr>
-                                    <td>Footer of table</td>
-                                </tr>
-                                </tfoot>
-                                <tbody>
-                                <tr>
-                                    <td><a href="#">Ipsum dolor amet,</a> consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td><span class="underline">Ipsum dolor amet</span>, consetetu sadipsci elitr, sed diam</td>
-                                </tr>
-                                <tr>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                </tr>
-                                <tr>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                    <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="docs-example">
-                        <h3 class="docs-example-title">Code</h3>
-
+                  
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example">
     <table>
         <thead>
-            <tr>
-                <th>...</th>
-                ...
-            </tr>
+        <tr>
+            <th><strong>Title 1</strong></th>
+            <th><strong>Title 2</strong></th>
+            <th><strong>Title 3</strong></th>
+            <th><strong>Title 4</strong></th>
+        </tr>
         </thead>
         <tfoot>
-            <tr>
-                <td>...</td>
-            </tr>
+        <tr>
+            <td>Footer of table</td>
+        </tr>
         </tfoot>
         <tbody>
-            <tr>
-                <td>...</td>
-                ...
-            </tr>
-            ...
+        <tr>
+            <td><a href="#">Ipsum dolor amet,</a> consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td><span class="underline">Ipsum dolor amet</span>, consetetu sadipsci elitr, sed diam</td>
+        </tr>
+        <tr>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+        </tr>
+        <tr>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+            <td>Ipsum dolor amet, consetetu sadipsci elitr, sed diam</td>
+        </tr>
         </tbody>
     </table>
+</div>
+                  
+<h3 class="docs-example-title">Code</h3>
 
-                    </div>
+```html
+<table>
+    <thead>
+    <tr>
+        <th>...</th>
+        ...
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <td>...</td>
+    </tr>
+    </tfoot>
+    <tbody>
+    <tr>
+        <td>...</td>
+        ...
+    </tr>
+    ...
+     </tbody>
+</table>
+```
+                
