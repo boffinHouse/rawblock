@@ -4,13 +4,5 @@ layout: docs_tpl.hbs
 ---
 
 <article class="rb-docs">
-    <h1>{{ title }}</h1>
-    <p class="docs-intro">This component creates simple effects based on the user scroll position.</p>
-{{#markdown}}
-##Usage
-To apply the scrolly component add class `rb-scrolly` and attribute `data-module="scrolly"` to a container element.
-{{/markdown}}
-
-                    {{> rb_scrolly }}
-
- </article><!-- end rb-docs -->
+    {{md 'sources/components/rb_scrolly/README.md'}}
+</article><!-- end rb-docs -->

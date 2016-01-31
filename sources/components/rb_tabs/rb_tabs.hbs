@@ -3,7 +3,6 @@ component: rb_tabs
 ---
 
 <div class="rb-tabs {{ type }}" data-module="tabs" {{#each attrs}} data-{{@key}}="{{this}}"{{/each}}>
-
     <ul class="tabs-nav">
         {{#each items }}
         <li class="tabs-nav-item"><button type="button" class="tabs-btn" {{#if open}}aria-expanded="true"{{/if}}>{{ title }}</button></li>
@@ -23,9 +22,7 @@ component: rb_tabs
     {{#each items }}
         <div class="tabs-panel {{#if open}}is-open{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
             <div class="tabs-content">
-                {{#each content}}
-                    {{{ this }}}
-                {{/each}}
+                {{#each content}}{{{ this }}}{{/each}}
             </div>
         </div>
     {{/each}}
