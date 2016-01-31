@@ -1,5 +1,12 @@
-(function () {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        factory();
+    }
+}(function () {
     'use strict';
+
     if (!window.rb) {
         window.rb = {};
     }
@@ -8,7 +15,8 @@
 
     var getData = function (oReq) {
         var data = oReq.responseXML || oReq.responseText;
-        if (oReq.getResponseHeader('Content-Type') == 'application/json') {
+        var contentType = oReq.getResponseHeader('Content-Type') || '';
+        if (contentType.endsWith('json')) {
             data = rb.jsonParse(oReq.responseText) || data;
         }
         return data;
@@ -30,7 +38,7 @@
      * @example
      *
      * rb.fetch('api/user.json?id=12')
-     *  .then(function(response){
+     *  .then(function(response, xhr){
 	 *      console.log(response.data);
 	 *  });
      */
@@ -47,6 +55,7 @@
         }, options);
 
         var promise = new Promise(function (resolve, reject) {
+            var header;
             var oReq = new XMLHttpRequest();
 
             oReq.addEventListener('load', function () {
@@ -57,20 +66,26 @@
                 value = {data: getData(oReq)};
 
                 if (isSuccess) {
-                    resolve(value);
+                    resolve(value, oReq);
                 } else {
-                    reject(value);
+                    reject(value, oReq);
                 }
                 oReq = null;
             });
 
             oReq.addEventListener('error', function () {
                 var value = {data: getData(oReq)};
-                reject(value);
+                reject(value, oReq);
                 oReq = null;
             });
 
             oReq.open(options.type.toUpperCase(), url, true, options.username, options.password);
+
+            if(options.headers){
+                for(header in options.headers){
+                    oReq.setRequestHeader(header, options.headers[header]);
+                }
+            }
 
             if (options.beforeSend) {
                 options.beforeSend(oReq);
@@ -81,4 +96,6 @@
 
         return promise;
     };
-})();
+
+    return rb.fetch;
+}));
