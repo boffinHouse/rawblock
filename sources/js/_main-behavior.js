@@ -19,28 +19,17 @@ if(!('ASSETBASEPATH' in window)){
 //if webpack is used:
 __webpack_public_path__ = window.ASSETBASEPATH + 'js/';
 
-require('../components/rb_listbox/rb_listbox');
-//require('../components/rb_range/rb_range');
 
-require('../components/rb_panel/rb_panel');
-require('../components/rb_popover/rb_popover');
-require('../components/rb_panelgroup/rb_panelgroup');
+require('../../grunt/webpack/globloader!./glob.paths');
 
-require('../components/rb_itemscroller/rb_itemscroller');
-require('../components/rb_itemscroller/rb_itemscroller-pagination');
-require('../components/rb_itemscroller/rb_itemscroller-player');
-require('../components/rb_itemscroller/rb_itemscroller-queries');
-
-require('../components/rb_dialog/rb_dialog');
-require('../components/rb_range/rb_range');
-
-require('../components/rb__childfx/rb__childfx');
-
-require('../components/rb_scrolly/rb_scrolly');
-require('../components/rb_sticky/rb_sticky');
-
-require('./utils/i18n/rb_form-de');
-require('../components/rb_form/rb_validate');
+(function(addImportHook){
+    addImportHook(function(moduleName){
+        //declare a map of module name -> paths
+        moduleName = 'rb_' + moduleName;
+        moduleName += '/' + moduleName;
+        require(['../components/' + moduleName +'.lazy.js']);
+    });
+})(rb.life.addImportHook);
 
 
 /* init after all modules are loaded or imports are configured. */
