@@ -1,5 +1,6 @@
 window.BezierEasing = require('bezier-easing');
 
+var ASSETBASEPATH = window.siteData && siteData.basePath || '';
 //load dom or jQuery
 require('./libs/rb_$');
 
@@ -11,15 +12,10 @@ require('./libs/rb_main');
 rb.isDebug = true;
 rb.life.autoStart = false;
 
-if(!('ASSETBASEPATH' in window)){
-	window.ASSETBASEPATH = '';
-	rb.log('set ASSETBASEPATH to "". Please configure!');
-}
-
 //if webpack is used:
-__webpack_public_path__ = window.ASSETBASEPATH + 'js/';
+__webpack_public_path__ = ASSETBASEPATH + 'js/';
 
-
+require('./utils/rb_pubsub');
 require('../../grunt/webpack/globloader!./glob.paths');
 
 (function(addImportHook){

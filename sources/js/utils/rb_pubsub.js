@@ -34,6 +34,8 @@
 
                 if(memoize){
                     stored[topic] = data;
+                } else if(topic in stored){
+                    rb.log('memoize once, memoize always');
                 }
             },
             sub: function(topic, handler, getStored){

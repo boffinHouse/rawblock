@@ -4,15 +4,12 @@
  * {@link} https://github.com/gruntjs/grunt-contrib-uglify
  */
 module.exports = {
-	options: {
-		screwIE8: true
-	},
-	dist: {
-		files: [{
-			expand: true,
-			cwd: '<%= paths.dev %>/js/',
-			src: ['**/*.js'],
-			dest: '<%= paths.dist %>/js/',
-		}],
-	}
+    options: {
+        screwIE8: true
+    },
+    inline: {
+        files: {
+            '<%= paths.dev %>/js/_inlinehead-behavior.js': ['<%= paths.src %>/js/_inlinehead-behavior.js']
+        }
+    }
 };
