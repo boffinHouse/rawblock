@@ -36,7 +36,7 @@
                 scrollLeft: bbox.left + (options.offsetLeft || 0),
             };
 
-            if(!options.scrollingElement){
+            if(!options.scrollingElement || options.scrollingElement.contains(elem)){
                 pos.scrollTop += scrollingElement.scrollTop;
                 pos.scrollLeft += scrollingElement.scrollLeft;
             }
