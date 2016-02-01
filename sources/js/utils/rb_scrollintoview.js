@@ -38,7 +38,7 @@
 
             if(!options.scrollingElement){
                 pos.scrollTop += scrollingElement.scrollTop;
-                pos.scrollLeft += scrollingElement.scrollTop;
+                pos.scrollLeft += scrollingElement.scrollLeft;
             }
 
             if (options.easing) {
