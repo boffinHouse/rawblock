@@ -1,7 +1,7 @@
 {
   "name": "rawblock",
   "description": "The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces. ",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "MIT",
   "author": [
     {
@@ -59,7 +59,7 @@
     "grunt-contrib-handlebars": "^0.11.0",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-qunit": "^0.7.0",
-    "grunt-contrib-uglify": "^0.10.0",
+    "grunt-contrib-uglify": "^0.11.0",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-jsdoc": "^1.0.0",
     "grunt-newer": "~1.1.1",

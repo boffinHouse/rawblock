@@ -36,9 +36,9 @@
                 scrollLeft: bbox.left + (options.offsetLeft || 0),
             };
 
-            if(!options.scrollingElement){
+            if(!options.scrollingElement || options.scrollingElement.contains(elem)){
                 pos.scrollTop += scrollingElement.scrollTop;
-                pos.scrollLeft += scrollingElement.scrollTop;
+                pos.scrollLeft += scrollingElement.scrollLeft;
             }
 
             if (options.easing) {
@@ -52,7 +52,7 @@
             opts = Object.assign({}, options, {
 
                 always: function () {
-                    var top, left;
+                    var top, left, hash;
 
                     if (options.forcePosition) {
                         top = scrollingElement.scrollTop;
@@ -70,10 +70,14 @@
                     }
 
                     if (options.hash) {
-                        location.hash = typeof options.hash == 'string' ?
+                        hash =  typeof options.hash == 'string' ?
                             options.hash :
                         elem.id || elem.name
                         ;
+
+                        if(hash){
+                            location.hash = hash;
+                        }
                     }
 
                     if (options.forcePosition) {
@@ -84,7 +88,6 @@
                     if (options.always) {
                         options.always.call(elem);
                     }
-
                 }
             });
 

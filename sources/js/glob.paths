@@ -1,0 +1,2 @@
+../components/**/*.js
+!../components/**/*.lazy.js

@@ -92,6 +92,8 @@
                 'keydown:keycodes(27)': function(e){
                     if(this.options.closeOnEsc && !e.defaultPrevented){
                         this.close();
+                        e.preventDefault();
+                        e.stopPropagation();
                     }
                 },
             },

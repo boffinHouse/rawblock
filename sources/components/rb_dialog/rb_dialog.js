@@ -133,7 +133,7 @@
                     this.element.setAttribute('tabindex', '-1');
                 }
                 if (!this.element.getAttribute('role')) {
-                    this.element.setAttribute('role', 'dialog');
+                    this.element.setAttribute('role', 'group');
                 }
 
                 this._setUpEvents();
@@ -159,8 +159,6 @@
 
                 this.$backdrop.css({display: 'block'});
                 this.$backdrop.addClass(rb.statePrefix + 'open');
-
-                this.setupOpenEvents();
 
                 rb.$root.addClass(rb.statePrefix + 'open-' + this.name +'-within');
 
@@ -256,8 +254,6 @@
                 this.isOpen = false;
                 this._xhr = null;
 
-                this.teardownOpenEvents();
-
                 this._close(options);
                 return true;
             },
@@ -281,24 +277,6 @@
                 this.$backdrop.css({display: this.isOpen ? 'block' : 'none'});
                 this._displayTimer = null;
             },
-            setupOpenEvents: function () {
-                var that = this;
-                if (!this.closeOnEsc) {
-                    this.closeOnEsc = function (e) {
-                        if (e.keyCode == 27 && that.options.closeOnEsc && !e.defaultPrevented) {
-                            that.close();
-                        }
-                    };
-                }
-
-                $(document).on('keydown', this.closeOnEsc);
-            },
-
-            teardownOpenEvents: function () {
-                if (this.closeOnEsc) {
-                    $(document).off('keydown', this.closeOnEsc);
-                }
-            },
 
             _setUpEvents: function () {
                 var that = this;
@@ -312,6 +290,13 @@
                         }
                     })
                 ;
+                this.$backdrop.on('keydown', function (e) {
+                    if (e.keyCode == 27 && that.options.closeOnEsc && !e.defaultPrevented) {
+                        that.close();
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
             },
         }
     );

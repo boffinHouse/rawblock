@@ -46,6 +46,7 @@
              * @property {Boolean}  defaults.switchedOff=false Turns off panelgroup.
              * @property {Boolean} defaults.resetSwitchedOff=true Resets panels to initial state on reset switch.
              * @property {String} defaults.panelName='{name}-panel' Name of the constructed panels.
+             * @property {Boolean}  defaults.closeOnEsc=false Panel closes on ESC keydown.
              * @property {String}  defaults.panelSel='find(.{name}-panel)' Reference to find all panels associated with this component group. For a nested accordion/tab use "children(.{name}-panel)".
              * @property {String}  defaults.btnSel='find(.{name}-btn)' Reference to find all panel buttons associated with this component group. For a nested accordion/tab use "children(.{name}-btn)".
              * @property {String}  defaults.groupBtnSel='find(.{name}-ctrl-btn)' Reference to find all panelgroup buttons associated with this component group. For a nested accordion/tab use "children(.{name}-ctrl-btn)".
@@ -293,6 +294,7 @@
                     panel.setOption('resetSwitchedOff', options.resetSwitchedOff);
                     panel.setOption('setFocus', options.setFocus);
                     panel.setOption('itemWrapper', itemWrapper);
+                    panel.setOption('closeOnEsc', options.closeOnEsc);
 
                 });
 
@@ -473,7 +475,7 @@
                     this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open');
                 } else if (name == 'easing' && value && typeof value == 'string') {
                     rb.addEasing(value);
-                } else if (name == 'setFocus' || name == 'resetSwitchedOff') {
+                } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc') {
                     this.setChildOption(this.$panels, name, value);
                 } else if (name == 'closeOnFocusout') {
                     this._addRemoveFocusOut();
