@@ -70,6 +70,8 @@ add class `is-select` the container `form-field`.
 The form layout can be structured with form classes to create sections `form-section` and `form-subsection`,
 rows `form-row`, boxes `form-box` and fields `form-fields`.
 
+TIP: You can apply utility classes `use-column-group`, `use-gutters` and `use-size-*` to create your layout widths and space.
+
 <h3 class="docs-example-title">Classes</h3>
 
 | Class name | Description
@@ -113,6 +115,53 @@ rows `form-row`, boxes `form-box` and fields `form-fields`.
         </fieldset>
     </form>
 </div>
+
+
+<h3 class="docs-example-title">Markup</h3>
+
+```html
+<form action="#" class="rb-form">
+    <fieldset class="form-section">
+        <legend class="form-section-legend">...</legend>
+        <p class="form-intro">...</p>
+        <fieldset class="form-subsection">
+            <legend class="form-subsection-legend">...</legend>
+            <p class="form-intro">...</p>
+            <div class="form-row">
+                <div class="form-box">
+                    <div class="form-field">...</div>
+                </div>
+                ...
+            </div>
+        </fieldset>
+    </fieldset>
+</form>
+```
+<hr>
+
+##Grouping
+
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example">
+    <form action="#" class="rb-form">
+        {{#mergeJSON 'label: "Grouped Inputs", classNames: "js-validation-group"'}}
+        {{> rb_grouped_begin}}
+        <div class="form-row use-column-group use-gutters">
+            <div class="form-box use-size-50">
+                {{#mergeJSON 'label: "Default group input 50",  booleans: ["required"]'}}
+                    {{> rb_input}}
+                {{/mergeJSON}}
+            </div>
+            <div class="form-box use-size-50">
+                {{#mergeJSON  'label: "Default group input 50",  booleans: ["required"]'}}
+                    {{> rb_input}}
+                {{/mergeJSON}}
+            </div>
+        </div>        
+        {{> rb_grouped_end}}
+        {{/mergeJSON}}
+    </form>        
+</div>        
 
 
 <h3 class="docs-example-title">Markup</h3>
