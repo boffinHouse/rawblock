@@ -53,6 +53,7 @@
 
                 this._onkeyboardInput = this._onkeyboardInput.bind(this);
                 this._onBlur = this._onBlur.bind(this);
+                this._onFocus = this._onFocus.bind(this);
 
                 this._getElements();
                 this._setFocusElement();
@@ -101,11 +102,21 @@
             _onBlur: function () {
                 this.select(-1);
             },
+            _onFocus: function(){
+                var activeItem = this.focusElement.getAttribute('aria-activedescendant');
+                if(activeItem){
+                    activeItem = this.query('#'+ activeItem);
+                }
+                if(activeItem){
+                    this.select(this.checkedItem || activeItem);
+                }
+            },
             _setFocusElement: function () {
                 var value = this.options.focusElement;
 
                 if (this.focusElement) {
                     this.focusElement.removeAttribute('aria-activedescendant');
+                    this.focusElement.removeAttribute('tabindex');
                     this.focusElement.removeEventListener('keydown', this._onkeyboardInput);
                     this.focusElement.removeEventListener('blur', this._onBlur);
                 }
@@ -115,8 +126,13 @@
                     (value && this.getElementsFromString(value)[0] || this.element)
                 ;
 
+                if(this.focusElement.tabIndex == -1 && !this.focusElement.getAttribute('tabindex')){
+                    this.focusElement.setAttribute('tabindex', '0');
+                }
+
                 this.focusElement.addEventListener('keydown', this._onkeyboardInput);
                 this.focusElement.addEventListener('blur', this._onBlur);
+                this.focusElement.addEventListener('focus', this._onFocus);
             },
             _selectCheck: function (index, type) {
                 var item;
