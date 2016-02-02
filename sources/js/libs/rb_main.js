@@ -1704,6 +1704,21 @@ if (!window.rb) {
         };
     };
 
+    var mainInit = function(){
+        mainInit = false;
+        if(rb.cssConfig.statePrefix) {
+            rb.statePrefix = rb.cssConfig.statePrefix;
+        }
+
+        rb._uitilsInit();
+
+        initObserver();
+
+        initClickCreate();
+
+        initWatchCss();
+    };
+
     rb.life = life;
 
     life.autoStart = true;
@@ -1734,22 +1749,13 @@ if (!window.rb) {
 
         if(options && options.statePrefix){
             rb.statePrefix = options.statePrefix;
-        } else if(rb.cssConfig.statePrefix) {
-            rb.statePrefix = rb.cssConfig.statePrefix;
         }
 
         elements = document.getElementsByClassName(initClass);
 
         lifeBatch = createBatch();
 
-        rb._uitilsInit();
-
-        initObserver();
         life.searchModules();
-
-        initClickCreate();
-
-        initWatchCss();
     };
 
     /**
@@ -1979,6 +1985,10 @@ if (!window.rb) {
             var element, modulePath, moduleId, i, hook, start, deferred;
 
             var len = elements.length;
+
+            if(mainInit){
+                mainInit();
+            }
 
             if (!len) {
                 return;

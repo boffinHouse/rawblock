@@ -67,6 +67,8 @@
 
                 this.isDefaultOpen = this.isOpen;
 
+                this._role = this.element.getAttribute('role');
+
                 this._onBodyClick = this._onBodyClick.bind(this);
 
                 rb.rAFs(this, {throttle: true}, '_opened', '_closed', '_switchOn', '_switchOff');
@@ -127,7 +129,8 @@
                 this.element.classList.remove(rb.statePrefix + 'switched-off');
 
                 this.element.setAttribute('aria-hidden', '' + (!this.isOpen));
-                this.$element.attr({'role': 'group', tabindex: '-1'});
+
+                this.$element.attr({'role': this._role || 'group', tabindex: '-1'});
             },
             _onBodyClick: function (e) {
                 var that;

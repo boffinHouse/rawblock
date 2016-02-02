@@ -1,9 +1,7 @@
 {
     "default": {
         "type": "js-rb-life",
-        "attrs": {
-            "tabindex": -1
-        },
+        "attrs": {},
         "items": [
             {
                 "title": "Option 1"
