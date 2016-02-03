@@ -311,13 +311,25 @@
                     that.viewport.scrollLeft = 0;
                 };
                 var scrollIntoView = function (e) {
-                    var cell, pageIndex;
+                    var cell, pageIndex, focusedElement;
                     if (that.options.switchedOff) {
                         return;
                     }
 
                     if (!isTestStopped) {
-                        cell = ((e.type == 'focus') ? e.target : document.activeElement).closest(cellSel);
+                        if(e.type == 'focus'){
+                            focusedElement = e.target;
+
+                            if(!rb.root.classList.contains(rb.statePrefix + 'keyboardfocus-within')){
+                                return;
+                            }
+                        } else {
+                            focusedElement = document.activeElement;
+                        }
+
+                        if(!focusedElement || !focusedElement.closest){return;}
+
+                        cell = focusedElement.closest(cellSel);
                         if (cell && that.isCellVisible(cell) !== true) {
                             pageIndex = that.getPageIndexOfCell(cell);
                             if(pageIndex != that._selectedIndex){

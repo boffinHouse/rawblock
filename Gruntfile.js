@@ -64,6 +64,7 @@
             'clean:tmp',
             //'svg',
             'css',
+            'jshint',
             'uglify:inline',
             'concurrent:dev2',
             'handlebars:dev',
