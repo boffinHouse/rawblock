@@ -262,10 +262,10 @@
                 var shouldInstall = this.options.closeOnFocusout && this.selectedItems.length;
 
                 if (shouldInstall && !this._hasFocusOutListener) {
-                    document.addEventListener('focusin', this._onOutSideInteraction, true);
+                    document.addEventListener('focus', this._onOutSideInteraction, true);
                     document.addEventListener('mousedown', this._onOutSideInteraction, true);
                 } else if (!shouldInstall && this._hasFocusOutListener) {
-                    document.removeEventListener('focusin', this._onOutSideInteraction, true);
+                    document.removeEventListener('focus', this._onOutSideInteraction, true);
                     document.removeEventListener('mousedown', this._onOutSideInteraction, true);
                 }
             },
