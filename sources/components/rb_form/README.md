@@ -70,6 +70,8 @@ add class `is-select` the container `form-field`.
 The form layout can be structured with form classes to create sections `form-section` and `form-subsection`,
 rows `form-row`, boxes `form-box` and fields `form-fields`.
 
+TIP: You can apply utility classes `use-column-group`, `use-gutters` and `use-size-*` to create your layout widths and space.
+
 <h3 class="docs-example-title">Classes</h3>
 
 | Class name | Description
@@ -136,3 +138,106 @@ rows `form-row`, boxes `form-box` and fields `form-fields`.
 </form>
 ```
 <hr>
+
+##Grouping
+Grouping related form elements makes forms better understandable. 
+Main sections are grouped with `<fieldset>`, but smaller chunks can be grouped with
+a container element `form-group` and attribute `role="group"`.
+
+| Class name | Description
+| ------------- |-------------|
+| `.form-group` | Use for group of form elements with attribue `role="group"` |
+| `.form-group-label` | Use for group label on `<strong>` with attribute `role="heading"`. |
+
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example">
+    <form action="#" class="rb-form">
+        {{#mergeJSON 'label: "Grouped Inputs"'}}
+        {{> rb_grouped_begin}}
+        <div class="form-row use-column-group use-gutters-horizontal">
+            <div class="form-box use-size-50">
+                {{#mergeJSON 'label: "Default group input 50"'}}
+                    {{> rb_input}}
+                {{/mergeJSON}}
+            </div>
+            <div class="form-box use-size-50">
+                {{#mergeJSON  'label: "Default group input 50"'}}
+                    {{> rb_input}}
+                {{/mergeJSON}}
+            </div>
+        </div>        
+        {{> rb_grouped_end}}
+        {{/mergeJSON}}
+    </form>        
+
+    <form action="#" class="rb-form">
+      {{#mergeJSON 'label: "Radio Grouped"'}}
+      {{> rb_grouped_begin}}
+      <div class="form-row use-column-group use-gutters-horizontal">
+      <div class="form-box use-size-33">
+    {{#mergeJSON rb_form.radio 'label: "Radio 1"'}}
+      {{> rb_input}}
+    {{/mergeJSON}}
+    </div>
+    <div class="form-box  use-size-33">
+    {{#mergeJSON rb_form.radio 'label: "Radio 2"'}}
+      {{> rb_input}}
+    {{/mergeJSON}}
+    </div>
+    <div class="form-box use-size-33">
+    {{#mergeJSON rb_form.radio 'label: "Radio 3"'}}
+      {{> rb_input}}
+    {{/mergeJSON}}
+    </div>
+      </div>
+      {{> rb_grouped_end}}
+      {{/mergeJSON}}
+    </form>  
+        
+    <form action="#" class="rb-form">
+      {{#mergeJSON 'label: "Checkbox Grouped"'}}
+      {{> rb_grouped_begin}}
+      <div class="form-row use-column-group use-gutters-horizontal">
+      <div class="form-box use-size-33">
+    {{#mergeJSON rb_form.checkbox 'label: "Checkbox 1"'}}
+      {{> rb_input}}
+    {{/mergeJSON}}
+    </div>
+    <div class="form-box use-size-33">
+    {{#mergeJSON rb_form.checkbox 'label: "Checkbox 2"'}}
+      {{> rb_input}}
+    {{/mergeJSON}}
+    </div>
+    <div class="form-box use-size-33">
+    {{#mergeJSON rb_form.checkbox 'label: "Checkbox 3"'}}
+      {{> rb_input}}
+    {{/mergeJSON}}
+    </div>
+      </div>
+      {{> rb_grouped_end}}
+      {{/mergeJSON}}
+    </form>        
+</div> 
+
+<h3 class="docs-example-title">Markup</h3>
+ 
+```html
+...
+<div class="form-group role="group">
+	<strong class="form-group-label" role="heading">...</strong>
+	<div class="form-row">
+	    <div class="form-box">
+	        <div class="form-field">...</div>
+	    </div>
+	    ...
+	</div>
+</div
+...
+```
+
+##Validation
+
+
+
+       
+
