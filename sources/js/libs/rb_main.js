@@ -62,6 +62,7 @@ if (!window.rb) {
     rb.templates = {};
 
     rb.statePrefix = 'is-';
+    rb.uitlPrefix = 'use-';
 
     /* End: global vars end */
 
@@ -74,7 +75,9 @@ if (!window.rb) {
      * @param action
      */
     rb.changeState = function(element, state, action){
-        element && element.classList && element.classList[action ? 'add' : 'remove'](rb.statePrefix + state);
+        if(element && element.classList){
+            element.classList[action ? 'add' : 'remove'](rb.statePrefix + state);
+        }
     };
 
     /**
