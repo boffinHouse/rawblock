@@ -60,8 +60,8 @@
 			 *      console.log(rb.$(this).rbComponent().isOpen);
 			 * });
              */
-            init: function (element) {
-                this._super(element);
+            init: function (element, initialOpts) {
+                this._super(element, initialOpts);
 
                 this.isOpen = this.element.classList.contains(rb.statePrefix + 'open');
 
@@ -375,8 +375,8 @@
              *    {{panelContent}}
              * </div>
              */
-            init: function (element) {
-                this._super(element);
+            init: function (element, initialOpts) {
+                this._super(element, initialOpts);
 
                 this.updatePanelButtonState = rb.rAF(this.updatePanelButtonState, {that: this, throttle: true});
             },

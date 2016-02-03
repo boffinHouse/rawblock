@@ -62,9 +62,9 @@
 			 *      console.log(rb.$(this).rbComponent().isOpen);
 			 * });
              */
-            init: function (element) {
+            init: function (element, initialOpts) {
 
-                this._super(element);
+                this._super(element, initialOpts);
 
                 /**
                  * @name rb.components.dialog.prototype.isOpen
