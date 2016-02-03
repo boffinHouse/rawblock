@@ -9,15 +9,17 @@ RawBlock relies on some tools who must be globally installed on your machine.
 - [Grunt](http://gruntjs.com/getting-started) is used as our task runner to build the project.
 - [SASS](http://sass-lang.com/) as our CSS preprocessor.
 
+##Getting Started
+This is what you have to do to start a project with RawBlock.
+
+- Download the [latest](https://github.com/boffinHouse/rawblock/archive/gh-pages.zip) version.
 
 ##Building
 
-Grunt build tasks
+Grunt build tasks:
 
-- `grunt`: Deletes previously `dev` build, rebuilds templates (assemble, prettify html), rebuilds css (compiles sass to css, prefixes css), rebuilds JS (compiles ). Used in development phase.
-- `grunt dist`: Deletes previously `dev` build, rebuilds templates (assemble, prettify html), rebuilds css (compiles sass to css, prefixes css, minifies the css), rebuilds JS (compiles ). Used for distribution phase. 
-
-##Todo
+- `grunt`: Deletes previously `dev` build, rebuilds templates (assemble, prettify html), rebuilds css (compiles sass to css, prefixes css), rebuilds JS (compiles ). Use in development phase.
+- `grunt dist`: Deletes previously `dist` build, rebuilds templates (assemble, prettify html), rebuilds css (compiles sass to css, prefixes css, minifies the css), rebuilds JS (compiles ). Use for distribution. 
 
 
 ##LICENSE
