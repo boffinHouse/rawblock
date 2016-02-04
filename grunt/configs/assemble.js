@@ -10,14 +10,13 @@ module.exports = {
 			'<%= paths.src %>/templates/data/**/*.{json,yml}',
 			'<%= paths.src %>/components/**/*.{json,yml}',
 			],
-		helpers: ['handlebars-helper-partial', '<%= paths.src %>/templates/helpers/**/*.js'],
+		helpers: ['handlebarsg-helper-partial', '<%= paths.src %>/templates/helpers/**/*.js'],
 		layoutdir: '<%= paths.src %>/templates/layouts/',
 		partials: [
 			'<%= paths.src %>/templates/partials/**/*.hbs',
 			'<%= paths.src %>/components/**/*.hbs',
 			'!<%= paths.src %>/components/**/*_page.hbs'
-		],
-		plugins: ['assemble-middleware-kssnode']
+		]
 	},
 	dev: {
 		options: {

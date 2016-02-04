@@ -162,54 +162,54 @@ You can infinitely nest columns within columns by creating colum-groups `use-col
 ##Breakpoint classes
 RawBlock provides a **breakpointconfig** where you easy can customize how your layout behaves at specific breakpoints by simple adding breakpoint classes to your markup. 
 
-RawBlock default responsive layout comes with the following names and media breakpoints. 
+RawBlock default responsive layout comes with the following keys and media breakpoints. 
 
 <h3 class="docs-example-title">Default Breakpoints</h3>
 
-| Name | Media Query | Description 
+| Key | Media breakpoint | Description 
 | ------------- |------------------| ------------- |-------------|-------------|
 | `all`  | none | Affects all screen sizes. No suffix is needed. For example `.use-size-50` (**required**)|
 |`l` |(min-width: 1240px) | Affects screens sizes above 1240px. Suffixed with `-l`. For example `.use-size-50-l`  |
 | `m` |(min-width:768px)| Affects screen sizes of 768px and higher. Suffixed with `-m`. For example `.use-size-50-m` |
 | `s`|(max-width:767px) | Affects screen sizes beneath to 767px. Suffixed with `-s`. For example `.use-size-50-s`  |
                    
-You can change the names and breakpoints of `l`, `m` and `s` or add new names and breakpoints. Name `all` is **required** and can not be changed.   
+You can change the keys and breakpoints of `l`, `m` and `s` or add new keys and breakpoints. Key `all` is **required** and can not be changed.   
                    
-Next to media breakpoints (set with property `media`) there are more v you can set.
+Next to media breakpoints (set with property `media`) you can control additional settings, like `gutter`.
                       
 <h3 class="docs-example-title">Breakpoint Options</h3>
 
 | property name | Description
 | ------------- |-------------|
-| `media`  | Set values media querie for breakpoint name  |
-|`gutter: horizontal / vertical`| Set horizontal/vertical gutter space for `.use-size-*` columns |
-
+| `media`  | Set media query for specific key |
+|`gutter: horizontal / vertical`| Set horizontal/vertical gutter space on `.use-size-*` columns.  |
+  
                     
-<h3 class="docs-example-title">Code Example</h3>
+<h3 class="docs-example-title">BreakpointConfigs</h3>
 
 ```css
 $breakpointConfigs: (
     all: (
         gutter: (
-        vertical: 40px,
-        horizontal: 40px
+        	vertical: 40px,
+        	horizontal: 40px
         )
     ),
     l: (
         media:'(min-width: 1240px)'
     ),
     m: (
-        media:'(min-width: 569px) and (max-width: 1239px)',
+        media:'(min-width: 768px)',
         gutter: (
             vertical: 20px,
             horizontal: 20px
         )
     ),
     s: (
-        media: '(max-width: 568px)',
+        media: '(max-width: 767px)',
         gutter: (
-            vertical: 20px,
-            horizontal: 20px
+            vertical: 10px,
+            horizontal: 10px
         )
     )
 );
