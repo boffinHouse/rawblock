@@ -75,6 +75,7 @@
     "jsdoc-oblivion": "0.0.4",
     "jsdoc-to-markdown": "^1.2.1",
     "load-grunt-configs": "^0.4.3",
+    "loader-utils": "^0.2.12",
     "lodash": "^3.10.1",
     "node-sass": "^3.4.2",
     "npm": "^3.3.12",
