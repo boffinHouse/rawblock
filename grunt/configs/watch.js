@@ -50,7 +50,7 @@ module.exports = {
     //	tasks: ['test'] //
     //},
     templates: {
-        files: ['<%= paths.dev %>/js/_inlinehead-behavior.js', '<%= paths.src %>/templates/**/*.{json,hbs}', '<%= paths.src %>/components/**/*.{json,hbs,md}'],
+        files: ['<%= paths.dev %>/js/_inlinehead-behavior.js', '<%= paths.src %>/templates/**/*.{json,hbs,md}', '<%= paths.src %>/components/**/*.{json,hbs,md}'],
         tasks: ['newer:assemble:dev', 'prettify:dev']
     },
     ejs: {

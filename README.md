@@ -1,7 +1,6 @@
 #RawBlock
 The worlds most flexible and efficient responsive component library to build modular HTML5 web interfaces.
 
-
 ##Requirements
 RawBlock relies on some tools who must be globally installed on your machine.  
 
