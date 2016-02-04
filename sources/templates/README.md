@@ -42,7 +42,7 @@ all screensizes
                     
 <hr>
 
-##Grid
+##Columns Grid
 The `.use-size-*` classes only sizes an element. To apply a column grid you must wrap them inside an `.use-column-group` container.
 
 <h3 class="docs-example-title">Demo</h3>
@@ -120,8 +120,44 @@ Gutters are only set in conjunction with `use-size-*` as direct children. Nested
 
 <hr>
 
-##
+##Nested Columns Grid
+You can infinitely nest columns within columns by creating colum-groups `use-column-group` inside a column `use-size-*`.
 
+<h3 class="docs-example-title">Demo</h3>
+
+<div class="docs-example">
+    <div class="use-column-group">
+        <div class="use-size-50">
+            <div class="use-column-group use-gutters-horizontal">
+            	<div class="use-size-50">
+            		<div class="docs-item" style="background:#aaa;">Nested 50%</div>
+            	</div>
+            	<div class="use-size-50">
+	            	<div class="docs-item" style="background:#aaa;">Nested 50%</div>
+            	</div>
+            </div>
+        </div>
+        <div class="use-size-50">
+            <div class="docs-item">50%</div>
+        </div>
+    </div>
+</div>
+
+<h3 class="docs-example-title">Code</h3>
+
+```html
+<div class="use-column-group">
+    <div class="use-size-50">...</div>
+    <div class="use-size-50">
+    	<div class="use-column-group">
+    		<div class="use-size-50">..</div>
+    		<div class="use-size-50">..</div>
+    	</div>
+    </div>
+</div>
+```
+
+<hr>
 
 ##Responsive classes
                    
