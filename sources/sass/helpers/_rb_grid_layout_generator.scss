@@ -51,9 +51,6 @@
 	}
 }
 
-//
-//
-//
 @mixin rb-size-gutter-generator($className, $gutter) {
 
 	@if type-of($gutter) == 'map' {
@@ -106,9 +103,6 @@
 		[class*=use-size-].use-no-gutter-vertical {
 			margin-bottom: 0;
 		}
-		//[class*=use-size-].use-gutter-horizontal-destroy {
-		//	padding-left: 0;
-		//}
 
 	}
 }

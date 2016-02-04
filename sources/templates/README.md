@@ -159,22 +159,23 @@ You can infinitely nest columns within columns by creating colum-groups `use-col
 
 <hr>
 
-##Responsive classes
-                   
-These names can be created/changed in `$breakpointConfig` and all have an media property where you can set your value.
-An exception is the `all`. This name defines the layout styles for all screen sizes and therefore has no media property. This name is **required** and
-may not be changed.
-                   
+##Breakpoint classes
+RawBlock provides a **breakpointconfig** where you easy can customize how your layout behaves at specific breakpoints by simple adding breakpoint classes to your markup. 
+
+RawBlock default responsive layout comes with the following names and media breakpoints. 
+
 <h3 class="docs-example-title">Default Breakpoints</h3>
 
-| name | Description
-| ------------- |-------------|
-| `all`  | Affects all screen sizes. No suffix is needed. ex. `.use-size-50` (**required**)|
-|`l`| Affects screen sizes above 1240px. ex. `.use-size-50-l`  |
-| `m` | Affects screen sizes between 569px and 1239px. ex. `.use-size-50-m` |
-| `s`| Affects screen sizes up to 568px. ex `.use-size-50-s`  |
-
-Next to the property media there are more properties you can set.
+| Name | Media Query | Description 
+| ------------- |------------------| ------------- |-------------|-------------|
+| `all`  | none | Affects all screen sizes. No suffix is needed. For example `.use-size-50` (**required**)|
+|`l` |(min-width: 1240px) | Affects screens sizes above 1240px. Suffixed with `-l`. For example `.use-size-50-l`  |
+| `m` |(min-width:768px)| Affects screen sizes of 768px and higher. Suffixed with `-m`. For example `.use-size-50-m` |
+| `s`|(max-width:767px) | Affects screen sizes beneath to 767px. Suffixed with `-s`. For example `.use-size-50-s`  |
+                   
+You can change the names and breakpoints of `l`, `m` and `s` or add new names and breakpoints. Name `all` is **required** and can not be changed.   
+                   
+Next to media breakpoints (set with property `media`) there are more v you can set.
                       
 <h3 class="docs-example-title">Breakpoint Options</h3>
 
