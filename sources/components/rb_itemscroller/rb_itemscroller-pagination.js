@@ -21,8 +21,8 @@
             defaults: {
                 paginationFor: '',
             },
-            init: function (element) {
-                this._super(element);
+            init: function (element, initialOpts) {
+                this._super(element, initialOpts);
 
                 this.updateScrollerAsPagination = rb.rAF(this.updateScrollerAsPagination, {that: this});
 

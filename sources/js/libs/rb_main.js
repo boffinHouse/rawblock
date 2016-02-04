@@ -556,11 +556,11 @@ if (!window.rb) {
      *
      * @returns {ComponentInstance|jQueryfiedDOMList}
      */
-    $.fn.rbComponent = function (name) {
+    $.fn.rbComponent = function (name, initialOpts) {
         var ret;
         this.each(function () {
             if (ret === undefined) {
-                ret = rb.getComponent(this, name);
+                ret = rb.getComponent(this, name, initialOpts);
             }
         });
 
@@ -1917,11 +1917,11 @@ if (!window.rb) {
      * @param LifeClass
      * @returns {Object}
      */
-    life.create = function (element, LifeClass) {
+    life.create = function (element, LifeClass, initialOpts) {
         var instance;
 
         if (!(instance = element[componentExpando])) {
-            instance = new LifeClass(element);
+            instance = new LifeClass(element, initialOpts);
             element[componentExpando] = instance;
         }
 
@@ -2234,9 +2234,10 @@ if (!window.rb) {
      * @memberof rb
      * @param {Element} element - DOM element
      * @param {String} [componentName] - optional name of the component (if element has no `data-module="componentName"`).
+     * @param {Object} [initialOpts] - only use if component is not initialized otherwise use `setOption`/`setOptions`
      * @returns {Object} A component instance
      */
-    rb.getComponent = function (element, componentName) {
+    rb.getComponent = function (element, componentName, initialOpts) {
         var component = element && element[componentExpando];
 
         if (!component) {
@@ -2248,7 +2249,7 @@ if (!window.rb) {
             }
 
             if (rb.components[componentName]) {
-                component = life.create(element, rb.components[componentName]);
+                component = life.create(element, rb.components[componentName], initialOpts);
             }
         }
         return component;
@@ -2265,6 +2266,7 @@ if (!window.rb) {
              *
              * For the life cycle features see [rb.life.register]{@link rb.life.register}.
              * @param element
+             * @param [initialOptions] {Object}
              * @constructs
              *
              * @example
@@ -2273,8 +2275,8 @@ if (!window.rb) {
 			 *      defaults: {
 			 *          className: 'toggle-class',
 			 *      },
-			 *      init: function(element){
-			 *          this._super(element);
+			 *      init: function(element, initialOpts){
+			 *          this._super(element, initialOpts);
 			 *
 			 *          this.changeClass = rb.rAF(this.changeClass);
 			 *      },
@@ -2296,8 +2298,8 @@ if (!window.rb) {
 			 *          }
 			 *      }
 			 *
-			 *      constructor(element){
-			 *          super(element);
+			 *      constructor(element, initialOpts){
+			 *          super(element, initialOpts);
 			 *          this.changeClass = rb.rAF(this.changeClass);
 			 *      }
 			 *
@@ -2312,7 +2314,7 @@ if (!window.rb) {
 			 *      }
 			 * });
              */
-            init: function (element) {
+            init: function (element, initialOpts) {
                 var origName = this.name;
                 /**
                  * Reference to the main element.
@@ -2330,10 +2332,10 @@ if (!window.rb) {
 
                 element[componentExpando] = this;
 
-                this.parseOptions(this.options);
+                this.parseOptions(this.options, initialOpts);
 
                 this.name = this.options.name || this.name;
-                this.jsName = this.options.keepJsName ? origName : this.name;
+                this.jsName = this.options.jsName || origName;
 
                 this._evtName = this.jsName + 'changed';
                 this._beforeEvtName = this.jsName + 'change';
@@ -2358,8 +2360,8 @@ if (!window.rb) {
              * @prop {Object} defaults
              * @prop {Boolean} defaults.isDebug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
              * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
-             * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used by `interpolateName` and its dependent methods.
-             * @prop {Boolean} defaults.jsName=true If the name is overridden by option. This normally affects only the HTML structure. In case you also want to change the event name, set this to `false`
+             * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
+             * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
              *
              * @example
              * <!-- overriding defaults with markup -->
@@ -2404,7 +2406,6 @@ if (!window.rb) {
              */
             defaults: {
                 focusDelay: 0,
-                keepJsName: true,
             },
 
             /**
@@ -2645,9 +2646,10 @@ if (!window.rb) {
             /*
              * Parses the Options from HTML (data-* attributes) and CSS using rb.parsePseudo. This function is automatically invoked by the init/constructor.
              * @param opts
+             * @param initialOpts
              */
-            parseOptions: function (opts) {
-                var options = Object.assign(opts || {}, this.constructor.defaults, this.parseCSSOptions(), this.parseHTMLOptions());
+            parseOptions: function (opts, initialOpts) {
+                var options = Object.assign(opts || {}, this.constructor.defaults, this.parseCSSOptions(), this.parseHTMLOptions(), initialOpts);
                 this.setOptions(options);
             },
 
@@ -2683,8 +2685,26 @@ if (!window.rb) {
                 this.options[name] = value;
                 if (name == 'debug' && value) {
                     this.isDebug = true;
-                } else if (name == 'name') {
+                } else if (name == 'name' || name == 'jsName') {
                     rb.log('don\'t change name after init.');
+                }
+            },
+            setChildOption: function ($childs, name, value) {
+                var run = function (elem) {
+                    var component = this && this[componentExpando] ||
+                        elem[componentExpando] ||
+                            elem;
+                    if (component && component.setOption) {
+                        component.setOption(name, value);
+                    }
+                };
+
+                if($childs.each){
+                    $childs.each(run);
+                } else if($childs.forEach){
+                    $childs.forEach(run);
+                } else {
+                    run($childs);
                 }
             },
             /**
@@ -2866,9 +2886,9 @@ if (!window.rb) {
              * <div id="panel-1" data-module="panel"></div>
              * ```
              */
-            init: function (element) {
+            init: function (element, initialOpts) {
 
-                this._super(element);
+                this._super(element, initialOpts);
 
                 this._isFakeBtn = !this.element.matches('input, button');
                 this._resetPreventClick = this._resetPreventClick.bind(this);

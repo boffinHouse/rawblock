@@ -83,8 +83,8 @@
 			 *     }
              * </style>
              */
-            init: function (element) {
-                this._super(element);
+            init: function (element, initialOpts) {
+                this._super(element, initialOpts);
 
                 this.isFixed = false;
                 this.isScrollFixed = false;

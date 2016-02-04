@@ -109,8 +109,8 @@
              *
              * rb.$('.rb-tabs').rbComponent().next();
              */
-            init: function (element) {
-                this._super(element);
+            init: function (element, initialOpts) {
+                this._super(element, initialOpts);
 
                 if (this.options.multiple && !this.options.toggle) {
                     this.options.toggle = true;
@@ -126,8 +126,6 @@
                 this._onOutSideInteraction = this._onOutSideInteraction.bind(this);
 
                 this.setOption('easing', this.options.easing);
-
-                this.panelName = this.interpolateName(this.options.panelName);
 
                 if (!this.options.switchedOff) {
                     this.setOption('switchedOff', false);
@@ -278,24 +276,27 @@
                 var panels;
                 var that = this;
                 var options = this.options;
-                var panelName = this.panelName;
 
                 var buttonWrapper = this.getElementsFromString(options.btnWrapperSel)[0];
                 var itemWrapper = this.interpolateName(this.options.itemWrapper || '');
+
+                var panelName = this.interpolateName(this.options.panelName);
+                var jsPanelName = this.interpolateName(this.options.panelName, true);
+
                 this.$panelWrapper = $(this.getElementsFromString(options.panelWrapperSel));
 
-                components.panel.prototype.name = panelName;
-
                 this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0))).each(function (index) {
-                    var panel = life.create(this, rb.components.panel);
+                    var panel = life.create(this, rb.components.panel, {
+                        jsName: jsPanelName,
+                        name: panelName,
+                        resetSwitchedOff: options.resetSwitchedOff,
+                        setFocus: options.setFocus,
+                        itemWrapper: itemWrapper,
+                        closeOnEsc: options.closeOnEsc,
+                    });
+
                     panel.group = that.element;
                     panel.groupComponent = that;
-                    panel.name = panelName;
-                    panel.setOption('resetSwitchedOff', options.resetSwitchedOff);
-                    panel.setOption('setFocus', options.setFocus);
-                    panel.setOption('itemWrapper', itemWrapper);
-                    panel.setOption('closeOnEsc', options.closeOnEsc);
-
                 });
 
                 components.panel.prototype.name = 'panel';
@@ -303,16 +304,18 @@
                 panels = this.$panels;
 
                 this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper)).each(function (index) {
-                    var btn = life.create(this, components.panelbutton);
+                    var btn = life.create(this, components.panelbutton, {
+                        type: (options.toggle) ? 'toggle' : 'open',
+                        preventDefault: options.preventDefault,
+                    });
                     btn.setTarget(panels.get(index));
-                    btn.setOption('type', (options.toggle) ? 'toggle' : 'open');
-                    btn.setOption('preventDefault', options.preventDefault);
                 });
 
                 this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function (index) {
-                    var btn = life.create(this, components.panelgroupbutton);
+                    var btn = life.create(this, components.panelgroupbutton, {
+                        preventDefault: options.preventDefault
+                    });
                     btn.setTarget(that.element);
-                    btn.setOption('preventDefault', options.preventDefault);
                 });
             },
             /**
@@ -382,7 +385,8 @@
              * @param options {Object} options Options are passed to the open method of the panel instance.
              */
             next: function (options) {
-                var selectedIndex = (this.selectedIndexes[0] || 0) + 1;
+                var selectedIndex = this.selectedIndexes[0];
+                selectedIndex = selectedIndex == null ? 0 : selectedIndex + 1;
                 if (selectedIndex >= this.$panels.get().length) {
                     selectedIndex = 0;
                 }
@@ -393,7 +397,8 @@
              * @param options {Object} options Options are passed to the open method of the panel instance.
              */
             prev: function (options) {
-                var selectedIndex = (this.selectedIndexes[0] || 0) - 1;
+                var selectedIndex = this.selectedIndexes[0];
+                selectedIndex = selectedIndex == null ? 0 : selectedIndex - 1;
                 if (selectedIndex < 0) {
                     selectedIndex = this.$panels.get().length - 1;
                 }
@@ -435,13 +440,6 @@
             deselectIndex: function (index, options) {
                 var component = this.getComponentByIndexOrDOM(index);
                 return component && component.close(options);
-            },
-            setChildOption: function ($childs, name, value) {
-                $childs.each(function () {
-                    if (this[componentExpando]) {
-                        this[componentExpando].setOption(name, value);
-                    }
-                });
             },
             _switchOff: function () {
                 if (this.$panels && this.$buttons) {
