@@ -45,6 +45,8 @@ all screensizes
 ##Columns Grid
 The `.use-size-*` classes only sizes an element. To apply a column grid you must wrap them inside an `.use-column-group` container.
 
+This will create a flex container. By default, all columns will be aligned to the left and equally matched in height.
+
 <h3 class="docs-example-title">Demo</h3>
 
 <div class="docs-example">
