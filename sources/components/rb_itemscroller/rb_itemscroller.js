@@ -114,8 +114,8 @@
 			 *      buildOptions();
 			 * });
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this.usesTransform = this.options.useTransform && supports3dTransform;
                 this._pos = 0;

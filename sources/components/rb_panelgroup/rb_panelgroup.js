@@ -51,7 +51,7 @@
              * @property {String}  defaults.btnSel='find(.{name}-btn)' Reference to find all panel buttons associated with this component group. For a nested accordion/tab use "children(.{name}-btn)".
              * @property {String}  defaults.groupBtnSel='find(.{name}-ctrl-btn)' Reference to find all panelgroup buttons associated with this component group. For a nested accordion/tab use "children(.{name}-ctrl-btn)".
              * @property {String}  defaults.panelWrapperSel='find(.{name}-panel-wrapper):0' Reference to find the panelwrapper(s) associated with this component group. If no panelwrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-wrapper)".
-             * @property {String}  defaults.btnWrapperSel='find(.{name}-panel-btn-wrapper):0'  Reference to find the button wrapper(s) associated with this component group. If no button wrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-btn-wrapper)".
+             * @property {String}  defaults.btnWrapperSel='find(.{name}-btn-wrapper):0'  Reference to find the button wrapper(s) associated with this component group. If no button wrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-btn-wrapper)".
              */
             defaults: {
                 multiple: false,
@@ -70,7 +70,7 @@
                 btnSel: 'find(.{name}-btn)',
                 groupBtnSel: 'find(.{name}-ctrl-btn)',
                 panelWrapperSel: 'find(.{name}-panel-wrapper):0',
-                btnWrapperSel: 'find(.{name}-panel-btn-wrapper):0',
+                btnWrapperSel: 'find(.{name}-btn-wrapper):0',
                 itemWrapper: '',
             },
             statics: {},
@@ -109,8 +109,8 @@
              *
              * rb.$('.rb-tabs').rbComponent().next();
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 if (this.options.multiple && !this.options.toggle) {
                     this.options.toggle = true;

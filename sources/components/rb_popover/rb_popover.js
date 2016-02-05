@@ -62,8 +62,8 @@
              *    {{popoverContent}}
              * </div>
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this.reflow = rb.throttle(this.reflow, {that: this});
 

@@ -197,14 +197,6 @@
                 });
             })
             .then(function () {
-                component.element.querySelector('.focus-element').focus();
-                return QUnit.afterAF(19);
-            })
-            .then(function () {
-                assert.strictEqual(component.selectedIndex, 0);
-                assert.numberClose(component._pos, 150);
-            })
-            .then(function () {
                 component.setOption('carousel', true);
                 return QUnit.afterAF();
             })
@@ -218,15 +210,8 @@
                 return QUnit.afterAF(20);
             })
             .then(function () {
-                assert.strictEqual(component.selectedIndex, 9);
-                assert.numberClose(component._pos, 250);
-            })
-            .then(function () {
-                syn.click({}, component.element.querySelector('.focus-element'));
-                return QUnit.afterAF(40);
-            })
-            .then(function () {
-                assert.strictEqual(component.selectedIndex, 9);
+                assert.strictEqual(component.selectedIndex, 7);
+                assert.numberClose(component._pos, -550);
             })
             .then(function () {
                 component.setOption('switchedOff', true);

@@ -72,10 +72,7 @@ $accordionJSCFG: (
         }
     }
 
-}
-
-@media (max-width: 500px) {
-    .rb-accordion {
+    @media (max-width: 500px) {
         @include rb-js-export(map_merge($accordionJSCFG, (
             switchedOff: true
         )));
@@ -87,4 +84,6 @@ $accordionJSCFG: (
             opacity: 1;
         }
     }
+
 }
+

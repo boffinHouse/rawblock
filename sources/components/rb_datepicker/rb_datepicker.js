@@ -36,8 +36,8 @@
              * @example
              * rb.$('.rb-datepicker').rbComponent();
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this._values = [];
                 this.valueData = {};
