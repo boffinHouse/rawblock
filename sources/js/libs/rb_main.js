@@ -2266,7 +2266,7 @@ if (!window.rb) {
              *
              * For the life cycle features see [rb.life.register]{@link rb.life.register}.
              * @param element
-             * @param [initialOptions] {Object}
+             * @param [initialDefaults] {Object}
              * @constructs
              *
              * @example
@@ -2275,8 +2275,8 @@ if (!window.rb) {
 			 *      defaults: {
 			 *          className: 'toggle-class',
 			 *      },
-			 *      init: function(element, initialOpts){
-			 *          this._super(element, initialOpts);
+			 *      init: function(element, initialDefaults){
+			 *          this._super(element, initialDefaults);
 			 *
 			 *          this.changeClass = rb.rAF(this.changeClass);
 			 *      },
@@ -2298,8 +2298,8 @@ if (!window.rb) {
 			 *          }
 			 *      }
 			 *
-			 *      constructor(element, initialOpts){
-			 *          super(element, initialOpts);
+			 *      constructor(element, initialDefaults){
+			 *          super(element, initialDefaults);
 			 *          this.changeClass = rb.rAF(this.changeClass);
 			 *      }
 			 *
@@ -2314,7 +2314,7 @@ if (!window.rb) {
 			 *      }
 			 * });
              */
-            init: function (element, initialOpts) {
+            init: function (element, initialDefaults) {
                 var origName = this.name;
                 /**
                  * Reference to the main element.
@@ -2330,9 +2330,10 @@ if (!window.rb) {
                 this.options = {};
                 this._afterStyle = rb.getStyles(element, '::before');
 
+                this._initialDefaults = initialDefaults;
                 element[componentExpando] = this;
 
-                this.parseOptions(this.options, initialOpts);
+                this.parseOptions(this.options);
 
                 this.name = this.options.name || this.name;
                 this.jsName = this.options.jsName || origName;
@@ -2648,8 +2649,8 @@ if (!window.rb) {
              * @param opts
              * @param initialOpts
              */
-            parseOptions: function (opts, initialOpts) {
-                var options = Object.assign(opts || {}, this.constructor.defaults, this.parseCSSOptions(), this.parseHTMLOptions(), initialOpts);
+            parseOptions: function (opts) {
+                var options = Object.assign(opts || {}, this.constructor.defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions());
                 this.setOptions(options);
             },
 
@@ -2886,9 +2887,9 @@ if (!window.rb) {
              * <div id="panel-1" data-module="panel"></div>
              * ```
              */
-            init: function (element, initialOpts) {
+            init: function (element, initialDefaults) {
 
-                this._super(element, initialOpts);
+                this._super(element, initialDefaults);
 
                 this._isFakeBtn = !this.element.matches('input, button');
                 this._resetPreventClick = this._resetPreventClick.bind(this);

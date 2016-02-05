@@ -32,8 +32,8 @@
              * @example
              * rb.$('.rb-dateinput').rbComponent();
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this.log(this.element, this.$element, this.options, this);
 

@@ -27,8 +27,8 @@
                 //pauseOnFocus: false,
                 jumpToStart: true,
             },
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this._setAutoplayUI = rb.rAF(function () {
                     this.$element[this.options.autoplay ? 'addClass' : 'removeClass'](rb.statePrefix + 'autoplay');

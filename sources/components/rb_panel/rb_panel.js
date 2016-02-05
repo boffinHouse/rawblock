@@ -60,8 +60,8 @@
 			 *      console.log(rb.$(this).rbComponent().isOpen);
 			 * });
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this.isOpen = this.element.classList.contains(rb.statePrefix + 'open');
 
@@ -361,7 +361,10 @@
     rb.components.button.extend('panelbutton',
         /** @lends rb.components.panelbutton.prototype */
         {
-            defaults: {},
+            defaults: {
+                openTitle: '',
+                closedTitle: '',
+            },
             /**
              * @constructs
              * @classdesc Class component to create a panelbutton. A panelbutton controls the state of a panel the same way an ordinary button does. Additionally the panelbutton associates with the panel and reflects it's state via an aria-expanded attribute.
@@ -381,6 +384,7 @@
                 this.updatePanelButtonState = rb.rAF(this.updatePanelButtonState, {that: this, throttle: true});
             },
             updatePanelButtonState: function () {
+                var options = this.options;
                 var isOpen = this.panelComponent.isOpen;
                 var disable = !!(isOpen &&
                 this.panelComponent.groupComponent &&
@@ -389,6 +393,10 @@
                 this.element.setAttribute('aria-expanded', '' + isOpen);
 
                 this.element.disabled = disable;
+
+                if(options.closedTitle && options.openTitle){
+                    this.element.title = options[isOpen ? 'openTitle' : 'closedTitle'];
+                }
 
                 if (this._isFakeBtn) {
                     this.element.setAttribute('aria-disabled', disable);

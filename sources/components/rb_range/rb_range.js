@@ -104,8 +104,8 @@
 			 *      console.log('values changed', rb.$(this).rbComponent().getValues());
 			 * });
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this.pos = [];
 

@@ -75,8 +75,8 @@
 			 * });
              * </script>
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this.progress = -2;
                 this.updateChilds = rb.rAF(this.updateChilds);

@@ -108,8 +108,8 @@
              * </div>
              *
              */
-            init: function (element, initialOpts) {
-                this._super(element, initialOpts);
+            init: function (element, initialDefaults) {
+                this._super(element, initialDefaults);
 
                 this.minScroll = Number.MAX_VALUE;
                 this.maxScroll = -1;
