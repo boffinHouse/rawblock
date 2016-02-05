@@ -5,26 +5,29 @@
 </p>
 
 ##Sizes
+Rawblock uses 24 width units, who are named `.use-size-%`. Ranging from **5%** to **100%** with **5%** increments and adjust the width for
+all screensizes
 
-Rawblock uses 24 width units, who are named `.use-size-%`. Ranging from **5%** to **100%** with **5%** increments.
-Additional there are 4 extra classes: `.use-size-16` (16.6666%), `.use-size-33` (33.3333%), `.use-size-66` (66.6666%) and `.use-size-auto` (Takes width content).
-
-The `.use-size-*` classes only define the width of an element. If you want to create vertical columns you can wrap them inside an `.use-column-group` element.
-
-Best practice is to put the `rb-`component always inside an `use-size-*` column. This prevents strange side effect and will be better maintainable for future improvements.                   
+| Class name | Description
+| ------------- |-------------|
+| `.use-size-*`  | Use to define width on a element for all screensizes. Ranging from **5%** to **100%** with **5%** increments. |
+|`.use-size-16`| Defines width of 1/6 |
+| `.use-size-33` | Defines width of 1/3 |
+| `.use-size-66` | Defines width of 2/3 |
+| `.use-size-auto` | Defines width on amount content |                 
 
 <h3 class="docs-example-title">Demo</h3>
 
-<div class="docs-example is-demo">
-    <div class="use-column-group">
-        <div class="use-size-40">
-            <div class="docs-item">40%</div>
-        </div>
-        <div class="use-size-40">
-            <div class="docs-item">40%</div>
-        </div>
+<div class="docs-example">
+    <div>
         <div class="use-size-20">
             <div class="docs-item">20%</div>
+        </div>
+        <div class="use-size-30">
+            <div class="docs-item">30%</div>
+        </div>
+        <div class="use-size-50">
+            <div class="docs-item">50%</div>
         </div>
     </div>
 </div>
@@ -32,13 +35,44 @@ Best practice is to put the `rb-`component always inside an `use-size-*` column.
 <h3 class="docs-example-title">Code</h3>
 
 ```html
-    <div class="use-column-group">
-        <div class="use-size-40">...</div>
-        <div class="use-size-40">...</div>
-        <div class="use-size-20">...</div>
-    </div>
+<div class="use-size-20">...</div>
+<div class="use-size-30">...</div>
+<div class="use-size-50">...</div>
 ```
+                    
+<hr>
+
+##Columns Grid
+The `.use-size-*` classes only sizes an element. To apply a column grid you must wrap them inside an `.use-column-group` container.
+
+<h3 class="docs-example-title">Demo</h3>
+
+<div class="docs-example">
+    <div class="use-column-group">
+        <div class="use-size-20">
+            <div class="docs-item">20%</div>
+        </div>
+        <div class="use-size-30">
+            <div class="docs-item">30%</div>
+        </div>
+        <div class="use-size-50">
+            <div class="docs-item">50%</div>
+        </div>
+    </div>
+</div>
                    
+<h3 class="docs-example-title">Code</h3>
+
+```html
+<div classs="use-column-group">
+    <div class="use-size-20">...</div>
+    <div class="use-size-30">...</div>
+    <div class="use-size-50">...</div>
+</div>    
+```
+
+Best practice is to put the RawBlock component `rb-yourcomponent` always inside an `use-size-*` column. This prevents strange side effect and will be better maintainable for future improvements. 
+
 <hr>
 
 ##Gutters
@@ -52,9 +86,9 @@ Gutters are only set in conjunction with `use-size-*` as direct children. Nested
 
 | Class name | Description
 | ------------- |-------------|
-| `use-gutters`  | Creates horizontal/vertical space between layout columns. |
-|`use-gutters-horizontal`| Creates horizontal space between columns.  |
-| `use-gutters-vertical` | Creates vertical (bottom only) space between columns. |
+| `.use-gutters`  | Creates horizontal/vertical space between layout columns. |
+|`.use-gutters-horizontal`| Creates horizontal space between columns.  |
+| `.use-gutters-vertical` | Creates vertical (bottom only) space between columns. |
 
                  
 <h3 class="docs-example-title">Demo</h3>
@@ -86,22 +120,62 @@ Gutters are only set in conjunction with `use-size-*` as direct children. Nested
 
 <hr>
 
-##Breakpoints
-                   
-These names can be created/changed in `$breakpointConfig` and all have an media property where you can set your value.
-An exception is the `all`. This name defines the layout styles for all screen sizes and therefore has no media property. This name is **required** and
-may not be changed.
-                   
+##Nested Columns Grid
+You can infinitely nest columns within columns by creating colum-groups `use-column-group` inside a column `use-size-*`.
+
+<h3 class="docs-example-title">Demo</h3>
+
+<div class="docs-example">
+    <div class="use-column-group">
+        <div class="use-size-50">
+            <div class="use-column-group use-gutters-horizontal">
+            	<div class="use-size-50">
+            		<div class="docs-item" style="background:#aaa;">Nested 50%</div>
+            	</div>
+            	<div class="use-size-50">
+	            	<div class="docs-item" style="background:#aaa;">Nested 50%</div>
+            	</div>
+            </div>
+        </div>
+        <div class="use-size-50">
+            <div class="docs-item">50%</div>
+        </div>
+    </div>
+</div>
+
+<h3 class="docs-example-title">Code</h3>
+
+```html
+<div class="use-column-group">
+    <div class="use-size-50">...</div>
+    <div class="use-size-50">
+    	<div class="use-column-group">
+    		<div class="use-size-50">..</div>
+    		<div class="use-size-50">..</div>
+    	</div>
+    </div>
+</div>
+```
+
+<hr>
+
+##Breakpoint classes
+RawBlock provides a **breakpointconfig** where you easy can customize how your layout behaves at specific breakpoints by simple adding breakpoint classes to your markup. 
+
+RawBlock default responsive layout comes with the following names and media breakpoints. 
+
 <h3 class="docs-example-title">Default Breakpoints</h3>
 
-| name | Description
-| ------------- |-------------|
-| `all`  | Affects all screen sizes. No suffix is needed. ex. `.use-size-50` (**required**)|
-|`l`| Affects screen sizes above 1240px. ex. `.use-size-50-l`  |
-| `m` | Affects screen sizes between 569px and 1239px. ex. `.use-size-50-m` |
-| `s`| Affects screen sizes up to 568px. ex `.use-size-50-s`  |
-
-Next to the property media there are more properties you can set.
+| Name | Media Query | Description 
+| ------------- |------------------| ------------- |-------------|-------------|
+| `all`  | none | Affects all screen sizes. No suffix is needed. For example `.use-size-50` (**required**)|
+|`l` |(min-width: 1240px) | Affects screens sizes above 1240px. Suffixed with `-l`. For example `.use-size-50-l`  |
+| `m` |(min-width:768px)| Affects screen sizes of 768px and higher. Suffixed with `-m`. For example `.use-size-50-m` |
+| `s`|(max-width:767px) | Affects screen sizes beneath to 767px. Suffixed with `-s`. For example `.use-size-50-s`  |
+                   
+You can change the names and breakpoints of `l`, `m` and `s` or add new names and breakpoints. Name `all` is **required** and can not be changed.   
+                   
+Next to media breakpoints (set with property `media`) there are more v you can set.
                       
 <h3 class="docs-example-title">Breakpoint Options</h3>
 
