@@ -235,8 +235,18 @@ a container element `form-group` and attribute `role="group"`.
 ...
 ```
 
-##Validation
+##Control States
+Basic information is giving through feedback states on form controls.
 
+<h3 class="docs-example-title">Disabled</h3>
+<div class="docs-example">
+ {{#mergeJSON rb_form.input 'label: "Disabled field", booleans:["disabled"]'}}
+      {{> rb_input}}
+    {{/mergeJSON}}
+</div>
+
+##Validation
+Apply form validation by added attribute `required` to form elements who are required. 
 
 
        
