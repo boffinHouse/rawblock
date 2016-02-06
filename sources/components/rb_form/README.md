@@ -156,12 +156,12 @@ a container element `form-group` and attribute `role="group"`.
         {{> rb_grouped_begin}}
         <div class="form-row use-column-group use-gutters-horizontal">
             <div class="form-box use-size-50">
-                {{#mergeJSON 'label: "Default group input 50"'}}
+                {{#mergeJSON rb_form.input 'label: "Default group input 50"'}}
                     {{> rb_input}}
                 {{/mergeJSON}}
             </div>
             <div class="form-box use-size-50">
-                {{#mergeJSON  'label: "Default group input 50"'}}
+                {{#mergeJSON rb_form.input 'label: "Default group input 50"'}}
                     {{> rb_input}}
                 {{/mergeJSON}}
             </div>

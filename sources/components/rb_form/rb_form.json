@@ -1,7 +1,6 @@
 {
     "input": {
         "type": "text",
-        "name": "dummy-text-name",
         "label": "Radiobutton",
         "invalid": "",
         "requiredNotion": "",
@@ -9,15 +8,16 @@
     },
     "radio": {
         "type": "radio",
-        "name": "dummy-radio-name",
         "label": "Radiobutton",
         "invalid": "",
         "requiredNotion": "",
-        "booleans": []
+        "booleans": [],
+        "attrs": {
+            "name": "dummy-radio-name"
+        }
     },
     "checkbox": {
         "type": "checkbox",
-        "name": "dummy-checkbox-name",
         "label": "Checkbox",
         "invalid": "",
         "requiredNotion": "",
@@ -27,7 +27,6 @@
     },
     "select": {
         "type": "select",
-        "name": "dummy-name-select",
         "label": "Selectbox",
         "invalid": false,
         "requiredNotion": "",
