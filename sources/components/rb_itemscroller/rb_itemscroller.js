@@ -319,18 +319,14 @@
                     if (!isTestStopped) {
                         if(e.type == 'focus'){
                             focusedElement = e.target;
-
-                            if(!rb.root.classList.contains(rb.statePrefix + 'keyboardfocus-within')){
-                                return;
-                            }
                         } else {
                             focusedElement = document.activeElement;
                         }
 
-                        if(!focusedElement || !focusedElement.closest){return;}
-
-                        cell = focusedElement.closest(cellSel);
-                        if (cell && that.isCellVisible(cell) !== true) {
+                        if (focusedElement && focusedElement.closest &&
+                            rb.root.classList.contains(rb.statePrefix + 'keyboardfocus-within') &&
+                            (cell = focusedElement.closest(cellSel)) &&
+                            that.isCellVisible(cell) !== true) {
                             pageIndex = that.getPageIndexOfCell(cell);
                             if(pageIndex != that._selectedIndex){
                                 that.selectedIndex = pageIndex;
