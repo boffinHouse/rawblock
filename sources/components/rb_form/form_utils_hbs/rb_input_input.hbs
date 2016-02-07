@@ -1,5 +1,4 @@
-<input type="{{#if type}}{{ type }}{{ else }}text{{/if}}" {{#is type "radio"}}name="{{name}}"{{/is}}
-		id="{{name}}-{{ id }}"
+<input class="form-input" type="{{#if type}}{{ type }}{{ else }}text{{/if}}" id="dummy-{{ type }}-{{ id }}"
 
 	{{#each attrs}}
 		{{@key}}="{{this}}"
@@ -9,7 +8,4 @@
 		{{this}}="{{this}}"
 	{{/each}}
 
-	{{#if invalid}}
-		class="form-user-error"
-	{{/if}}
 		/>

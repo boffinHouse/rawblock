@@ -1,5 +1,5 @@
-<div class="form-field {{#if type}}is-{{ type }}{{/if}} {{#if invalid}}is-invalid{{/if}}">
-	<label for="{{name}}-{{ id }}">
+<div class="form-field is-{{ type }} {{#if invalid}}is-invalid{{/if}}">
+	<label class="form-label" for="dummy-{{type}}-{{ id }}">
 		{{ label }}
 		{{#if requiredNotion }}
 			<dfn title="Required Input">{{ requiredNotion  }}</dfn>

@@ -2,10 +2,7 @@
 // rb-forms
 //
 // @
-@import "form_utils_sass/rb_form_label";
-@import "form_utils_sass/rb_form_input_and_textarea";
-@import "form_utils_sass/rb_form_input_state_btn";
-@import "form_utils_sass/rb_form_select";
+@import "../../sass/helpers/rb_form_elements";
 
 .rb-form {
 	width: 100%;
@@ -68,11 +65,11 @@
 			margin: 0;
 			color: red;
 		}
-	}
 
-	@include form-field-and-label(true);
-	@include form-selectbox(true);
-	@include form-input-and-textarea(true);
-	@include form_input-state-btn(checkbox, true);
-	@include form_input-state-btn(radio, true);
+		@include form-label(true);
+		@include form-selectbox(true);
+		@include form-input-and-textarea(true);
+		@include form_input-state-btn(checkbox, true);
+		@include form_input-state-btn(radio, true);
+	}
 }
