@@ -65,7 +65,8 @@
             init: function (element, initialDefaults) {
                 this._super(element, initialDefaults);
 
-                this.reflow = rb.throttle(this.reflow, {that: this});
+                this.reflow = rb.throttle(this._reflow, {that: this});
+                this.scrollRepostion = this.scrollRepostion.bind(this);
 
                 if (this.options.positioned) {
                     this.setOption('positioned', true);
@@ -103,7 +104,7 @@
                 });
                 this.setOption('my', this.options.my);
             },
-            reflow: function (e) {
+            _reflow: function (e) {
                 if (!rb.root.contains(this.element)) {
                     this.teardownPopoverResize();
                     return;
@@ -112,12 +113,26 @@
                     this.connect(false, this.lastOpeningOptions);
                 }
             },
+            scrollRepostion(e){
+                var anchor;
+                if (!rb.root.contains(this.element)) {
+                    this.teardownPopoverResize();
+                    return;
+                }
+
+                if(!e || (this.options.updateOnResize && e.target.contains &&
+                    (anchor = this.getAnchor(this.lastOpeningOptions)) && e.target.contains(anchor) != e.target.contains(this.element))){
+                    this._reflow();
+                }
+            },
             setupPopoverResize: function () {
                 this.teardownPopoverResize();
                 addEventListener('resize', this.reflow);
+                document.addEventListener('scroll', this.scrollRepostion, true);
             },
             teardownPopoverResize: function () {
                 removeEventListener('resize', this.reflow);
+                document.removeEventListener('scroll', this.scrollRepostion, true);
             },
             getAnchor: function (options) {
                 var anchor = options && options.anchor || this.options.anchor || '';
