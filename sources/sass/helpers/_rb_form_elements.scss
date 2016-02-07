@@ -14,7 +14,7 @@ $input-bg-color: #fff !default;
 $input-cursor: pointer !default;
 
 //Deactive (readonly / disabled)
-$input-deactive-bg-color: #f9f9f9 !default;
+$input-deactive-bg-color: #aaa !default;
 $input-deactive-color: #eee !default;
 
 //Invalid
@@ -286,7 +286,6 @@ $selectbox-invalid-border-color: red !default;
         cursor: pointer;
 
         option {
-
             &:active,
             &:focus {
                 background-color: #000088;

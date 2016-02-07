@@ -240,10 +240,37 @@ Basic information is giving through feedback states on form controls.
 
 <h3 class="docs-example-title">Disabled</h3>
 <div class="docs-example">
- {{#mergeJSON rb_form.input 'label: "Disabled field", booleans:["disabled"]'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
+<form action="#" class="rb-form">
+ <div class="form-row use-column-group use-gutters-horizontal">
+     <div class="form-box use-size-50">
+         {{#mergeJSON rb_form.input 'label: "Disabled field", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
+         {{> rb_input}}
+         {{/mergeJSON}}
+     </div> 
+     <div class="form-box use-size-50">
+         {{#mergeJSON rb_form.select 'label: "Disabled Select", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
+         {{> rb_input}}
+         {{/mergeJSON}}
+     </div> 
+ </div>  
+</form>  
 </div>
+
+<h3 class="docs-example-title">Markup</h3>
+ 
+```html
+...
+<div class="form-group role="group">
+	<strong class="form-group-label" role="heading">...</strong>
+	<div class="form-row">
+	    <div class="form-box">
+	        <div class="form-field">...</div>
+	    </div>
+	    ...
+	</div>
+</div
+...
+```
 
 ##Validation
 Apply form validation by added attribute `required` to form elements who are required. 
