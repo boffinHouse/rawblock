@@ -14,7 +14,7 @@ $input-bg-color: #fff !default;
 $input-cursor: pointer !default;
 
 //Deactive (readonly / disabled)
-$input-deactive-bg-color: #aaa !default;
+$input-deactive-bg-color: #f9f9f9 !default;
 $input-deactive-color: #eee !default;
 
 //Invalid
@@ -202,9 +202,8 @@ $selectbox-invalid-border-color: red !default;
             }
         }
 
-        &input[disabled] ~ .is-state-label,
-        &input[readonly] ~ .is-state-label {
-            color: $state-btn-deactive-color;
+        &input[disabled] ~ .is-label-#{$type},
+        &input[readonly] ~ .is-label-#{$type} {
             cursor: not-allowed;
 
             &::before {
@@ -227,6 +226,25 @@ $selectbox-invalid-border-color: red !default;
             }
         }
     }
+
+    .is-invalid & {
+        &input:focus:not([disabled]):not([readonly]),
+        &input:hover:not([disabled]):not([readonly]) {
+
+            ~ .is-label-#{$type} {
+                &::before {
+                    border-color: $state-btn-border-color-hover;
+                }
+            }
+        }
+
+        &label {
+
+            &::before {
+                border-color: $state-btn-invalid-border-color;
+            }
+        }
+    }
 }
 
 
@@ -245,7 +263,7 @@ $selectbox-invalid-border-color: red !default;
             width: 100%;
         }
 
-        &.is-invalid & {
+        .is-invalid & {
             color: $label-invalid-color;
         }
     }
