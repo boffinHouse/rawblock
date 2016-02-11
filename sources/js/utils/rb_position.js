@@ -197,8 +197,8 @@
                     if (computedPosition != null) {
                         this.flipped[props.axis] = false;
                         position = computedPosition;
-                    } else if ((isOut1 && elementOffset[props.axisIndex] > 75 && targetOffset[props.axisIndex] < 25) ||
-                        (isOut2 && elementOffset[props.axisIndex] < 25 && targetOffset[props.axisIndex] > 75)) {
+                    } else if ((isOut1 && elementOffset[props.axisIndex] > 50 && targetOffset[props.axisIndex] <= 50) ||
+                        (isOut2 && elementOffset[props.axisIndex] < 50 && targetOffset[props.axisIndex] >= 50)) {
                         targetOffset2 = {};
                         elementOffset2 = {};
 
