@@ -186,6 +186,11 @@
                     this.selectedIndex = index;
                 },
                 'elemresizewidth': 'calculateLayout',
+                //'mousewheel': function(e){
+                //    this.log(e);
+                //    this._setRelPos(e.deltaX * -1);
+                //    e.preventDefault();
+                //},
             },
             setOption: function (name, value) {
                 this._super(name, value);
@@ -828,7 +833,6 @@
                 if (this.options.switchedOff) {
                     return;
                 }
-
 
                 if (this.cellData && (!this.scroller.offsetWidth && !this.scroller.offsetHeight)) {
                     return;

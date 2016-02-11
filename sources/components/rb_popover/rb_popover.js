@@ -113,7 +113,7 @@
                     this.connect(false, this.lastOpeningOptions);
                 }
             },
-            scrollRepostion(e){
+            scrollRepostion: function(e){
                 var anchor;
                 if (!rb.root.contains(this.element)) {
                     this.teardownPopoverResize();
