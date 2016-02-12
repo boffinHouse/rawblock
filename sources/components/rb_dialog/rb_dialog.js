@@ -37,6 +37,7 @@
                 backdropClass: '',
                 setDisplay: true,
                 scrollPadding: 'paddingRight',
+                trapKeyboard: true,
             },
             /**
              * @constructs
@@ -102,6 +103,13 @@
                 var backdropDocument = this.element.parentNode;
                 var backdropDocumentName = this.name + '-backdrop-document';
 
+                this.trapKeyboardElemBefore = $(document.createElement('span')).attr({
+                    'class': this.name + 'keyboard-trap',
+                    'tabindex': this.options.trapKeyboard ? 0 : -1,
+                }).get(0);
+
+                this.trapKeyboardElemAfter = this.trapKeyboardElemBefore.cloneNode();
+
                 this.isReady = true;
 
                 if(!backdropDocument || !backdropDocument.classList.contains(backdropDocumentName)){
@@ -114,6 +122,8 @@
                 }
 
                 this.backdropDocument = backdropDocument;
+
+                $(this.backdropDocument).before(this.trapKeyboardElemBefore).after(this.trapKeyboardElemAfter);
 
                 if(this.options.backdropClass){
                     this.$backdrop.addClass(this.options.backdropClass);
@@ -280,10 +290,11 @@
 
             _setUpEvents: function () {
                 var that = this;
+                var options = this.options;
 
                 this.$backdrop
                     .on('click', function (e) {
-                        if (that.options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == that.backdropDocument)) {
+                        if (options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == that.backdropDocument)) {
                             that.close();
                             e.preventDefault();
                             e.stopPropagation();
@@ -291,12 +302,32 @@
                     })
                 ;
                 this.$backdrop.on('keydown', function (e) {
-                    if (e.keyCode == 27 && that.options.closeOnEsc && !e.defaultPrevented) {
+                    if (e.keyCode == 27 && options.closeOnEsc && !e.defaultPrevented) {
                         that.close();
                         e.preventDefault();
                         e.stopPropagation();
                     }
                 });
+
+                this.trapKeyboardElemBefore.addEventListener('focus', function(e){
+                    var focusElem;
+                    if(options.trapKeyboard) {
+                        focusElem = that.queryAll('.{name}-close');
+                        e.preventDefault();
+                        try {
+                            focusElem[focusElem.length - 1].focus();
+                        } catch (e) { }
+                    }
+                }, true);
+
+                this.trapKeyboardElemAfter.addEventListener('focus', function(e){
+                    if(options.trapKeyboard){
+                        e.preventDefault();
+                        try {
+                            that.element.focus();
+                        } catch (e){}
+                    }
+                }, true);
             },
         }
     );

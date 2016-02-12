@@ -1203,21 +1203,17 @@ if (!window.rb) {
     /* * * Begin: keyboard-focus * * */
 
     var initKeyboardFocus = function(){
-        var keyboardBlocktimer, keyboardFocusElem;
+        var keyboardFocusElem;
         var hasKeyboardFocus = false;
         var isKeyboardBlocked = false;
         var root = rb.root;
         var isClass = rb.statePrefix + 'keyboardfocus';
         var isWithinClass = rb.statePrefix + 'keyboardfocus-within';
 
-        var unblockKeyboardFocus = function () {
-            isKeyboardBlocked = false;
-        };
-
-        var blockKeyboardFocus = function () {
-            isKeyboardBlocked = true;
-            clearTimeout(keyboardBlocktimer);
-            keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 99);
+        var unblockKeyboardFocus = function (e) {
+            if(e.keyCode == 9){
+                isKeyboardBlocked = false;
+            }
         };
 
         var _removeChildFocus = function () {
@@ -1240,10 +1236,10 @@ if (!window.rb) {
         }, {throttle: true});
 
         var removeKeyBoardFocus = function () {
+            isKeyboardBlocked = true;
             if (hasKeyboardFocus) {
                 _removeKeyBoardFocus();
             }
-            blockKeyboardFocus();
         };
 
         var setKeyboardFocus = rb.rAF(function () {
@@ -1252,10 +1248,13 @@ if (!window.rb) {
 
                 if (keyboardFocusElem != document.activeElement) {
                     _removeChildFocus();
+
                     keyboardFocusElem = document.activeElement;
 
                     if (keyboardFocusElem && keyboardFocusElem.classList) {
                         keyboardFocusElem.classList.add(isClass);
+                    } else {
+                        keyboardFocusElem = null;
                     }
                 }
 
@@ -1272,17 +1271,17 @@ if (!window.rb) {
             ;
 
         root.addEventListener('blur', removeChildFocus, true);
-        root.addEventListener('focus', setKeyboardFocus, true);
+        root.addEventListener('focus', function(){
+            if(!isKeyboardBlocked || hasKeyboardFocus){
+                setKeyboardFocus();
+            }
+        }, true);
+        root.addEventListener('keydown', unblockKeyboardFocus, true);
+        root.addEventListener('keypress', unblockKeyboardFocus, true);
 
         pointerEvents.forEach(function (eventName) {
             document.addEventListener(eventName, removeKeyBoardFocus, true);
         });
-
-        document.addEventListener('click', blockKeyboardFocus, true);
-        window.addEventListener('focus', blockKeyboardFocus);
-        document.addEventListener('focus', blockKeyboardFocus);
-
-        rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
     };
     /* End: keyboard-focus */
 
