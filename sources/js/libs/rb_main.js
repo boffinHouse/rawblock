@@ -2186,12 +2186,11 @@ if (!window.rb) {
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
 
     var _setupEventsByEvtObj = function (that) {
-        var evt, namedStr, evtName, selector;
+        var evt, evtName, selector;
         var evts = that.constructor.events;
 
         for (evt in evts) {
-            namedStr = that.interpolateName(evt, true);
-            selector = namedStr.split(regWhite);
+            selector = evt.split(regWhite);
             evtName = selector.shift();
 
             /* jshint loopfunc: true */
@@ -2199,16 +2198,16 @@ if (!window.rb) {
                 var optMatch, handler, i;
                 var opts = {};
                 var strOpts = evtName.split(':');
-                var evts = strOpts.shift().split(',');
+                var evts = that.interpolateName(strOpts.shift(), true).split(',');
 
                 for (i = 0; i < strOpts.length; i++) {
                     if ((optMatch = strOpts[i].match(regEvtOpts))) {
-                        opts[optMatch[1]] = optMatch[3] || true;
+                        opts[optMatch[1]] = that.interpolateName(optMatch[3] || '') || true;
                     }
                 }
 
-                if (selector) {
-                    opts.delegate = selector;
+                if (selector && !opts.closest) {
+                    opts.delegate = that.interpolateName(selector);
                 }
 
                 handler = (typeof method == 'string') ?
