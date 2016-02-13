@@ -316,7 +316,7 @@
                         e.preventDefault();
                         try {
                             focusElem[focusElem.length - 1].focus();
-                        } catch (e) { }
+                        } catch (er) { }
                     }
                 }, true);
 
@@ -325,7 +325,7 @@
                         e.preventDefault();
                         try {
                             that.element.focus();
-                        } catch (e){}
+                        } catch (er){}
                     }
                 }, true);
             },
