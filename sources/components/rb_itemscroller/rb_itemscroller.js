@@ -12,6 +12,7 @@
     var rb = window.rb;
     var $ = rb.$;
     var regIndex = /\{index}/g;
+    var supportOrder = 'order' in rb.root.style;
     var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
 
     var ItemScroller = rb.Component.extend('itemscroller',
@@ -248,29 +249,34 @@
                 if ($.fn.draggy) {
                     $(this.viewport).draggy('destroy');
                 }
+
                 this.$cells
-                    .css({left: '', position: ''})
                     .removeClass(rb.statePrefix + 'active-done')
                     .removeClass(rb.statePrefix + 'active')
                     .removeClass(rb.statePrefix + 'activated-done')
                     .removeClass(rb.statePrefix + 'activated')
                 ;
+
+                if(supportOrder){
+                    this.$cells.css({
+                        order: '',
+                    });
+                } else {
+                    this.$cells.css({
+                        webkitOrder: '',
+                        msFlexOrder: '',
+                    });
+                }
+
                 this.$scroller.css({
                     position: '',
-                    'padding-left': '',
-                    'padding-right': '',
                     left: '',
                     transform: '',
-                    'min-height': '',
                 });
+
                 $(this.viewport).css({
                     position: '',
-                    'border-left-width': '',
-                    'border-right-width': '',
-                    'border-left-style': '',
-                    'border-right-style': '',
                     overflow: '',
-                    height: '',
                 });
                 this.setSwitchedOffClass();
             },
@@ -773,14 +779,13 @@
                 var ordinalOrder;
                 var style = elem.style;
 
-                if('order' in style){
+                if(supportOrder){
                     style.order = order;
                 } else {
                     ordinalOrder = order === '' ? order : order + 1;
                     style.webkitOrder = order;
                     style.msFlexOrder = order;
                     style.webkitBoxOrdinalGroup = ordinalOrder;
-                    style.mozBoxOrdinalGroup = ordinalOrder;
                 }
             },
             _changeWrap: function (side, prop) {
@@ -864,7 +869,7 @@
                 });
             },
             _getCellWidth: function (element) {
-                return rb.getCSSNumbers(element, ['width']);
+                return $(element).outerWidth();
             },
             calculateLayout: function () {
                 if (this.options.switchedOff) {

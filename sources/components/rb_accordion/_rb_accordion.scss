@@ -27,6 +27,7 @@ $accordionJSCFG: (
             padding: rb-em-calc(20);
             text-align: left;
             background: #e6e6e6;
+            touch-action: manipulation;
 
             &:hover,
             &:focus {
@@ -64,6 +65,7 @@ $accordionJSCFG: (
             padding: rb-em-calc(7 10);
             border: none;
             transition: background 300ms ease-in;
+            touch-action: manipulation;
 
             &:hover,
             &:focus {

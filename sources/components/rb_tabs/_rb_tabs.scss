@@ -41,6 +41,7 @@ $tabsJSCFG: (
             border-top: 3px solid transparent;
             padding: 10px;
             background: #e7e7e7;
+            touch-action: manipulation;
 
             &:hover:not(:disabled),
             &:focus:not(:disabled) {

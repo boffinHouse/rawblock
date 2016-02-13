@@ -6,7 +6,7 @@
 }(typeof window != 'undefined' ? window : this, function (window, document) {
     'use strict';
 
-    var eventSymbol, dataSymbol;
+    var dataSymbol;
     var specialEvents = {};
     var Dom = function (elements, context) {
 
@@ -191,6 +191,7 @@
             "opacity": true,
         },
         cssHooks: {},
+        support: {},
         isReady: document.readyState != 'loading',
         noop: function () {
         },
@@ -641,6 +642,126 @@
             };
         });
     }
+
+    (function(){
+        var added, isBorderBoxRelieable;
+        var div = document.createElement('div');
+
+        var read = function(){
+            isBorderBoxRelieable = rb.getStyles(div).width == '4px';
+            rb.rAFQueue(function(){
+                div.remove();
+            });
+        };
+        var add = function(){
+            if(!added){
+                added = true;
+                document.documentElement.appendChild(div);
+                setTimeout(read);
+            }
+        };
+
+        var boxSizingReliable = function(){
+            if(isBorderBoxRelieable == null){
+                add();
+                read();
+            }
+            return isBorderBoxRelieable;
+        };
+
+        div.style.cssText = 'position:absolute;top:0;visibility:hidden;' +
+            'width:4px;border:0;padding:1px;box-sizing:border-box;';
+
+        requestAnimationFrame(add);
+
+        Dom.support.boxSizingReliable = boxSizingReliable;
+
+        [['height', 'Height'], ['width', 'Width']].forEach(function(names){
+            var cssName = names[0];
+            var extras = cssName == 'height' ? ['Top', 'Bottom'] : ['Left', 'Right'];
+
+            ['inner', 'outer', ''].forEach(function(modifier){
+                fn[modifier + names[1]] = function(margin, value){
+                    var styles, extraStyles, isBorderBox, doc;
+                    var ret = 0;
+                    var elem = this.elements[0];
+                    if(margin != null && (typeof margin !== 'boolean' || value)){
+                        rb.log(modifier + names[1] + ' is only supported as getter');
+                    }
+
+                    if(elem){
+                        if(elem.nodeType){
+                            styles = rb.getStyles(elem);
+                            ret = Dom.css(elem, cssName, true, styles);
+                            isBorderBox = styles.boxSizing == 'border-box' && boxSizingReliable();
+
+                            switch (modifier){
+                                case '':
+                                    if(isBorderBox){
+                                        extraStyles = [
+                                            'border'+ extras[0] +'Width',
+                                            'border'+ extras[1] +'Width',
+                                            'padding' + extras[0],
+                                            'padding' + extras[1]
+                                        ];
+
+                                        ret -= rb.getCSSNumbers(elem, extraStyles, true);
+                                    }
+                                    break;
+                                case 'inner':
+                                    if(isBorderBox){
+                                        extraStyles = [
+                                            'border'+ extras[0] + 'Width',
+                                            'border'+ extras[1] + 'Width',
+                                        ];
+                                        ret -= rb.getCSSNumbers(elem, extraStyles, true);
+                                    } else {
+                                        extraStyles = [
+                                            'padding' + extras[0],
+                                            'padding' + extras[1]
+                                        ];
+
+                                        ret += rb.getCSSNumbers(elem, extraStyles, true);
+                                    }
+                                    break;
+                                case 'outer':
+                                    if(!isBorderBox){
+                                        extraStyles = [
+                                            'border'+ extras[0] + 'Width',
+                                            'border'+ extras[1] + 'Width',
+                                            'padding' + extras[0],
+                                            'padding' + extras[1]
+                                        ];
+                                        ret += rb.getCSSNumbers(elem, extraStyles, true);
+                                    }
+
+                                    if(margin === true){
+                                        ret += rb.getCSSNumbers(elem, ['margin' + extras[0], 'margin' + extras[1]], true);
+                                    }
+                            }
+                        } else if(elem.nodeType == 9){
+                            doc = elem.documentElement;
+
+                            // Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height],
+                            // whichever is greatest
+                            ret = Math.max(
+                                elem.body[ "scroll" + name ], doc[ "scroll" + name ],
+                                elem.body[ "offset" + name ], doc[ "offset" + name ],
+                                doc[ "client" + name ]
+                            );
+                        } else if('innerWidth' in elem){
+                            ret = (modifier == 'outer') ?
+                                elem[ 'inner' + names[1] ] :
+                                elem.document.documentElement[ "client" + names[1] ]
+                            ;
+                        }
+                    }
+                    return ret;
+
+                };
+            });
+        });
+    })();
 
     if (!Dom.isReady) {
         document.addEventListener("DOMContentLoaded", function () {

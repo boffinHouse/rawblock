@@ -34,6 +34,12 @@ $itemscrollerJSCFG: (
             overflow: visible;
             width: auto;
             height: 100%;
+
+            //FOUC preventation in case of centerMode:
+            [data-center-mode="true"].rb-itemscroller:not(.js-rb-attached) & {
+                //tranlateX = 50% - (widthOfCell / 2)
+                transform: translate3d(25%, 0, 0);
+            }
         }
 
         &cell {
@@ -59,6 +65,7 @@ $itemscrollerJSCFG: (
             background: #fff;
             transition: background 400ms ease-in;
             cursor: pointer;
+            touch-action: manipulation;
 
             &.is-selected {
                 background: #666;
@@ -83,6 +90,7 @@ $itemscrollerJSCFG: (
             transition: background 400ms ease-in;
             outline: none;
             border-radius: 50%;
+            touch-action: manipulation;
 
             &:hover,
             &:focus {
@@ -93,6 +101,12 @@ $itemscrollerJSCFG: (
                 cursor: not-allowed;
                 background: rgba(0, 0, 0, 0.5);
             }
+
+            &:after {
+                top: 0;
+                bottom: 0;
+                margin: auto;
+            }
         }
 
         &btn-prev {
@@ -100,10 +114,7 @@ $itemscrollerJSCFG: (
 
             &:after {
                 @include rb-arrow-icon(15px, 15px, 3px, #fff, left);
-                top: 0;
                 left: 15px;
-                bottom: 0;
-                margin: auto;
             }
         }
 
@@ -112,10 +123,7 @@ $itemscrollerJSCFG: (
 
             &:after {
                 @include rb-arrow-icon(15px, 15px, 3px, #fff, right);
-                top: 0;
                 right: 15px;
-                bottom: 0;
-                margin: auto;
             }
         }
     }

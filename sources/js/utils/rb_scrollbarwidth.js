@@ -53,11 +53,7 @@
         }
     };
 
-    if(window.requestIdleCallback){
-        requestIdleCallback(start);
-    } else {
-        start();
-    }
+    start();
 
 
     Object.defineProperty(rb, 'scrollbarWidth', {
