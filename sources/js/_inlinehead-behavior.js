@@ -39,6 +39,9 @@
     //            }
     //        }
     //    };
+    //    var append = function(){
+    //        document.head.appendChild(ss);
+    //    };
     //
     //    media = media || 'all';
     //
@@ -51,7 +54,11 @@
     //
     //    ss.media = 'x';
     //
-    //    document.head.appendChild(ss);
+    //    if(!document.msElementsFromPoint || document.body){
+    //        append();
+    //    } else {
+    //        setTimeout(append, 19);
+    //    }
     //
     //    return ss;
     //};

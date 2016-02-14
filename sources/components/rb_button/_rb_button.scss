@@ -26,6 +26,7 @@
     color: #fff;
     background: #aaa;
     transition: background 400ms ease;
+    touch-action: manipulation;
 
     &:hover:not(.is-disabled),
     &:focus:not(.is-disabled) {

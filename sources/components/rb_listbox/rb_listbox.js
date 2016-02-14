@@ -220,7 +220,7 @@
                 this._trigger('selectedchanged');
             },
 
-            getSelectableIndex(dir){
+            getSelectableIndex: function(dir){
                 var item;
                 var ret = -1;
                 var disabledClass = rb.statePrefix + 'disabled';

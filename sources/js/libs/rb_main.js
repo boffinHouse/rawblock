@@ -1203,21 +1203,17 @@ if (!window.rb) {
     /* * * Begin: keyboard-focus * * */
 
     var initKeyboardFocus = function(){
-        var keyboardBlocktimer, keyboardFocusElem;
+        var keyboardFocusElem;
         var hasKeyboardFocus = false;
         var isKeyboardBlocked = false;
         var root = rb.root;
         var isClass = rb.statePrefix + 'keyboardfocus';
         var isWithinClass = rb.statePrefix + 'keyboardfocus-within';
 
-        var unblockKeyboardFocus = function () {
-            isKeyboardBlocked = false;
-        };
-
-        var blockKeyboardFocus = function () {
-            isKeyboardBlocked = true;
-            clearTimeout(keyboardBlocktimer);
-            keyboardBlocktimer = setTimeout(unblockKeyboardFocus, 99);
+        var unblockKeyboardFocus = function (e) {
+            if(e.keyCode == 9){
+                isKeyboardBlocked = false;
+            }
         };
 
         var _removeChildFocus = function () {
@@ -1240,10 +1236,10 @@ if (!window.rb) {
         }, {throttle: true});
 
         var removeKeyBoardFocus = function () {
+            isKeyboardBlocked = true;
             if (hasKeyboardFocus) {
                 _removeKeyBoardFocus();
             }
-            blockKeyboardFocus();
         };
 
         var setKeyboardFocus = rb.rAF(function () {
@@ -1252,10 +1248,13 @@ if (!window.rb) {
 
                 if (keyboardFocusElem != document.activeElement) {
                     _removeChildFocus();
+
                     keyboardFocusElem = document.activeElement;
 
                     if (keyboardFocusElem && keyboardFocusElem.classList) {
                         keyboardFocusElem.classList.add(isClass);
+                    } else {
+                        keyboardFocusElem = null;
                     }
                 }
 
@@ -1272,17 +1271,17 @@ if (!window.rb) {
             ;
 
         root.addEventListener('blur', removeChildFocus, true);
-        root.addEventListener('focus', setKeyboardFocus, true);
+        root.addEventListener('focus', function(){
+            if(!isKeyboardBlocked || hasKeyboardFocus){
+                setKeyboardFocus();
+            }
+        }, true);
+        root.addEventListener('keydown', unblockKeyboardFocus, true);
+        root.addEventListener('keypress', unblockKeyboardFocus, true);
 
         pointerEvents.forEach(function (eventName) {
             document.addEventListener(eventName, removeKeyBoardFocus, true);
         });
-
-        document.addEventListener('click', blockKeyboardFocus, true);
-        window.addEventListener('focus', blockKeyboardFocus);
-        document.addEventListener('focus', blockKeyboardFocus);
-
-        rb.$doc.on('rbscriptfocus', blockKeyboardFocus);
     };
     /* End: keyboard-focus */
 
@@ -2187,12 +2186,11 @@ if (!window.rb) {
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
 
     var _setupEventsByEvtObj = function (that) {
-        var evt, namedStr, evtName, selector;
+        var evt, evtName, selector;
         var evts = that.constructor.events;
 
         for (evt in evts) {
-            namedStr = that.interpolateName(evt, true);
-            selector = namedStr.split(regWhite);
+            selector = evt.split(regWhite);
             evtName = selector.shift();
 
             /* jshint loopfunc: true */
@@ -2200,16 +2198,16 @@ if (!window.rb) {
                 var optMatch, handler, i;
                 var opts = {};
                 var strOpts = evtName.split(':');
-                var evts = strOpts.shift().split(',');
+                var evts = that.interpolateName(strOpts.shift(), true).split(',');
 
                 for (i = 0; i < strOpts.length; i++) {
                     if ((optMatch = strOpts[i].match(regEvtOpts))) {
-                        opts[optMatch[1]] = optMatch[3] || true;
+                        opts[optMatch[1]] = that.interpolateName(optMatch[3] || '') || true;
                     }
                 }
 
-                if (selector) {
-                    opts.delegate = selector;
+                if (selector && !opts.closest) {
+                    opts.delegate = that.interpolateName(selector);
                 }
 
                 handler = (typeof method == 'string') ?

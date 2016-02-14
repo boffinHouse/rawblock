@@ -15,7 +15,6 @@ rb.life.autoStart = false;
 //if webpack is used:
 __webpack_public_path__ = ASSETBASEPATH + 'js/';
 
-require('./utils/rb_pubsub');
 require('../../grunt/webpack/globloader!./glob.paths');
 
 (function(addImportHook){
