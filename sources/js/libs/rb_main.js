@@ -2183,6 +2183,8 @@ if (!window.rb) {
     var regData = /^data-/;
     var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
     var regName = /\{name}/g;
+    var regJsName = /\{jsName}/g;
+    var regHtmlName = /\{htmlName}/g;
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
 
     var _setupEventsByEvtObj = function (that) {
@@ -2618,7 +2620,10 @@ if (!window.rb) {
              * this.interpolateName('.{name}__button'); //return '.dialog__button'
              */
             interpolateName: function (str, isJs) {
-                return str.replace(regName, isJs ? this.jsName : this.name);
+                return str.replace(regName, isJs ? this.jsName : this.name)
+                    .replace(regJsName, this.jsName)
+                    .replace(regHtmlName, this.name)
+                ;
             },
 
             /**

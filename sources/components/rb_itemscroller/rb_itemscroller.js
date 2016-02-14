@@ -11,8 +11,10 @@
     'use strict';
     var rb = window.rb;
     var $ = rb.$;
+    var rootStyle = rb.root.style;
     var regIndex = /\{index}/g;
     var supportOrder = 'order' in rb.root.style;
+    var supportSomeOrder = supportOrder || ('webkitOrder' in rootStyle) || ('msFlexOrder' in rootStyle);
     var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
 
     var ItemScroller = rb.Component.extend('itemscroller',
@@ -776,16 +778,13 @@
                 this.setPos(this._pos + relPos);
             },
             _setOrder: function(elem, order){
-                var ordinalOrder;
                 var style = elem.style;
 
                 if(supportOrder){
                     style.order = order;
                 } else {
-                    ordinalOrder = order === '' ? order : order + 1;
                     style.webkitOrder = order;
                     style.msFlexOrder = order;
-                    style.webkitBoxOrdinalGroup = ordinalOrder;
                 }
             },
             _changeWrap: function (side, prop) {
@@ -1055,7 +1054,7 @@
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
 
-                this.isCarousel = this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
+                this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
 
                 if (!this.isCarousel) {
                     return;

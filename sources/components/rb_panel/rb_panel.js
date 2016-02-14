@@ -20,6 +20,7 @@
              * @property {String} defaults.easing='' CSS Easing function for the animation.
              * @property {Number} defaults.duration=400 Duration of the animation.
              * @property {Boolean} defaults.setFocus=true Whether the component should set the focus on open.
+             * @property {Boolean} defaults.closeOnFocusout=false Similar to closeOnOutsideClick, but better from behavior. Caution behavior can be sometimes unpredictable, if multiple buttons do control the panel.
              * @property {Boolean} defaults.closeOnOutsideClick=false Whether the component should be closed, if clicked outside the component.
              * @prop {Boolean} defaults.switchedOff=false Turns off panel.
              * @prop {Boolean} defaults.resetSwitchedOff=true Resets panel to initial state on reset switch.
@@ -35,6 +36,7 @@
                 resetSwitchedOff: true,
                 switchedOff: false,
                 closeOnEsc: false,
+                closeOnFocusout: false,
                 itemWrapper: '',
             },
             /**
@@ -70,6 +72,7 @@
                 this._role = this.element.getAttribute('role');
 
                 this._onBodyClick = this._onBodyClick.bind(this);
+                this._onOutSideAction = this._onOutSideAction.bind(this);
 
                 rb.rAFs(this, {throttle: true}, '_opened', '_closed', '_switchOn', '_switchOff');
 
@@ -132,26 +135,58 @@
 
                 this.$element.attr({'role': this._role || 'group', tabindex: '-1'});
             },
+            _shouldTeardown: function(){
+                if ((!this.isOpen && (!this.options.closeOnOutsideClick && this.options.closeOnFocusout)) || !rb.root.contains(this.element)) {
+                    this.teardownOnOpenEvts();
+                    return true;
+                }
+            },
             _onBodyClick: function (e) {
                 var that;
-                if (!this.isOpen && !this.options.closeOnOutsideClick || !rb.root.contains(this.element)) {
-                    this.teardownFocusEvents();
-                    return;
-                }
-                if (e.target != this.element && !this.element.contains(e.target)) {
+                if (this.options.closeOnOutsideClick && !this._shouldTeardown() && document.body.contains(e.target) && !rb.contains(this.element, e.target)) {
                     that = this;
                     this._closeTimer = setTimeout(function () {
                         that.close();
                     }, 44);
                 }
             },
-            setupFocusEvents: function () {
-                this.teardownFocusEvents();
-                document.body.addEventListener('click', this._onBodyClick);
+            _onOutSideAction: function(e){
+                var containers, component;
+
+                if (this.options.closeOnFocusout && document.body.contains(e.target) && !this._shouldTeardown()) {
+                    component = this.component(e.target);
+
+                    if(component && component.getTarget && component.getTarget() == this.element){
+                        return;
+                    }
+
+                    containers = [this.element];
+
+                    if(this.buttonComponent){
+                        containers.push(this.buttonComponent.element);
+                    }
+                    if(this.activeButtonComponent){
+                        containers.push(this.activeButtonComponent.element);
+                    }
+
+                    if(!rb.contains(containers, e.target)){
+                        this.close();
+                    }
+                }
             },
-            teardownFocusEvents: function () {
+            setupOnOpenEvts: function () {
+                this.teardownOnOpenEvts();
+                if(this.options.closeOnFocusout || this.options.closeOnOutsideClick){
+                    document.addEventListener('click', this._onBodyClick, true);
+                    document.addEventListener('mousedown', this._onOutSideAction, true);
+                    document.addEventListener('focus', this._onOutSideAction, true);
+                }
+            },
+            teardownOnOpenEvts: function () {
                 clearTimeout(this._closeTimer);
-                document.body.addEventListener('click', this._onBodyClick);
+                document.removeEventListener('click', this._onBodyClick, true);
+                document.removeEventListener('mousedown', this._onOutSideAction, true);
+                document.removeEventListener('focus', this._onOutSideAction, true);
             },
             setOption: function (name, value) {
                 this._super(name, value);
@@ -287,7 +322,7 @@
                 }
                 clearTimeout(this._closeTimer);
                 if (this.options.closeOnOutsideClick) {
-                    this.setupFocusEvents();
+                    this.setupOnOpenEvts();
                 }
 
                 this._trigger();
@@ -347,7 +382,7 @@
                 this._trigger();
                 clearTimeout(this._closeTimer);
                 if (this.options.closeOnOutsideClick) {
-                    this.teardownFocusEvents();
+                    this.teardownOnOpenEvts();
                 }
 
                 if ((!options || options.setFocus !== false) && (this.options.setFocus || (options && options.setFocus))) {
