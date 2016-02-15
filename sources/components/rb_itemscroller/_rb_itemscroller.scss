@@ -35,8 +35,8 @@ $itemscrollerJSCFG: (
             width: auto;
             height: 100%;
 
-            //FOUC preventation in case of centerMode:
-            [data-center-mode="true"].rb-itemscroller:not(.js-rb-attached) & {
+            //FOUC prevention in case of centerMode:
+            [data-center-mode="true"] & {
                 //tranlateX = 50% - (widthOfCell / 2)
                 transform: translate3d(25%, 0, 0);
             }

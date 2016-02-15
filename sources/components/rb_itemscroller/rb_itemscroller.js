@@ -9,6 +9,7 @@
 
     /* jshint eqnull: true */
     'use strict';
+    var transformProp;
     var rb = window.rb;
     var $ = rb.$;
     var rootStyle = rb.root.style;
@@ -16,6 +17,14 @@
     var supportOrder = 'order' in rb.root.style;
     var supportSomeOrder = supportOrder || ('webkitOrder' in rootStyle) || ('msFlexOrder' in rootStyle);
     var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
+
+    if(supports3dTransform || 'transform' in rootStyle){
+        transformProp = 'transform';
+    } else if('webkitTransform' in rootStyle){
+        transformProp = 'webkitTransform';
+    } else if('msTransform' in rootStyle){
+        transformProp = 'msTransform';
+    }
 
     var ItemScroller = rb.Component.extend('itemscroller',
         /** @lends rb.components.itemscroller.prototype */
@@ -123,7 +132,7 @@
             init: function (element, initialDefaults) {
                 this._super(element, initialDefaults);
 
-                this.usesTransform = this.options.useTransform && supports3dTransform;
+                this.usesTransform = this.options.useTransform && !!transformProp;
                 this._pos = 0;
 
                 this._selectedIndex = this.options.selectedIndex;
@@ -852,7 +861,11 @@
                 this.scroller.rbItemscrollerPos = this._pos;
 
                 if (this.usesTransform) {
-                    this.scroller.style.transform = 'translate3d(' + pos + 'px, 0, 0)';
+                    if(supports3dTransform){
+                        this.scroller.style.transform = 'translate3d(' + pos + 'px, 0, 0)';
+                    } else {
+                        this.scroller.style[transformProp] = 'translateX(' + pos + 'px)';
+                    }
                 } else {
                     this.scroller.style.left = pos + 'px';
                 }

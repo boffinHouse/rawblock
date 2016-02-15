@@ -5,7 +5,7 @@
  */
 module.exports = {
 	options: {
-		browsers: ['last 2 version', 'ie >= 10', 'Android >= 4.0', 'Firefox ESR']
+		browsers: ['last 2 version', 'ie >= 10', 'Android >= 4.2', 'Firefox ESR']
 	},
 	dev: {
 		options: {
