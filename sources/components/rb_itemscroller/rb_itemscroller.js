@@ -6,25 +6,12 @@
         factory();
     }
 }(function () {
-
     /* jshint eqnull: true */
     'use strict';
-    var transformProp;
     var rb = window.rb;
     var $ = rb.$;
-    var rootStyle = rb.root.style;
     var regIndex = /\{index}/g;
-    var supportOrder = 'order' in rb.root.style;
-    var supportSomeOrder = supportOrder || ('webkitOrder' in rootStyle) || ('msFlexOrder' in rootStyle);
     var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
-
-    if(supports3dTransform || 'transform' in rootStyle){
-        transformProp = 'transform';
-    } else if('webkitTransform' in rootStyle){
-        transformProp = 'webkitTransform';
-    } else if('msTransform' in rootStyle){
-        transformProp = 'msTransform';
-    }
 
     var ItemScroller = rb.Component.extend('itemscroller',
         /** @lends rb.components.itemscroller.prototype */
@@ -56,8 +43,6 @@
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
-                startOrder: -1,
-                endOrder: 99,
             },
             /**
              * @constructs
@@ -132,7 +117,7 @@
             init: function (element, initialDefaults) {
                 this._super(element, initialDefaults);
 
-                this.usesTransform = this.options.useTransform && !!transformProp;
+                this.usesTransform = this.options.useTransform && supports3dTransform;
                 this._pos = 0;
 
                 this._selectedIndex = this.options.selectedIndex;
@@ -146,7 +131,6 @@
                 this.$pageLength = $(this.query('.{name}-page-length'));
                 this.$currentIndex = $(this.query('.{name}-current-index'));
                 this.$paginationBtns = $([]);
-
 
                 this.onslide = $.Callbacks();
 
@@ -165,7 +149,6 @@
                 this._slideProgress = this._slideProgress.bind(this);
                 this._slideComplete = this._slideComplete.bind(this);
 
-                this._generateHelper();
                 this._setupEvents();
 
                 if (!this.options.switchedOff) {
@@ -260,34 +243,29 @@
                 if ($.fn.draggy) {
                     $(this.viewport).draggy('destroy');
                 }
-
                 this.$cells
+                    .css({left: '', position: ''})
                     .removeClass(rb.statePrefix + 'active-done')
                     .removeClass(rb.statePrefix + 'active')
                     .removeClass(rb.statePrefix + 'activated-done')
                     .removeClass(rb.statePrefix + 'activated')
                 ;
-
-                if(supportOrder){
-                    this.$cells.css({
-                        order: '',
-                    });
-                } else {
-                    this.$cells.css({
-                        webkitOrder: '',
-                        msFlexOrder: '',
-                    });
-                }
-
                 this.$scroller.css({
                     position: '',
+                    'padding-left': '',
+                    'padding-right': '',
                     left: '',
                     transform: '',
+                    'min-height': '',
                 });
-
                 $(this.viewport).css({
                     position: '',
+                    'border-left-width': '',
+                    'border-right-width': '',
+                    'border-left-style': '',
+                    'border-right-style': '',
                     overflow: '',
+                    height: '',
                 });
                 this.setSwitchedOffClass();
             },
@@ -300,31 +278,27 @@
                 this._setupTouch();
                 this.setSwitchedOffClass();
             },
-            _generateHelper: function(){
-
-                this.helperElem = $(document.createElement('div'))
-                    .attr({
-                        'class': 'js-' + this.name + '-helper',
-                        style: 'width:0;padding:0;margin:0;visibility:hidden;border:0;height:100%;min-height:9px',
-                    })
-                    .css({
-                        webkitFlexGrow: 0,
-                        flexGrow: 0,
-                    })
-                    .get(0)
-                ;
-
-                this._setOrder(this.helperElem, this.options.startOrder);
-            },
             _mainSetup: function () {
                 var that = this;
                 rb.rAFQueue(function () {
+                    var css = {visibility: 'hidden', position: 'absolute', 'z-index': -1};
+                    if (!that.scrollerClone || !that.viewportClone) {
+                        that.scrollerClone = that.scroller.cloneNode();
+                        that.viewportClone = that.viewport.cloneNode();
+                        $(that.scrollerClone).css(css);
+                        $(that.viewportClone).css(css).addClass('js-size-shadow');
+                        that.viewportClone.appendChild(that.scrollerClone);
+                        $(that.viewport).after(that.viewportClone);
+                    }
+
+                    that.$scroller.css({position: 'relative', 'padding-left': '0px', 'padding-right': '0px'});
                     $(that.viewport).css({
                         position: 'relative',
                         overflow: 'hidden',
-                    });
-                    that.$scroller.css({
-                        position: 'relative',
+                        'border-left-color': 'transparent',
+                        'border-right-color': 'transparent',
+                        'border-left-style': 'solid',
+                        'border-right-style': 'solid',
                     });
                     that._updateControls();
                     that._slideComplete();
@@ -786,19 +760,8 @@
             _setRelPos: function (relPos) {
                 this.setPos(this._pos + relPos);
             },
-            _setOrder: function(elem, order){
-                var style = elem.style;
-
-                if(supportOrder){
-                    style.order = order;
-                } else {
-                    style.webkitOrder = order;
-                    style.msFlexOrder = order;
-                }
-            },
             _changeWrap: function (side, prop) {
-                var i, len, curCell, order;
-                var posPages = this.posPages[side];
+                var i, len, curCell;
                 var cells = this.posPages[side].rbCells;
 
                 if (prop == 'ul') {
@@ -807,24 +770,10 @@
                     this.isWrap = '';
                 }
 
-                order = (this.isWrap == 'left') ?
-                    this.options.startOrder :
-                    (this.isWrap == 'right') ?
-                        this.options.endOrder:
-                        ''
-                ;
-
-                this.helperElem.style.marginLeft = this.isWrap ?
-                    posPages._helperLeft + 'px' :
-                    ''
-                ;
-
                 for (i = 0, len = cells.length; i < len; i++) {
                     curCell = cells[i];
                     curCell.isSide = this.isWrap;
-                    this._setOrder(curCell.elem, order);
-
-                    //curCell.elem.style.left = curCell[prop] + 'px';
+                    curCell.elem.style.left = curCell[prop] + 'px';
                 }
             },
             _setPos: function (pos) {
@@ -861,11 +810,7 @@
                 this.scroller.rbItemscrollerPos = this._pos;
 
                 if (this.usesTransform) {
-                    if(supports3dTransform){
-                        this.scroller.style.transform = 'translate3d(' + pos + 'px, 0, 0)';
-                    } else {
-                        this.scroller.style[transformProp] = 'translateX(' + pos + 'px)';
-                    }
+                    this.scroller.style.transform = 'translate3d(' + pos + 'px, 0, 0)';
                 } else {
                     this.scroller.style.left = pos + 'px';
                 }
@@ -873,15 +818,16 @@
             },
             updateCells: function () {
                 var that = this;
-                this.$cells = this.$scroller.children(':not(.js-' + this.name + '-helper)');
+                this.$cells = this.$scroller.children();
                 this.calculateLayout();
-                rb.rAFQueue(function () {
-                    that.$scroller.prepend(that.helperElem);
-                    that.$cells.addClass(that.name + '-cell');
-                });
+                if (!this.options.switchedOff) {
+                    rb.rAFQueue(function () {
+                        that.$cells.css({position: 'absolute'}).addClass(that.name + '-cell');
+                    });
+                }
             },
             _getCellWidth: function (element) {
-                return $(element).outerWidth();
+                return rb.getCSSNumbers(element, ['width']);
             },
             calculateLayout: function () {
                 if (this.options.switchedOff) {
@@ -892,8 +838,16 @@
                     return;
                 }
 
-                this.viewportWidth = this.scroller.offsetWidth - rb.getCSSNumbers(this.scroller, ['padding-right', 'padding-left'], true);
+                this.viewportCSS = {
+                    'border-left-width': rb.getCSSNumbers(this.scrollerClone || this.scroller, ['padding-left']) + rb.getCSSNumbers(this.viewportClone || this.viewport, ['border-left-width']) + 'px',
+                    'border-right-width': rb.getCSSNumbers(this.scrollerClone || this.scroller, ['padding-right']) + rb.getCSSNumbers(this.viewportClone || this.viewport, ['border-right-width']) + 'px'
+                };
 
+                this.viewportWidth = this.scroller.offsetWidth - rb.getCSSNumbers(this.scroller, ['padding-right'], true);
+
+                if (!this.scrollerClone) {
+                    this.viewportWidth -= rb.getCSSNumbers(this.scroller, ['padding-left'], true);
+                }
 
                 this._calculateCellLayout();
 
@@ -916,7 +870,6 @@
                     if (height > highest) {
                         highest = height;
                     }
-
                     return {w: width, elem: this, r: lastWidth, l: returnWidth};
                 }).get();
 
@@ -928,11 +881,16 @@
             },
             _writeLayout: function () {
                 var wasPos = this._pos;
+                var that = this;
+
+                this.scroller.style.minHeight = this.highestCell + 'px';
 
                 this.$cells.each(function (i) {
-
+                    this.style.left = that.cellData[i].l + 'px';
                 });
                 this.isWrap = '';
+
+                $(this.viewport).css(this.viewportCSS);
 
                 this.selectIndex(this._selectedIndex, true);
 
@@ -1061,13 +1019,13 @@
                 };
             },
             _createCarouselPages: function () {
-                var i, len, pageData, curWidth, pageCorrect, negativeIndex, lastPos;
+                var i, len, pageData, curWidth, pageCorrect, negativeIndex;
                 var viewport = this.viewportWidth;
                 this.posPages = {left: [], right: []};
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
 
-                this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
+                this.isCarousel = this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
 
                 if (!this.isCarousel) {
                     return;
@@ -1098,21 +1056,10 @@
                     }
                 }
 
-                //console.log(this.posPages.left)
-
                 this.minUnwrapRight = viewport;
+                this.maxUnwrapRight = (this.posPages.right[this.posPages.right.length - 1].or * -1) - viewport;
 
-                lastPos = this.posPages.right[this.posPages.right.length - 1];
-
-                this.posPages.right._helperLeft = lastPos.or;
-
-                this.maxUnwrapRight = (lastPos.or * -1) - viewport;
-
-                lastPos = this.posPages.left[this.posPages.left.length - 1];
-
-                this.posPages.left._helperLeft = lastPos.l;
-
-                this.minUnwrapLeft = (lastPos.ol * -1) + viewport;
+                this.minUnwrapLeft = (this.posPages.left[this.posPages.left.length - 1].ol * -1) + viewport;
                 this.maxUnwrapLeft = (this.posPages.left[0].or * -1) - viewport;
 
                 this.pageData.unshift.apply(this.pageData, this.posPages.left.reverse());
