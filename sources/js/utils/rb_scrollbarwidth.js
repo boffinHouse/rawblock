@@ -7,9 +7,10 @@
 }(function () {
     'use strict';
 
-    var started, added, scrollbarDiv, scrollbarWidth;
+    var added, scrollbarWidth;
     var rb = window.rb;
     var $ = rb.$ || window.jQuery;
+    var scrollbarDiv = document.createElement('div');
 
     var read = function(){
         if(scrollbarWidth == null){
@@ -28,32 +29,25 @@
     };
     var getWidth = function(){
         if(scrollbarWidth == null){
-            start();
             add();
             read();
         }
         return scrollbarWidth;
     };
-    var start = function(){
-        if(!started){
-            started = true;
-            scrollbarDiv = document.createElement('div');
-            $(scrollbarDiv).css({
-                width: '99px',
-                height: '99px',
-                overflow: 'scroll',
-                position: 'absolute',
-                visibility: 'hidden',
-                top: '0px',
-                left: '0px',
-                zIndex: '-1',
-            });
 
-            rb.rAFQueue(add);
-        }
-    };
 
-    start();
+    $(scrollbarDiv).css({
+        width: '99px',
+        height: '99px',
+        overflow: 'scroll',
+        position: 'absolute',
+        visibility: 'hidden',
+        top: '0px',
+        left: '0px',
+        zIndex: '-1',
+    });
+
+    rb.rAFQueue(add);
 
 
     Object.defineProperty(rb, 'scrollbarWidth', {

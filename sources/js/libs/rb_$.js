@@ -651,13 +651,15 @@
             isBorderBoxRelieable = rb.getStyles(div).width == '4px';
             rb.rAFQueue(function(){
                 div.remove();
+                div = null;
             });
         };
         var add = function(){
             if(!added){
                 added = true;
                 document.documentElement.appendChild(div);
-                setTimeout(read);
+
+                setTimeout(read, 9);
             }
         };
 
@@ -672,7 +674,12 @@
         div.style.cssText = 'position:absolute;top:0;visibility:hidden;' +
             'width:4px;border:0;padding:1px;box-sizing:border-box;';
 
-        requestAnimationFrame(add);
+        if(window.CSS && CSS.supports){
+            isBorderBoxRelieable = true;
+        } else {
+            requestAnimationFrame(add);
+        }
+
 
         Dom.support.boxSizingReliable = boxSizingReliable;
 

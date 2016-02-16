@@ -22,7 +22,8 @@ require('../../grunt/webpack/globloader!./glob.paths');
         //declare a map of module name -> paths
         moduleName = 'rb_' + moduleName;
         moduleName += '/' + moduleName;
-        require(['../components/' + moduleName +'.lazy.js']);
+
+        require('bundle!../components/' + moduleName +'.lazy.js');
     });
 })(rb.life.addImportHook);
 
