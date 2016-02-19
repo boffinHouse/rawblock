@@ -16,52 +16,68 @@
         return script;
     };
     /* if you need async CSS */
-    //var loadCss = function( href, media, callback ){
-    //    var timer;
-    //    var ss = document.createElement('link');
-    //    var sheets = document.styleSheets;
+    //var loadCss = (function(){
+    //    var supportsPreload;
+    //    try {
+    //        supportsPreload = document.createElement('link').relList.supports('preload');
+    //    } catch(e){}
     //
-    //    var onLoad = function(){
-    //        setTimeout(onloadcssdefined);
-    //        ss.removeEventListener('load', onLoad);
-    //    };
-    //    var onloadcssdefined = function(){
-    //        var resolvedHref = ss.href;
-    //        var i = sheets.length;
-    //        while( i-- ){
-    //            if( sheets[ i ].href == resolvedHref ){
-    //                ss.media = media;
-    //                if(callback){
-    //                    callback();
-    //                }
-    //                clearInterval(timer);
-    //                break;
+    //    return function( href, media, callback ){
+    //        var timer;
+    //        var ss = document.createElement('link');
+    //        var sheets = document.styleSheets;
+    //
+    //        var onLoad = function(){
+    //            if(supportsPreload){
+    //                ss.rel = 'stylesheet';
+    //                timer = setInterval(onloadcssdefined, 19);
     //            }
+    //            setTimeout(onloadcssdefined);
+    //            ss.removeEventListener('load', onLoad);
+    //        };
+    //        var onloadcssdefined = function(){
+    //            var resolvedHref = ss.href;
+    //            var i = sheets.length;
+    //            while( i-- ){
+    //                if( sheets[ i ].href == resolvedHref ){
+    //                    ss.media = media;
+    //                    if(callback){
+    //                        callback();
+    //                    }
+    //                    clearInterval(timer);
+    //                    break;
+    //                }
+    //            }
+    //        };
+    //        var append = function(){
+    //            document.head.appendChild(ss);
+    //        };
+    //
+    //        media = media || 'all';
+    //
+    //        if(supportsPreload){
+    //            ss.rel = 'preload';
+    //            ss.as = 'style';
+    //            ss.media = media;
+    //        } else {
+    //            timer = setInterval(onloadcssdefined, 19);
+    //            ss.rel = 'stylesheet';
+    //            ss.media = 'x';
     //        }
+    //
+    //        ss.addEventListener('load', onLoad);
+    //
+    //        ss.href = href;
+    //
+    //        if(supportsPreload || !document.msElementsFromPoint || document.body){
+    //            append();
+    //        } else {
+    //            requestAnimationFrame(append);
+    //        }
+    //
+    //        return ss;
     //    };
-    //    var append = function(){
-    //        document.head.appendChild(ss);
-    //    };
-    //
-    //    media = media || 'all';
-    //
-    //    ss.rel = 'stylesheet';
-    //
-    //    timer = setInterval(onloadcssdefined, 19);
-    //    ss.addEventListener('load', onLoad);
-    //
-    //    ss.href = href;
-    //
-    //    ss.media = 'x';
-    //
-    //    if(!document.msElementsFromPoint || document.body){
-    //        append();
-    //    } else {
-    //        setTimeout(append, 19);
-    //    }
-    //
-    //    return ss;
-    //};
+    //})();
 
     docElem.classList.remove('no-js');
     docElem.classList.add('js');
