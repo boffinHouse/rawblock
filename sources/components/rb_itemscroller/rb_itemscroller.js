@@ -903,11 +903,6 @@
             _writeLayout: function () {
                 var wasPos = this._pos;
 
-                this.$cells.each(function (i) {
-
-                });
-                this.isWrap = '';
-
                 this.selectIndex(this._selectedIndex, true);
 
                 if (this.isCarousel && wasPos == this._pos) {
