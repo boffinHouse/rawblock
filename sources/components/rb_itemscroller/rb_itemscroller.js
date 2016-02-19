@@ -1,17 +1,23 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
         require('../../js/utils/rb_draggy');
+        require('../../js/utils/rb_prefixed');
         module.exports = factory();
     } else {
         factory();
     }
 }(function () {
+
     /* jshint eqnull: true */
     'use strict';
     var rb = window.rb;
     var $ = rb.$;
     var regIndex = /\{index}/g;
+    var orderProp = rb.prefixed('order') || rb.prefixed('flexOrder');
+    var supportSomeOrder = !!orderProp;
+    var transformProp = rb.prefixed('transform');
     var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
+
 
     var ItemScroller = rb.Component.extend('itemscroller',
         /** @lends rb.components.itemscroller.prototype */
@@ -43,6 +49,8 @@
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
+                startOrder: -1,
+                endOrder: 99,
             },
             /**
              * @constructs
@@ -117,7 +125,7 @@
             init: function (element, initialDefaults) {
                 this._super(element, initialDefaults);
 
-                this.usesTransform = this.options.useTransform && supports3dTransform;
+                this.usesTransform = this.options.useTransform && !!transformProp;
                 this._pos = 0;
 
                 this._selectedIndex = this.options.selectedIndex;
@@ -131,6 +139,7 @@
                 this.$pageLength = $(this.query('.{name}-page-length'));
                 this.$currentIndex = $(this.query('.{name}-current-index'));
                 this.$paginationBtns = $([]);
+
 
                 this.onslide = $.Callbacks();
 
@@ -149,6 +158,7 @@
                 this._slideProgress = this._slideProgress.bind(this);
                 this._slideComplete = this._slideComplete.bind(this);
 
+                this._generateHelper();
                 this._setupEvents();
 
                 if (!this.options.switchedOff) {
@@ -243,29 +253,26 @@
                 if ($.fn.draggy) {
                     $(this.viewport).draggy('destroy');
                 }
+                var cellCSS = {};
                 this.$cells
-                    .css({left: '', position: ''})
                     .removeClass(rb.statePrefix + 'active-done')
                     .removeClass(rb.statePrefix + 'active')
                     .removeClass(rb.statePrefix + 'activated-done')
                     .removeClass(rb.statePrefix + 'activated')
                 ;
+
+                cellCSS[orderProp] = '';
+
+                this.$cells.css(cellCSS);
+
                 this.$scroller.css({
                     position: '',
-                    'padding-left': '',
-                    'padding-right': '',
                     left: '',
                     transform: '',
-                    'min-height': '',
                 });
+
                 $(this.viewport).css({
                     position: '',
-                    'border-left-width': '',
-                    'border-right-width': '',
-                    'border-left-style': '',
-                    'border-right-style': '',
-                    overflow: '',
-                    height: '',
                 });
                 this.setSwitchedOffClass();
             },
@@ -278,27 +285,30 @@
                 this._setupTouch();
                 this.setSwitchedOffClass();
             },
+            _generateHelper: function(){
+
+                this.helperElem = $(document.createElement('div'))
+                    .attr({
+                        'class': 'js-' + this.name + '-helper',
+                        style: 'width:0;padding:0;margin:0;visibility:hidden;border:0;height:100%;min-height:9px',
+                    })
+                    .css({
+                        webkitFlexGrow: 0,
+                        flexGrow: 0,
+                    })
+                    .get(0)
+                ;
+
+                this._setOrder(this.helperElem, this.options.startOrder);
+            },
             _mainSetup: function () {
                 var that = this;
                 rb.rAFQueue(function () {
-                    var css = {visibility: 'hidden', position: 'absolute', 'z-index': -1};
-                    if (!that.scrollerClone || !that.viewportClone) {
-                        that.scrollerClone = that.scroller.cloneNode();
-                        that.viewportClone = that.viewport.cloneNode();
-                        $(that.scrollerClone).css(css);
-                        $(that.viewportClone).css(css).addClass('js-size-shadow');
-                        that.viewportClone.appendChild(that.scrollerClone);
-                        $(that.viewport).after(that.viewportClone);
-                    }
-
-                    that.$scroller.css({position: 'relative', 'padding-left': '0px', 'padding-right': '0px'});
                     $(that.viewport).css({
                         position: 'relative',
-                        overflow: 'hidden',
-                        'border-left-color': 'transparent',
-                        'border-right-color': 'transparent',
-                        'border-left-style': 'solid',
-                        'border-right-style': 'solid',
+                    });
+                    that.$scroller.css({
+                        position: 'relative',
                     });
                     that._updateControls();
                     that._slideComplete();
@@ -760,8 +770,12 @@
             _setRelPos: function (relPos) {
                 this.setPos(this._pos + relPos);
             },
+            _setOrder: function(elem, order){
+                elem.style[orderProp] = order;
+            },
             _changeWrap: function (side, prop) {
-                var i, len, curCell;
+                var i, len, curCell, order;
+                var posPages = this.posPages[side];
                 var cells = this.posPages[side].rbCells;
 
                 if (prop == 'ul') {
@@ -770,10 +784,22 @@
                     this.isWrap = '';
                 }
 
+                order = (this.isWrap == 'left') ?
+                    this.options.startOrder :
+                    (this.isWrap == 'right') ?
+                        this.options.endOrder:
+                        ''
+                ;
+
+                this.helperElem.style.marginLeft = this.isWrap ?
+                    posPages._helperLeft + 'px' :
+                    ''
+                ;
+
                 for (i = 0, len = cells.length; i < len; i++) {
                     curCell = cells[i];
                     curCell.isSide = this.isWrap;
-                    curCell.elem.style.left = curCell[prop] + 'px';
+                    this._setOrder(curCell.elem, order);
                 }
             },
             _setPos: function (pos) {
@@ -810,7 +836,10 @@
                 this.scroller.rbItemscrollerPos = this._pos;
 
                 if (this.usesTransform) {
-                    this.scroller.style.transform = 'translate3d(' + pos + 'px, 0, 0)';
+                    this.scroller.style[transformProp] = (supports3dTransform) ?
+                        'translate3d(' + pos + 'px, 0, 0)' :
+                        'translateX(' + pos + 'px)'
+                    ;
                 } else {
                     this.scroller.style.left = pos + 'px';
                 }
@@ -818,16 +847,15 @@
             },
             updateCells: function () {
                 var that = this;
-                this.$cells = this.$scroller.children();
+                this.$cells = this.$scroller.children(':not(.js-' + this.name + '-helper)');
                 this.calculateLayout();
-                if (!this.options.switchedOff) {
-                    rb.rAFQueue(function () {
-                        that.$cells.css({position: 'absolute'}).addClass(that.name + '-cell');
-                    });
-                }
+                rb.rAFQueue(function () {
+                    that.$scroller.prepend(that.helperElem);
+                    that.$cells.addClass(that.name + '-cell');
+                });
             },
             _getCellWidth: function (element) {
-                return rb.getCSSNumbers(element, ['width']);
+                return $(element).outerWidth();
             },
             calculateLayout: function () {
                 if (this.options.switchedOff) {
@@ -838,16 +866,8 @@
                     return;
                 }
 
-                this.viewportCSS = {
-                    'border-left-width': rb.getCSSNumbers(this.scrollerClone || this.scroller, ['padding-left']) + rb.getCSSNumbers(this.viewportClone || this.viewport, ['border-left-width']) + 'px',
-                    'border-right-width': rb.getCSSNumbers(this.scrollerClone || this.scroller, ['padding-right']) + rb.getCSSNumbers(this.viewportClone || this.viewport, ['border-right-width']) + 'px'
-                };
+                this.viewportWidth = this.scroller.offsetWidth - rb.getCSSNumbers(this.scroller, ['padding-right', 'padding-left'], true);
 
-                this.viewportWidth = this.scroller.offsetWidth - rb.getCSSNumbers(this.scroller, ['padding-right'], true);
-
-                if (!this.scrollerClone) {
-                    this.viewportWidth -= rb.getCSSNumbers(this.scroller, ['padding-left'], true);
-                }
 
                 this._calculateCellLayout();
 
@@ -870,6 +890,7 @@
                     if (height > highest) {
                         highest = height;
                     }
+
                     return {w: width, elem: this, r: lastWidth, l: returnWidth};
                 }).get();
 
@@ -881,16 +902,11 @@
             },
             _writeLayout: function () {
                 var wasPos = this._pos;
-                var that = this;
-
-                this.scroller.style.minHeight = this.highestCell + 'px';
 
                 this.$cells.each(function (i) {
-                    this.style.left = that.cellData[i].l + 'px';
+
                 });
                 this.isWrap = '';
-
-                $(this.viewport).css(this.viewportCSS);
 
                 this.selectIndex(this._selectedIndex, true);
 
@@ -1019,13 +1035,13 @@
                 };
             },
             _createCarouselPages: function () {
-                var i, len, pageData, curWidth, pageCorrect, negativeIndex;
+                var i, len, pageData, curWidth, pageCorrect, negativeIndex, lastPos;
                 var viewport = this.viewportWidth;
                 this.posPages = {left: [], right: []};
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
 
-                this.isCarousel = this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
+                this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
 
                 if (!this.isCarousel) {
                     return;
@@ -1056,10 +1072,21 @@
                     }
                 }
 
-                this.minUnwrapRight = viewport;
-                this.maxUnwrapRight = (this.posPages.right[this.posPages.right.length - 1].or * -1) - viewport;
+                //console.log(this.posPages.left)
 
-                this.minUnwrapLeft = (this.posPages.left[this.posPages.left.length - 1].ol * -1) + viewport;
+                this.minUnwrapRight = viewport;
+
+                lastPos = this.posPages.right[this.posPages.right.length - 1];
+
+                this.posPages.right._helperLeft = lastPos.or;
+
+                this.maxUnwrapRight = (lastPos.or * -1) - viewport;
+
+                lastPos = this.posPages.left[this.posPages.left.length - 1];
+
+                this.posPages.left._helperLeft = lastPos.l;
+
+                this.minUnwrapLeft = (lastPos.ol * -1) + viewport;
                 this.maxUnwrapLeft = (this.posPages.left[0].or * -1) - viewport;
 
                 this.pageData.unshift.apply(this.pageData, this.posPages.left.reverse());
