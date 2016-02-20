@@ -284,7 +284,7 @@ if (!window.rb) {
             _setup: function () {
                 if (!installed) {
                     installed = true;
-                    (window.requestIdleCallback || setTimeout)(function () {
+                    rb.rIC(function () {
                         iWidth = innerWidth;
                         cHeight = docElem.clientHeight;
                     });
@@ -406,6 +406,12 @@ if (!window.rb) {
         return parseValue;
     })();
     /* End: parseValue */
+
+    /* Begin: idleCallback */
+        rb.rIC = function(fn){
+            return (window.requestIdleCallback || setTimeout)(fn);
+        };
+    /* End: idleCallback */
 
     /* Begin: rAF helpers */
 
@@ -832,7 +838,9 @@ if (!window.rb) {
                     wasStatic: rb.getStyles(element).position == 'static',
                 };
 
-                setTimeout(function(){
+                that = this;
+
+                rb.rIC(function(){
                     that.addMarkup(element, element[elementResize.expando]);
                 });
             }
@@ -902,7 +910,7 @@ if (!window.rb) {
             var write = rb.rAF(function () {
                 expandChild.style.width = data.exChildWidth;
                 expandChild.style.height = data.exChildHeight;
-                setTimeout(scrollWrite, 20);
+                setTimeout(scrollWrite, 9);
             }, {throttle: true});
 
             var read = function () {
@@ -939,7 +947,7 @@ if (!window.rb) {
                     read();
                 }
 
-            }, {read: true});
+            });
 
             wrapper.className = 'js-element-resize';
             wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;');
@@ -959,7 +967,7 @@ if (!window.rb) {
             }
 
             element.appendChild(wrapper);
-            setTimeout(read);
+            rb.rIC(read);
         }),
     };
 

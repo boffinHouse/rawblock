@@ -322,6 +322,7 @@
                 var that = this;
                 var cellSel = '.' + this.name + '-cell';
                 var isTestStopped = false;
+                var evtOpts = {capture: true, passive: true};
                 var resetScrollLeft = function () {
                     that.viewport.scrollLeft = 0;
                 };
@@ -361,10 +362,10 @@
                     }
                 };
 
-                this.scroller.addEventListener('mousedown', stopTest, true);
-                this.scroller.addEventListener('touchstart', stopTest, true);
-                this.scroller.addEventListener('touchend', stopTest, true);
-                this.scroller.addEventListener('click', stopTest, true);
+                this.scroller.addEventListener('mousedown', stopTest, evtOpts);
+                this.scroller.addEventListener('touchstart', stopTest, evtOpts);
+                this.scroller.addEventListener('touchend', stopTest, evtOpts);
+                this.scroller.addEventListener('click', stopTest, evtOpts);
                 this.scroller.addEventListener('focus', scrollIntoView, true);
                 this.viewport.addEventListener('scroll', scrollIntoView);
             },
@@ -868,24 +869,18 @@
             _calculateCellLayout: function () {
                 var that = this;
                 var lastWidth = 0;
-                var highest = 0;
 
                 this.cellData = this.$cells.map(function (i) {
                     var returnWidth = lastWidth;
-                    var height = rb.getCSSNumbers(this, ['margin-top', 'margin-bottom', 'height'], true);
                     var width = that._getCellWidth(this);
 
                     lastWidth = returnWidth + width + rb.getCSSNumbers(this, ['margin-left', 'margin-right']);
 
-                    if (height > highest) {
-                        highest = height;
-                    }
 
                     return {w: width, elem: this, r: lastWidth, l: returnWidth};
                 }).get();
 
                 this.cellData.push({l: lastWidth, w: 0, r: lastWidth, index: 'last', elem: null});
-                this.highestCell = highest + rb.getCSSNumbers(this.scroller, ['padding-top', 'padding-bottom'], true);
 
                 this.maxWrapRight = (lastWidth - this.viewportWidth) * -1;
 
