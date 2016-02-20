@@ -437,12 +437,6 @@
                 var curPos = ((this._pos + (offset || 0)) * -1) + 1;
                 var index = this.pageData.length - 1;
 
-
-                //if(this.isWrap == 'right' && this.minWrapRight * -1 < curPos){
-                //	this._setPos(curPos);
-                //	return this.getNext(offset);
-                //}
-
                 for (i = 0, len = index + 1; i < len; i++) {
                     cellWidth = this._getPosition(i) * -1;
                     if (cellWidth > curPos) {
@@ -471,10 +465,6 @@
                 var curPos = ((this._pos + (offset || 0)) * -1) - 1;
                 var index = 0;
                 var i = this.pageData.length - 1;
-
-                //if(this.isWrap == 'left' && this.minUnwrapRight * -1 > curPos){
-                //
-                //}
 
                 while (i >= 0) {
                     cellWidth = this._getPosition(i) * -1;
@@ -902,6 +892,10 @@
             },
             _writeLayout: function () {
                 var wasPos = this._pos;
+
+                if(this.isWrap){
+                    this._changeWrap(this.isWrap, 'ul');
+                }
 
                 this.selectIndex(this._selectedIndex, true);
 

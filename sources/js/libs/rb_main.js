@@ -821,6 +821,7 @@ if (!window.rb) {
     /* Begin: elementResize */
     var elementResize = {
         add: function (element, fn, options) {
+            var that;
             if (!element[elementResize.expando]) {
                 element[elementResize.expando] = {
                     width: element.offsetWidth,
@@ -831,7 +832,9 @@ if (!window.rb) {
                     wasStatic: rb.getStyles(element).position == 'static',
                 };
 
-                this.addMarkup(element, element[elementResize.expando]);
+                setTimeout(function(){
+                    that.addMarkup(element, element[elementResize.expando]);
+                });
             }
 
             if (options && options.noWidth) {
@@ -936,7 +939,7 @@ if (!window.rb) {
                     read();
                 }
 
-            });
+            }, {read: true});
 
             wrapper.className = 'js-element-resize';
             wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;');
