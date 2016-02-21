@@ -1,6 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
         require('../../js/utils/rb_draggy');
+        require('../../js/utils/rb_prefixed');
         module.exports = factory();
     } else {
         factory();
@@ -12,8 +13,11 @@
     var rb = window.rb;
     var $ = rb.$;
     var regIndex = /\{index}/g;
-    var supportOrder = 'order' in rb.root.style;
+    var orderProp = rb.prefixed('order') || rb.prefixed('flexOrder');
+    var supportSomeOrder = !!orderProp;
+    var transformProp = rb.prefixed('transform');
     var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
+
 
     var ItemScroller = rb.Component.extend('itemscroller',
         /** @lends rb.components.itemscroller.prototype */
@@ -121,7 +125,7 @@
             init: function (element, initialDefaults) {
                 this._super(element, initialDefaults);
 
-                this.usesTransform = this.options.useTransform && supports3dTransform;
+                this.usesTransform = this.options.useTransform && !!transformProp;
                 this._pos = 0;
 
                 this._selectedIndex = this.options.selectedIndex;
@@ -249,7 +253,7 @@
                 if ($.fn.draggy) {
                     $(this.viewport).draggy('destroy');
                 }
-
+                var cellCSS = {};
                 this.$cells
                     .removeClass(rb.statePrefix + 'active-done')
                     .removeClass(rb.statePrefix + 'active')
@@ -257,16 +261,9 @@
                     .removeClass(rb.statePrefix + 'activated')
                 ;
 
-                if(supportOrder){
-                    this.$cells.css({
-                        order: '',
-                    });
-                } else {
-                    this.$cells.css({
-                        webkitOrder: '',
-                        msFlexOrder: '',
-                    });
-                }
+                cellCSS[orderProp] = '';
+
+                this.$cells.css(cellCSS);
 
                 this.$scroller.css({
                     position: '',
@@ -276,7 +273,6 @@
 
                 $(this.viewport).css({
                     position: '',
-                    overflow: '',
                 });
                 this.setSwitchedOffClass();
             },
@@ -310,7 +306,6 @@
                 rb.rAFQueue(function () {
                     $(that.viewport).css({
                         position: 'relative',
-                        overflow: 'hidden',
                     });
                     that.$scroller.css({
                         position: 'relative',
@@ -327,6 +322,7 @@
                 var that = this;
                 var cellSel = '.' + this.name + '-cell';
                 var isTestStopped = false;
+                var evtOpts = {capture: true, passive: true};
                 var resetScrollLeft = function () {
                     that.viewport.scrollLeft = 0;
                 };
@@ -366,10 +362,10 @@
                     }
                 };
 
-                this.scroller.addEventListener('mousedown', stopTest, true);
-                this.scroller.addEventListener('touchstart', stopTest, true);
-                this.scroller.addEventListener('touchend', stopTest, true);
-                this.scroller.addEventListener('click', stopTest, true);
+                this.scroller.addEventListener('mousedown', stopTest, evtOpts);
+                this.scroller.addEventListener('touchstart', stopTest, evtOpts);
+                this.scroller.addEventListener('touchend', stopTest, evtOpts);
+                this.scroller.addEventListener('click', stopTest, evtOpts);
                 this.scroller.addEventListener('focus', scrollIntoView, true);
                 this.viewport.addEventListener('scroll', scrollIntoView);
             },
@@ -442,12 +438,6 @@
                 var curPos = ((this._pos + (offset || 0)) * -1) + 1;
                 var index = this.pageData.length - 1;
 
-
-                //if(this.isWrap == 'right' && this.minWrapRight * -1 < curPos){
-                //	this._setPos(curPos);
-                //	return this.getNext(offset);
-                //}
-
                 for (i = 0, len = index + 1; i < len; i++) {
                     cellWidth = this._getPosition(i) * -1;
                     if (cellWidth > curPos) {
@@ -476,10 +466,6 @@
                 var curPos = ((this._pos + (offset || 0)) * -1) - 1;
                 var index = 0;
                 var i = this.pageData.length - 1;
-
-                //if(this.isWrap == 'left' && this.minUnwrapRight * -1 > curPos){
-                //
-                //}
 
                 while (i >= 0) {
                     cellWidth = this._getPosition(i) * -1;
@@ -776,17 +762,7 @@
                 this.setPos(this._pos + relPos);
             },
             _setOrder: function(elem, order){
-                var ordinalOrder;
-                var style = elem.style;
-
-                if(supportOrder){
-                    style.order = order;
-                } else {
-                    ordinalOrder = order === '' ? order : order + 1;
-                    style.webkitOrder = order;
-                    style.msFlexOrder = order;
-                    style.webkitBoxOrdinalGroup = ordinalOrder;
-                }
+                elem.style[orderProp] = order;
             },
             _changeWrap: function (side, prop) {
                 var i, len, curCell, order;
@@ -815,8 +791,6 @@
                     curCell = cells[i];
                     curCell.isSide = this.isWrap;
                     this._setOrder(curCell.elem, order);
-
-                    //curCell.elem.style.left = curCell[prop] + 'px';
                 }
             },
             _setPos: function (pos) {
@@ -853,7 +827,10 @@
                 this.scroller.rbItemscrollerPos = this._pos;
 
                 if (this.usesTransform) {
-                    this.scroller.style.transform = 'translate3d(' + pos + 'px, 0, 0)';
+                    this.scroller.style[transformProp] = (supports3dTransform) ?
+                        'translate3d(' + pos + 'px, 0, 0)' :
+                        'translateX(' + pos + 'px)'
+                    ;
                 } else {
                     this.scroller.style.left = pos + 'px';
                 }
@@ -892,24 +869,18 @@
             _calculateCellLayout: function () {
                 var that = this;
                 var lastWidth = 0;
-                var highest = 0;
 
                 this.cellData = this.$cells.map(function (i) {
                     var returnWidth = lastWidth;
-                    var height = rb.getCSSNumbers(this, ['margin-top', 'margin-bottom', 'height'], true);
                     var width = that._getCellWidth(this);
 
                     lastWidth = returnWidth + width + rb.getCSSNumbers(this, ['margin-left', 'margin-right']);
 
-                    if (height > highest) {
-                        highest = height;
-                    }
 
                     return {w: width, elem: this, r: lastWidth, l: returnWidth};
                 }).get();
 
                 this.cellData.push({l: lastWidth, w: 0, r: lastWidth, index: 'last', elem: null});
-                this.highestCell = highest + rb.getCSSNumbers(this.scroller, ['padding-top', 'padding-bottom'], true);
 
                 this.maxWrapRight = (lastWidth - this.viewportWidth) * -1;
 
@@ -917,10 +888,9 @@
             _writeLayout: function () {
                 var wasPos = this._pos;
 
-                this.$cells.each(function (i) {
-
-                });
-                this.isWrap = '';
+                if(this.isWrap){
+                    this._changeWrap(this.isWrap, 'ul');
+                }
 
                 this.selectIndex(this._selectedIndex, true);
 
@@ -1055,7 +1025,7 @@
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
 
-                this.isCarousel = this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
+                this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
 
                 if (!this.isCarousel) {
                     return;

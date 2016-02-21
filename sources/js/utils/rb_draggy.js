@@ -200,6 +200,8 @@
                 if (e.defaultPrevented || !that.options.useMouse || !that.allowMouse || regInputs.test(e.target.nodeName || '')) {
                     return;
                 }
+
+                e.preventDefault();
                 that.allowTouch = false;
                 that.isType = 'mouse';
 

@@ -284,7 +284,7 @@ if (!window.rb) {
             _setup: function () {
                 if (!installed) {
                     installed = true;
-                    (window.requestIdleCallback || setTimeout)(function () {
+                    rb.rIC(function () {
                         iWidth = innerWidth;
                         cHeight = docElem.clientHeight;
                     });
@@ -406,6 +406,12 @@ if (!window.rb) {
         return parseValue;
     })();
     /* End: parseValue */
+
+    /* Begin: idleCallback */
+        rb.rIC = function(fn){
+            return (window.requestIdleCallback || setTimeout)(fn);
+        };
+    /* End: idleCallback */
 
     /* Begin: rAF helpers */
 
@@ -821,6 +827,7 @@ if (!window.rb) {
     /* Begin: elementResize */
     var elementResize = {
         add: function (element, fn, options) {
+            var that;
             if (!element[elementResize.expando]) {
                 element[elementResize.expando] = {
                     width: element.offsetWidth,
@@ -831,7 +838,11 @@ if (!window.rb) {
                     wasStatic: rb.getStyles(element).position == 'static',
                 };
 
-                this.addMarkup(element, element[elementResize.expando]);
+                that = this;
+
+                rb.rIC(function(){
+                    that.addMarkup(element, element[elementResize.expando]);
+                });
             }
 
             if (options && options.noWidth) {
@@ -899,7 +910,7 @@ if (!window.rb) {
             var write = rb.rAF(function () {
                 expandChild.style.width = data.exChildWidth;
                 expandChild.style.height = data.exChildHeight;
-                setTimeout(scrollWrite, 20);
+                setTimeout(scrollWrite, 9);
             }, {throttle: true});
 
             var read = function () {
@@ -956,7 +967,7 @@ if (!window.rb) {
             }
 
             element.appendChild(wrapper);
-            setTimeout(read);
+            rb.rIC(read);
         }),
     };
 
@@ -2183,6 +2194,8 @@ if (!window.rb) {
     var regData = /^data-/;
     var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
     var regName = /\{name}/g;
+    var regJsName = /\{jsName}/g;
+    var regHtmlName = /\{htmlName}/g;
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
 
     var _setupEventsByEvtObj = function (that) {
@@ -2618,7 +2631,10 @@ if (!window.rb) {
              * this.interpolateName('.{name}__button'); //return '.dialog__button'
              */
             interpolateName: function (str, isJs) {
-                return str.replace(regName, isJs ? this.jsName : this.name);
+                return str.replace(regName, isJs ? this.jsName : this.name)
+                    .replace(regJsName, this.jsName)
+                    .replace(regHtmlName, this.name)
+                ;
             },
 
             /**

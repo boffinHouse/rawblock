@@ -22,8 +22,8 @@ component: rb_itemscroller
     <div class="itemscroller-content use-column-group use-gutters-horizontal">
         {{#each items}}
             <div class="itemscroller-cell {{sizes}}">
-                <div class="docs-item" style="height: 200px; background: #888; width: 100%; border: 1px solid #444;">
-                    <span style="font-size: 48px; color: #fff; font-weight: bold;">{{ @index }}</span>
+                <div class="docs-item" style="min-height: 200px; background: #888; width: 100%; border: 1px solid #444;">
+                    <span style="display: block; font-size: 48px; color: #fff; font-weight: bold; text-align: center;">{{ @index }}</span>
                 </div>
             </div>
         {{/each}}
