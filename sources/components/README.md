@@ -1,8 +1,5 @@
 #Components
 The base of RawBlock is modularity. We achieve this by creating isolated components who are context unaware.
-
-Two methodologies who have influenced the setup of a component are [BEM](https://en.bem.info/method/) and [SMACSS](https://smacss.com/).
-
 While rawblock's naming convention gives the same grade of isolation/ re-usage of components compared to BEM it leads to much shorter class names.
 
 ###Block/Component name
@@ -11,7 +8,7 @@ In RawBlock a **block** is the top-level abstraction of an object, that represen
 Good examples
 - a main nav: `.rb-mainnav`
 - a search: `.rb-search`
-- a logo: `.logo`
+- a logo: `.rb-logo`
 
 **HTML Example**
 
@@ -61,5 +58,5 @@ The SASS `@at-root` directive can be of good help here:
 
 ####Modifiers/States
 Modifiers are flags set on **block** or **element** elements, they represent a different state or version. This is done with the modifier class, like `.is-collapsed` or `is-offset-left`.
-
 Modifier classes are only allowed as adjoining classes.
+

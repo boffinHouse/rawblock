@@ -1,0 +1,15 @@
+---
+component: rb_logo
+---
+
+<div class="rb-logo">
+	<a class="logo-inner" title="Startpage" href="{{ link }}">
+		<svg class="logo-symbol" aria-labelledby="logo-title">
+            <title id="logo-title">{{ title }}</title>
+			<use xlink:href="#page-logo"></use>
+		</svg>
+	</a>
+</div>
+
+<!--Add svg to top body element-->
+{{glob '*/img/logo.svg' }}
