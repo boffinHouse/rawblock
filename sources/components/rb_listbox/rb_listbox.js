@@ -53,8 +53,8 @@
 
                 this._onkeyboardInput = this._onkeyboardInput.bind(this);
 
+                this.setFocusElement();
                 this._getElements();
-                this._setFocusElement();
             },
             setOption: function (name, value) {
 
@@ -62,7 +62,7 @@
 
                 switch (name) {
                     case 'focusElement':
-                        this._setFocusElement();
+                        this.setFocusElement();
                         break;
                     case 'disconnected':
                         this[value ? '_disconnect' : '_connect']();
@@ -141,25 +141,34 @@
                 this.select(this.checkedItem || activeItem || 0);
                 this.scrollIntoView(this.checkedItem || activeItem, true);
             },
-            _setFocusElement: function () {
+            setFocusElement: function(){
                 var value = this.options.focusElement;
-
-                if (this.focusElement) {
-                    this.focusElement.removeAttribute('aria-activedescendant');
-                    this.focusElement.removeAttribute('tabindex');
-                    this.focusElement.removeEventListener('keydown', this._onkeyboardInput);
-                }
+                var old = this.focusElement;
 
                 this.focusElement = typeof value == 'object' ?
                     value :
                     (value && this.getElementsFromString(value)[0] || this.element)
                 ;
 
-                if(this.focusElement.tabIndex == -1 && !this.focusElement.getAttribute('tabindex')){
-                    this.focusElement.setAttribute('tabindex', '0');
+                if(old && old != this.focusElement){
+                    old.removeEventListener('keydown', this._onkeyboardInput);
+                } else {
+                    old = null;
                 }
 
                 this.focusElement.addEventListener('keydown', this._onkeyboardInput);
+
+                this._setFocusElement(old);
+            },
+            _setFocusElement: function (old) {
+                if (old) {
+                    old.removeAttribute('aria-activedescendant');
+                    old.removeAttribute('tabindex');
+                }
+
+                if(this.focusElement.tabIndex == -1 && !this.focusElement.getAttribute('tabindex')){
+                    this.focusElement.setAttribute('tabindex', '0');
+                }
             },
             _selectCheck: function (index, type) {
                 var item;
