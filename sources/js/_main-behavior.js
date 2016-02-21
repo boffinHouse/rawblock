@@ -17,15 +17,7 @@ __webpack_public_path__ = ASSETBASEPATH + 'js/';
 
 require('../../grunt/webpack/globloader!./glob.paths');
 
-(function(addImportHook){
-    addImportHook(function(moduleName){
-        //declare a map of module name -> paths
-        moduleName = 'rb_' + moduleName;
-        moduleName += '/' + moduleName;
-
-        require('bundle!../components/' + moduleName +'.lazy.js');
-    });
-})(rb.life.addImportHook);
+require('../../grunt/webpack/lazyglobloader!./lazyglob.paths');
 
 
 /* init after all modules are loaded or imports are configured. */
