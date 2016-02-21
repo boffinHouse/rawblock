@@ -1,8 +1,10 @@
-/*********************************************************
+//  Page
+//  Structure main page section like header, main, footer
+//
+//**********************************************************
 
-rb-page
-----------------------------------------------------------
-
+/*
+ * Component: rb-logo
 **********************************************************/
 .rb-page {
     width: 100%;
@@ -46,8 +48,6 @@ rb-page
         }
 
         &section-inner {
-            max-width: $grid-max-width;
-            margin: 0 auto;
             padding: 0 20px;
         }
     }

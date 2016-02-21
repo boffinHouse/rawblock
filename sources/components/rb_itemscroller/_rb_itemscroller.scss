@@ -1,18 +1,24 @@
-/*********************************************************
-
-rb-itemscroller
-----------------------------------------------------------
-
+/*
+ * Component: Itemscroller
 **********************************************************/
 
-//JS Config
+// Variables
+//**********************************************************
+
+// JS-Config
+//**********************************************************
 $itemscrollerJSCFG: (
+    queries: '500:100%, 860:50%, 33.333%'
 );
 
+// Dependencies (Helpers)
+//**********************************************************
+@import "../../sass/helpers/rb_accessibility";
+@import "../../sass/helpers/rb_arrow_icon";
+
+//----------------------------------------------------------
 .rb-itemscroller {
-    //@include rb-js-export((
-    //	queries: '500:100%, 860:50%, 33.333%'
-    //));
+    //@include rb-js-export($itemscrollerJSCFG);
     display: block;
     position: relative;
     transition: 300ms opacity;
@@ -35,10 +41,10 @@ $itemscrollerJSCFG: (
             width: auto;
             height: 100%;
 
-            //FOUC prevention in case of centerMode:
+            // FOUC prevention in case of centerMode:
+            // [1] tranlateX = 50% - (widthOfCell / 2)
             [data-center-mode="true"] & {
-                //tranlateX = 50% - (widthOfCell / 2)
-                transform: translate3d(25%, 0, 0);
+                transform: translate3d(25%, 0, 0); //[1]
             }
         }
 

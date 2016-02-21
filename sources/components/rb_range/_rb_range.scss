@@ -1,12 +1,15 @@
-/*********************************************************
-
-rb-range
-----------------------------------------------------------
-
+/*
+ * Component: Range
 **********************************************************/
+
+// Variables
+//**********************************************************
 $range-rail-size: 20px;
 $range-thumb-height: 32px;
 $range-thumb-width: 30px;
+
+// JS Config
+//**********************************************************
 $rangeJSCFG: (
 	watchCss: false,
 	animate: true,
@@ -19,16 +22,12 @@ $rangeJSCFG: (
 	min: 0,
 );
 
-.range-wrapper {
-	display: flex;
-	flex-wrap: wrap;
-	align-conten: center;
+// Dependencies (Helpers)
+//**********************************************************
+@import "../../sass/helpers/rb_accessibility";
+@import "../../sass/helpers/rb_arrow_icon";
 
-	input {
-		width: 100%;
-	}
-}
-
+//----------------------------------------------------------
 .rb-range {
 	//@include rb-js-export($rangeJSCFG);
 	background: #00aaff;
@@ -188,3 +187,12 @@ $rangeJSCFG: (
 	}
 }
 
+.range-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	align-conten: center;
+
+	input {
+		width: 100%;
+	}
+}

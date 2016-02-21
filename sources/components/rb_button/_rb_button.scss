@@ -1,27 +1,21 @@
-//
-// rb-button
-// rb-button component represent to main call-to-action elements. The buttons can be created with most markup elements, but `<button>`
-// and `<a>` are the most deserved.
-//
-// @modifiers
-// .is-stretched: stretched the button to full size (block)
-//
-// @modifiers colors
-// .is-primary: button that represent most important action.
-// .is-secondary: button for less utilized action.
-// .is-success: button that represent an successfull action.
-// .is-error: button that represent that something is wrong.
-// .is-warning: button that represent a warning action
-// .is-disabled: button that is disabled for calling action
-//
-// @Dependencies
+/*
+ * Component: Button
+**********************************************************/
+
+// Variables
+//**********************************************************
+
+
+// Dependencies (Helpers)
+//**********************************************************
 @import '../../sass/helpers/rb_px_to_units';
+
 
 .rb-button {
     display: inline-block;
     border: none;
     padding: rb-em-calc(15 20);
-    font-size: rb-rem-calc(16);
+    font-size: 1rem;
     font-weight: 400;
     color: #fff;
     background: #aaa;

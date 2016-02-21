@@ -1,9 +1,12 @@
-////
-/// rb-accordion
-/// List of items, allowing each item to hide or reveal additional content by clicking the header/button
-///
-///
-//// -------------------------
+/*
+ * Component: Accordion
+**********************************************************/
+
+// Variables
+//**********************************************************
+
+// JS Config
+//**********************************************************
 $accordionJSCFG: (
     multiple: false,
     selectedIndex: -1,
@@ -12,6 +15,7 @@ $accordionJSCFG: (
     animation: 'slide',
 );
 
+//----------------------------------------------------------
 .rb-accordion {
     width: 100%;
     @include rb-js-export($accordionJSCFG);

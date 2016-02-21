@@ -1,12 +1,26 @@
+/*
+ * Component: Dialog
+**********************************************************/
+
+// Variables
+//**********************************************************
+
+// JS Config
+//**********************************************************
 $dialogJSCFG: (
-    //watchCss: true,
-    //closeOnEsc: true,
-    //closeOnBackdropClick: false,
-    //open: true,
+    watchCss: true,
+    closeOnEsc: true,
+    closeOnBackdropClick: false,
+    open: true,
 );
 
+// Dependencies (Helpers)
+//**********************************************************
+@import '../../sass/helpers/animations/fx/rb_fx_zoom';
+
+//----------------------------------------------------------
 .rb-dialog {
-    @include rb-js-export($dialogJSCFG);
+    //@include rb-js-export($dialogJSCFG);
     @include rb-fx-zoomOutSmall;
     display: none;
     position: relative;
