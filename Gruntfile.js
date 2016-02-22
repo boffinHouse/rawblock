@@ -44,7 +44,8 @@
             'svgmin:svgLogo',
             'svgstore:svgLogo',
             'svgmin:svgIcons',
-            'svgstore:svgIcons'
+            'svgstore:svgIcons',
+            'clean:tmp',
         ]);
 
         // Build task
