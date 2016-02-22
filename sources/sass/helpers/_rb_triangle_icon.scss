@@ -1,25 +1,17 @@
+// Apply to generate arrow-like triangles icon.
 //
-// rb-triangle-icon mixin
-// --------------
-//
-// This mixin is used for generating arrow-like triangles.
-//
-//  Options:
-//  $height: height triangle
-//  $width: width triangle
-//  $color: color triangle  (use border-left-color to change color on hover/focus)
-//  $direction: right/left/up/down
-//
-// Sample input:
+// @param {Number} $height - size height arrow.
+// @param {Number} $width - size width arrow.
+// @param {Color} $color - color of arrow
+// @param {String} $direction - direction arrow points (up | down | right | left)
+
+// @example
 // .element {
-//      &::after {
-//			@include rb-triangle-icon(10px, 10px, #fff, left);
+//	    &::after {
+//			@include rb-triangle-icon(10px, 10px, #fff, down);
 //		}
-//
 // }
-
 @mixin rb-triangle-icon($height, $width, $color, $direction) {
-
 	content: '';
 	position: absolute;
 	height: $height;

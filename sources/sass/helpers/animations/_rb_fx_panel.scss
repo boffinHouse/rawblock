@@ -1,7 +1,9 @@
-/// Common styles for all panel animations.
+///Common styles for all panel animations.
 ///
 ///@param {String} $name - component name
 ///@param {List} $options - (@see rb_fx_animations) add sub-properties of the animation property to element with key/value, for example $options(delay: 2s, duration: 500ms).
+///
+///@author Jeroen Smit | Alex Farkas
 @mixin rb-fx-panel-common($name, $options:()) {
 
     .#{$name}- {
@@ -29,6 +31,8 @@
 ///@param {String} $name - component name
 ///@param {String} $animation - animation type the panel must use, for example fade or slide.
 ///@param {List} $options - (@see rb_fx_animations) add sub-properties of the animation property to element with key/value, for example $options(delay: 2s, duration: 500ms).
+///
+///@author Jeroen Smit
 @mixin rb-fx-panel($name, $animation: '', $options:()){
 
     // Animations classes
