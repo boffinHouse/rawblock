@@ -649,7 +649,7 @@ if (!window.rb) {
      * @returns {string}
      */
     rb.getID = function () {
-        id += (Math.round(Math.random() * 1000));
+        id += Math.round(Math.random() * 1000);
         return id.toString(36);
     };
 
