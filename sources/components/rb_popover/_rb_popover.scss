@@ -1,16 +1,24 @@
-/*********************************************************
-
-rb-popover
-----------------------------------------------------------
-
+/*
+ * Component: Popover
 **********************************************************/
-$popoverJSCFG: ();
+
+// Variables
+//**********************************************************
 $popover-margin: 10px;
 $popover-bg-color: #111;
 $popover-arrow-size: 10px;
 
+// JS Config
+//**********************************************************
+$popoverJSCFG: ();
+
+// Dependencies (Helpers)
+//**********************************************************
+@import "../../sass/helpers/rb_accessibility";
+@import "../../sass/helpers/rb_arrow_icon";
+
+//----------------------------------------------------------
 .rb-popover {
-    //@include rb-js-export($popoverJSCFG);
     position: absolute;
     width: 200px;
     z-index: 30;
@@ -40,7 +48,6 @@ $popover-arrow-size: 10px;
         visibility: visible;
         opacity: 1;
     }
-
 
     &,
     &.is-top,

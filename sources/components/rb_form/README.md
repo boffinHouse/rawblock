@@ -3,7 +3,7 @@
 
 ##Usage
 To apply this component:
-- Add class `rb-form` to the form element. If validation is needed add also attribute `data-module="validation"` and class `js-rb-life`.
+- Add class `rb-form` to the form element. If validation is needed add also attribute `data-module="validate"` and class `js-rb-life`.
 - Form element are nested inside container `form-field` and a corresponding modifier class is added to the container. For example when you use element `<select>` you
 add class `is-select` the container `form-field`.
 
@@ -154,7 +154,7 @@ a container element `form-group` and attribute `role="group"`.
     <form action="#" class="rb-form">
         {{#mergeJSON 'label: "Grouped Inputs"'}}
         {{> rb_grouped_begin}}
-        <div class="form-row use-column-group use-gutters-horizontal">
+        <div class="form-row use-column-group use-gutters">
             <div class="form-box use-size-50">
                 {{#mergeJSON rb_form.input 'label: "Default group input 50"'}}
                     {{> rb_input}}
@@ -168,55 +168,50 @@ a container element `form-group` and attribute `role="group"`.
         </div>        
         {{> rb_grouped_end}}
         {{/mergeJSON}}
+        {{#mergeJSON 'label: "Radio Grouped"'}}
+              {{> rb_grouped_begin}}
+              <div class="form-row use-column-group use-gutters">
+              <div class="form-box use-size-33">
+            {{#mergeJSON rb_form.radio 'label: "Radio 1"'}}
+              {{> rb_input}}
+            {{/mergeJSON}}
+            </div>
+            <div class="form-box  use-size-33">
+            {{#mergeJSON rb_form.radio 'label: "Radio 2"'}}
+              {{> rb_input}}
+            {{/mergeJSON}}
+            </div>
+            <div class="form-box use-size-33">
+            {{#mergeJSON rb_form.radio 'label: "Radio 3"'}}
+              {{> rb_input}}
+            {{/mergeJSON}}
+            </div>
+              </div>
+              {{> rb_grouped_end}}
+         {{/mergeJSON}}
+         {{#mergeJSON 'label: "Checkbox Grouped"'}}
+               {{> rb_grouped_begin}}
+               <div class="form-row use-column-group use-gutters-horizontal">
+               <div class="form-box use-size-33">
+             {{#mergeJSON rb_form.checkbox 'label: "Checkbox 1"'}}
+               {{> rb_input}}
+             {{/mergeJSON}}
+             </div>
+             <div class="form-box use-size-33">
+             {{#mergeJSON rb_form.checkbox 'label: "Checkbox 2"'}}
+               {{> rb_input}}
+             {{/mergeJSON}}
+             </div>
+             <div class="form-box use-size-33">
+             {{#mergeJSON rb_form.checkbox 'label: "Checkbox 3"'}}
+               {{> rb_input}}
+             {{/mergeJSON}}
+             </div>
+               </div>
+               {{> rb_grouped_end}}
+               {{/mergeJSON}}
     </form>        
-
-    <form action="#" class="rb-form">
-      {{#mergeJSON 'label: "Radio Grouped"'}}
-      {{> rb_grouped_begin}}
-      <div class="form-row use-column-group use-gutters-horizontal">
-      <div class="form-box use-size-33">
-    {{#mergeJSON rb_form.radio 'label: "Radio 1"'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
-    </div>
-    <div class="form-box  use-size-33">
-    {{#mergeJSON rb_form.radio 'label: "Radio 2"'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
-    </div>
-    <div class="form-box use-size-33">
-    {{#mergeJSON rb_form.radio 'label: "Radio 3"'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
-    </div>
-      </div>
-      {{> rb_grouped_end}}
-      {{/mergeJSON}}
-    </form>  
-        
-    <form action="#" class="rb-form">
-      {{#mergeJSON 'label: "Checkbox Grouped"'}}
-      {{> rb_grouped_begin}}
-      <div class="form-row use-column-group use-gutters-horizontal">
-      <div class="form-box use-size-33">
-    {{#mergeJSON rb_form.checkbox 'label: "Checkbox 1"'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
-    </div>
-    <div class="form-box use-size-33">
-    {{#mergeJSON rb_form.checkbox 'label: "Checkbox 2"'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
-    </div>
-    <div class="form-box use-size-33">
-    {{#mergeJSON rb_form.checkbox 'label: "Checkbox 3"'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
-    </div>
-      </div>
-      {{> rb_grouped_end}}
-      {{/mergeJSON}}
-    </form>        
+      
 </div> 
 
 <h3 class="docs-example-title">Markup</h3>
@@ -234,20 +229,93 @@ a container element `form-group` and attribute `role="group"`.
 </div
 ...
 ```
+<hr>
 
-##Control States
-Basic information is giving through feedback states on form controls.
+##Disabled
+Add attribute `disabled` to a form element and it will appear muted. 
 
-<h3 class="docs-example-title">Disabled</h3>
+<h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
- {{#mergeJSON rb_form.input 'label: "Disabled field", booleans:["disabled"]'}}
-      {{> rb_input}}
-    {{/mergeJSON}}
+<form action="#" class="rb-form">
+ <div class="form-row use-column-group use-gutters">
+     <div class="form-box use-size-50">
+         {{#mergeJSON rb_form.input 'label: "Disabled field", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
+         {{> rb_input}}
+         {{/mergeJSON}}
+     </div> 
+     <div class="form-box use-size-50">
+         {{#mergeJSON rb_form.select 'label: "Disabled select", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
+         {{> rb_input}}
+         {{/mergeJSON}}
+     </div>
+      <div class="form-box use-size-50">
+          {{#mergeJSON rb_form.radio 'label: "Disabled radio", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
+          {{> rb_input}}
+          {{/mergeJSON}}
+      </div>  
+      <div class="form-box use-size-50">
+          {{#mergeJSON rb_form.checkbox 'label: "Disabled checkbox", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
+          {{> rb_input}}
+          {{/mergeJSON}}
+      </div>  
+ </div>  
+</form>  
+</div>
+<h3 class="docs-example-title">Markup</h3>
+ 
+```html
+...
+<input type="text" disabled="disabled">
+...
+```
+<hr>
+
+
+
+<h2>Validation</h2>
+Apply form validation by added attribute `required` to form elements who are required. Apply custom validation by
+adding attribute `data-module="validate"` and class `js-rb-life`  to component `<form>`.
+
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example">
+<form action="#" class="rb-form js-rb-life" data-module="validate">
+ <div class="form-row use-column-group use-gutters">
+     <div class="form-box use-size-50">
+         {{#mergeJSON rb_form.input 'label: "Required field", booleans:["required"]'}}
+         {{> rb_input}}
+         {{/mergeJSON}}
+     </div> 
+     <div class="form-box use-size-50">
+         {{#mergeJSON rb_form.select 'label: "Required select", booleans:["required"]'}}
+         {{> rb_input}}
+         {{/mergeJSON}}
+     </div>
+      <div class="form-box use-size-50">
+          {{#mergeJSON rb_form.radio 'label: "Required radio", booleans:["required"]'}}
+          {{> rb_input}}
+          {{/mergeJSON}}
+      </div>  
+      <div class="form-box use-size-50">
+          {{#mergeJSON rb_form.checkbox 'label: "Required checkbox", booleans:["required"]'}}
+          {{> rb_input}}
+          {{/mergeJSON}}
+      </div>  
+ </div> 
+ <button>Submit</button>
+</form>  
 </div>
 
-##Validation
-Apply form validation by added attribute `required` to form elements who are required. 
-
-
+<h3 class="docs-example-title">Markup</h3>
+ 
+```html
+...
+<form class="rb-form js-rb-life" data-module="rb-validate">
+    .. 
+    <input type="text" required="required">
+    ..
+</form>
+...
+```
+<hr>
        
 

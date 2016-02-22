@@ -1,15 +1,28 @@
+/*
+ * Component: panel
+**********************************************************/
+
+// Variables
+//**********************************************************
+
+// JS-Config
+//**********************************************************
+$panelJSCFG: (
+	animation: 'slide'
+);
+
+// Dependencies (Helpers)
+//**********************************************************
+@import "../../sass/helpers/rb_accessibility";
+@import "../../sass/helpers/rb_arrow_icon";
+
+
 .rb-panel {
-	@if function-exists(rbToJSON) {
-		$panelJSCFG: (
-			animation: 'slide'
-		);
-
-		@include rb-js-export($panelJSCFG);
-	}
-
+	@include rb-js-export($panelJSCFG);
 	display: block;
 	overflow: hidden;
 	visibility: hidden;
+	width: 100%;
 	height: 0;
 	opacity: 0;
 	transition: opacity 400ms, visibility 400ms;

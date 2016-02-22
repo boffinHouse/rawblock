@@ -1,21 +1,27 @@
-//
-// rb-forms
-//
-// @
+/*
+ * Component: Form
+**********************************************************/
+
+// Variables
+//**********************************************************
+
+
+// Dependencies (Helpers)
+//**********************************************************
 @import "../../sass/helpers/rb_form_elements";
 
+//----------------------------------------------------------
 .rb-form {
 	width: 100%;
-	font-size: rb-rem-calc(18);
+	font-size: 1rem;
 
 	@at-root .form- {
 
 		&section-legend {
 			margin: 0 0 20px;
-			font: 600 32px/1 sans-serif;
+			font: 600 rb-em-calc(32)/1 sans-serif;
 			color: #333;
 		}
-
 
 		&subsection-legend {
 			margin: 0 0 20px;
@@ -24,13 +30,9 @@
 		}
 
 		&intro {
-			margin: rb-rem-calc(0 0 30);
-			font-size: rb-rem-calc(18);
-			line-height: rb-rem-calc(24);
-		}
-
-		&row {
-			align-items: flex-end;
+			margin: rb-em-calc(0 0 30);
+			font-size: rb-em-calc(18);
+			line-height: rb-em-calc(24);
 		}
 
 		&box {
@@ -44,12 +46,9 @@
 
 		&note {
 			padding: 10px;
-			font-family: sans-serif;
-			font-size: rb-rem-calc(12);
-			line-height: rb-rem-calc(18);
-			font-weight: 700;
-			color: #333;
 			margin-bottom: rb-rem-calc(20);
+			font: 600 rb-em-calc(12)/1.5 sans-serif;
+			color: #333;
 		}
 
 		//Validation

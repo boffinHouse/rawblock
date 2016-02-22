@@ -1,9 +1,12 @@
-/*********************************************************
-
-rb-scrolly
-----------------------------------------------------------
-
+/*
+ * Component: Scrolly
 **********************************************************/
+
+// Variables
+//**********************************************************
+
+// JS-Config
+//**********************************************************
 $scrollyJSCFG: (
 	switchedOff: false,
 	from: '-90eh',
@@ -14,6 +17,11 @@ $scrollyJSCFG: (
 	throttleDelay: 0,
 );
 
+// Dependencies (Helpers)
+//**********************************************************
+@import "../../sass/helpers/rb_px_to_units";
+
+//----------------------------------------------------------
 .rb-scrolly {
 	@include rb-js-export($scrollyJSCFG);
 	position: relative;
@@ -47,7 +55,6 @@ $scrollyJSCFG: (
 	}
 
 	&.is-complex-scrolly {
-
 		height: 250px;
 		background: #333;
 		transition: 99ms opacity, 99ms top;

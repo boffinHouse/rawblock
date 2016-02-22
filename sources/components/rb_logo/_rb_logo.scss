@@ -1,0 +1,24 @@
+//  Logo
+//  Creates graphic representation or symbol of the website (like company name
+//
+//**********************************************************
+
+/*
+ * Component: rb-logo
+**********************************************************/
+.rb-logo {
+	width: 100%;
+
+	@at-root .logo- {
+
+		&inner {
+			display: block;
+		}
+
+		&symbol {
+			height: 21px;
+			width: 115px;
+		}
+	}
+}
+

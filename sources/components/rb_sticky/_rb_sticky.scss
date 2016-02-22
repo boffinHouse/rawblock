@@ -1,9 +1,12 @@
-////
-/// rb-sticky
-/// Creates a sticky element, that can be stuck to the top or the bottom of the viewport.
-///
-///
-//// -------------------------
+/*
+ * Component: Sticky
+**********************************************************/
+
+// Variables
+//**********************************************************
+
+// JS-Config
+//**********************************************************
 $stickyJSCFG: (
     container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
     switchedOff: false,
@@ -16,6 +19,11 @@ $stickyJSCFG: (
     childStyle: '',
 );
 
+// Dependencies (Helpers)
+//**********************************************************
+@import "../../sass/helpers/rb_px_to_units";
+
+//----------------------------------------------------------
 .rb-sticky {
     @include rb-js-export(map_merge($stickyJSCFG, (
         topOffset: 0,
@@ -30,14 +38,12 @@ $stickyJSCFG: (
     padding: 0 !important;
     position: static;
     backface-visibility: hidden;
-    //DONT CHANGE:
+    //END DONT CHANGE
 
     //Default is top
     top: auto;
     bottom: auto;
     z-index: 5;
-
-
 
     &.is-bottom {
         @include rb-js-export(map_merge($stickyJSCFG, (

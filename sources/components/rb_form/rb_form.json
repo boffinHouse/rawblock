@@ -21,18 +21,14 @@
         "label": "Checkbox",
         "invalid": "",
         "requiredNotion": "",
-        "booleans": [
-
-        ]
+        "booleans": []
     },
     "select": {
         "type": "select",
         "label": "Selectbox",
         "invalid": false,
         "requiredNotion": "",
-        "booleans": [
-            "required"
-        ],
+        "booleans": [],
         "items": [
             {
                 "label": "Please Choose",

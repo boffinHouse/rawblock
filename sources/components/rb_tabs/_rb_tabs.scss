@@ -1,15 +1,24 @@
-/*********************************************************
-
-rb-tabs
-----------------------------------------------------------
-
+/*
+ * Component: Itemscroller
 **********************************************************/
+
+// Variables
+//**********************************************************
+
+// JS-Config
+//**********************************************************
 $tabsJSCFG: (
     watchCss: false,
     //animation: 'adaptHeight',
     duration: 400,
 );
 
+// Dependencies (Helpers)
+//**********************************************************
+@import "../../sass/helpers/rb_px_to_units";
+@import "../../sass/helpers/animations/rb_fx_panel";
+
+//----------------------------------------------------------
 .rb-tabs {
     @include rb-js-export($tabsJSCFG);
     width: 100%;
@@ -73,7 +82,6 @@ $tabsJSCFG: (
             padding: 20px;
         }
     }
-
 
     @include rb-fx-panel(tabs, fade);
     @include rb-fx-panel(tabs, slide);
