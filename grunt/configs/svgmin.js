@@ -51,18 +51,18 @@ module.exports = {
 		},
 		files: [
 			{
-				'<%= paths.tmp %>/svgmin/logo/logo.svg': ['<%= paths.src %>/img/logo/*.svg']
+				'<%= paths.tmp %>/svgmin/logo/logo.svg': ['<%= paths.src %>/components/rb_logo/*.svg']
 			}
 		]
 	},
 	svgIcons: {
 		files: [
 			{
-				cwd: '<%= paths.src %>/img/icons',
+				cwd: '<%= paths.src %>/components/',
 				dest: '<%= paths.tmp %>/svgmin/icons',
 				expand: true,
 				ext: '.svg',
-				src: ['*.svg']
+				src: ['**/*.svg', '!rb_logo/*.svg']
 			}
 		]
 	},

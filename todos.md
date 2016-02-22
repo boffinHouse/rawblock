@@ -1,0 +1,1 @@
+- SVG Icon sprite with svgstore:  Find a solution to remove duplicate icons in components, for example testing svg against each other. 
