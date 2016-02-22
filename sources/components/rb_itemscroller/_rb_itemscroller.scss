@@ -134,6 +134,18 @@ $itemscrollerJSCFG: (
             }
         }
     }
+
+    //@media (min-width: 800px) {
+    //    @include rb-js-export((
+    //        switchedOff: true,
+    //    ));
+    //
+    //    @at-root .itemscroller- {
+    //        &content {
+    //            flex-wrap: wrap;
+    //        }
+    //    }
+    //}
 }
 
 

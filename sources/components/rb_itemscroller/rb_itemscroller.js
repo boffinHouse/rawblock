@@ -274,6 +274,9 @@
                 $(this.viewport).css({
                     position: '',
                 });
+
+                this.helperElem.style.display = 'none';
+
                 this.setSwitchedOffClass();
             },
             setSwitchedOffClass: function(){
@@ -295,6 +298,7 @@
                     .css({
                         webkitFlexGrow: 0,
                         flexGrow: 0,
+                        display: this.options.switchedOff ? 'none' : ''
                     })
                     .get(0)
                 ;
@@ -310,6 +314,9 @@
                     that.$scroller.css({
                         position: 'relative',
                     });
+
+                    that.helperElem.style.display = '';
+
                     that._updateControls();
                     that._slideComplete();
                 }, true);
