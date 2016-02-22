@@ -4,13 +4,15 @@
 // @param {Number} $width - size width arrow.
 // @param {Color} $color - color of arrow
 // @param {String} $direction - direction arrow points (up | down | right | left)
-
+//
 // @example
 // .element {
 //	    &::after {
 //			@include rb-triangle-icon(10px, 10px, #fff, down);
 //		}
 // }
+//
+// @author Jeroen Smit
 @mixin rb-triangle-icon($height, $width, $color, $direction) {
 	content: '';
 	position: absolute;

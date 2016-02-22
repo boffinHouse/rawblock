@@ -5,14 +5,15 @@
 // @param {Number} $thickness - line thickness of arrow
 // @param {Color} $color - color of arrow (use border-left-color to change color on hover/focus)
 // @param {String} $direction - direction arrow points (up | down | right | left)
-
+//
 // @example
 // .element {
 //	    &::after {
 //			@include arrow-icon(10px, 10px, 2px, #fff, down);
 //		}
 // }
-
+//
+// @author Jeroen Smit
 @mixin rb-arrow-icon($height, $width, $thickness, $color, $direction) {
     content: '';
     position: absolute;
