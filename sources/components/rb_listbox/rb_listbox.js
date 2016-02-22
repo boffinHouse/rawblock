@@ -19,6 +19,8 @@
              */
             defaults: {
                 focusElement: '',
+                defaultSelected: 0,
+                checkWithSpace: false,
             },
             statics: {
                 regList: /^(?:ol|ul)$/i,
@@ -42,10 +44,10 @@
                 this._super(element, initialDefaults);
 
                 this.selectedIndex = -1;
-                this.selectedItem = -1;
+                this.selectedItem = null;
 
                 this.checkedIndex = -1;
-                this.checkedItem = -1;
+                this.checkedItem = null;
 
                 this.isList = Listbox.regList.test(element.nodeName);
 
@@ -121,7 +123,7 @@
                     prevent = true;
                     this.selectPrev();
                     this.scrollIntoView(this.selectedItem);
-                } else if (e.keyCode == 32 || e.keyCode == 13) {
+                } else if (this.selectedItem && (e.keyCode == 13 || (e.keyCode == 32 && this.options.checkWithSpace))) {
                     prevent = true;
                     this.checkSelected();
                 }
@@ -138,7 +140,7 @@
                 if(activeItem){
                     activeItem = this.query('#'+ activeItem);
                 }
-                this.select(this.checkedItem || activeItem || 0);
+                this.select(this.checkedItem || activeItem || this.options.defaultSelected);
                 this.scrollIntoView(this.checkedItem || activeItem, true);
             },
             setFocusElement: function(){

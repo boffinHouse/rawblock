@@ -15,7 +15,7 @@
 
     var getData = function (oReq) {
         var data = oReq.responseXML || oReq.responseText;
-        var contentType = oReq.getResponseHeader('Content-Type') || '';
+        var contentType = (oReq.getResponseHeader('Content-Type') || '').split(';')[0];
         if (contentType.endsWith('json')) {
             data = rb.jsonParse(oReq.responseText) || data;
         }
