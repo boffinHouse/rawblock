@@ -42,7 +42,10 @@
 
         grunt.registerTask('svg', [
             'svgmin:svgLogo',
-            'svgstore:svgLogo'
+            'svgstore:svgLogo',
+            'svgmin:svgIcons',
+            'svgstore:svgIcons',
+            'clean:tmp',
         ]);
 
         // Build task
@@ -62,7 +65,7 @@
         grunt.registerTask('dev', [
             'clean:dev',
             'clean:tmp',
-            //'svg',
+            'svg',
             'css',
             'jshint',
             'uglify:inline',

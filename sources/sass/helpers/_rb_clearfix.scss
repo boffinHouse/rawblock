@@ -1,4 +1,10 @@
-@mixin rb-clearfix() {
+//Provides way for an element (floated) to automatically clear its child elements.
+//
+// @example
+// .your-element {
+//      @include rb-clearfix;
+// }
+@mixin rb-clearfix {
     &::after,
     &::before {
         clear: both;

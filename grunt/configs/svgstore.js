@@ -18,10 +18,10 @@ module.exports = {
 			}
 		},
 		files: {
-			'<%= paths.dev %>/img/logo.svg': ['<%= paths.tmp %>/svgmin/logo.svg']
+			'<%= paths.dev %>/img/logo.svg': ['<%= paths.tmp %>/svgmin/logo/logo.svg']
 		}
 	},
-	svgSprite: {
+	svgIcons: {
 		options: {
 			prefix : 'icon-',
 			svg: {
@@ -29,7 +29,7 @@ module.exports = {
 			}
 		},
 		files: {
-			'<%= paths.dev %>/img/icons/icon-sprite.svg': ['<%= paths.tmp %>/svgmin/icons/*.svg']
+			'<%= paths.dev %>/img/icons/icon-sprite.svg': ['<%= paths.tmp %>/svgmin/icons/**/*.svg']
 		}
 	}
 };

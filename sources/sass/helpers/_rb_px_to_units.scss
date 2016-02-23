@@ -16,7 +16,7 @@ $root-value: 16px !default;
     $value: ($value / $base-value) + $unit;
 
     @if ($value == ("0" + $unit)) {
-        $value: 0;  // Turn 0rem into 0
+        $value: 0;  // Turn 0rem/0em into 0
     }
 
     @return $value;

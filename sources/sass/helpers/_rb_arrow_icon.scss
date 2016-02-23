@@ -1,50 +1,44 @@
+// Apply to generate arrow-like line icon.
 //
-// rb-arrow-icon mixin
-// --------------
+// @param {Number} $height - size height arrow.
+// @param {Number} $width - size width arrow.
+// @param {Number} $thickness - line thickness of arrow
+// @param {Color} $color - color of arrow (use border-left-color to change color on hover/focus)
+// @param {String} $direction - direction arrow points (up | down | right | left)
 //
-// This mixin is used for generating arrow-like icon.
-//
-//  Options:
-//  $height: height arrow
-//  $width: width arrow
-//  $borderWidth: border width arrow
-//  $color: color arrow (use border-left-color to change color on hover/focus)
-//  $direction: right/left/up/down
-//
-// Sample input:
+// @example
 // .element {
-//      &::after {
+//	    &::after {
 //			@include arrow-icon(10px, 10px, 2px, #fff, down);
 //		}
-//
 // }
+//
+// @author Jeroen Smit
+@mixin rb-arrow-icon($height, $width, $thickness, $color, $direction) {
+    content: '';
+    position: absolute;
+    height: $height;
+    width: $width;
+    border-top: $thickness solid $color;
+    border-right: $thickness solid $color;
+    background-color: rgba(255,255,255,0);
+    pointer-events: none;
 
-@mixin rb-arrow-icon($height, $width, $borderWidth, $color, $direction) {
-	content: '';
-	position: absolute;
-	height: $height;
-	width: $width;
-	border-top: $borderWidth solid $color;
-	border-right: $borderWidth solid $color;
-	background-color: rgba(255,255,255,0);
-	pointer-events: none;
+    @if $direction == "right" {
+        transform: rotate(45deg);
+    }
 
-	@if $direction == "right" {
-		transform: rotate(45deg);
-	}
+    @if $direction == "down" {
+        transform: rotate(135deg);
+    }
 
-	@if $direction == "down" {
-		transform: rotate(135deg);
-	}
+    @if $direction == "up" {
+        transform: rotate(-45deg);
+    }
 
-	@if $direction == "up" {
-		transform: rotate(-45deg);
-	}
-
-	@if $direction == "left" {
-		transform: rotate(-135deg);
-	}
-
+    @if $direction == "left" {
+        transform: rotate(-135deg);
+    }
 }
 
 

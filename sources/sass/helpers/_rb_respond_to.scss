@@ -1,23 +1,34 @@
-// ====================================================================
-//  rb-respond-to
+// Managing responsive breakpoints from breakpointConfig
 //
-//  Managing responsive breakpoints from breakpointConfig
-//=====================================================================
+// @param {List} $breakpoint - media query where styles must apply to. (breakpoint name must be available in breakpointConfig)
+//
+// @require $breakpointConfig
+//
+// @example
+// .your-component {
+//      @include rb-respond-to(l, m) { Change elements in breakpoint l (large screen) and m (medium screen).
+//          .your-element {
+//              ...
+//          }
+//      }
+//  }
+// @author Jeroen Smit
+//
 @mixin rb-respond-to($breakpoint) {
-	@if map-has-key($breakpointConfigs, $breakpoint) {
-		$breakpointData: map-get($breakpointConfigs, $breakpoint);
-		$breakpointMedia: map-get($breakpointData, media);
+    @if map-has-key($breakpointConfigs, $breakpoint) {
+        $breakpointData: map-get($breakpointConfigs, $breakpoint);
+        $breakpointMedia: map-get($breakpointData, media);
 
-		@if($breakpoint == 'all') {
-			@content;
-		}
-		@else {
-			@media #{$breakpointMedia} {
-				@content;
-			}
-		}
-	}
-	@else {
-		@warn "Value #{$breakpoint} not found in $breakpoint-configs"
-	}
+        @if($breakpoint == 'all') {
+            @content;
+        }
+        @else {
+            @media #{$breakpointMedia} {
+                @content;
+            }
+        }
+    }
+    @else {
+        @warn "Value #{$breakpoint} not found in $breakpoint-configs"
+    }
 }
