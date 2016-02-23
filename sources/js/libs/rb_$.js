@@ -39,6 +39,7 @@
         this.elements = elements;
         this.length = this.elements.length || 0;
     };
+    var regComma = /^\d+,\d+/;
     var regUnit = /^\d+\.*\d*(px|em|rem|%|deg)$/;
     var fn = Dom.prototype;
     var steps = {};
@@ -247,6 +248,10 @@
             } else {
                 styles = styles || rb.getStyles(elem, null);
                 ret = styles.getPropertyValue(name) || styles[name];
+            }
+
+            if(ret && regComma.test(ret)){
+                ret = ret.replace(',', '.');
             }
 
             if (extra) {
