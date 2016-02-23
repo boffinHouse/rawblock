@@ -1,5 +1,18 @@
-$root-value: 16px !default;
-@function rb-convert-px-to-unit($value, $base-value: $root-value, $unit: rem)  {
+
+////
+/// @group functions
+////
+
+$base-fontsize: 100% !default;
+
+/// Convert one or more pixel values to matching unit values.
+///
+/// @param {Number} $value - Value to convert
+/// @param {Number}
+@function rb-convert-px-to-unit($value, $base-value: null, $unit: rem)  {
+    @if $base-value == null {
+        $base-value: $base-fontsize;
+    }
 
     @if($value == "auto") {
         @return $value;
@@ -9,8 +22,15 @@ $root-value: 16px !default;
         $value: $value * 1px;
     }
 
-    @if (unitless($base-value)) {
-        $base-value: $base-value * 1px;
+
+    @if type-of($base-value ) == 'number'{
+        @if (unit($base-value) == '%') {
+            $base-value: strip-unit($base-value);
+            $base-value: (16 / 100) * $base-value * 1px;
+        }
+        @elseif (unitless($base-value)) {
+            $base-value: $base-value * 1px;
+        }
     }
 
     $value: ($value / $base-value) + $unit;
@@ -22,7 +42,7 @@ $root-value: 16px !default;
     @return $value;
 }
 
-@function rb-rem-calc($values, $base-value: $root-value) {
+@function rb-rem-calc($values, $base-value: null) {
     $value-length: length($values);
     $remValues: ();
 
@@ -37,7 +57,7 @@ $root-value: 16px !default;
     @return $remValues;
 }
 
-@function rb-em-calc($values, $base-value: $root-value) {
+@function rb-em-calc($values, $base-value: null) {
     $value-length: length($values);
     $emValues: ();
 

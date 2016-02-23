@@ -17,79 +17,78 @@ $accordionJSCFG: (
 
 //----------------------------------------------------------
 .rb-accordion {
-    width: 100%;
     @include rb-js-export($accordionJSCFG);
-
-    @at-root .accordion- {
-
-        &btn {
-            display: block;
-            width: 100%;
-            border: none;
-            border-bottom: 1px solid #aaa;
-
-            padding: rb-em-calc(20);
-            text-align: left;
-            background: #e6e6e6;
-            touch-action: manipulation;
-
-            &:hover,
-            &:focus {
-                background: #ddd;;
-            }
-        }
-
-        &panel {
-            @include rb-clearfix;
-            display: block;
-            height: 0;
-            overflow: hidden;
-            background: #f7f7f7;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 400ms, visibility 400ms;
-
-            &.is-open {
-                visibility: inherit;
-                overflow: visible;
-                height: auto;
-                opacity: 1;
-            }
-        }
-
-        &content {
-            padding: 20px 20px 0;
-        }
-
-        &controls {
-            margin-bottom: rb-em-calc(15);
-        }
-
-        &ctrl-btn {
-            padding: rb-em-calc(7 10);
-            border: none;
-            transition: background 300ms ease-in;
-            touch-action: manipulation;
-
-            &:hover,
-            &:focus {
-                background: #777;
-            }
-        }
-    }
-
-    @media (max-width: 500px) {
-        @include rb-js-export(map_merge($accordionJSCFG, (
-            switchedOff: true
-        )));
-
-        .accordion-panel {
-            visibility: visible;
-            overflow: visible;
-            height: auto;
-            opacity: 1;
-        }
-    }
-
+    width: 100%;
 }
+
+.accordion-btn {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #aaa;
+
+    padding: rb-em-calc(20);
+    text-align: left;
+    background: #e6e6e6;
+    touch-action: manipulation;
+
+    &:hover,
+    &:focus {
+        background: #ddd;;
+    }
+}
+
+.accordion-panel {
+    @include rb-clearfix;
+    display: block;
+    height: 0;
+    overflow: hidden;
+    background: #f7f7f7;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 400ms, visibility 400ms;
+
+    &.is-open {
+        visibility: inherit;
+        overflow: visible;
+        height: auto;
+        opacity: 1;
+    }
+}
+
+.accordion-content {
+    padding: 20px 20px 0;
+}
+
+.accordion-controls {
+    margin-bottom: rb-em-calc(15);
+}
+
+.accordion-ctrl-btn {
+    padding: rb-em-calc(7 10);
+    border: none;
+    transition: background 300ms ease-in;
+    touch-action: manipulation;
+
+    &:hover,
+    &:focus {
+        background: #777;
+    }
+}
+
+
+@media (max-width: 500px) {
+    @include rb-js-export(map_merge($accordionJSCFG, (
+        switchedOff: true
+    )));
+
+    .accordion-panel {
+        visibility: visible;
+        overflow: visible;
+        height: auto;
+        opacity: 1;
+    }
+}
+
+
 

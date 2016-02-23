@@ -15,38 +15,35 @@
 	width: 100%;
 	padding: 20px;
 	background: #444;
+}
 
-	@at-root {
-		.siteinfo- {
+.siteinfo-copyright {
+	margin: 0;
+	font: 14px/16px $font-sans-serif;
+	color: #ccc;
+}
 
-			&copyright {
-				margin: 0;
-				font: 14px/16px $font-sans-serif;
-				color: #ccc;
-			}
+.siteinfo-list {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	list-style: none;
+}
 
-			&list {
-				display: flex;
-				flex-wrap: wrap;
-				margin: 0;
-				list-style: none;
-			}
+.siteinfo-item {
+	font: 14px/16px $font-sans-serif;
+	color: #ccc;
+}
 
-			&item {
-				font: 14px/16px $font-sans-serif;
-				color: #ccc;
-			}
+.siteinfo-link {
+	display: block;
+	padding: 0 10px;
+	color: #ccc;
 
-			&link {
-				display: block;
-				padding: 0 10px;
-				color: #ccc;
-
-				&:hover,
-				&:focus {
-					text-decoration: underline;
-				}
-			}
-		}
+	&:hover,
+	&:focus {
+		text-decoration: underline;
 	}
 }
+
+

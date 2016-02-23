@@ -29,54 +29,6 @@ $dialogJSCFG: (
     margin: auto;
     outline: none;
 
-    @at-root {
-        .is-open-dialog-within,
-        .is-open-dialog-within > body {
-            overflow: hidden;
-        }
-
-        .dialog-backdrop {
-            @include rb-fx-fadeOut();
-            visibility: hidden;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: auto;
-            z-index: 999;
-            opacity: 0;
-            background: rgba(0, 0, 0, 0.6);
-            transition: 400ms visibility;
-
-            .rb-dialog {
-                display: block;
-            }
-
-            &.is-open {
-                @include rb-fx-fadeIn();
-                display: block;
-                visibility: inherit;
-
-                .rb-dialog {
-                    @include rb-fx-zoomInSmall;
-                    visibility: inherit;
-                }
-            }
-        }
-
-        .dialog-backdrop-document {
-            min-height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    }
-
-    .dialog-close {
-
-    }
-
     @media (max-width: 620px), (max-height: 320px) {
         margin: 0;
         width: 100%;
@@ -90,3 +42,54 @@ $dialogJSCFG: (
         }
     }
 }
+
+.dialog-close {
+
+}
+
+//body styles
+.is-open-dialog-within,
+.is-open-dialog-within > body {
+    overflow: hidden;
+}
+.dialog-backdrop {
+    @include rb-fx-fadeOut();
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    z-index: 999;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.6);
+    transition: 400ms visibility;
+
+    .rb-dialog {
+        display: block;
+    }
+
+    &.is-open {
+        @include rb-fx-fadeIn();
+        display: block;
+        visibility: inherit;
+
+        .rb-dialog {
+            @include rb-fx-zoomInSmall;
+            visibility: inherit;
+        }
+    }
+}
+
+.dialog-backdrop-document {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+

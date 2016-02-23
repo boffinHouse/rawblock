@@ -1,5 +1,5 @@
 /*
- * Component: Itemscroller
+ * Component: Tabs
 **********************************************************/
 
 // Variables
@@ -21,71 +21,70 @@ $tabsJSCFG: (
 //----------------------------------------------------------
 .rb-tabs {
     @include rb-js-export($tabsJSCFG);
-    width: 100%;
-    margin: auto;
-
-
-    @at-root .tabs- {
-
-        //Buttons
-        &nav {
-            display: flex;
-            flex-wrap: wrap;
-            position: relative;
-        }
-
-        &nav-item {
-            flex: 1;
-            margin: 0 0 -1px 1px;
-            text-align: center;
-
-            &:first-child {
-                margin-left: 0;
-            }
-        }
-
-        &btn {
-            width: 100%;
-            position: relative;
-            border: none;
-            border-top: 3px solid transparent;
-            padding: 10px;
-            background: #e7e7e7;
-            touch-action: manipulation;
-
-            &:hover:not(:disabled),
-            &:focus:not(:disabled) {
-                background: #dfdfdf;
-            }
-
-            &:disabled {
-                border-color: #dc0f6e;
-                z-index: 10;
-                background: #fff;
-            }
-        }
-
-        //Panels
-        &panel-wrapper {
-            position: relative;
-        }
-
-        &panel {
-            display: none;
-            background: #fff;
-
-            &.is-open {
-                display: block;
-            }
-        }
-
-        &content {
-            padding: 20px;
-        }
-    }
-
     @include rb-fx-panel(tabs, fade);
     @include rb-fx-panel(tabs, slide);
+    width: 100%;
+    margin: auto;
 }
+
+//Buttons
+.tabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.tabs-item {
+    flex: 1;
+    margin: 0 0 -1px 1px;
+    text-align: center;
+
+    &:first-child {
+        margin-left: 0;
+    }
+}
+
+.tabs-btn {
+    width: 100%;
+    position: relative;
+    border: none;
+    border-top: 3px solid transparent;
+    padding: 10px;
+    background: #e7e7e7;
+    touch-action: manipulation;
+
+    &:hover:not(:disabled),
+    &:focus:not(:disabled) {
+        background: #dfdfdf;
+    }
+
+    &:disabled {
+        border-color: #dc0f6e;
+        z-index: 10;
+        background: #fff;
+    }
+}
+
+.tabs-panel-wrapper {
+    position: relative;
+}
+
+.tabs-panel {
+    display: none;
+    background: #fff;
+
+    &.is-open {
+        display: block;
+    }
+}
+
+.tabs-content {
+    padding: 20px;
+}
+
+
+
+
+
 
 

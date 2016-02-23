@@ -5,47 +5,44 @@
 //---------------------------------------------------------
 .rb-page {
     width: 100%;
-
-    @at-root .page- {
-
-        //Main wrapper page
-        &wrapper {
-            width: 100%;
-        }
-
-        //Main header page
-        &header {
-            width: 100%;
-            margin-bottom: 30px;
-            padding: 20px 0;
-            background: #f7f7f7;
-        }
-
-        &header-inner {
-            padding: 0 20px;
-        }
-
-        //Main content page
-        &main {
-            width: 100%;
-        }
-
-        //Main footer page
-        &footer {
-            width: 100%;
-        }
-
-        &footer-inner {
-            padding: 0 20px;
-        }
-
-        //Main section page
-        &section {
-            width: 100%
-        }
-
-        &section-inner {
-            padding: 0 20px;
-        }
-    }
 }
+//Main wrapper page
+.page-wrapper {
+    width: 100%;
+}
+
+//Main header page
+.page-header {
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    background: #f7f7f7;
+}
+
+.page-header-inner {
+    padding: 0 20px;
+}
+
+//Main content page
+.page-main {
+    width: 100%;
+}
+
+//Main footer page
+.page-footer {
+    width: 100%;
+}
+
+.page-footer-inner {
+    padding: 0 20px;
+}
+
+//Main section page
+.page-section {
+    width: 100%
+}
+
+.page-section-inner {
+    padding: 0 20px;
+}
+

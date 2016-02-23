@@ -5,17 +5,13 @@
 //---------------------------------------------------------
 .rb-logo {
 	width: 100%;
-
-	@at-root .logo- {
-
-		&inner {
-			display: block;
-		}
-
-		&symbol {
-			height: 21px;
-			width: 115px;
-		}
-	}
 }
 
+.logo-inner {
+	display: block;
+}
+
+.logo-symbol {
+	height: 21px;
+	width: 115px;
+}

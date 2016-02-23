@@ -4,7 +4,6 @@
 ##Usage
 
 - To apply the tab component add the `rb-tab` class and attribute `data-module="tab"` to a container element.
-- Panel animations can be applied by adding an modifier class to the component, for example `is-fade`.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
@@ -38,3 +37,37 @@
 {{> docs_js_life }}
 
 <hr>
+##Panel animations
+Panel animations can be applied by adding an modifier class to the component, for example `is-fade`.
+
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example">
+{{#mergeJSON rb_tabs.default 'type: "is-fade js-rb-life"'}}
+{{> rb_tabs }}
+{{/mergeJSON}}
+</div>
+
+
+<h3 class="docs-example-title">Markup</h3>
+
+```html
+<div class="rb-tabs is-fade js-rb-life" data-module="tabs">
+    ...
+</div>
+```
+
+<h3 class="docs-example-title">Demo</h3>
+<div class="docs-example">
+{{#mergeJSON rb_tabs.default 'type: "is-slide js-rb-life "'}}
+{{> rb_tabs }}
+{{/mergeJSON}}
+</div>
+
+
+<h3 class="docs-example-title">Markup</h3>
+
+```html
+<div class="rb-tabs is-slide js-rb-life" data-module="tabs">
+    ...
+</div>
+```
