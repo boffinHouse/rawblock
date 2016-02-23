@@ -35,7 +35,7 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
 <hr>
 
 ##Panel Controls
-Panels can also be open/closed with control buttons `accordion-ctr-btn`. The direction can be applied with attribute `data-type`
+Panels can also be open/closed with control buttons `accordion-ctrl-btn`. The direction can be applied with attribute `data-type`.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">

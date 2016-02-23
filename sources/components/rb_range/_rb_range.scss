@@ -28,161 +28,161 @@ $rangeJSCFG: (
 
 //----------------------------------------------------------
 .rb-range {
-	//@include rb-js-export($rangeJSCFG);
 	background: #00aaff;
-
-	/* FOUC */
-	//opacity: 0.1;
-	//transition: 300ms opacity;
-	//
-	//&.js-rb-attached {
-	//	opacity: 1;
-	//}
 
 	input {
 		display: none;
 	}
 
-	@at-root {
+	//Range horizontal
+	&:not(.is-vertical)  {
+		height: $range-rail-size;
+	}
 
-		//Range general styling
-		.range- {
+	//Range vertical
+	&.is-vertical {
+		width: $range-rail-size;
+		height: 20rem;
+	}
+}
 
-			&rail {
-				position: relative;
-				display: block;
-				width: 100%;
-				height: 100%;
-			}
+.range-rail {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 100%;
 
-			&track {
-				margin: 0 !important;
-				padding: 0 !important;
-				border: 0 !important;
-				display: block;
-				position: relative;
-				width: 100%;
-				height: 100%;
-			}
+	//Range horizontal
+	.rb-range:not(.is-vertical) &  {
+		padding-left: $range-thumb-width / 2;
+		padding-right: $range-thumb-width / 2;
+	}
 
-			&progress {
-				display: inline-block;
-				position: absolute;
-				box-sizing: content-box;
-				background: #004b80;
-			}
+	//Range vertical
+	.is-vertical & {
+		padding-top: $range-thumb-height / 2;
+		padding-bottom: $range-thumb-height / 2;
+	}
+}
 
-			&thumb {
-				position: absolute;
-				border: 1px solid #c4c4c4;
-				height: #{$range-thumb-height};
-				width: #{$range-thumb-width};
-				cursor: pointer;
-				outline: none;
-				background: #fff;
-			}
+.range-track {
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.range-progress {
+	display: inline-block;
+	position: absolute;
+	box-sizing: content-box;
+	background: #004b80;
+
+	//Range horizontal
+	.rb-range:not(.is-vertical) &  {
+		height: 100%;
+		padding-left: $range-thumb-width / 2;
+	}
+
+	//Range vertical
+	.is-vertical & {
+		width: 100%;
+		padding-top: $range-thumb-height / 2;
+	}
+}
+
+.range-thumb {
+	position: absolute;
+	border: 1px solid #c4c4c4;
+	height: #{$range-thumb-height};
+	width: #{$range-thumb-width};
+	cursor: pointer;
+	outline: none;
+	background: #fff;
+
+	//Range horizontal
+	.rb-range:not(.is-vertical) &  {
+		top: -($range-thumb-height - $range-rail-size) / 2;
+		left: 0;
+		margin-left: -($range-thumb-width / 2);
+	}
+
+	.rb-range:not(.is-vertical).is-animate & {
+		transition: 300ms left;
+	}
+
+	//Range vertical
+	.is-vertical & {
+		bottom: 0;
+		left: -($range-thumb-height - $range-rail-size) / 2;
+		margin-bottom: $range-thumb-width / -2;
+	}
+}
+
+.range-tooltip {
+
+	//Range horizontal
+	.rb-range:not(.is-vertical) &  {
+		display: block;
+		position: absolute;
+		top: -40px;
+		min-width: 10rem;
+		left: calc(-5rem + #{$range-thumb-width} / 2);
+		text-align: center;
+		visibility: hidden;
+		z-index: 3;
+	}
+
+	.rb-range:not(.is-vertical).is-animate & {
+		transition: 300ms width;
+	}
+}
+
+.range-tooltip-value {
+
+	//Range horizontal
+	.rb-range:not(.is-vertical).is-active &  {
+		box-shadow: 0 2px 10px rgba(0,0,0, 0.3);
+		padding: 10px;
+		visibility: visible;
+		background: #fff;
+
+		&::before {
+			content: attr(data-value);
 		}
+	}
+}
 
-		//Range horizontal styling
-		&:not(.is-vertical) {
-			height: $range-rail-size;
+.range-progress-min {
 
-			.range- {
+	//Range horizontal
+	.rb-range:not(.is-vertical) &  {
+		left: 0;
+		margin-left: -($range-thumb-width / 2);
+	}
 
-				&rail {
-					padding-left: $range-thumb-width / 2;
-					padding-right: $range-thumb-width / 2;
-				}
+	//Range vertical
+	.is-vertical & {
+		bottom: 0;
+		margin-bottom: -($range-thumb-height / 2);
+	}
+}
 
-				&progress {
-					height: 100%;
-					padding-left: $range-thumb-width / 2;
-				}
+.range-progress-max {
 
-				&tooltip {
-					display: block;
-					position: absolute;
-					top: -40px;
-					min-width: 10rem;
-					left: calc(-5rem + #{$range-thumb-width} / 2);
-					text-align: center;
-					visibility: hidden;
-					z-index: 3;
-				}
+	//Range horizontal
+	.rb-range:not(.is-vertical) &  {
+		right: 0;
+		margin-right: -($range-thumb-width / 2);
+	}
 
-				&progress-min {
-					left: 0;
-					margin-left: -($range-thumb-width / 2);
-				}
-
-				&progress-max {
-					right: 0;
-					margin-right: -($range-thumb-width / 2);
-				}
-
-				&thumb {
-					top: -($range-thumb-height - $range-rail-size) / 2;
-					left: 0;
-					margin-left: -($range-thumb-width / 2);
-				}
-			}
-
-			&.is-active .range-tooltip-value {
-				box-shadow: 0 2px 10px rgba(0,0,0, 0.3);
-				padding: 10px;
-				visibility: visible;
-				background: #fff;
-
-				&::before {
-					content: attr(data-value);
-				}
-			}
-
-			&.is-animate {
-				.range-progress {
-					transition: 300ms width;
-				}
-				.range-thumb {
-					transition: 300ms left;
-				}
-			}
-		}
-
-
-		//Range vertical styling
-		&.is-vertical {
-			width: $range-rail-size;
-			height: 20rem;
-
-			.range- {
-
-				&rail {
-					padding-top: $range-thumb-height / 2;
-					padding-bottom: $range-thumb-height / 2;
-				}
-
-				&progress {
-					width: 100%;
-					padding-top: $range-thumb-height / 2;
-				}
-
-				&progress-min {
-					bottom: 0;
-					margin-bottom: -($range-thumb-height / 2);
-				}
-
-				&progress-max {
-					top: 0;
-					margin-top: -($range-thumb-width / 2);
-				}
-
-				&thumb {
-					bottom: 0;
-					left: -($range-thumb-height - $range-rail-size) / 2;
-					margin-bottom: $range-thumb-width / -2;
-				}
-			}
-		}
+	//Range vertical
+	.is-vertical & {
+		top: 0;
+		margin-top: -($range-thumb-width / 2);
 	}
 }
 
