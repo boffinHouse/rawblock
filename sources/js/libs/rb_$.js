@@ -653,11 +653,15 @@
         var div = document.createElement('div');
 
         var read = function(){
-            isBorderBoxRelieable = rb.getStyles(div).width == '4px';
-            rb.rAFQueue(function(){
-                div.remove();
-                div = null;
-            });
+            if(isBorderBoxRelieable == null && div){
+                isBorderBoxRelieable = rb.getStyles(div).width == '4px';
+                rb.rAFQueue(function(){
+                    if(div){
+                        div.remove();
+                        div = null;
+                    }
+                });
+            }
         };
         var add = function(){
             if(!added){
@@ -679,7 +683,7 @@
         div.style.cssText = 'position:absolute;top:0;visibility:hidden;' +
             'width:4px;border:0;padding:1px;box-sizing:border-box;';
 
-        if(window.CSS && CSS.supports){
+        if(false && window.CSS && CSS.supports){
             isBorderBoxRelieable = true;
         } else {
             requestAnimationFrame(add);

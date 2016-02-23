@@ -966,7 +966,7 @@ if (!window.rb) {
                 element.style.position = 'relative';
             }
 
-            element.appendChild(wrapper);
+            $(element).prepend(wrapper);
             rb.rIC(read);
         }),
     };
