@@ -19,134 +19,132 @@ $itemscrollerJSCFG: (
 
 //----------------------------------------------------------
 .rb-itemscroller {
-    //@include rb-js-export($itemscrollerJSCFG);
     display: block;
     position: relative;
     transition: 300ms opacity;
     user-select: none;
+}
 
-    @at-root .itemscroller- {
+.itemscroller-viewport {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
 
-        &viewport {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-        }
+.itemscroller-content {
+    display: flex;
+    flex-wrap: nowrap;
+    position: relative;
+    left: 0;
+    overflow: visible;
+    width: auto;
+    height: 100%;
 
-        &content {
-            display: flex;
-            flex-wrap: nowrap;
-            position: relative;
-            left: 0;
-            overflow: visible;
-            width: auto;
-            height: 100%;
+    // FOUC prevention in case of centerMode:
+    // [1] tranlateX = 50% - (widthOfCell / 2)
+    [data-center-mode="true"] & {
+        transform: translate3d(25%, 0, 0); //[1]
+    }
+}
 
-            // FOUC prevention in case of centerMode:
-            // [1] tranlateX = 50% - (widthOfCell / 2)
-            [data-center-mode="true"] & {
-                transform: translate3d(25%, 0, 0); //[1]
-            }
-        }
+.itemscroller-cell {
+    flex-shrink: 0;
+}
 
-        &cell {
-            flex-shrink: 0;
-        }
+//Pagination
+.itemscroller-pagination {
+    position: absolute;
+    width: 100%;
+    bottom: 20px;
+    margin: 0 auto;
+    z-index: 2;
+    text-align: center;
+}
 
-        //Pagination
-        &pagination {
-            position: absolute;
-            width: 100%;
-            bottom: 20px;
-            margin: 0 auto;
-            z-index: 2;
-            text-align: center;
-        }
+.itemscroller-pagination-btn {
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    margin: 0 4px;
+    background: #fff;
+    transition: background 400ms ease-in;
+    cursor: pointer;
+    touch-action: manipulation;
 
-        &pagination-btn {
-            display: inline-block;
-            height: 15px;
-            width: 15px;
-            border-radius: 50%;
-            margin: 0 4px;
-            background: #fff;
-            transition: background 400ms ease-in;
-            cursor: pointer;
-            touch-action: manipulation;
+    &.is-selected {
+        background: #666;
+        cursor: not-allowed;
+    }
+}
 
-            &.is-selected {
-                background: #666;
-                cursor: not-allowed;
-            }
-        }
+//Buttons
+.itemscroller-btn-prev,
+.itemscroller-btn-next {
+    @include rb-hide-text;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 40px;
+    width: 40px;
+    z-index: 5;
+    margin: auto 0;
+    border: none;
+    cursor: pointer;
+    background: #000;
+    transition: background 400ms ease-in;
+    outline: none;
+    border-radius: 50%;
+    touch-action: manipulation;
 
-        //Buttons
-        &btn-prev,
-        &btn-next {
-            @include rb-hide-text;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            height: 40px;
-            width: 40px;
-            z-index: 5;
-            margin: auto 0;
-            border: none;
-            cursor: pointer;
-            background: #000;
-            transition: background 400ms ease-in;
-            outline: none;
-            border-radius: 50%;
-            touch-action: manipulation;
-
-            &:hover,
-            &:focus {
-                background: #666;
-            }
-
-            &.is-disabled {
-                cursor: not-allowed;
-                background: rgba(0, 0, 0, 0.5);
-            }
-
-            &:after {
-                top: 0;
-                bottom: 0;
-                margin: auto;
-            }
-        }
-
-        &btn-prev {
-            left: 30px;
-
-            &:after {
-                @include rb-arrow-icon(15px, 15px, 3px, #fff, left);
-                left: 15px;
-            }
-        }
-
-        &btn-next {
-            right: 30px;
-
-            &:after {
-                @include rb-arrow-icon(15px, 15px, 3px, #fff, right);
-                right: 15px;
-            }
-        }
+    &:hover,
+    &:focus {
+        background: #666;
     }
 
-    //@media (min-width: 800px) {
-    //    @include rb-js-export((
-    //        switchedOff: true,
-    //    ));
-    //
-    //    @at-root .itemscroller- {
-    //        &content {
-    //            flex-wrap: wrap;
-    //        }
-    //    }
-    //}
+    &.is-disabled {
+        cursor: not-allowed;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    &::after {
+        top: 0;
+        bottom: 0;
+        margin: auto;
+    }
 }
+
+.itemscroller-btn-prev {
+    left: 30px;
+
+    &::after {
+        @include rb-arrow-icon(15px, 15px, 3px, #fff, left);
+        left: 15px;
+    }
+}
+
+.itemscroller-btn-next {
+    right: 30px;
+
+    &:after {
+        @include rb-arrow-icon(15px, 15px, 3px, #fff, right);
+        right: 15px;
+    }
+}
+
+
+//@media (min-width: 800px) {
+//    @include rb-js-export((
+//        switchedOff: true,
+//    ));
+//
+//    @at-root .itemscroller- {
+//        &content {
+//            flex-wrap: wrap;
+//        }
+//    }
+//}
+
 
 
 

@@ -59,7 +59,7 @@ $rangeJSCFG: (
 	}
 
 	//Range vertical
-	.is-vertical & {
+	.rb-range.is-vertical & {
 		padding-top: $range-thumb-height / 2;
 		padding-bottom: $range-thumb-height / 2;
 	}
@@ -88,7 +88,7 @@ $rangeJSCFG: (
 	}
 
 	//Range vertical
-	.is-vertical & {
+	.rb-range.is-vertical & {
 		width: 100%;
 		padding-top: $range-thumb-height / 2;
 	}
@@ -115,7 +115,7 @@ $rangeJSCFG: (
 	}
 
 	//Range vertical
-	.is-vertical & {
+	.rb-range.is-vertical & {
 		bottom: 0;
 		left: -($range-thumb-height - $range-rail-size) / 2;
 		margin-bottom: $range-thumb-width / -2;
@@ -165,7 +165,7 @@ $rangeJSCFG: (
 	}
 
 	//Range vertical
-	.is-vertical & {
+	.rb-range.is-vertical & {
 		bottom: 0;
 		margin-bottom: -($range-thumb-height / 2);
 	}
@@ -180,7 +180,7 @@ $rangeJSCFG: (
 	}
 
 	//Range vertical
-	.is-vertical & {
+	.rb-range.is-vertical & {
 		top: 0;
 		margin-top: -($range-thumb-width / 2);
 	}

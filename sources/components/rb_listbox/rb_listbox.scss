@@ -12,27 +12,23 @@ $listboxJSCFG: (
 .rb-listbox {
     width: 100%;
     font-size: 1rem;
+}
 
-    @at-root .listbox- {
+.listbox-item {
+    margin-bottom: 5px;
+    border: 1px solid #333;
+    padding: rb-em-calc(8px 10px);
+    cursor: pointer;
+    transition: all 300ms ease-in;
+    touch-action: manipulation;
 
-        &item {
-            margin-bottom: 5px;
-            border: 1px solid #333;
-            padding: rb-em-calc(8px 10px);
-            cursor: pointer;
-            transition: all 300ms ease-in;
-            touch-action: manipulation;
-
-            &.is-selected {
-                color: #fff;
-                background: #006da0;
-            }
-
-            &.is-checked {
-                color: #fff;
-                background: #00aaff;
-            }
-        }
+    &.is-selected {
+        color: #fff;
+        background: #006da0;
     }
 
+    &.is-checked {
+        color: #fff;
+        background: #00aaff;
+    }
 }

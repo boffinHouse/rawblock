@@ -25,15 +25,6 @@ $popoverJSCFG: ();
     opacity: 0;
     transition: 400ms opacity, 400ms visibility;
 
-    @at-root {
-        .popover-content {
-            position: relative;
-            z-index: 2;
-            padding: 10px;
-            background: #{$popover-bg-color};
-        }
-    }
-
     &::after {
         content: '';
         position: absolute;
@@ -130,5 +121,12 @@ $popoverJSCFG: ();
             at: 'left middle'
         )));
     }
+}
+
+.popover-content {
+    position: relative;
+    z-index: 2;
+    padding: 10px;
+    background: #{$popover-bg-color};
 }
 
