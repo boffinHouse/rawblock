@@ -113,5 +113,4 @@ fieldset {
 //	Layout classes (.use-*)
 // ---------------------
 @include rb-generate-layout-styles($breakpointConfig);
-
 @include rb-export-globaljs((mqs: $breakpointConfig));

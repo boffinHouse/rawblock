@@ -1,0 +1,12 @@
+// Truncation text and adds an ellipses when it overflows the box.
+//
+// @example scss
+// .your-element {
+//      @include rb-ellipsis;
+// }
+@mixin rb-ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-wrap: normal;
+}
