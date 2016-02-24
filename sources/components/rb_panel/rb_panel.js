@@ -153,7 +153,7 @@
             _onOutSideAction: function(e){
                 var containers, component;
 
-                if (this.options.closeOnFocusout && document.body.contains(e.target) && !this._shouldTeardown()) {
+                if (this.options.closeOnFocusout && (e.type != 'focus' || e.target.tabIndex != -1) && document.body.contains(e.target) && !this._shouldTeardown()) {
                     component = this.component(e.target);
 
                     if(component && component.getTarget && component.getTarget() == this.element){

@@ -195,12 +195,12 @@
                     var index = this.$paginationBtns.index(e.delegatedTarget || e.currentTarget);
                     this.selectedIndex = index;
                 },
-                'elemresizewidth': 'calculateLayout',
-                //'mousewheel': function(e){
-                //    this.log(e);
-                //    this._setRelPos(e.deltaX * -1);
-                //    e.preventDefault();
-                //},
+            },
+            attached: function(){
+                rb.resize.on(this.reflow);
+            },
+            detached: function(){
+                rb.resize.off(this.reflow);
             },
             setOption: function (name, value) {
                 this._super(name, value);

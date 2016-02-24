@@ -104,18 +104,19 @@
                 this.$element.on('mouseenter', this._onenterAutoplay);
                 this.$element.on('mouseleave', this._onleaveAutoplay);
 
-
                 clearInterval(that._autoplayTimer);
                 that._autoplayTimer = setInterval(this._autoplayHandler, options.autoplayDelay);
 
                 this._setAutoplayUI();
             },
             attached: function () {
+                this._super();
                 if (this.options.autoplay) {
                     this.startAutoplay();
                 }
             },
             detached: function () {
+                this._super();
                 this.stopAutoplay();
             },
         }

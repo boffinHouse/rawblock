@@ -268,7 +268,7 @@
                 }
             },
             _onOutSideInteraction: function (e) {
-                if (!rb.contains(this.element, e.target) && document.body.contains(e.target)) {
+                if ((e.type != 'focus' || e.target.tabIndex != -1) && !rb.contains(this.element, e.target) && document.body.contains(e.target)) {
                     this.closeAll();
                 }
             },
