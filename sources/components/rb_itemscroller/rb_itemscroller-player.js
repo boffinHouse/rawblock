@@ -110,13 +110,11 @@
                 this._setAutoplayUI();
             },
             attached: function () {
-                this._super();
                 if (this.options.autoplay) {
                     this.startAutoplay();
                 }
             },
             detached: function () {
-                this._super();
                 this.stopAutoplay();
             },
         }

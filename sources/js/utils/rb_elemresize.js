@@ -139,7 +139,7 @@
             });
 
             wrapper.className = 'js-element-resize';
-            wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;');
+            wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;-webkit-overflow-scrolling auto;');
             wrapper.innerHTML = '<span style="' + wrapperStyle + 'overflow: scroll;">' +
                 '<span style="' + posStyle + '"><\/span>' +
                 '<\/span>' +
