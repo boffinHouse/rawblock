@@ -1,2 +1,3 @@
 ../components/**/*.js
 !../components/**/*.lazy.js
+!../components/**/tests/*.js
