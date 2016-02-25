@@ -139,11 +139,11 @@
             });
 
             wrapper.className = 'js-element-resize';
-            wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;-webkit-overflow-scrolling auto;');
-            wrapper.innerHTML = '<span style="' + wrapperStyle + 'overflow: scroll;-webkit-overflow-scrolling auto;">' +
+            wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;-webkit-overflow-scrolling:auto;');
+            wrapper.innerHTML = '<span style="' + wrapperStyle + 'overflow: scroll;-webkit-overflow-scrolling:auto;">' +
                 '<span style="' + posStyle + '"><\/span>' +
                 '<\/span>' +
-                '<span style="' + wrapperStyle + 'overflow: scroll;-webkit-overflow-scrolling auto;">' +
+                '<span style="' + wrapperStyle + 'overflow: scroll;-webkit-overflow-scrolling:auto;">' +
                 '<span style="' + posStyle + 'width: 200%; height: 200%;"><\/span>' +
                 '<\/span>';
 
