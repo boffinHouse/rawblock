@@ -81,7 +81,7 @@
         color: #666;
     }
 
-    ul {
+    > ul {
 
         ul,
         ol {
@@ -162,17 +162,20 @@
     }
 
     code {
-        border: 1px solid #c1c1c1;
-        padding: 3px 7px;
-        font-size: 14px;
-        color: #008cd5;
-        background: #e8e8e8;
+        border: $docs-example-border;
+        padding: 2px 3px;
+        font-size: 13px;
+        font-weight: 400;
+        color: rgb(198, 20, 20);;
+        background: $docs-example-bg-color;
     }
 
     pre {
-        border: 1px solid #c1c1c1;
+        margin: 0 0 20px;
+        border: $docs-example-border;
         padding: 12px 10px;
-        background: #e8e8e8;
+        background: $docs-example-bg-color;
+
         code {
             border: none;
             padding: 0;
