@@ -1,0 +1,21 @@
+@mixin rb-util-offset($className) {
+
+    @if $className == 'all' {
+        $offsetType: '';
+
+    } @else {
+        $offsetType: '-' + $className;
+    }
+
+    .use-offset-right#{$offsetType} {
+        margin-left: auto;
+    }
+
+    .use-offset-left#{$offsetType} {
+        margin-right: auto;
+    }
+
+    .use-offset-center#{$offsetType} {
+        margin: auto;
+    }
+}

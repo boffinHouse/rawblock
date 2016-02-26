@@ -1,0 +1,62 @@
+//
+@mixin rb-util-sizes($className) {
+    $i: 5;
+    $steps: 5;
+
+    @if $className == 'all' {
+        $colomnType: '';
+    } @else {
+        $colomnType: '-' + $className;
+    }
+
+    @while $i <= 100 {
+
+        //If no width is desired
+        @if $i == 100 {
+            .use-size-auto#{$colomnType} {
+                width: auto;
+            }
+
+            //Element will take available space
+            .use-size-flex#{$colomnType} {
+                flex: 1;
+                width: auto;
+            }
+
+            //Element will take twice the available space
+            .use-size-flex-double {
+                flex: 2;
+                width: auto;
+            }
+        }
+
+        // create width: 33%
+        @if $i > 30 and $i <= 35 {
+            .use-size-33#{$colomnType} {
+                width: 33.3333%;
+            }
+        }
+
+        // create width: 66%
+        @if $i > 65 and $i <= 70 {
+            .use-size-66#{$colomnType} {
+                width: 66.6666%;
+            }
+        }
+
+        // create width: 16%
+        @if $i > 15 and $i <= 20 {
+            .use-size-16#{$colomnType} {
+                width: 16.6666%;
+            }
+        }
+
+        // create
+        &.use-size-#{$i}#{$colomnType} {
+            width: $i * 1%;
+        }
+
+        // increment the counter
+        $i: $i + $steps;
+    }
+}

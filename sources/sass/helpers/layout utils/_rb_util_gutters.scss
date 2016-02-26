@@ -1,0 +1,55 @@
+@mixin rb-util-gutters($gutters) {
+
+    @if type-of($gutters) == 'map' {
+
+        @if map-has-key($gutters, horizontal) {
+            $gutterHorizontal: map-get($gutters, horizontal);
+        }
+        @if map-has-key($gutters, vertical) {
+            $gutterVertical: map-get($gutters, vertical);
+        }
+
+        .use-gutters {
+            margin-left: (-$gutterHorizontal);
+
+            > [class*=use-size-] {
+                margin-bottom: $gutterVertical;
+                padding-left: ($gutterHorizontal);
+            }
+        }
+
+        > [class*=use-size-].use-gutter {
+            margin-bottom: $gutterVertical;
+            padding-left: ($gutterHorizontal);
+        }
+
+        .use-gutters-vertical {
+
+            > [class*=use-size-]  {
+                margin-bottom: $gutterVertical;
+            }
+        }
+
+        > [class*=use-size-].use-gutter-vertical {
+            margin-bottom: $gutterVertical;
+        }
+
+        .use-gutters-horizontal {
+            margin-left: (-$gutterHorizontal);
+
+            > [class*=use-size-]  {
+                padding-left: ($gutterHorizontal);
+            }
+        }
+
+        > [class*=use-size-].use-gutter-horizontal {
+            padding-left: ($gutterHorizontal);
+        }
+
+        //Destroy gutter
+        [class*=use-size-].use-no-gutter-vertical {
+            margin-bottom: 0;
+        }
+
+    }
+}

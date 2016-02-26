@@ -1,0 +1,30 @@
+@mixin rb-layout-columns() {
+
+    .use-column-group {
+        display: flex;
+        flex-wrap: wrap;
+
+        .use-column-group {
+            flex: 1;
+        }
+    }
+
+    .use-equal-heights {
+        > [class*=use-size-]  {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+
+    .use-unequal-height,
+    [class*=use-size-].use-unequal-height {
+        display: block;
+    }
+
+    .use-equal-height,
+    [class*=use-size-].use-equal-height {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+}
