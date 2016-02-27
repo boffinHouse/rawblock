@@ -104,7 +104,6 @@
                 this.$element.on('mouseenter', this._onenterAutoplay);
                 this.$element.on('mouseleave', this._onleaveAutoplay);
 
-
                 clearInterval(that._autoplayTimer);
                 that._autoplayTimer = setInterval(this._autoplayHandler, options.autoplayDelay);
 

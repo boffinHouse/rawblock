@@ -1,6 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
         require('../../js/utils/rb_draggy');
+        require('../../js/utils/rb_elemresize');
         require('../../js/utils/rb_prefixed');
         module.exports = factory();
     } else {
@@ -195,12 +196,7 @@
                     var index = this.$paginationBtns.index(e.delegatedTarget || e.currentTarget);
                     this.selectedIndex = index;
                 },
-                'elemresizewidth': 'calculateLayout',
-                //'mousewheel': function(e){
-                //    this.log(e);
-                //    this._setRelPos(e.deltaX * -1);
-                //    e.preventDefault();
-                //},
+                elemresizewidth: 'reflow',
             },
             setOption: function (name, value) {
                 this._super(name, value);

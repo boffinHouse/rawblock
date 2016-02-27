@@ -824,184 +824,6 @@ if (!window.rb) {
 
     /* End: rb.events */
 
-    /* Begin: elementResize */
-    var elementResize = {
-        add: function (element, fn, options) {
-            var that;
-            if (!element[elementResize.expando]) {
-                element[elementResize.expando] = {
-                    width: element.offsetWidth,
-                    height: element.offsetHeight,
-                    cbs: $.Callbacks(),
-                    widthCbs: $.Callbacks(),
-                    heightCbs: $.Callbacks(),
-                    wasStatic: rb.getStyles(element).position == 'static',
-                };
-
-                that = this;
-
-                rb.rIC(function(){
-                    that.addMarkup(element, element[elementResize.expando]);
-                });
-            }
-
-            if (options && options.noWidth) {
-                element[elementResize.expando].heightCbs.add(fn);
-            } else if (options && options.noHeight) {
-                element[elementResize.expando].widthCbs.add(fn);
-            } else {
-                element[elementResize.expando].cbs.add(fn);
-            }
-            return element[elementResize.expando];
-        },
-        remove: function (element, fn) {
-            if (element[elementResize.expando]) {
-                element[elementResize.expando].cbs.remove(fn);
-                element[elementResize.expando].heightCbs.remove(fn);
-                element[elementResize.expando].widthCbs.remove(fn);
-            }
-        },
-        expando: rb.Symbol('_elementResize'),
-        addMarkup: rb.rAF(function (element, data) {
-            var fire, widthChange, heightChange;
-            var first = true;
-            var expandElem, shrinkElem, expandChild, block;
-            var posStyle = 'position:absolute;top:0;left:0;display: block;'; //
-            var wrapperStyle = posStyle + 'bottom:0;right:0;';
-            var wrapper = document.createElement('span');
-
-            var addEvents = function () {
-                expandElem.addEventListener('scroll', onScroll);
-                shrinkElem.addEventListener('scroll', onScroll);
-            };
-
-            var runFire = function () {
-
-                if (heightChange) {
-                    element[elementResize.expando].heightCbs.fire(data);
-                }
-                if (widthChange) {
-                    element[elementResize.expando].widthCbs.fire(data);
-                }
-
-                data.cbs.fire(data);
-
-                heightChange = false;
-                widthChange = false;
-            };
-
-            var scrollWrite = function () {
-                expandElem.scrollLeft = data.exScrollLeft;
-                expandElem.scrollTop = data.exScrollTop;
-                shrinkElem.scrollLeft = data.shrinkScrollLeft;
-                shrinkElem.scrollTop = data.shrinkScrollTop;
-
-                if (fire) {
-                    runFire();
-                }
-
-                if (first) {
-                    first = false;
-                    addEvents();
-                }
-                block = false;
-            };
-
-            var write = rb.rAF(function () {
-                expandChild.style.width = data.exChildWidth;
-                expandChild.style.height = data.exChildHeight;
-                setTimeout(scrollWrite, 9);
-            }, {throttle: true});
-
-            var read = function () {
-                data.exChildWidth = expandElem.offsetWidth + 9 + 'px';
-                data.exChildHeight = expandElem.offsetHeight + 9 + 'px';
-
-                data.exScrollLeft = expandElem.scrollWidth;
-                data.exScrollTop = expandElem.scrollHeight;
-
-                data.shrinkScrollLeft = shrinkElem.scrollWidth;
-                data.shrinkScrollTop = shrinkElem.scrollHeight;
-
-                write();
-            };
-            var onScroll = rb.throttle(function () {
-                if (block) {
-                    return;
-                }
-
-                var width = element.offsetWidth;
-                var height = element.offsetHeight;
-
-                var curWidthChange = width != data.width;
-                var curHeightChange = height != data.height;
-
-                fire = curHeightChange || curWidthChange;
-
-                if (fire) {
-                    widthChange = curWidthChange || widthChange;
-                    heightChange = curHeightChange || heightChange;
-                    data.height = height;
-                    data.width = width;
-                    block = widthChange && heightChange;
-                    read();
-                }
-
-            });
-
-            wrapper.className = 'js-element-resize';
-            wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;');
-            wrapper.innerHTML = '<span style="' + wrapperStyle + 'overflow: scroll;">' +
-                '<span style="' + posStyle + '"><\/span>' +
-                '<\/span>' +
-                '<span style="' + wrapperStyle + 'overflow: scroll;">' +
-                '<span style="' + posStyle + 'width: 200%; height: 200%;"><\/span>' +
-                '<\/span>';
-
-            expandElem = wrapper.children[0];
-            shrinkElem = wrapper.children[1];
-            expandChild = expandElem.children[0];
-
-            if (data.wasStatic) {
-                element.style.position = 'relative';
-            }
-
-            element.appendChild(wrapper);
-            rb.rIC(read);
-        }),
-    };
-
-    /**
-     * A jQuery plugin that invokes a callback as soon as the dimension of an element changes
-     * @function external:"jQuery.fn".elementResize
-     * @param action {String} "add" or "remove". Whether the function should be added or removed
-     * @param fn {Function} The resize listener function that should be added or removed.
-     * @param [options] {Object}
-     * @param [options.noWidth=false] {Boolean} Only height changes to this element should fire the callback function.
-     * @param [options.noHeight=false] {Boolean} Only width changes to this element should fire the callback function.
-     * @returns {jQueryfiedObject}
-     */
-    $.fn.elementResize = function (action, fn, options) {
-        if (action != 'remove') {
-            action = 'add';
-        }
-        return this.each(function () {
-            elementResize[action](this, fn, options);
-        });
-    };
-
-    [['elemresize'], ['elemresizewidth', {noHeight: true}], ['elemresizeheight', {noWidth: true}]].forEach(function (evt) {
-        rb.events.special[evt[0]] = {
-            add: function (elem, fn) {
-                elementResize.add(elem, fn, evt[1]);
-            },
-            remove: function (elem, fn) {
-                elementResize.remove(elem, fn, evt[1]);
-            }
-        };
-    });
-    /* End: elementResize */
-
     /**
      * Invokes on the first element in collection the closest method and on the result the querySelector method.
      * @function external:"jQuery.fn".closestFind
@@ -1027,6 +849,7 @@ if (!window.rb) {
     /* Begin: clickarea delegate */
     var initClickArea = function(){
 
+        var supportMouse = typeof window.MouseEvent == 'function';
         var clickAreaSel = '.' + rb.statePrefix + 'clickarea';
         var clickAreaactionSel = '.' + rb.statePrefix + 'clickarea-action';
         var abortSels = 'a[href], a[href] *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
@@ -1050,7 +873,7 @@ if (!window.rb) {
                 if (selection.anchorNode && !selection.isCollapsed && item.contains(selection.anchorNode)) {
                     return;
                 }
-                if (window.MouseEvent && link.dispatchEvent) {
+                if (supportMouse && link.dispatchEvent) {
                     event = new MouseEvent('click', {
                         cancelable: true,
                         bubbles: true,
@@ -1291,7 +1114,7 @@ if (!window.rb) {
         root.addEventListener('keypress', unblockKeyboardFocus, true);
 
         pointerEvents.forEach(function (eventName) {
-            document.addEventListener(eventName, removeKeyBoardFocus, true);
+            document.addEventListener(eventName, removeKeyBoardFocus, {passive: true});
         });
     };
     /* End: keyboard-focus */
@@ -2429,7 +2252,6 @@ if (!window.rb) {
              *
              * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
              *
-             * As events the following special events can also be used: 'elemresize', 'elemresizewidth' and 'elemresizeheight'.
              *
              * @example
              *
@@ -2445,10 +2267,6 @@ if (!window.rb) {
 			 *          return {
 			 *              'mouseenter': '_onInteraction',
 			 *              'click .{name}__close-button': 'close',
-			 *              'elemresizewidth': function(){
-			 *                  this.readLayout();
-			 *                  this.setLayout();
-			 *              },
 			 *              'focus:capture():matches(input, select)': '_onFocus',
 			 *              'mouseenter:capture():matches(.teaser)': '_delegatedMouseenter',
 			 *              'click .ok-btn': '_ok',
