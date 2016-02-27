@@ -1,0 +1,297 @@
+$docs-example-bg-color: #f9f9f9;
+$docs-example-border: 1px solid #f1f1f1;
+.rb-docs {
+    //Global Styles
+    width: 100%;
+
+    //Header
+    > h1 {
+        margin: rb-rem-calc(0 0 20);
+        font: 600 rb-em-calc(44)/rb-rem-calc(44) sans-serif;
+        color: #c6146e;
+    }
+
+    > h2 {
+        margin: rb-rem-calc(0 0 10);
+        font: 400 29px/32px sans-serif;
+        color: #c6146e;
+    }
+
+    > h3 {
+        margin: rb-rem-calc(0 0 10);
+        font: 400 24px/39px sans-serif;
+        color: #c6146e;
+    }
+
+    //Paragraph
+    p {
+        margin: rb-rem-calc(0 0 20);
+        font: 400 16px/20px sans-serif;
+        color: #666;
+    }
+
+    //Text align
+    .is-align-right {
+        text-align: right;
+    }
+
+    .is-align-center {
+        text-align: center;
+    }
+
+    .is-justify {
+        text-align: justify;
+    }
+
+    //List
+    > ol,
+    > ul {
+        margin: rb-rem-calc(0 0 30);
+        font: 400 16px/20px sans-serif;
+        color: #666;
+    }
+
+    > ul {
+
+        ul,
+        ol {
+            margin-top: 6px;
+        }
+
+        > li {
+            position: relative;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            line-height: 24px;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 8px;
+                left: 3px;
+                width: rb-rem-calc(6);
+                height: 6px;
+                border-radius: 50%;
+                background: #666;
+            }
+        }
+    }
+
+    ol {
+        list-style: decimal;
+        margin-left: 25px;
+
+        ul,
+        ol {
+            margin-top: rb-rem-calc(6);
+        }
+
+        > li {
+            margin-bottom: rb-rem-calc(10);
+        }
+    }
+
+    //Different Stylings
+    > p,
+    > li {
+        > a {
+            color: #1a90bb;
+
+            &:hover,
+            &:focus {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .is-underline {
+        text-decoration: underline;
+    }
+    .is-strike {
+        text-decoration: line-through;
+    }
+    strong, b {
+        font-weight: 600;
+    }
+
+    em, i {
+        font-style: italic;
+    }
+
+    code {
+        border: $docs-example-border;
+        padding: 2px 3px;
+        font-size: 13px;
+        font-weight: 400;
+        color: rgb(198, 20, 20);;
+        background: $docs-example-bg-color;
+    }
+
+    pre {
+        margin: 0 0 20px;
+        border: $docs-example-border;
+        padding: 12px 10px;
+        background: $docs-example-bg-color;
+
+        code {
+            border: none;
+            padding: 0;
+            background: inherit;
+        }
+    }
+
+    hr {
+        border: 2px solid #e6e6e6;
+        margin-bottom: 20px;
+    }
+
+    //Table
+    table {
+        width: 100%;
+        margin: rb-rem-calc(0 0 30);
+        border: $docs-example-border;
+        background: $docs-example-bg-color;
+    }
+
+    thead {
+
+        tr {
+            border-bottom: 1px solid #d6d6d6;
+        }
+
+        th {
+            padding: rb-rem-calc(10 20);
+            font-size: rb-em-calc(18);
+            text-align: left;
+            color: #666;
+        }
+    }
+
+    tbody {
+
+        tr {
+            border-bottom: 1px solid #d6d6d6;
+        }
+
+        tr:nth-child(odd) {
+            background: #eee;
+        }
+
+        tr:nth-child(even) {
+            //background: #fff;
+        }
+
+        td,
+        th {
+            padding: rb-rem-calc(10 20);
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        td {
+            color: #666;
+        }
+
+        //td:first-child {
+        //    width: 40%;
+        //}
+    }
+
+    .docs- {
+        &intro {
+            margin-bottom: rb-em-calc(25);
+            font-size: rb-em-calc(18);
+            line-height: rb-em-calc(22);
+            font-weight: 600
+        }
+
+
+        //&example {
+        //    position: relative;
+        //    margin-bottom: rb-em-calc(40);
+        //
+        //    &.is-demo {
+        //        > div {
+        //            border: $docs-example-border;
+        //            padding: 20px 20px 10px;
+        //            background: $docs-example-bg-color;
+        //
+        //            &:nth-child(2n+1) {
+        //                border-top: none;
+        //            }
+        //        }
+        //    }
+        //}
+
+        &example {
+            display: block!important;
+            position: relative;
+            margin-bottom: rb-em-calc(40);
+            border: $docs-example-border;
+            padding: 20px 20px 10px;
+            background: #c7d9e0;
+
+            &:nth-child(2n+1) {
+                border-top: none;
+            }
+        }
+
+        &example-title {
+            display: block!important;
+            position: relative;
+            z-index: 2;
+            margin: 0 0 -6px 20px;
+            font-size: rb-em-calc(30);
+            color: #dbdbdb;
+        }
+
+        &example-1-title {
+            position: relative;
+            z-index: 2;
+            margin: 0 0 -6px 20px;
+            font-size: rb-em-calc(30);
+            font-weight: 600;
+            color: #dbdbdb;
+        }
+
+        &demo-title {
+            margin-bottom: 10px;
+            width: 100%;
+            color: #555;
+        }
+
+        &gutters {
+            > [class*=use-size-] {
+                padding-right: 10px;
+                margin-bottom: 10px;
+            }
+        }
+
+        &item {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #aaa;
+            height: 150px;
+            color: #444;
+            background: #dbdbdb;
+            z-index: 2;
+        }
+
+        &info {
+            margin-bottom: 20px;
+            padding: 20px 20px 10px;
+            border-left: 10px solid #008cd5;
+
+            p {
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+    br  {
+       display: none;
+    }
+}
