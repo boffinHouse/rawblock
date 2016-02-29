@@ -5,15 +5,21 @@
         $gutters: map-get($config, gutter);
         $gridMaxWidth: map-get($config, gridMaxWidth);
         $flexOrderSize: map-get($config, flexOrderSize);
+        $media: map-get($config, media);
 
         @if $breakpointName == 'all' {
             @include rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth);
-            @include rb-layout-columns();
-
+            @include rb-util-gridcontainer;
+            @include rb-util-columns();
         } @else {
-            @media #{map-get($config, media)} {
-                @include rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth);
+            @if $media {
+                @media #{$media} {
+                    @include rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth);
+                }
+            } @else {
+                @warn 'No media query is found for breakpoint property "#{$breakpointName}" inside $breakpointConfig';
             }
+
         }
     }
 }
@@ -22,6 +28,7 @@
     @include rb-util-sizes($breakpointName);
     @include rb-util-gutters($gutters);
     @include rb-util-position($breakpointName);
+    @include rb-util-visibility($breakpointName);
     @include rb-util-basics($breakpointName, $gridMaxWidth);
 }
 

@@ -1,13 +1,4 @@
-@mixin rb-layout-columns() {
-
-    .use-column-group {
-        display: flex;
-        flex-wrap: wrap;
-
-        .use-column-group {
-            flex: 1;
-        }
-    }
+@mixin rb-util-columns() {
 
     .use-equal-heights {
         > [class*=use-size-]  {
@@ -26,5 +17,4 @@
         display: flex;
         flex-wrap: wrap;
     }
-
 }

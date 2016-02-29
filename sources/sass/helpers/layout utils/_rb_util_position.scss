@@ -26,7 +26,12 @@
     }
 
     .use-offset-center#{$type} {
-        margin: auto;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .use-offset-columns-left#{$type} {
+        justify-content: flex-start;
     }
 
     @if $breakpointName == 'all' {

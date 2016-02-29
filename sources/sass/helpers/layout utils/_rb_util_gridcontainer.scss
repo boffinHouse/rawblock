@@ -1,0 +1,28 @@
+@mixin rb-util-gridcontainer() {
+
+    //Turns container in a column group (left to right)
+    .use-column-group {
+        display: flex;
+        flex-wrap: wrap;
+
+        .use-column-group,
+        .use-row-group {
+            flex: 1;
+        }
+    }
+
+    //Turns a element in a row group (top to bottom)
+    .use-row-group {
+        display: flex;
+        flex-flow: column wrap;
+
+        .use-column-group,
+        .use-row-group {
+            flex: 1;
+        }
+    }
+
+    .use-group-reverse {
+        flex-wrap: wrap-reverse;
+    }
+}
