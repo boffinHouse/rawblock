@@ -1,4 +1,4 @@
-//
+//Generates all utility styles with devices
 @mixin rb-generate-layout-utils($configs) {
 	//Styles breakpoints
 	@each $className, $config in $configs {
