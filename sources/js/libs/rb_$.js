@@ -683,7 +683,7 @@
         div.style.cssText = 'position:absolute;top:0;visibility:hidden;' +
             'width:4px;border:0;padding:1px;box-sizing:border-box;';
 
-        if(false && window.CSS && CSS.supports){
+        if(window.CSS && CSS.supports && CSS.supports('box-sizing', 'border-box')){
             isBorderBoxRelieable = true;
         } else {
             requestAnimationFrame(add);

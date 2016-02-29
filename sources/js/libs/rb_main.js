@@ -12,6 +12,7 @@ if (!window.rb) {
     /* Begin: global vars end */
     var rb = window.rb;
     var regSplit = /\s*?,\s*?|\s+?/g;
+    var slice = Array.prototype.slice;
 
     /**
      * The jQuery or dom.js (rb.$) plugin namespace.
@@ -374,6 +375,37 @@ if (!window.rb) {
 
     /* End: camelCase */
 
+    /* Begin: memoize */
+
+	/**
+	 * Simple memoize method
+     * @param fn {function}
+     * @param [justOne] {boolean}
+     * @returns {Function}
+     */
+    rb.memoize = function(fn, justOne){
+        var cache = {};
+        return justOne ?
+            function(argsString){
+                if(argsString in cache){
+                    return cache[argsString];
+                }
+                cache[argsString] = fn.call(this, argsString);
+                return cache[argsString];
+            } :
+            function(){
+                var args = slice.call(arguments);
+                var argsString = args.join(',');
+                if(argsString in cache){
+                    return cache[argsString];
+                }
+                cache[argsString] = fn.apply(this, args);
+                return cache[argsString];
+            }
+        ;
+    };
+    /* End: memoize */
+
     /* Begin: parseValue */
     rb.parseValue = (function () {
         var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
@@ -535,7 +567,6 @@ if (!window.rb) {
      * @example
      * rb.rAFs(this, {throttle: true}, 'renderList', 'renderCircle');
      */
-    var slice = Array.prototype.slice;
     rb.rAFs = function (obj) {
         var options;
         var args = slice.call(arguments);
@@ -631,6 +662,18 @@ if (!window.rb) {
     extendEasing();
     setTimeout(extendEasing);
     /* End: addEasing */
+
+    /* Begin: cssSupports */
+    var CSS = window.CSS;
+    rb.cssSupports = CSS && CSS.supports ?
+        function(){
+            return CSS.supports.apply(CSS, arguments);
+        } :
+        function(){
+            return '';
+        }
+    ;
+    /* End: cssSupports */
 
     /* Begin: ID/Symbol */
     /**
@@ -1114,7 +1157,7 @@ if (!window.rb) {
         root.addEventListener('keypress', unblockKeyboardFocus, true);
 
         pointerEvents.forEach(function (eventName) {
-            document.addEventListener(eventName, removeKeyBoardFocus, {passive: true});
+            document.addEventListener(eventName, removeKeyBoardFocus, {passive: true, capture: true});
         });
     };
     /* End: keyboard-focus */
@@ -2016,35 +2059,22 @@ if (!window.rb) {
     var componentExpando = life.componentExpando;
     var regData = /^data-/;
     var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
+    var regComma = /\s*,\s*(?=[^\)]*(?:\(|$))/g;
+    var regColon = /\s*:\s*(?=[^\)]*(?:\(|$))/g;
     var regName = /\{name}/g;
     var regJsName = /\{jsName}/g;
     var regHtmlName = /\{htmlName}/g;
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
-
     var _setupEventsByEvtObj = function (that) {
-        var evt, evtName, selector;
+        var eventsObjs, evt;
         var evts = that.constructor.events;
 
         for (evt in evts) {
-            selector = evt.split(regWhite);
-            evtName = selector.shift();
+            eventsObjs = rb.parseEventString(evt);
 
             /* jshint loopfunc: true */
-            (function (evtName, selector, method) {
-                var optMatch, handler, i;
-                var opts = {};
-                var strOpts = evtName.split(':');
-                var evts = that.interpolateName(strOpts.shift(), true).split(',');
-
-                for (i = 0; i < strOpts.length; i++) {
-                    if ((optMatch = strOpts[i].match(regEvtOpts))) {
-                        opts[optMatch[1]] = that.interpolateName(optMatch[3] || '') || true;
-                    }
-                }
-
-                if (selector && !opts.closest) {
-                    opts.delegate = that.interpolateName(selector);
-                }
+            (function (eventsObjs, method) {
+                var handler;
 
                 handler = (typeof method == 'string') ?
                     function (e) {
@@ -2055,12 +2085,51 @@ if (!window.rb) {
                     }
                 ;
 
-                for(i = 0; i <  evts.length; i++){
-                    rb.events.add(that.element, evts[i], handler, opts);
-                }
-            })(evtName, selector.join(' '), evts[evt]);
+                eventsObjs.forEach(function(eventObj){
+                    var prop, eventName;
+                    var opts = {};
+                    eventName = that.interpolateName(eventObj.event, true);
+
+                    for(prop in eventObj.opts){
+                        opts[prop] = that.interpolateName(eventObj.opts[prop]);
+                    }
+
+                    rb.events.add(that.element, eventName, handler, opts);
+                });
+            })(eventsObjs, evts[evt]);
         }
     };
+
+    rb.parseEventString = rb.memoize(function(evtStr){
+
+        var evtNames = evtStr.split(regComma);
+        var selector = evtNames[evtNames.length - 1].split(regWhite);
+
+        evtNames[evtNames.length - 1] = selector.shift();
+
+        selector = selector.join(' ');
+
+        return evtNames.map(function(evtName){
+            var optMatch, i;
+            var strOpts = evtName.split(regColon);
+            var data = {
+                event: strOpts.shift(),
+                opts: {}
+            };
+
+            for (i = 0; i < strOpts.length; i++) {
+                if ((optMatch = strOpts[i].match(regEvtOpts))) {
+                    data.opts[optMatch[1]] = optMatch[3] || ' ';
+                }
+            }
+
+            if (selector && !data.opts.closest) {
+                data.opts.closest = selector;
+            }
+            return data;
+        });
+
+    }, true);
 
     /**
      * returns the component instance of an element. If the component is not yet initialized it will be initialized.
