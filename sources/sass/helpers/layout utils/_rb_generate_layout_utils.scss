@@ -1,24 +1,27 @@
 //Generates all utility styles with devices
 @mixin rb-generate-layout-utils($configs) {
-	//Styles breakpoints
-	@each $className, $config in $configs {
-		$gutters: map-get($config, gutter);
-		$flexOrderSize: map-get($config, flexOrderSize);
+    //Styles breakpoints
+    @each $breakpointName, $config in $configs {
+        $gutters: map-get($config, gutter);
+        $gridMaxWidth: map-get($config, gridMaxWidth);
+        $flexOrderSize: map-get($config, flexOrderSize);
 
-		@if $className == 'all' {
-			@include rb-layout-utils($className, $gutters, $flexOrderSize);
-			@include rb-layout-columns();
-		} @else {
-			@media #{map-get($config, media)} {
-				@include rb-layout-utils($className, $gutters, $flexOrderSize);
-			}
-		}
-	}
+        @if $breakpointName == 'all' {
+            @include rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth);
+            @include rb-layout-columns();
+
+        } @else {
+            @media #{map-get($config, media)} {
+                @include rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth);
+            }
+        }
+    }
 }
 
-@mixin rb-layout-utils($className, $gutters, $flexOrderSize) {
-	@include rb-util-sizes($className);
-	@include rb-util-gutters($gutters);
-	@include rb-util-offset($className);
+@mixin rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth) {
+    @include rb-util-sizes($breakpointName);
+    @include rb-util-gutters($gutters);
+    @include rb-util-position($breakpointName);
+    @include rb-util-basics($breakpointName, $gridMaxWidth);
 }
 

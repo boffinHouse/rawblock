@@ -1,0 +1,44 @@
+// Creates classes to define the visibility of an element
+//
+// @param {String} $breakpointName - Breakpoint name added to end of class (with the exception of all) which responds to assigned screen size.
+@mixin rb-util-visibility($breakpoinName) {
+    @if $breakpointName == 'all' {
+        $type: '';
+
+    } @else {
+        $type: '-' + $breakpointName;
+    }
+
+    //Hides element in layout.
+    .use-hide#{$type} {
+        display: none !important;
+    }
+
+    //Shows element in layout
+    .use-show#{$type} {
+        display: inherit !important;
+    }
+
+    //Hides element visually while still allowing accessibility for assistive technology.
+    .use-visually-hidden#{$type} {
+        display: block;
+        position: absolute;
+        clip: rect(1px, 1px, 1px, 1px);
+        clip-path: circle(1% at 1% 1%);
+        width: 1px;
+        height: 1px;
+        border: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    //Shows element what was visually hidden.
+    .use-visually-shown#{$type} {
+        position: static;
+        clip: auto;
+        clip-path: none;
+        height: auto;
+        width: auto;
+        overflow: visible;
+    }
+}

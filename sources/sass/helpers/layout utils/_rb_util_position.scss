@@ -1,0 +1,65 @@
+//Reposition a column
+//
+//
+@mixin rb-util-position($breakpointName) {
+    $i: 5;
+    $steps: 5;
+
+    @if $breakpointName == 'all' {
+        $type: '';
+
+        [class*=use-offset-],
+        [class*=use-push-] {
+            position: relative;
+        }
+
+    } @else {
+        $type: '-' + $breakpointName;
+    }
+
+    .use-offset-right#{$type} {
+        margin-left: auto;
+    }
+
+    .use-offset-left#{$type} {
+        margin-right: auto;
+    }
+
+    .use-offset-center#{$type} {
+        margin: auto;
+    }
+
+    @if $breakpointName == 'all' {
+        @while $i <= 100 {
+
+            // create width: 33%
+            @if $i > 30 and $i <= 35 {
+                .use-push-33#{$type} {
+                    left: 33.3333%;
+                }
+            }
+
+            // create width: 66%
+            @if $i > 65 and $i <= 70 {
+                .use-push-66#{$type} {
+                    left: 66.6666%;
+                }
+            }
+
+            // create width: 16%
+            @if $i > 15 and $i <= 20 {
+                .use-push-16#{$type} {
+                    left: 16.6666%;
+                }
+            }
+
+            // create
+            &.use-push-#{$i}#{$type} {
+                left: $i * 1%;
+            }
+
+            // increment the counter
+            $i: $i + $steps;
+        }
+    }
+}

@@ -46,7 +46,7 @@
             padding-left: ($gutterHorizontal);
         }
 
-        //Destroy gutter
+        //Remove gutter
         [class*=use-size-].use-no-gutter-vertical {
             margin-bottom: 0;
         }

@@ -5,7 +5,8 @@ $breakpointConfig: (
 			vertical: 40px,
 			horizontal: 40px
 		),
-		flex-order-amount: 5
+		flex-order-amount: 5,
+		gridMaxWidth: 940px
 	),
 	l: (
 		media:'(min-width: 1240px)',

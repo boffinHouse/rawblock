@@ -2,46 +2,18 @@
 title: Layout
 layout: default_tpl.hbs
 ---
-<section class="page-section">
-	<div class="page-section-inner">
-		<div class="use-column-group use-gutters">
-			<div class="use-size-100">
-                {{#mergeJSON rb_itemscroller.default }}
-                    {{> rb_itemscroller }}
-                {{/mergeJSON}}
-			</div>
-			<div class="use-size-50 use-offset-center">
-                {{#mergeJSON rb_itemscroller.default }}
-                    {{> rb_itemscroller }}
-                {{/mergeJSON}}
-			</div>
-
-		</div>
-	</div>
-</section>
-
 
 <section class="page-section">
-	<div class="page-section-inner">
-		<div class="use-column-group use-gutters-horizontal">
-			<div class="use-size-100 use-size-50-l">
-				<div class="use-column-group use-gutters">
-					<div class="use-size-50 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-					<div class="use-size-50 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-					<div class="use-size-100 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-					<div class="use-size-100 use-size-25-l">
-						<div style="background: #888; height: 400px; width: 100%;"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="page-section-inner">
+        <div class="use-column-group use-gutters-horizontal">
+            <div class="use-size-25 use-push-20">
+                <div style="background: #888; height: 400px; width: 100%;"></div>
+            </div>
+            <div class="use-size-25 use-offset-center">
+                <div style="background: #888; height: 400px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <div class="use-column-group">

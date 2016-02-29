@@ -1,0 +1,14 @@
+@mixin rb-util-basics($breakpointName, $gridMaxWidth) {
+
+    @if $breakpointName == 'all' {
+        $type: '';
+    } @else {
+        $type: '-' + $breakpointName;
+    }
+
+    @if $gridMaxWidth {
+        .use-grid-maxwidth#{$type} {
+            max-width: $gridMaxWidth;
+        }
+    }
+}
