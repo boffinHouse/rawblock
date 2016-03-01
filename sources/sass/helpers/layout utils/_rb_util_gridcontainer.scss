@@ -11,10 +11,11 @@
         }
     }
 
-    //Turns a element in a row group (top to bottom)
+    //Turns container in a row group (top to bottom)
     .use-row-group {
         display: flex;
-        flex-flow: column wrap;
+        flex-direction: column;
+
 
         .use-column-group,
         .use-row-group {
@@ -22,7 +23,13 @@
         }
     }
 
-    .use-group-reverse {
-        flex-wrap: wrap-reverse;
+    //Reverse column container (right to left)
+    .use-column-group-reverse {
+        flex-direction: row-reverse;
+    }
+
+    //Reverse row container (bottom to top)
+    .use-row-group-reverse {
+        flex-direction: column-reverse;
     }
 }

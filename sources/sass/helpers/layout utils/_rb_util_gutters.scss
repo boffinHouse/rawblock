@@ -1,3 +1,6 @@
+// Adds space between columns if "use-size-" is set on element.
+//
+// @param {List|Number} $gutters - list of horizontal and vertical gutter values (em/px/%).
 @mixin rb-util-gutters($gutters) {
 
     @if type-of($gutters) == 'map' {
@@ -9,6 +12,7 @@
             $gutterVertical: map-get($gutters, vertical);
         }
 
+        //Horizontal & vertical gutters
         .use-gutters {
             margin-left: (-$gutterHorizontal);
 
@@ -23,6 +27,7 @@
             padding-left: ($gutterHorizontal);
         }
 
+        //Only vertical gutters
         .use-gutters-vertical {
 
             > [class*=use-size-]  {
@@ -34,6 +39,7 @@
             margin-bottom: $gutterVertical;
         }
 
+        //Only horizontal gutters
         .use-gutters-horizontal {
             margin-left: (-$gutterHorizontal);
 

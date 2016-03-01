@@ -1,11 +1,14 @@
-//Generates all utility styles with devices
+// Generates all utility styles with devices
+//
+// @param {List} $configs - A list of all breakpoint specific settings used on utility classes.
+//
 @mixin rb-generate-layout-utils($configs) {
     //Styles breakpoints
     @each $breakpointName, $config in $configs {
+        $media: map-get($config, media);
         $gutters: map-get($config, gutter);
         $gridMaxWidth: map-get($config, gridMaxWidth);
         $flexOrderSize: map-get($config, flexOrderSize);
-        $media: map-get($config, media);
 
         @if $breakpointName == 'all' {
             @include rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth);
@@ -24,6 +27,11 @@
     }
 }
 
+// Assemblage of layout utils to use in rb-generate-layout-utils
+//
+// @param {String} $breakpointName - Breakpoint name added to end of class (with the exception of all) which correspond to the assigned screen size.
+// @param {List|Number} $gutters - list of horizontal and vertical gutter values (em/px/%).
+//
 @mixin rb-layout-utils($breakpointName, $gutters, $flexOrderSize, $gridMaxWidth) {
     @include rb-util-sizes($breakpointName);
     @include rb-util-gutters($gutters);
