@@ -19,6 +19,7 @@ $itemscrollerJSCFG: (
 
 //----------------------------------------------------------
 .rb-itemscroller {
+    //@include rb-js-export($itemscrollerJSCFG);
     display: block;
     position: relative;
     transition: 300ms opacity;

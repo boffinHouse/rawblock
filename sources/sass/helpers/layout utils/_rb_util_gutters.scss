@@ -1,0 +1,61 @@
+// Adds space between columns if "use-size-" is set on element.
+//
+// @param {List|Number} $gutters - list of horizontal and vertical gutter values (em/px/%).
+@mixin rb-util-gutters($gutters) {
+
+    @if type-of($gutters) == 'map' {
+
+        @if map-has-key($gutters, horizontal) {
+            $gutterHorizontal: map-get($gutters, horizontal);
+        }
+        @if map-has-key($gutters, vertical) {
+            $gutterVertical: map-get($gutters, vertical);
+        }
+
+        //Horizontal & vertical gutters
+        .use-gutters {
+            margin-left: (-$gutterHorizontal);
+
+            > [class*=use-size-] {
+                margin-bottom: $gutterVertical;
+                padding-left: ($gutterHorizontal);
+            }
+        }
+
+        > [class*=use-size-].use-gutter {
+            margin-bottom: $gutterVertical;
+            padding-left: ($gutterHorizontal);
+        }
+
+        //Only vertical gutters
+        .use-gutters-vertical {
+
+            > [class*=use-size-]  {
+                margin-bottom: $gutterVertical;
+            }
+        }
+
+        > [class*=use-size-].use-gutter-vertical {
+            margin-bottom: $gutterVertical;
+        }
+
+        //Only horizontal gutters
+        .use-gutters-horizontal {
+            margin-left: (-$gutterHorizontal);
+
+            > [class*=use-size-]  {
+                padding-left: ($gutterHorizontal);
+            }
+        }
+
+        > [class*=use-size-].use-gutter-horizontal {
+            padding-left: ($gutterHorizontal);
+        }
+
+        //Remove gutter
+        [class*=use-size-].use-no-gutter-vertical {
+            margin-bottom: 0;
+        }
+
+    }
+}

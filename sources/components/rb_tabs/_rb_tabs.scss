@@ -67,11 +67,11 @@ $tabsJSCFG: (
 
 .tabs-panel-wrapper {
     position: relative;
+    background: #fff;
 }
 
 .tabs-panel {
     display: none;
-    background: #fff;
 
     &.is-open {
         display: block;

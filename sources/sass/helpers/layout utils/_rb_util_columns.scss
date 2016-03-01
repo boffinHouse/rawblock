@@ -1,0 +1,21 @@
+//
+@mixin rb-util-columns() {
+
+    .use-equal-heights {
+        > [class*=use-size-]  {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+
+    .use-unequal-height,
+    [class*=use-size-].use-unequal-height {
+        display: block;
+    }
+
+    .use-equal-height,
+    [class*=use-size-].use-equal-height {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}

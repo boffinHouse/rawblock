@@ -8,67 +8,68 @@
 
 // Dependencies (Helpers)
 //**********************************************************
-@import "../../sass/helpers/form/rb_form_elements";
+@import "../../sass/helpers/form/rb_generate_input_texteara";
+@import "../../sass/helpers/form/rb_generate_label";
+@import "../../sass/helpers/form/rb_generate_select";
+@import "../../sass/helpers/form/rb_generate_state_btn";
 
 //----------------------------------------------------------
 .rb-form {
 	width: 100%;
 	font-size: 1rem;
+}
 
-	@at-root .form- {
+.form-section-legend {
+	margin: 0 0 20px;
+	font: 600 rb-em-calc(32)/1 sans-serif;
+	color: #333;
+}
 
-		&section-legend {
-			margin: 0 0 20px;
-			font: 600 rb-em-calc(32)/1 sans-serif;
-			color: #333;
-		}
+.form-subsection-legend {
+	margin: 0 0 20px;
+	font: 600 rb-em-calc(24)/1 sans-serif;
+	color: #333;
+}
 
-		&subsection-legend {
-			margin: 0 0 20px;
-			font: 600 rb-em-calc(24)/1 sans-serif;
-			color: #333;
-		}
+.form-intro {
+	margin: rb-em-calc(0 0 30);
+	font-size: rb-em-calc(18);
+	line-height: rb-em-calc(24);
+}
 
-		&intro {
-			margin: rb-em-calc(0 0 30);
-			font-size: rb-em-calc(18);
-			line-height: rb-em-calc(24);
-		}
+.form-box {
+	align-items: flex-end;
+}
 
-		&box {
-			align-items: flex-end;
-		}
+.form-field {
+	position: relative;
+	width: 100%;
+}
 
-		&field {
-			position: relative;
-			width: 100%;
-		}
+.form-note {
+	padding: 10px;
+	margin-bottom: rb-rem-calc(20);
+	font: 600 rb-em-calc(12)/1.5 sans-serif;
+	color: #333;
+}
 
-		&note {
-			padding: 10px;
-			margin-bottom: rb-rem-calc(20);
-			font: 600 rb-em-calc(12)/1.5 sans-serif;
-			color: #333;
-		}
+.form-errorbox {
+	display: none;
 
-		//Validation
-		&errorbox {
-			display: none;
-
-			.is-invalid & {
-				display: block;
-			}
-		}
-
-		&errormessage {
-			margin: 0;
-			color: red;
-		}
-
-		@include form-label(true);
-		@include form-selectbox(true);
-		@include form-input-and-textarea(true);
-		@include form_input-state-btn(checkbox, true);
-		@include form_input-state-btn(radio, true);
+	.is-invalid & {
+		display: block;
 	}
 }
+
+.form-errormessage {
+	margin: 0;
+	color: red;
+}
+
+@include generate-label(form, true);
+@include generate-select(form, true);
+@include generate-input-textarea(form, true);
+@include generate-state-btn(form, checkbox, true);
+@include generate-state-btn(form, radio, true);
+
+

@@ -43,15 +43,9 @@ module.exports = {
 		]
 	},
 	svgLogo: {
-		options: {
-			plugins: [
-				{ removeXMLProcInst: true },
-				{ removeTitle: true },
-			]
-		},
 		files: [
 			{
-				'<%= paths.tmp %>/svgmin/logo/logo.svg': ['<%= paths.src %>/components/rb_logo/*.svg']
+				'<%= paths.src %>/components/rb_logo/logo.svg': ['<%= paths.src %>/components/rb_logo/*.svg']
 			}
 		]
 	},
