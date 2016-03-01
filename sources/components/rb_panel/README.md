@@ -10,13 +10,13 @@ The panel component consists of an panel element and action button:
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-    <div class="use-column-group use-gutters">
+    <div class="u-column-group u-gutters">
         {{#uniqueID}}
-            <div class="use-size-50">
+            <div class="u-size-50">
                 <button class="rb-button is-primary js-rb-life" type="button" aria-controls="panel-{{id}}" data-module="panelbutton">Panel Button</button>
             </div>
 
-            <div class="use-size-100">
+            <div class="u-size-100">
                 <div id="panel-{{id}}" class="rb-panel" data-module="panel">
                     <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
                 </div>

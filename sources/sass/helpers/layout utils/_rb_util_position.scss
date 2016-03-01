@@ -8,8 +8,8 @@
     @if $breakpointName == 'all' {
         $type: '';
 
-        [class*=use-offset-],
-        [class*=use-push-] {
+        [class*=u-offset-],
+        [class*=u-push-] {
             position: relative;
         }
 
@@ -17,20 +17,20 @@
         $type: '-' + $breakpointName;
     }
 
-    .use-offset-right#{$type} {
+    .u-offset-right#{$type} {
         margin-left: auto;
     }
 
-    .use-offset-left#{$type} {
+    .u-offset-left#{$type} {
         margin-right: auto;
     }
 
-    .use-offset-center#{$type} {
+    .u-offset-center#{$type} {
         margin-right: auto;
         margin-left: auto;
     }
 
-    .use-offset-columns-left#{$type} {
+    .u-offset-columns-left#{$type} {
         justify-content: flex-start;
     }
 
@@ -39,27 +39,27 @@
 
             // create width: 33%
             @if $i > 30 and $i <= 35 {
-                .use-push-33#{$type} {
+                .u-push-33#{$type} {
                     left: 33.3333%;
                 }
             }
 
             // create width: 66%
             @if $i > 65 and $i <= 70 {
-                .use-push-66#{$type} {
+                .u-push-66#{$type} {
                     left: 66.6666%;
                 }
             }
 
             // create width: 16%
             @if $i > 15 and $i <= 20 {
-                .use-push-16#{$type} {
+                .u-push-16#{$type} {
                     left: 16.6666%;
                 }
             }
 
             // create
-            &.use-push-#{$i}#{$type} {
+            &.u-push-#{$i}#{$type} {
                 left: $i * 1%;
             }
 

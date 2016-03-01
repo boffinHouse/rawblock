@@ -62,7 +62,7 @@ if (!window.rb) {
     rb.templates = {};
 
     rb.statePrefix = 'is-';
-    rb.uitlPrefix = 'use-';
+    rb.uitlPrefix = 'u-';
 
     /* End: global vars end */
 

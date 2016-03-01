@@ -42,9 +42,9 @@
 
         grunt.registerTask('svg', [
             'svgmin:svgLogo',
-            'svgstore:svgLogo',
+            //'svgstore:svgLogo',
             'svgmin:svgIcons',
-            'svgstore:svgIcons',
+            //'svgstore:svgIcons',
             'clean:tmp',
         ]);
 

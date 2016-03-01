@@ -18,18 +18,18 @@
 
         //If no width is desired
         @if $i == 100 {
-            .use-size-auto#{$type} {
+            .u-size-auto#{$type} {
                 width: auto;
             }
 
             //Element will take available space
-            .use-size-flex#{$type} {
+            .u-size-flex#{$type} {
                 flex: 1;
                 width: auto;
             }
 
             //Element will take twice the available space
-            .use-size-flex-double {
+            .u-size-flex-double {
                 flex: 2;
                 width: auto;
             }
@@ -37,27 +37,27 @@
 
         // create width: 33%
         @if $i > 30 and $i <= 35 {
-            .use-size-33#{$type} {
+            .u-size-33#{$type} {
                 width: 33.3333%;
             }
         }
 
         // create width: 66%
         @if $i > 65 and $i <= 70 {
-            .use-size-66#{$type} {
+            .u-size-66#{$type} {
                 width: 66.6666%;
             }
         }
 
         // create width: 16%
         @if $i > 15 and $i <= 20 {
-            .use-size-16#{$type} {
+            .u-size-16#{$type} {
                 width: 16.6666%;
             }
         }
 
         // create
-        &.use-size-#{$i}#{$type} {
+        &.u-size-#{$i}#{$type} {
             width: $i * 1%;
         }
 

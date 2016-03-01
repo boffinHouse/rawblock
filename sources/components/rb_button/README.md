@@ -9,13 +9,13 @@ Apply class `.rb-button` to a `<button>` or `<a>` element to create a button com
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-    <div class="use-column-group docs-gutters">
-        <div class="use-size-auto">
+    <div class="u-column-group docs-gutters">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'title: "Home ", link:"#"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'title: "Start"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
@@ -52,70 +52,70 @@ These classes gives the buttons additional meaning.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-    <div class="use-column-group docs-gutters">
+    <div class="u-column-group docs-gutters">
         <h4 class="docs-demo-title">Anchor button (Link)</h4>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-primary", title: "Primary", link:"#"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-secondary", title: "Secondary", link:"#"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-success", title: "Success", link:"#"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-danger", title: "Danger", link:"#"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-warning", title: "Warning", link:"#"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
     </div>
-    <div class="use-column-group docs-gutters">
+    <div class="u-column-group docs-gutters">
         <h4 class="docs-demo-title">Action button</h4>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-primary", title: "Primary"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-secondary", title: "Secondary "'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-success", title: "Success"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-danger", title: "Danger"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'type: "is-warning", title: "Warning"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
     </div>
-    <div class="use-column-group docs-gutters">
+    <div class="u-column-group docs-gutters">
         <h4 class="docs-demo-title">Disabled</h4>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'title: "Disabled anchor", disabled: true, link:"#"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-auto">
+        <div class="u-size-auto">
             {{#mergeJSON rb_button 'title: "Disabled button", disabled: true'}}
                 {{> rb_button }}
             {{/mergeJSON}}
@@ -162,13 +162,13 @@ These classes changes the shape of a button.
 <h3 class="docs-example-title">Demo</h3>
 
 <div class="docs-example">
-    <div class="use-column-group docs-gutters">
-        <div class="use-size-50">
+    <div class="u-column-group docs-gutters">
+        <div class="u-size-50">
             {{#mergeJSON rb_button 'type: "is-primary is-stretched", title: "Primary"'}}
                 {{> rb_button }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-50">
+        <div class="u-size-50">
             {{#mergeJSON rb_button 'type: "is-secondary is-stretched", title: "Secondary "'}}
                 {{> rb_button }}
             {{/mergeJSON}}
