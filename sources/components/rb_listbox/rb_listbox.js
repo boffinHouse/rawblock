@@ -96,7 +96,7 @@
                     this.checkedItem.setAttribute('aria-checked', 'true');
                 }
 
-                if(this.$element.css('position') == 'static'){
+                if(this._isStatic){
                     this.element.style.position = 'relative';
                 }
             },
@@ -104,6 +104,7 @@
                 this.$items = $(this.queryAll('.{name}-item'));
                 this.checkedItem = this.$items.filter('.' + rb.statePrefix + 'checked').get(0) || null;
                 this.checkedIndex = (this.checkedItem) ? this.$items.index(this.checkedItem) : -1;
+                this._isStatic = this.$element.css('position') == 'static';
                 this._setInitialMarkup();
 
                 if(!this.options.disconnected){

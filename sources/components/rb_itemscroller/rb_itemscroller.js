@@ -17,7 +17,7 @@
     var orderProp = rb.prefixed('order') || rb.prefixed('flexOrder');
     var supportSomeOrder = !!orderProp;
     var transformProp = rb.prefixed('transform');
-    var supports3dTransform = window.CSS && CSS.supports && CSS.supports('(transform: translate3d(0,0,0))');
+    var supports3dTransform = rb.cssSupports('transform', 'translate3d(0,0,0)');
 
 
     var ItemScroller = rb.Component.extend('itemscroller',
@@ -369,7 +369,7 @@
                 this.scroller.addEventListener('touchstart', stopTest, evtOpts);
                 this.scroller.addEventListener('touchend', stopTest, evtOpts);
                 this.scroller.addEventListener('click', stopTest, evtOpts);
-                this.scroller.addEventListener('focus', scrollIntoView, true);
+                this.scroller.addEventListener('focus', scrollIntoView, evtOpts);
                 this.viewport.addEventListener('scroll', scrollIntoView);
             },
             _snapTo: function (dir, velocity, length) {
