@@ -12,7 +12,6 @@
 //          }
 //      }
 //  }
-// @author Jeroen Smit
 //
 @mixin rb-respond-to($breakpoint) {
     @if map-has-key($breakpointConfigs, $breakpoint) {
