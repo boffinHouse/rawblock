@@ -41,8 +41,6 @@
         ]);
 
         grunt.registerTask('svg', [
-            'svgmin:svgLogo',
-            //'svgstore:svgLogo',
             'svgmin:svgIcons',
             //'svgstore:svgIcons',
             'clean:tmp',

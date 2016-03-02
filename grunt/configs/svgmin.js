@@ -42,13 +42,6 @@ module.exports = {
 			{ transformsWithOnePath: false }
 		]
 	},
-	svgLogo: {
-		files: [
-			{
-				'<%= paths.src %>/components/rb_logo/logo.svg': ['<%= paths.src %>/components/rb_logo/*.svg']
-			}
-		]
-	},
 	svgIcons: {
 		files: [
 			{
