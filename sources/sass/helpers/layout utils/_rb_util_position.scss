@@ -30,10 +30,34 @@
         margin-left: auto;
     }
 
+    //Position all columns inside container (justify-content: for main-axis / align-items: for cross axis)
     .u-offset-columns-left#{$type} {
         justify-content: flex-start;
     }
 
+    .u-offset-columns-center#{$type} {
+        justify-content: center;
+    }
+
+    .u-offset-columns-right#{$type} {
+        justify-content: flex-end;
+    }
+
+    .u-offset-columns-top#{$type} {
+        align-items: flex-start;
+    }
+
+    .u-offset-columns-middle#{$type} {
+        align-items: center;
+    }
+
+    .u-offset-columns-bottom#{$type} {
+        align-items: flex-end;
+    }
+
+
+
+    //TODO: check if all push classes are needed or just some.
     @if $breakpointName == 'all' {
         @while $i <= 100 {
 
