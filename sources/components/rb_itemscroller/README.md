@@ -6,7 +6,7 @@ To apply the itemscroller component:
 
 - Add the `rb-itemscroller` class and attribute `data-module="itemscroller"` to a container element.
 - The component contains out of a viewport `itemscroller-viewport`, contentarea `itemscroller-content` and cells 'itemscroller-cells`.
-- Use utility class 'use-size-*` to determine how many cells are visible by giving to cells a width.
+- Use utility class 'u-size-*` to determine how many cells are visible by giving to cells a width.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example is-demo">
@@ -20,8 +20,8 @@ To apply the itemscroller component:
 ```html
 <div class="rb-itemscroller js-rb-life" data-module="itemscroller">
     <div class="itemscroller-viewport">
-        <div class="itemscroller-content use-column-group">
-            <div class="itemscroller-cell use-size-50">...</div>
+        <div class="itemscroller-content u-column-group">
+            <div class="itemscroller-cell u-size-50">...</div>
         </div>
     </div>
 </div>
@@ -59,8 +59,8 @@ elements to navigate, like previous/next buttons or paginations.
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">
 
-        <div class="itemscroller-content use-column-group">
-            <div class="itemscroller-cell use-size-50">...</div>
+        <div class="itemscroller-content u-column-group">
+            <div class="itemscroller-cell u-size-50">...</div>
         </div>
     </div>
     <div class="itemscroller-pagination"></div>
@@ -86,8 +86,8 @@ elements to navigate, like previous/next buttons or paginations.
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">
 
-        <div class="itemscroller-content use-column-group">
-            <div class="itemscroller-cell use-size-50">...</div>
+        <div class="itemscroller-content u-column-group">
+            <div class="itemscroller-cell u-size-50">...</div>
         </div>
     </div>
     <div class="itemscroller-pagination"></div>
@@ -114,8 +114,8 @@ elements to navigate, like previous/next buttons or paginations.
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">
 
-        <div class="itemscroller-content use-column-group">
-            <div class="itemscroller-cell use-size-50">...</div>
+        <div class="itemscroller-content u-column-group">
+            <div class="itemscroller-cell u-size-50">...</div>
         </div>
     </div>
     <div class="itemscroller-pagination"></div>
@@ -141,8 +141,8 @@ elements to navigate, like previous/next buttons or paginations.
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">
 
-        <div class="itemscroller-content use-column-group">
-            <div class="itemscroller-cell use-size-50">...</div>
+        <div class="itemscroller-content u-column-group">
+            <div class="itemscroller-cell u-size-50">...</div>
         </div>
     </div>
     <div class="itemscroller-pagination"></div>
@@ -154,13 +154,13 @@ elements to navigate, like previous/next buttons or paginations.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-    <div class="use-gutters-vertical">
-        <div class="use-size-100">
+    <div class="u-gutters-vertical">
+        <div class="u-size-100">
             {{#mergeJSON rb_itemscroller.default 'attrs: {"id":"itemscroller-pagination"}'}}
                 {{> rb_itemscroller }}
             {{/mergeJSON}}
         </div>
-        <div class="use-size-100">
+        <div class="u-size-100">
             {{#mergeJSON rb_itemscroller.default 'attrs: {"data-pagination-for":"itemscroller-pagination"}'}}
                 {{> rb_itemscroller }}
             {{/mergeJSON}}

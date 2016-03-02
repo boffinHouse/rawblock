@@ -10,17 +10,17 @@
     }
 
     //Hides element in layout.
-    .use-hide#{$type} {
+    .u-hide#{$type} {
         display: none !important;
     }
 
     //Shows element in layout
-    .use-show#{$type} {
+    .u-show#{$type} {
         display: inherit !important;
     }
 
     //Hides content elements visually while still allowing accessibility for assistive technology.
-    .use-visually-hidden#{$type} {
+    .u-visually-hidden#{$type} {
         display: block;
         position: absolute;
         clip: rect(1px, 1px, 1px, 1px);
@@ -33,7 +33,7 @@
     }
 
     //Shows content elements what was visually hidden.
-    .use-visually-shown#{$type} {
+    .u-visually-shown#{$type} {
         position: static;
         clip: auto;
         clip-path: none;

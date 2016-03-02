@@ -1,35 +1,35 @@
 @mixin rb-util-gridcontainer() {
 
     //Turns container in a column group (left to right)
-    .use-column-group {
+    .u-column-group {
         display: flex;
         flex-wrap: wrap;
 
-        .use-column-group,
-        .use-row-group {
+        .u-column-group,
+        .u-row-group {
             flex: 1;
         }
     }
 
     //Turns container in a row group (top to bottom)
-    .use-row-group {
+    .u-row-group {
         display: flex;
         flex-direction: column;
 
 
-        .use-column-group,
-        .use-row-group {
+        .u-column-group,
+        .u-row-group {
             flex: 1;
         }
     }
 
     //Reverse column container (right to left)
-    .use-column-group-reverse {
+    .u-column-group-reverse {
         flex-direction: row-reverse;
     }
 
     //Reverse row container (bottom to top)
-    .use-row-group-reverse {
+    .u-row-group-reverse {
         flex-direction: column-reverse;
     }
 }

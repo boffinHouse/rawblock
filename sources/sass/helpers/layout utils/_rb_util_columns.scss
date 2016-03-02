@@ -1,20 +1,20 @@
 //
 @mixin rb-util-columns() {
 
-    .use-equal-heights {
-        > [class*=use-size-]  {
+    .u-equal-heights {
+        > [class*=u-size-]  {
             display: flex;
             flex-wrap: wrap;
         }
     }
 
-    .use-unequal-height,
-    [class*=use-size-].use-unequal-height {
+    .u-unequal-height,
+    [class*=u-size-].u-unequal-height {
         display: block;
     }
 
-    .use-equal-height,
-    [class*=use-size-].use-equal-height {
+    .u-equal-height,
+    [class*=u-size-].u-equal-height {
         display: flex;
         flex-wrap: wrap;
     }

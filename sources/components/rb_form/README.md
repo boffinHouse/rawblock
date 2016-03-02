@@ -70,7 +70,7 @@ add class `is-select` the container `form-field`.
 The form layout can be structured with form classes to create sections `form-section` and `form-subsection`,
 rows `form-row`, boxes `form-box` and fields `form-fields`.
 
-TIP: You can apply utility classes `use-column-group`, `use-gutters` and `use-size-*` to create your layout widths and space.
+TIP: You can apply utility classes `u-column-group`, `u-gutters` and `u-size-*` to create your layout widths and space.
 
 <h3 class="docs-example-title">Classes</h3>
 
@@ -81,8 +81,8 @@ TIP: You can apply utility classes `use-column-group`, `use-gutters` and `use-si
 | `.form-subsection`| Use to divide form in multiple division. |
 | `.form-subsection-legend`| Use for titles in sub sections. |
 |`.form-intro`| Use for introduction text. |
-| `.form-row` | Use on parent container for boxes `form-box` to group them. Utility class `use-colum-group` and `use-gutter` can be used to set box inline and space.|
-| `.form-box` | Use as column box to divide elements. Utility class `use-size-*` can be used to set width. |
+| `.form-row` | Use on parent container for boxes `form-box` to group them. Utility class `u-colum-group` and `u-gutter` can be used to set box inline and space.|
+| `.form-box` | Use as column box to divide elements. Utility class `u-size-*` can be used to set width. |
 | `.form-field`| Use as container to group form elements (`<input>`, `<select>`, `<textarea>`) and `<label>`  |
 
 
@@ -95,15 +95,15 @@ TIP: You can apply utility classes `use-column-group`, `use-gutters` and `use-si
             <fieldset class="form-subsection">
                 <legend class="form-subsection-legend">Section 2</legend>
                 <p class="form-intro">Intro text 2</p>
-                <div class="form-row use-column-group use-gutters">
-                    <div class="form-box use-size-50">
+                <div class="form-row u-column-group u-gutters">
+                    <div class="form-box u-size-50">
                         <div class="form-field">
                             {{#mergeJSON rb_form.input 'label: "Text field"'}}
                                 {{> rb_input}}
                             {{/mergeJSON}}
                         </div>
                     </div>
-                    <div class="form-box use-size-50">
+                    <div class="form-box u-size-50">
                         <div class="form-field">
                             {{#mergeJSON rb_form.input 'label: "Text field"'}}
                                 {{> rb_input}}
@@ -154,13 +154,13 @@ a container element `form-group` and attribute `role="group"`.
     <form action="#" class="rb-form">
         {{#mergeJSON 'label: "Grouped Inputs"'}}
         {{> rb_grouped_begin}}
-        <div class="form-row use-column-group use-gutters">
-            <div class="form-box use-size-50">
+        <div class="form-row u-column-group u-gutters">
+            <div class="form-box u-size-50">
                 {{#mergeJSON rb_form.input 'label: "Default group input 50"'}}
                     {{> rb_input}}
                 {{/mergeJSON}}
             </div>
-            <div class="form-box use-size-50">
+            <div class="form-box u-size-50">
                 {{#mergeJSON rb_form.input 'label: "Default group input 50"'}}
                     {{> rb_input}}
                 {{/mergeJSON}}
@@ -170,18 +170,18 @@ a container element `form-group` and attribute `role="group"`.
         {{/mergeJSON}}
         {{#mergeJSON 'label: "Radio Grouped"'}}
               {{> rb_grouped_begin}}
-              <div class="form-row use-column-group use-gutters">
-              <div class="form-box use-size-33">
+              <div class="form-row u-column-group u-gutters">
+              <div class="form-box u-size-33">
             {{#mergeJSON rb_form.radio 'label: "Radio 1"'}}
               {{> rb_input}}
             {{/mergeJSON}}
             </div>
-            <div class="form-box  use-size-33">
+            <div class="form-box  u-size-33">
             {{#mergeJSON rb_form.radio 'label: "Radio 2"'}}
               {{> rb_input}}
             {{/mergeJSON}}
             </div>
-            <div class="form-box use-size-33">
+            <div class="form-box u-size-33">
             {{#mergeJSON rb_form.radio 'label: "Radio 3"'}}
               {{> rb_input}}
             {{/mergeJSON}}
@@ -191,18 +191,18 @@ a container element `form-group` and attribute `role="group"`.
          {{/mergeJSON}}
          {{#mergeJSON 'label: "Checkbox Grouped"'}}
                {{> rb_grouped_begin}}
-               <div class="form-row use-column-group use-gutters-horizontal">
-               <div class="form-box use-size-33">
+               <div class="form-row u-column-group u-gutters-horizontal">
+               <div class="form-box u-size-33">
              {{#mergeJSON rb_form.checkbox 'label: "Checkbox 1"'}}
                {{> rb_input}}
              {{/mergeJSON}}
              </div>
-             <div class="form-box use-size-33">
+             <div class="form-box u-size-33">
              {{#mergeJSON rb_form.checkbox 'label: "Checkbox 2"'}}
                {{> rb_input}}
              {{/mergeJSON}}
              </div>
-             <div class="form-box use-size-33">
+             <div class="form-box u-size-33">
              {{#mergeJSON rb_form.checkbox 'label: "Checkbox 3"'}}
                {{> rb_input}}
              {{/mergeJSON}}
@@ -237,23 +237,23 @@ Add attribute `disabled` to a form element and it will appear muted.
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
 <form action="#" class="rb-form">
- <div class="form-row use-column-group use-gutters">
-     <div class="form-box use-size-50">
+ <div class="form-row u-column-group u-gutters">
+     <div class="form-box u-size-50">
          {{#mergeJSON rb_form.input 'label: "Disabled field", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
          {{> rb_input}}
          {{/mergeJSON}}
      </div> 
-     <div class="form-box use-size-50">
+     <div class="form-box u-size-50">
          {{#mergeJSON rb_form.select 'label: "Disabled select", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
          {{> rb_input}}
          {{/mergeJSON}}
      </div>
-      <div class="form-box use-size-50">
+      <div class="form-box u-size-50">
           {{#mergeJSON rb_form.radio 'label: "Disabled radio", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
           {{> rb_input}}
           {{/mergeJSON}}
       </div>  
-      <div class="form-box use-size-50">
+      <div class="form-box u-size-50">
           {{#mergeJSON rb_form.checkbox 'label: "Disabled checkbox", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
           {{> rb_input}}
           {{/mergeJSON}}
@@ -279,23 +279,23 @@ adding attribute `data-module="validate"` and class `js-rb-life`  to component `
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
 <form action="#" class="rb-form js-rb-life" data-module="validate">
- <div class="form-row use-column-group use-gutters">
-     <div class="form-box use-size-50">
+ <div class="form-row u-column-group u-gutters">
+     <div class="form-box u-size-50">
          {{#mergeJSON rb_form.input 'label: "Required field", booleans:["required"]'}}
          {{> rb_input}}
          {{/mergeJSON}}
      </div> 
-     <div class="form-box use-size-50">
+     <div class="form-box u-size-50">
          {{#mergeJSON rb_form.select 'label: "Required select", booleans:["required"]'}}
          {{> rb_input}}
          {{/mergeJSON}}
      </div>
-      <div class="form-box use-size-50">
+      <div class="form-box u-size-50">
           {{#mergeJSON rb_form.radio 'label: "Required radio", booleans:["required"]'}}
           {{> rb_input}}
           {{/mergeJSON}}
       </div>  
-      <div class="form-box use-size-50">
+      <div class="form-box u-size-50">
           {{#mergeJSON rb_form.checkbox 'label: "Required checkbox", booleans:["required"]'}}
           {{> rb_input}}
           {{/mergeJSON}}

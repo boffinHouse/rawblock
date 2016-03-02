@@ -105,8 +105,8 @@ Display content in a list. Create an unordered list using the `<ul>` and ordered
 Inside create an list item with `<li>` element.
 
 
-<div class="use-column-group use-gutters-horizontal">
-    <div class="use-size-50">
+<div class="u-column-group u-gutters-horizontal">
+    <div class="u-size-50">
         <h3 class="docs-example-title">Unordered List</h3>
         <div class="docs-example">
             <div class="rb-richtext">
@@ -145,7 +145,7 @@ Inside create an list item with `<li>` element.
 ```        
 </div>
 
-<div class="use-size-50">
+<div class="u-size-50">
         <h3 class="docs-example-title">Ordered List</h3>
         <div class="docs-example">
                 <div class="rb-richtext">

@@ -11,7 +11,7 @@
     }
 
     @if $gridMaxWidth {
-        .use-grid-maxwidth#{$type} {
+        .u-grid-maxwidth#{$type} {
             max-width: $gridMaxWidth;
         }
     }
