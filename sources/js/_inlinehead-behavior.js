@@ -78,6 +78,14 @@
     //        return ss;
     //    };
     //})();
+    /*ES6 support detection */
+    //var es6support = (function(){
+    //    var support = false;
+    //    try {
+    //        support = eval('(function(x=1){try{eval("((a=a)=>{}())");return !1;}catch(e){}try{eval("((a=b,b)=>{}())");return !1;}catch(e){}return !0;}())')
+    //    } catch(e){}
+    //    return support;
+    //})();
 
     docElem.classList.remove('no-js');
     docElem.classList.add('js');

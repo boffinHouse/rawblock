@@ -39,7 +39,7 @@
         this.elements = elements;
         this.length = this.elements.length || 0;
     };
-    var regComma = /^\d+,\d+/;
+    var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
     var regUnit = /^\d+\.*\d*(px|em|rem|%|deg)$/;
     var fn = Dom.prototype;
     var steps = {};
@@ -697,7 +697,8 @@
             var extras = cssName == 'height' ? ['Top', 'Bottom'] : ['Left', 'Right'];
 
             ['inner', 'outer', ''].forEach(function(modifier){
-                fn[modifier + names[1]] = function(margin, value){
+                var fnName = modifier ? modifier + names[1] : names[0];
+                fn[fnName] = function(margin, value){
                     var styles, extraStyles, isBorderBox, doc;
                     var ret = 0;
                     var elem = this.elements[0];
