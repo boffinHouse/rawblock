@@ -167,7 +167,7 @@
                     this.$backdrop.addClass(rb.statePrefix + 'loading');
                 }
 
-                this.$backdrop.css({display: 'block'});
+                this.$backdrop.css({display: ''});
                 this.$backdrop.addClass(rb.statePrefix + 'open');
 
                 rb.$root.addClass(rb.statePrefix + 'open-' + this.name +'-within');
@@ -284,7 +284,7 @@
                 this._xhr = null;
             },
             _setDisplay: function(){
-                this.$backdrop.css({display: this.isOpen ? 'block' : 'none'});
+                this.$backdrop.css({display: this.isOpen ? '' : 'none'});
                 this._displayTimer = null;
             },
 
