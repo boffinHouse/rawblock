@@ -39,7 +39,7 @@
     "whatwg-fetch": "^0.11.0"
   },
   "devDependencies": {
-    "assemble": "~0.9.1",
+    "assemble": "~0.4.42",
     "babel-core": "^6.5.2",
     "babel-loader": "^6.2.3",
     "babel-preset-es2015": "^6.5.0",
