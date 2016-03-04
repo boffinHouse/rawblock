@@ -1,6 +1,6 @@
 // Managing responsive breakpoints from breakpointConfig
 //
-// @param {List} $breakpoint - media query where styles must apply to. (breakpoint name must be available in breakpointConfig)
+// @param {List} $breakpoint - screen dimension where styles apply to. (breakpoint name must be available in breakpointConfig)
 //
 // @require $breakpointConfig
 //
@@ -14,8 +14,8 @@
 //  }
 //
 @mixin rb-respond-to($breakpoint) {
-    @if map-has-key($breakpointConfigs, $breakpoint) {
-        $breakpointData: map-get($breakpointConfigs, $breakpoint);
+    @if map-has-key($breakpointConfig, $breakpoint) {
+        $breakpointData: map-get($breakpointConfig, $breakpoint);
         $breakpointMedia: map-get($breakpointData, media);
 
         @if($breakpoint == 'all') {
