@@ -27,15 +27,19 @@ module.exports = {
     },
     scss: {
         files: ['<%= paths.src %>/sass/**/*.scss', '<%= paths.src %>/components/**/*.scss', '!<%= paths.src %>/sass/tmp_*.scss'],
-        tasks: ['scssglobbing', 'sass:dev', 'clean:scssglobbing', 'autoprefixer:dev'],
+        tasks: ['css'],
         options: {
             debounceDelay: 100,
             livereload: false
         }
     },
+    component: {
+        files: ['<%= paths.src %>/components/**/*.scss','<%= paths.src %>/components/**/*.{json,hbs,md}'],
+        tasks: ['css', 'newer:assemble:dev', 'prettify:dev'],
+    },
     sync_img: {
         files: ['<%= paths.src %>/img/{,*/}*.{svg, png, jpg}'],
-        tasks: ['sync:js']
+        tasks: ['sync:image']
     },
     inline_js: {
         files: ['<%= paths.src %>/js/_inlinehead-behavior.js'],
@@ -56,5 +60,5 @@ module.exports = {
     ejs: {
         files: ['<%= paths.src %>/_templates/**/*.{ejs}'],
         tasks: ['ejs']
-    },
+    }
 };
