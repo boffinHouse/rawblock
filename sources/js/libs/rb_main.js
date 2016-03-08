@@ -67,8 +67,6 @@ if (!window.rb) {
 
     /* End: global vars end */
 
-    /* Begin: rbSlideUp / rbSlideDown */
-
     /**
      * Changes state class of an element.
      * @param element
@@ -81,6 +79,7 @@ if (!window.rb) {
         }
     };
 
+    /* Begin: rbSlideUp / rbSlideDown */
     /**
      * A jQuery/rb.$ plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
      * Also does not animate padding, margin, borders (use child elements)
@@ -609,7 +608,7 @@ if (!window.rb) {
     /* End: rbComponent */
 
     /* Begin: addEasing */
-    var isExtended;
+    var isExtended, BezierEasing;
     var copyEasing = function (easing, name) {
         var easObj = BezierEasing.css[easing];
         $.easing[easing] = easObj.get;
@@ -620,7 +619,7 @@ if (!window.rb) {
     };
     var extendEasing = function () {
         var easing;
-        if (!isExtended && window.BezierEasing && $) {
+        if (!isExtended && BezierEasing) {
             isExtended = true;
             for (easing in BezierEasing.css) {
                 copyEasing(easing);
@@ -636,11 +635,12 @@ if (!window.rb) {
      * @returns {Function} Easing a function
      */
     rb.addEasing = function (easing, name) {
-        var bezierArgs, BezierEasing;
+        var bezierArgs;
         if (typeof easing != 'string') {
             return;
         }
-        BezierEasing = window.BezierEasing || rb.BezierEasing;
+
+        BezierEasing = BezierEasing || rb.BezierEasing || window.BezierEasing;
 
         if (BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4) {
             extendEasing();
