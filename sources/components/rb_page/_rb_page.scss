@@ -4,7 +4,8 @@
 
 //---------------------------------------------------------
 .rb-page {
-    width: 100%;
+    overflow-x: none;
+    overflow-y: scroll;
 }
 //Main wrapper page
 .page-wrapper {
