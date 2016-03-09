@@ -35,7 +35,7 @@
 // @param {Number} $gridMaxWidth - Maximal width set in corresponding breakpoint (em/px/%).
 @mixin rb-layout-utils($breakpointName, $gutters, $orderSize, $gridMaxWidth) {
     @include rb-util-sizes($breakpointName);
-    @include rb-util-gutters($gutters);
+    @include rb-util-gutters($breakpointName, $gutters);
     @include rb-util-position($breakpointName);
     @include rb-util-visibility($breakpointName);
     @include rb-util-basics($breakpointName, $gridMaxWidth);
