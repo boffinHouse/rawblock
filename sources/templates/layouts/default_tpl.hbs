@@ -1,11 +1,11 @@
 <!DOCTYPE html>
  <html class="no-js" lang="de">
-    <head>
+    <head itemscope itemtype="http://schema.org/WebSite">
         {{> meta_data }}
         {{> app_icons }}
         {{> head_assets }}
     </head>
-    <body class="rb-page">
+    <body class="rb-page" {{#if schemaPage}}itemscope itemtype="https://schema.org/{{schemaPage}}"{{/if}}>
         <script> /* block CSS */ </script>
         <div class="page-wrapper">
             <header class="page-header" role="banner">
