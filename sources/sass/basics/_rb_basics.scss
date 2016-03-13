@@ -114,3 +114,9 @@ fieldset {
 // ---------------------
 @include rb-generate-layout-utils($breakpointConfig);
 @include rb-export-globaljs((mqs: $breakpointConfig));
+
+.item-special {
+    display: flex;
+    flex-direction: column;
+}
+
