@@ -1,7 +1,5 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
-        //optional dependencies
-        //require('../../js/utils/rb_fetch');
         module.exports = factory();
     } else {
         factory();
@@ -27,6 +25,7 @@
              * @name rb.components.{name}
              * @extends rb.Component
              * @param element {Element}
+             * @param [initialDefaults] {Object}
              *
              *
              * @example
