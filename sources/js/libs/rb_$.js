@@ -653,9 +653,11 @@
         var div = document.createElement('div');
 
         var read = function(){
+            var width;
             if(isBorderBoxRelieable == null && div){
-                isBorderBoxRelieable = rb.getStyles(div).width == '4px';
-                rb.rAFQueue(function(){
+                width = parseFloat(rb.getStyles(div).width);
+                isBorderBoxRelieable = width < 4.02 && width > 3.98;
+                (rb.rAFQueue || requestAnimationFrame)(function(){
                     if(div){
                         div.remove();
                         div = null;

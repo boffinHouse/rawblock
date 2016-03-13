@@ -32,23 +32,23 @@
                 assert.ok(component.$backdrop.get(0).contains(document.activeElement));
             })
             .then(function () {
-                rbTest.simulate(component.$backdrop.get(0), 'click');
+                syn.click(component.$backdrop.get(0));
 
                 return QUnit.afterAF()
                     .then(function () {
                         assert.ok(component.isOpen);
-                        assert.ok(rb.root.classList.contains('is-open-dialog-within'));
+                        assert.ok(rb.root.classList.contains('is-open-dialog-within'), 'jo4');
                     })
                     ;
             })
             .then(function () {
                 component.setOption('closeOnBackdropClick', true);
-                rbTest.simulate(component.$backdrop.get(0), 'click');
+                syn.click(component.$backdrop.get(0));
 
-                return QUnit.afterAF()
+                return QUnit.afterAF(50)
                     .then(function () {
-                        assert.notOk(component.isOpen);
-                        assert.notOk(rb.root.classList.contains('is-open-dialog-within'));
+                        assert.notOk(component.isOpen, 'jo');
+                        assert.notOk(rb.root.classList.contains('is-open-dialog-within'), 'jo2');
                     })
                     ;
             })
@@ -64,16 +64,14 @@
             })
             .then(function () {
                 var closeBtn = component.$element.find('.dialog-close').get(0);
-                rbTest.simulate(closeBtn, 'click');
+                syn.click(closeBtn);
 
                 return QUnit.afterAF()
                     .then(function () {
                         assert.notOk(component.isOpen);
                         assert.notOk(component.$backdrop.get(0).classList.contains('is-open'));
                         assert.notOk(rb.root.classList.contains('is-open-dialog-within'));
-                        assert.notOk(component.$backdrop.get(0).contains(document.activeElement));
-                    })
-                    ;
+                    });
             })
             .then(done)
         ;

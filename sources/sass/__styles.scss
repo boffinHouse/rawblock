@@ -15,6 +15,6 @@ Main Stylesheet
 @import "basics/rb_basics";
 
 // All Components
-@import "../components/**/*.scss !../components/**/*.async.scss !../components/**/*.js.scss";
+@import "../components/**/*.scss !../components/**/tests/**/*.scss !../components/**/*.async.scss !../components/**/*.js.scss";
 
 

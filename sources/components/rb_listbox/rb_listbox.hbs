@@ -1,4 +1,4 @@
-<ul class="rb-listbox {{ type }}" data-module="listbox" {{#each attrs}}{{@key}}="{{this}}"{{/each}}>
+<ul class="rb-listbox {{ type }}" data-module="listbox" {{#eachProperty attrs}}{{this.key}}="{{this.value}}"{{/eachProperty}}>
     {{#each items}}
         <li class="listbox-item">{{ title }}</li>
     {{/each}}

@@ -1,8 +1,6 @@
 <input class="form-input" type="{{#if type}}{{ type }}{{ else }}text{{/if}}" id="dummy-{{ type }}-{{ id }}"
 
-	{{#each attrs}}
-		{{@key}}="{{this}}"
-	{{/each}}
+    {{#eachProperty attrs}}{{this.key}}="{{this.value}}"{{/eachProperty}}
 
 	{{#each booleans}}
 		{{this}}="{{this}}"

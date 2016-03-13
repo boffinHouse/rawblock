@@ -23,4 +23,3 @@ if(!Function.prototype.bind){
 if(!Object.assign){
 	Object.assign = assign;
 }
-

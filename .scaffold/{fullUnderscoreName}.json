@@ -1,0 +1,5 @@
+{
+  "default": {
+    "content": "Hello, I'm {Name}"
+  }
+}

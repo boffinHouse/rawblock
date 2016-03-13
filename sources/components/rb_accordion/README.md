@@ -57,7 +57,7 @@ Panels can also be open/closed with control buttons `accordion-ctrl-btn`. The di
     <div class="accordion-item">...</div>
     <div class="accordion-item">...</div>
 </div>
-``` 
+```
 
 <hr>
 
@@ -67,7 +67,7 @@ To allow multiple panels to be open at the same time, add attribute `data-multip
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-	{{#mergeJSON rb_accordion.default 'attrs: {"multiple": true}'}}
+	{{#mergeJSON rb_accordion.default 'attrs: {"data-multiple": true}'}}
 		{{> rb_accordion }}
 	{{/mergeJSON}}
 </div>

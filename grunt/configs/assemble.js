@@ -39,26 +39,4 @@ module.exports = {
 			},
 		]
 	},
-	dist: {
-		options: {
-			production: true
-		},
-		files: [
-			{
-				cwd: '<%= paths.src %>/components/',
-				dest: '<%= paths.dev %>/components/',
-				expand: true,
-				flatten: true,
-				src: ['**/*_page.hbs']
-			},
-			{
-				cwd: '<%= paths.src %>/templates/pages/',
-				dest: '<%= paths.dist %>/',
-				expand: true,
-				flatten: true,
-				src: ['**/*.hbs']
-			},
-		]
-	}
-
 };

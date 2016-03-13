@@ -23,9 +23,4 @@ module.exports = {
 			'<%= paths.src %>/js/templates.js': ['<%= paths.src %>/hbs/**/*.hbs', '<%= paths.src %>/assemble/partials/**/*-hybrid.hbs']
 		}
 	},
-	dist: {
-		files: {
-			'<%= paths.src %>/js/templates.js': ['<%= paths.src %>/hbs/**/*.hbs', '<%= paths.src %>/assemble/partials/**/*-hybrid.hbs']
-		}
-	},
 };

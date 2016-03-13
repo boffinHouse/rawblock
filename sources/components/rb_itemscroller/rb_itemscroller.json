@@ -4,7 +4,7 @@
       "pagination": false,
       "autoplay": false,
       "itemsIndex": false,
-      "attrs": false,
+      "attrs": {},
       "buttons": {
           "prev": "previous",
           "next": "next"

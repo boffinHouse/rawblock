@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>QUnit rawblock - {Name}</title>
+    <script>
+        (function (docElem) {
+            //polyfills
+            if (!Object.assign || !window.fetch || !docElem.closest || !String.prototype.includes || !window.cancelAnimationFrame || !Array.from || !Array.prototype.find || !('sizes' in document.createElement('img'))) { //  || !docElem.before || !docElem.queryAll
+                document.write('<script src="../../../../../dev/js/_rb_polyfills.js"><\/script>');
+            }
+        })(document.documentElement);
+    </script>
+    <link rel="stylesheet" href="../../../../../node_modules/qunitjs/qunit/qunit.css"/>
+
+    <style>
+        /*
+		#qunit-fixture {
+			position: static;
+		}
+		*/
+    </style>
+
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture">
+
+</div>
+<script src="../../../../../node_modules/qunitjs/qunit/qunit.js"></script>
+
+<script src="../../../../../node_modules/sinon/pkg/sinon.js"></script>
+<script src="../../../../../node_modules/syn/syn.js"></script>
+
+<script src="../../../../../tests/funit/qunit-helper.js"></script>
+<script src="../../../../../tests/funit/qunit-config.js"></script>
+
+<script>
+    (function () {
+        var src = '../../../../../sources/js/libs/rb_$.js';
+        if (location.search.indexOf('jqueryinsteadrb') != -1) {
+            src = 'http://code.jquery.com/jquery-2.1.4.js';
+        }
+        document.write('<script src="' + src + '"><\/script>');
+    })();
+</script>
+
+
+<script src="../../../../../sources/js/libs/rb_crucial.js"></script>
+<script src="../../../../../sources/js/libs/rb_main.js"></script>
+<script>
+    rb.life.autoStart = false;
+</script>
+
+<!-- scripts to test -->
+<script src="../../{fullUnderscoreName}.js"></script>
+
+<script src="{name}-tests.js"></script>
+
+</body>
+</html>
