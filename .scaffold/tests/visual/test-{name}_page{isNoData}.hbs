@@ -11,8 +11,6 @@ layout: csstest_tpl.hbs
 </style>
 
 <div id="test-1">
-    {{#mergeJSON testdata_{name}.default}}
-        {{> {fullName} }}
-    {{/mergeJSON}}
+    {{> {fullUnderscoreName} }}
 </div>
 

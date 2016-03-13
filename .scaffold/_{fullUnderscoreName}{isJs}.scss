@@ -21,6 +21,4 @@ ${name}JsDefaults: (
     @include rb-js-export(map_merge(${name}JsDefaults, (
 
     )));
-
-
 }

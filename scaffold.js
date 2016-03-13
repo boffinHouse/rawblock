@@ -1,4 +1,4 @@
-var fullName, fullUnderscoreName, name, upperName, isFull, isJs;
+var fullName, fullUnderscoreName, name, upperName, isFull, isJs, isData;
 
 var path = require('path');
 var inquirer = require('inquirer');
@@ -11,8 +11,7 @@ var regName = /\{name}/g;
 var regFullName = /\{fullName}/g;
 var regFullUnderscoreName = /\{fullUnderscoreName}/g;
 var regUpperName = /\{Name}/g;
-var regIsJs = /\{isJs}/g;
-var regIsNoJs = /\{isNoJs}/g;
+var regRemove = /\{isJs}|\{isNoJs}|\{isData}|\{isNoData}/g;
 
 var groups = [
     {
@@ -28,8 +27,12 @@ var groups = [
     },
     {
         id: 'template',
-        name: 'Template files (hbs and json)',
+        name: 'Template file (hbs)',
         isMinimal: true,
+    },
+    {
+        id: 'data',
+        name: 'Template data file (json)',
     },
     {
         id: 'jsTests',
@@ -59,11 +62,18 @@ var files = [
     },
     {
         groupId: 'visualTests',
-        file: 'tests/visual/test-{name}_page.hbs',
+        file: 'tests/visual/test-{name}_page{isData}.hbs',
+        onlyIfData: true,
+    },
+    {
+        groupId: 'visualTests',
+        file: 'tests/visual/test-{name}_page{isNoData}.hbs',
+        onlyIfNoData: true,
     },
     {
         groupId: 'visualTests',
         file: 'tests/visual/testdata_{name}.json',
+        onlyIfData: true,
     },
     {
         groupId: 'visualTests',
@@ -71,7 +81,13 @@ var files = [
     },
     {
         groupId: 'sass',
-        file: '_{fullUnderscoreName}.scss',
+        file: '_{fullUnderscoreName}{isJs}.scss',
+        onlyIfJs: true,
+    },
+    {
+        groupId: 'sass',
+        file: '_{fullUnderscoreName}{isNoJs}.scss',
+        onlyIfNoJs: true,
     },
     {
         groupId: 'js',
@@ -80,17 +96,32 @@ var files = [
     },
     {
         groupId: 'template',
-        file: '{fullUnderscoreName}{isJs}.hbs',
+        file: '{fullUnderscoreName}{isJs}{isData}.hbs',
         onlyIfJs: true,
+        onlyIfData: true,
     },
     {
         groupId: 'template',
-        file: '{fullUnderscoreName}{isNoJs}.hbs',
+        file: '{fullUnderscoreName}{isJs}{isNoData}.hbs',
+        onlyIfJs: true,
+        onlyIfNoData: true,
+    },
+    {
+        groupId: 'template',
+        file: '{fullUnderscoreName}{isNoJs}{isData}.hbs',
         onlyIfNoJs: true,
+        onlyIfData: true,
     },
     {
         groupId: 'template',
+        file: '{fullUnderscoreName}{isNoJs}{isNoData}.hbs',
+        onlyIfNoJs: true,
+        onlyIfNoData: true,
+    },
+    {
+        groupId: 'data',
         file: '{fullUnderscoreName}.json',
+        onlyIfData: true,
     },
     {
         groupId: 'docs',
@@ -98,7 +129,13 @@ var files = [
     },
     {
         groupId: 'docs',
-        file: 'README.md',
+        file: 'README{isData}.md',
+        onlyIfData: true,
+    },
+    {
+        groupId: 'docs',
+        file: 'README{isNoData}.md',
+        onlyIfNoData: true,
     },
 ];
 
@@ -108,13 +145,14 @@ function replaceNames(str){
         .replace(regFullUnderscoreName, fullUnderscoreName)
         .replace(regName, name)
         .replace(regUpperName, upperName)
-        .replace(isJs ? regIsJs : regIsNoJs, '')
+        .replace(regRemove, '')
     ;
 }
 
 function handlePreset(answers){
     var choices = [];
     var handledChoices = {};
+
     name = answers.name;
 
     if(answers.prefix != '-'){
@@ -129,17 +167,18 @@ function handlePreset(answers){
 
     isFull = answers.preset.indexOf('full') != -1;
     isJs = answers.preset.indexOf('js') != -1;
+    isData = isFull || answers.preset.indexOf('medium') != -1;
 
 
     groups.forEach(function(item){
-        if(handledChoices[item.id] || (!isJs && item.onlyIfJs)){return;}
+        if(handledChoices[item.id] || (!isJs && item.onlyIfJs) || (!isData && item.onlyIfData)){return;}
 
         handledChoices[item.id] = true;
 
         choices.push({
             name: item.name,
             value: item.id,
-            checked: isFull || item.isMinimal,
+            checked: isFull || item.isMinimal || isData && item.id == 'data',
         });
     });
 
@@ -168,20 +207,31 @@ function questionPreset(){
             name: "preset",
             message: "What kind of component do you want to generate?",
             choices: [
+                new inquirer.Separator('Minimum: (no data, no docs, no unit tests)'),
                 {
-                    name: "Minimal without JS",
+                    name: "- Minimal without JS",
                     value: "min"
                 },
                 {
-                    name: "Minimal with JS",
+                    name: "- Minimal with JS",
                     value: "min_js"
                 },
+                new inquirer.Separator('Medium: (no docs, no unit tests)'),
                 {
-                    name: "Full without JS",
+                    name: "- Medium without JS",
+                    value: "medium"
+                },
+                {
+                    name: "- Medium with JS",
+                    value: "medium_js"
+                },
+                new inquirer.Separator('Full:'),
+                {
+                    name: "- Full without JS",
                     value: "full"
                 },
                 {
-                    name: "Full with JS",
+                    name: "- Full with JS",
                     value: "full_js"
                 },
             ]
@@ -218,7 +268,12 @@ function copyFiles(fileGroups){
     files.forEach(function(file){
         var content, installPath;
 
-        if((file.onlyIfJs && !isJs) || (file.onlyIfNoJs && isJs) || fileGroups.indexOf(file.groupId) == -1){return;}
+        if((file.onlyIfJs && !isJs) ||
+            (file.onlyIfNoJs && isJs) ||
+            (file.onlyIfNoData && isData) ||
+            (file.onlyIfData && !isData) ||
+            fileGroups.indexOf(file.groupId) == -1
+        ){return;}
 
         installPath = path.join(baseInstallPath, replaceNames(file.file));
 
