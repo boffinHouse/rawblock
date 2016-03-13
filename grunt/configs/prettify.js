@@ -35,15 +35,4 @@ module.exports = {
 			}
 		]
 	},
-	dist: {
-		files: [
-			{
-				cwd: '<%= paths.dist %>/',
-				dest: '<%= paths.dist %>/',
-				expand: true,
-				ext: '.html',
-				src: ['*.html']
-			}
-		]
-	}
 }

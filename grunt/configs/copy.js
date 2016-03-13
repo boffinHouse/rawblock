@@ -5,22 +5,22 @@
  */
 
 module.exports = {
-	favicon: {
-		cwd: '<%= paths.src %>/img/appicons/',
-		dest: '<%= paths.dist %>/img/appicons/',
-		expand: true,
-		src: ['**/*.ico']
-	},
-	dist: {
-		cwd: '<%= paths.src %>/js/modules/',
-		dest: '<%= paths.dist %>/js/modules/',
-		expand: true,
-		src: ['**/*.js']
-	},
-	fonts: {
-		cwd: '<%= paths.src %>/fonts/',
-		dest: '<%= paths.dist %>/fonts/',
-		expand: true,
-		src: ['**/*']
-	},
+    favicon: {
+        cwd: '<%= paths.src %>/img/appicons/',
+        dest: '<%= paths.dist %>/img/appicons/',
+        expand: true,
+        src: ['**/*.ico']
+    },
+    fonts: {
+        cwd: '<%= paths.src %>/fonts/',
+        dest: '<%= paths.dist %>/fonts/',
+        expand: true,
+        src: ['**/*']
+    },
+    dist: {
+        cwd: '<%= paths.dev %>/',
+        dest: '<%= paths.dist %>/',
+        expand: true,
+        src: ['**/*', '!test-*.html']
+    },
 };

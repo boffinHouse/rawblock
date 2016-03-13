@@ -22,21 +22,4 @@ module.exports = {
 			}
 		}],
 	},
-	dist: {
-		options: {
-			outputStyle: 'nested',
-			sourceMap: false
-		},
-		files: [{
-			expand: true,
-			cwd: '<%= paths.src %>/sass/',
-			src: ['*.scss', '!_*.scss'],
-			dest: '<%= paths.dist %>/css/',
-			ext: '.css',
-			extDot: 'last',
-			rename: function(path, file){
-				return path + (file.replace(/^tmp_/, ''));
-			}
-		}],
-	}
 }

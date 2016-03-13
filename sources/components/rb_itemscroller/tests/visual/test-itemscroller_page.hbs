@@ -1,0 +1,20 @@
+---
+title: Itemscroller
+layout: csstest_tpl.hbs
+---
+
+<style>
+    .itemscroller-btn-prev,
+    .itemscroller-btn-next,
+    .itemscroller-pagination-btn {
+        -webkit-transition: none !important;;
+        transition: none !important;
+    }
+</style>
+
+<div id="test-1">
+    {{#mergeJSON rb_itemscroller_test.default}}
+        {{> rb_itemscroller }}
+    {{/mergeJSON}}
+</div>
+

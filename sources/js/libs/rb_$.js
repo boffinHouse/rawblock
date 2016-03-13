@@ -657,7 +657,7 @@
             if(isBorderBoxRelieable == null && div){
                 width = parseFloat(rb.getStyles(div).width);
                 isBorderBoxRelieable = width < 4.02 && width > 3.98;
-                rb.rAFQueue(function(){
+                (rb.rAFQueue || requestAnimationFrame)(function(){
                     if(div){
                         div.remove();
                         div = null;

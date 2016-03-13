@@ -1,7 +1,5 @@
 <textarea class="form-textarea" name="{{name}}-{{id}}"
-	{{#each attrs}}
-		{{@key}}="{{this}}"
-	{{/each}}
+    {{#eachProperty attrs}}{{this.key}}="{{this.value}}"{{/eachProperty}}
 
 	{{#each booleans}}
 		{{this}}="{{this}}"

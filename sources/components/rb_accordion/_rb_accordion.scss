@@ -78,9 +78,11 @@ $accordionJSCFG: (
 
 
 @media (max-width: 500px) {
-    @include rb-js-export(map_merge($accordionJSCFG, (
-        switchedOff: true
-    )));
+    .rb-accordion {
+        @include rb-js-export(map_merge($accordionJSCFG, (
+            switchedOff: true
+        )));
+    }
 
     .accordion-panel {
         visibility: visible;

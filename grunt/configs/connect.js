@@ -4,15 +4,22 @@
  * {@link} https://github.com/gruntjs/grunt-contrib-connect
  */
 module.exports = {
-	options: {
-		port: '<%= ports.app %>',
-		livereload: '<%= ports.livereload %>',
-		hostname: 'localhost'
-	},
-	livereload: {
-		options: {
-			open: true,
-			base: ['<%= paths.dev %>']
-		}
-	}
+    options: {
+        port: '<%= ports.app %>',
+        livereload: '<%= ports.livereload %>',
+        hostname: 'localhost'
+    },
+    livereload: {
+        options: {
+            open: true,
+            base: ['<%= paths.dev %>']
+        }
+    },
+    casper: {
+        options: {
+            port: '<%= ports.test %>',
+            base: ['<%= paths.dev %>'],
+            livereload: false,
+        }
+    },
 };

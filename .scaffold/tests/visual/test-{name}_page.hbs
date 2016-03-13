@@ -1,0 +1,18 @@
+---
+title: {Name}
+layout: csstest_tpl.hbs
+---
+
+<style>
+    .{fullName} * {
+        -webkit-transition: none !important;;
+        transition: none !important;
+    }
+</style>
+
+<div id="test-1">
+    {{#mergeJSON testdata_{name}.default}}
+        {{> {fullName} }}
+    {{/mergeJSON}}
+</div>
+

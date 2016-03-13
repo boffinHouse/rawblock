@@ -64,6 +64,7 @@ if (!window.rb) {
 
     rb.statePrefix = 'is-';
     rb.uitlPrefix = 'u-';
+    rb.behaviorPrefix = '';
 
     /* End: global vars end */
 
@@ -893,8 +894,8 @@ if (!window.rb) {
     var initClickArea = function(){
 
         var supportMouse = typeof window.MouseEvent == 'function';
-        var clickAreaSel = '.' + rb.statePrefix + 'clickarea';
-        var clickAreaactionSel = '.' + rb.statePrefix + 'clickarea-action';
+        var clickAreaSel = '.' + rb.uitlPrefix + 'clickarea';
+        var clickAreaactionSel = '.' + rb.uitlPrefix + 'clickarea-action';
         var abortSels = 'a[href], a[href] *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
 
         var getSelection = window.getSelection || function () {
@@ -1035,7 +1036,7 @@ if (!window.rb) {
     /* Begin: focus-within polyfill */
     var initFocusWithin = function(){
         var running = false;
-        var isClass = rb.statePrefix + 'focus-within';
+        var isClass = rb.uitlPrefix + 'focus-within';
         var isClassSelector = '.' + isClass;
 
         var updateFocus = function () {
@@ -1083,9 +1084,10 @@ if (!window.rb) {
         var keyboardFocusElem;
         var hasKeyboardFocus = false;
         var isKeyboardBlocked = false;
+        var eventOpts = {passive: true, capture: true};
         var root = rb.root;
-        var isClass = rb.statePrefix + 'keyboardfocus';
-        var isWithinClass = rb.statePrefix + 'keyboardfocus-within';
+        var isClass = rb.uitlPrefix + 'keyboardfocus';
+        var isWithinClass = rb.uitlPrefix + 'keyboardfocus-within';
 
         var unblockKeyboardFocus = function (e) {
             if(e.keyCode == 9){
@@ -1144,20 +1146,20 @@ if (!window.rb) {
 
         var pointerEvents = (window.PointerEvent) ?
                 ['pointerdown', 'pointerup'] :
-                ['mousedown', 'mouseup', 'touchstart', 'touchend']
+                ['mousedown', 'mouseup']
             ;
 
-        root.addEventListener('blur', removeChildFocus, true);
+        root.addEventListener('blur', removeChildFocus, eventOpts);
         root.addEventListener('focus', function(){
             if(!isKeyboardBlocked || hasKeyboardFocus){
                 setKeyboardFocus();
             }
-        }, true);
-        root.addEventListener('keydown', unblockKeyboardFocus, true);
-        root.addEventListener('keypress', unblockKeyboardFocus, true);
+        }, eventOpts);
+        root.addEventListener('keydown', unblockKeyboardFocus, eventOpts);
+        root.addEventListener('keypress', unblockKeyboardFocus, eventOpts);
 
         pointerEvents.forEach(function (eventName) {
-            document.addEventListener(eventName, removeKeyBoardFocus, {passive: true, capture: true});
+            document.addEventListener(eventName, removeKeyBoardFocus, eventOpts);
         });
     };
     /* End: keyboard-focus */
@@ -1585,9 +1587,12 @@ if (!window.rb) {
 
     var mainInit = function(){
         mainInit = false;
-        if(rb.cssConfig.statePrefix) {
-            rb.statePrefix = rb.cssConfig.statePrefix;
-        }
+
+        ['statePrefix', 'uitlPrefix', 'behaviorPrefix'].forEach(function(prefixName){
+            if(prefixName in rb.cssConfig && typeof rb.cssConfig[prefixName] == 'string') {
+                rb[prefixName] = rb.cssConfig[prefixName];
+            }
+        });
 
         rb._uitilsInit();
 
@@ -2238,7 +2243,7 @@ if (!window.rb) {
 
                 this.parseOptions(this.options);
 
-                this.name = this.options.name || this.name;
+                this.name = this.options.name || rb.behaviorPrefix + this.name;
                 this.jsName = this.options.jsName || origName;
 
                 this._evtName = this.jsName + 'changed';
@@ -2508,7 +2513,7 @@ if (!window.rb) {
             },
 
             /**
-             * Interpolates {name} to the name of the component. Helps to generate BEM-style Class-Structure.
+             * Interpolates {name}, {jsName} and {htmlName} to the name of the component. Helps to generate BEM-style Class-Structure.
              * @param {String} str
              * @param {Boolean} [isJs=false]
              * @returns {string}

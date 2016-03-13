@@ -2,7 +2,9 @@
     'use strict';
 
     module.exports = function (grunt) {
-        require('jit-grunt')(grunt);
+        require('jit-grunt')(grunt, {
+            'phantomcss': '@micahgodbolt/grunt-phantomcss'
+        });
         require('time-grunt')(grunt);
 
         // Project settings
@@ -37,7 +39,9 @@
 
         grunt.registerTask('test', [
             'jshint',
-            'qunit'
+            'connect:casper',
+            'phantomcss',
+            'qunit',
         ]);
 
         grunt.registerTask('svg', [
@@ -78,20 +82,13 @@
         grunt.registerTask('dist', [
             'clean:dist',
             'clean:tmp',
-            'scssglobbing',
-            'sass:dist',
-            'uglify:inline',
-            'assemble:dist',
-            'autoprefixer:dist',
-            'cssmin',
-            'copy:favicon',
-            'handlebars:dist',
-            'jst',
-            'webpack:dist',
+            'dev',
             'test',
             'copy:fonts',
-            'prettify:dist',
-            'clean:scssglobbing',
+            'copy:favicon',
+            'copy:dist',
+            'cssmin',
+            'uglify:dist',
         ]);
     };
 

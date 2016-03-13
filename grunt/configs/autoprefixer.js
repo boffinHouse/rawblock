@@ -13,7 +13,4 @@ module.exports = {
 		},
 		src: '<%= paths.dev %>/css/*.css'
 	},
-	dist: {
-		src: '<%= paths.dist %>/css/*.css'
-	}
 };

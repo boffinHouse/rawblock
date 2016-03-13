@@ -11,5 +11,11 @@ module.exports = {
         files: {
             '<%= paths.dev %>/js/_inlinehead-behavior.js': ['<%= paths.src %>/js/_inlinehead-behavior.js']
         }
+    },
+    dist: {
+        cwd: '<%= paths.dist %>/js/',
+        dest: '<%= paths.dist %>/js/',
+        expand: true,
+        src: ['**/*.js']
     }
 };

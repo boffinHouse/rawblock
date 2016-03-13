@@ -28,7 +28,6 @@ var devPlugins = [
 		minSizeReduce: 1.5,
 	})
 ];
-var productionPlugins = devPlugins.concat([new webpack.optimize.UglifyJsPlugin()]);
 
 module.exports = {
 	options: {
@@ -81,10 +80,4 @@ module.exports = {
 		},
 		plugins: devPlugins,
 	},
-	dist: {
-		output: {
-			path: '<%= paths.dist %>/js/',
-		},
-		plugins: productionPlugins,
-	}
 };
