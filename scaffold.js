@@ -54,7 +54,7 @@ var files = [
     },
     {
         groupId: 'jsTests',
-        file: 'tests/funit/{name}-tests.html',
+        file: 'tests/funit/{name}-tests.js',
         onlyIfJs: true,
     },
     {
@@ -63,7 +63,7 @@ var files = [
     },
     {
         groupId: 'visualTests',
-        file: 'tests/visual/testdata-{name}.json',
+        file: 'tests/visual/testdata_{name}.json',
     },
     {
         groupId: 'visualTests',
@@ -80,10 +80,6 @@ var files = [
     },
     {
         groupId: 'template',
-        file: '{fullUnderscoreName}.hbs',
-    },
-    {
-        groupId: 'template',
         file: '{fullUnderscoreName}{isJs}.hbs',
         onlyIfJs: true,
     },
@@ -91,6 +87,10 @@ var files = [
         groupId: 'template',
         file: '{fullUnderscoreName}{isNoJs}.hbs',
         onlyIfNoJs: true,
+    },
+    {
+        groupId: 'template',
+        file: '{fullUnderscoreName}.json',
     },
     {
         groupId: 'docs',
@@ -198,7 +198,7 @@ function checkoutScaffold(choices){
         {
             type: 'checkbox',
             message: 'Should we scaffold the following checked files for you?',
-            name: 'toppings',
+            name: 'fileGroups',
             choices: choices,
             validate: function( answer ) {
                 if ( answer.length < 1 ) {
@@ -208,30 +208,31 @@ function checkoutScaffold(choices){
             }
         }
     ], function( answers ) {
-        copyFiles(answers);
+        copyFiles(answers.fileGroups);
     });
 }
 
 function copyFiles(fileGroups){
     var baseInstallPath = path.join(installDir, fullUnderscoreName);
-    var baseCopyPath = path.join(copyDir, fullUnderscoreName);
 
     files.forEach(function(file){
-        var content;
+        var content, installPath;
 
         if((file.onlyIfJs && !isJs) || (file.onlyIfNoJs && isJs) || fileGroups.indexOf(file.groupId) == -1){return;}
 
-        var copyPath = path.join(baseInstallPath, replaceNames(file));
+        installPath = path.join(baseInstallPath, replaceNames(file.file));
 
-        if(grunt.file.isFile(copyPath)){
-            console.log(copyPath + 'already exists. No action.');
+        if(grunt.file.isFile(installPath)){
+            console.log(installPath + ' already exists. No action.');
             return;
         }
 
-        content = replaceNames(grunt.file.read(path.join(baseCopyPath, file)) || '');
+        content = replaceNames(grunt.file.read(path.join(copyDir, file.file)) || '');
 
-        grunt.file.write(copyPath, content);
+        grunt.file.write(installPath, content);
     });
+
+    console.log('Installed to: '+ baseInstallPath);
 }
 
 

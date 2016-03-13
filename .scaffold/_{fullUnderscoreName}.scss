@@ -7,7 +7,7 @@
 
 // JS Config
 //**********************************************************
-${name}DefaultJSCFG: (
+${name}JsDefaults: (
     name: "{name}",
 );
 
@@ -18,7 +18,7 @@ ${name}DefaultJSCFG: (
 //----------------------------------------------------------
 
 .{fullName} {
-    @include rb-js-export(map_merge(${name}DefaultJSCFG, (
+    @include rb-js-export(map_merge(${name}JsDefaults, (
 
     )));
 

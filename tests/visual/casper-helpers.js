@@ -1,5 +1,6 @@
 var promise = require('es6-promise');
 module.exports = {
+    root: 'http://localhost:9001/',
     waitForJsReady: function(){
         var ready, run;
         return function check() {

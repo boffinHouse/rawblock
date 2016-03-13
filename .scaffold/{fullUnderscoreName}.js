@@ -11,7 +11,7 @@
     var rb = window.rb;
     var $ = rb.$;
 
-    return rb.Component.extend('{name}',
+    var {Name} = rb.Component.extend('{name}',
         /** @lends rb.components.{name}.prototype */
         {
             /**
@@ -43,4 +43,5 @@
         }
     );
 
+    return {Name};
 }));

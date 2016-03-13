@@ -1,6 +1,6 @@
 var casperHelpers = require('../../../../../tests/visual/casper-helpers');
 
-casper.thenOpen('http://localhost:9001/test-itemscroller_page.html')
+casper.thenOpen(casperHelpers.root + 'test-itemscroller_page.html')
     .then(function() {
         var promise = casperHelpers.deferred();
 

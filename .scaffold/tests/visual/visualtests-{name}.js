@@ -1,6 +1,6 @@
 //var casperHelpers = require('../../../../../tests/visual/casper-helpers');
 //
-//casper.thenOpen('http://localhost:9001/test-{name}_page.html')
+//casper.thenOpen(casperHelpers.root + 'test-{name}_page.html')
 //    .then(function() {
 //        var promise = casperHelpers.deferred();
 //
