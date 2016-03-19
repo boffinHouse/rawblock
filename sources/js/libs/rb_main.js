@@ -11,6 +11,7 @@ if (!window.rb) {
 
     /* Begin: global vars end */
     var rb = window.rb;
+    var regnameSeparator = /\{-}/g;
     var regSplit = /\s*?,\s*?|\s+?/g;
     var slice = Array.prototype.slice;
 
@@ -63,8 +64,9 @@ if (!window.rb) {
     rb.templates = {};
 
     rb.statePrefix = 'is-';
-    rb.uitlPrefix = 'u-';
-    rb.behaviorPrefix = '';
+    rb.utilPrefix = 'u-';
+    rb.jsPrefix = '';
+    rb.nameSeparator = '-';
 
     /* End: global vars end */
 
@@ -78,6 +80,14 @@ if (!window.rb) {
         if(element && element.classList){
             element.classList[action ? 'add' : 'remove'](rb.statePrefix + state);
         }
+    };
+
+    $.fn.rbChangeState = function(state, action){
+        if(this.length){
+            state = rb.statePrefix + (state.replace(regnameSeparator, rb.nameSeparator));
+            this[action ? 'addClass' : 'removeClass'](state);
+        }
+        return this;
     };
 
     /* Begin: rbSlideUp / rbSlideDown */
@@ -894,8 +904,8 @@ if (!window.rb) {
     var initClickArea = function(){
 
         var supportMouse = typeof window.MouseEvent == 'function';
-        var clickAreaSel = '.' + rb.uitlPrefix + 'clickarea';
-        var clickAreaactionSel = '.' + rb.uitlPrefix + 'clickarea-action';
+        var clickAreaSel = '.' + rb.utilPrefix + 'clickarea';
+        var clickAreaactionSel = '.' + rb.utilPrefix + 'clickarea' + rb.nameSeparator + 'action';
         var abortSels = 'a[href], a[href] *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
 
         var getSelection = window.getSelection || function () {
@@ -1036,7 +1046,7 @@ if (!window.rb) {
     /* Begin: focus-within polyfill */
     var initFocusWithin = function(){
         var running = false;
-        var isClass = rb.uitlPrefix + 'focus-within';
+        var isClass = rb.utilPrefix + 'focus' + rb.nameSeparator + 'within';
         var isClassSelector = '.' + isClass;
 
         var updateFocus = function () {
@@ -1086,8 +1096,8 @@ if (!window.rb) {
         var isKeyboardBlocked = false;
         var eventOpts = {passive: true, capture: true};
         var root = rb.root;
-        var isClass = rb.uitlPrefix + 'keyboardfocus';
-        var isWithinClass = rb.uitlPrefix + 'keyboardfocus-within';
+        var isClass = rb.utilPrefix + 'keyboardfocus';
+        var isWithinClass = rb.utilPrefix + 'keyboardfocus' + rb.nameSeparator + 'within';
 
         var unblockKeyboardFocus = function (e) {
             if(e.keyCode == 9){
@@ -1197,6 +1207,8 @@ if (!window.rb) {
 
     var cbs = [];
     var setupClick = function () {
+        var clickClass = ['js', 'click'].join(rb.nameSeparator);
+        var clickSel = '.' + clickClass;
         var applyBehavior = function (clickElem, e) {
             var i, len, attr, found;
             for (i = 0, len = cbs.length; i < len; i++) {
@@ -1210,26 +1222,26 @@ if (!window.rb) {
             }
 
             if (!found) {
-                clickElem.classList.remove('js-click');
+                clickElem.classList.remove(clickClass);
             }
         };
         setupClick = rb.$.noop;
 
         document.addEventListener('keydown', function (e) {
             var elem = e.target;
-            if ((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains('js-click') && elem.getAttribute('data-module')) {
+            if ((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains(clickClass) && elem.getAttribute('data-module')) {
                 applyBehavior(elem, e);
             }
         }, true);
 
         document.addEventListener('click', function (e) {
-            var clickElem = e.target.closest('.js-click');
+            var clickElem = e.target.closest(clickSel);
             while (clickElem) {
                 applyBehavior(clickElem, e);
 
                 clickElem = clickElem.parentNode;
                 if (clickElem && clickElem.closest) {
-                    clickElem = clickElem.closest('.js-click');
+                    clickElem = clickElem.closest(clickSel);
                 }
 
                 if (clickElem && !clickElem.closest) {
@@ -1238,6 +1250,8 @@ if (!window.rb) {
             }
 
         }, true);
+
+        return clickClass;
     };
 
     /**
@@ -1258,7 +1272,7 @@ if (!window.rb) {
                 fn: fn,
             });
             if (cbs.length == 1) {
-                setupClick();
+                this.clickClass = setupClick();
             }
         }
     };
@@ -1396,23 +1410,21 @@ if (!window.rb) {
         return condition ? yes : (no || '');
     };
 
-    rb._uitilsInit = function(){
+    rb._utilsInit = function(){
         initClickArea();
         initFocusWithin();
         initKeyboardFocus();
-        rb._uitilsInit = rb.$.noop;
+        rb._utilsInit = rb.$.noop;
     };
 })(window, document);
 
 (function (window, document) {
     'use strict';
 
-    var elements, useMutationEvents, implicitlyStarted, lifeBatch;
+    var elements, useMutationEvents, implicitlyStarted, lifeBatch, initClass, attachedClass, started;
 
     var life = {};
     var removeElements = [];
-    var initClass = 'js-rb-life';
-    var attachedClass = 'js-rb-attached';
     var rb = window.rb;
     var $ = rb.$;
     var componentExpando = rb.Symbol('_rbComponent');
@@ -1447,7 +1459,7 @@ if (!window.rb) {
                 rb.log('js-click component not found', elem);
             }
             rb.rAFQueue(function () {
-                elem.classList.remove('js-click');
+                elem.classList.remove(rb.click.clickClass);
                 if(!elem.classList.contains(attachedClass)){
                     elem.classList.add(initClass);
                     life.searchModules();
@@ -1584,17 +1596,27 @@ if (!window.rb) {
             }
         };
     };
+    var extendOptions = function(obj){
+        if(obj){
+            ['statePrefix', 'utilPrefix', 'jsPrefix', 'nameSeparator'].forEach(function(prefixName){
+                if(prefixName in obj && typeof obj[prefixName] == 'string') {
+                    rb[prefixName] = obj[prefixName];
+                }
+            });
+        }
+    };
 
     var mainInit = function(){
         mainInit = false;
 
-        ['statePrefix', 'uitlPrefix', 'behaviorPrefix'].forEach(function(prefixName){
-            if(prefixName in rb.cssConfig && typeof rb.cssConfig[prefixName] == 'string') {
-                rb[prefixName] = rb.cssConfig[prefixName];
-            }
-        });
+        extendOptions(rb.cssConfig);
 
-        rb._uitilsInit();
+        initClass = ['js', 'rb', 'life'].join(rb.nameSeparator);
+        attachedClass = ['js', 'rb', 'attached'].join(rb.nameSeparator);
+
+        elements = document.getElementsByClassName(initClass);
+
+        rb._utilsInit();
 
         initObserver();
 
@@ -1622,20 +1644,18 @@ if (!window.rb) {
     life.customElements = false;
 
     life.init = function (options) {
-        if (elements) {
+        if (started) {
             rb.log('only once');
             return;
         }
 
+        started = true;
+
         if (options) {
             useMutationEvents = options.useMutationEvents || false;
-        }
 
-        if(options && options.statePrefix){
-            rb.statePrefix = options.statePrefix;
+            extendOptions(options);
         }
-
-        elements = document.getElementsByClassName(initClass);
 
         lifeBatch = createBatch();
 
@@ -1709,7 +1729,7 @@ if (!window.rb) {
         }
 
         if (!_noCheck) {
-            if (!elements && !implicitlyStarted) {
+            if (!started && !implicitlyStarted) {
                 implicitlyStarted = true;
                 setTimeout(function () {
                     if (!elements && life.autoStart) {
@@ -1866,13 +1886,13 @@ if (!window.rb) {
 
         var findElements = rb.throttle(function () {
 
-            var element, modulePath, moduleId, i, hook, start, deferred;
-
-            var len = elements.length;
+            var element, modulePath, moduleId, i, hook, start, deferred, len;
 
             if(mainInit){
                 mainInit();
             }
+
+            len = elements.length;
 
             if (!len) {
                 return;
@@ -2069,6 +2089,7 @@ if (!window.rb) {
     var regName = /\{name}/g;
     var regJsName = /\{jsName}/g;
     var regHtmlName = /\{htmlName}/g;
+    var regnameSeparator = /\{-}/g;
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
     var _setupEventsByEvtObj = function (that) {
         var eventsObjs, evt;
@@ -2243,7 +2264,7 @@ if (!window.rb) {
 
                 this.parseOptions(this.options);
 
-                this.name = this.options.name || rb.behaviorPrefix + this.name;
+                this.name = this.options.name || rb.jsPrefix + this.name;
                 this.jsName = this.options.jsName || origName;
 
                 this._evtName = this.jsName + 'changed';
@@ -2343,7 +2364,7 @@ if (!window.rb) {
 			 *              'click .{name}__close-button': 'close',
 			 *              'focus:capture():matches(input, select)': '_onFocus',
 			 *              'mouseenter:capture():matches(.teaser)': '_delegatedMouseenter',
-			 *              'click .ok-btn': '_ok',
+			 *              'click:closest(.ok-btn)': '_ok',
 			 *              'keypress:keycodes(13 32):matches(.ok-btn)': '_ok',
 			 *          }
 			 *      }
@@ -2526,6 +2547,7 @@ if (!window.rb) {
                 return str.replace(regName, isJs ? this.jsName : this.name)
                     .replace(regJsName, this.jsName)
                     .replace(regHtmlName, this.name)
+                    .replace(regnameSeparator, rb.nameSeparator)
                 ;
             },
 
@@ -2540,6 +2562,10 @@ if (!window.rb) {
                 return (context || this.element).querySelector(this.interpolateName(selector));
             },
 
+            _qSA: function(selector, context){
+                return (context || this.element).querySelectorAll(this.interpolateName(selector));
+            },
+
             /**
              * Returns Array of matched elements. Interpolates selector with `interpolateName`.
              * @param {String} selector
@@ -2547,7 +2573,17 @@ if (!window.rb) {
              * @returns {Element[]}
              */
             queryAll: function (selector, context) {
-                return Array.from((context || this.element).querySelectorAll(this.interpolateName(selector)));
+                return Array.from(this._qSA(selector, context));
+            },
+
+            /**
+             * Returns jQuery list of matched elements. Interpolates selector with `interpolateName`.
+             * @param {String} selector
+             * @param {Element} [context=this.element]
+             * @returns {jQueryfiedNodeList}
+             */
+            $queryAll: function (selector, context) {
+                return $(this._qSA(selector, context));
             },
 
             /*
