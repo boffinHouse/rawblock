@@ -14,15 +14,15 @@
 //  }
 //
 @mixin rb-respond-to($breakpoint) {
-    @if map-has-key($breakpointConfig, $breakpoint) {
-        $breakpointData: map-get($breakpointConfig, $breakpoint);
-        $breakpointMedia: map-get($breakpointData, media);
+    @if map-has-key($breakpoint-config, $breakpoint) {
+        $breakpoint-data: map-get($breakpoint-config, $breakpoint);
+        $breakpoint-media: map-get( $breakpoint-data, media);
 
         @if($breakpoint == 'all') {
             @content;
         }
         @else {
-            @media #{$breakpointMedia} {
+            @media #{$breakpoint-media} {
                 @content;
             }
         }
