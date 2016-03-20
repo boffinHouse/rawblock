@@ -229,7 +229,7 @@
 	});
 
 
-	QUnit.test("rb. .is-clickarea delegate", function( assert ){
+	QUnit.test("rb. .u-clickarea delegate", function( assert ){
 		var $mainElement;
 		var i = 0;
 		var ni = 0;
@@ -243,8 +243,8 @@
 		var mainFn = function(){
 			mainI++;
 		};
-		var content = '<div id="test-wrapper" class="is-clickarea">' +
-			'<a class="is-clickarea-action">ssas</a>' +
+		var content = '<div id="test-wrapper" class="u-clickarea">' +
+			'<a class="u-clickarea-action">ssas</a>' +
 			'</div>';
 
 		if(!window.MouseEvent || typeof MouseEvent != 'function'){
@@ -258,7 +258,7 @@
 
 		$mainElement.on('click', mainFn);
 		window.addEventListener('click', fn, true);
-		$mainElement.find('.is-clickarea-action').on('click', nfn);
+		$mainElement.find('.u-clickarea-action').on('click', nfn);
 
 		rbTest.simulate($mainElement.get(0), 'click');
 
@@ -266,7 +266,7 @@
 		assert.equal(ni, 1);
 		assert.equal(mainI, 2);
 
-		rbTest.simulate($mainElement.find('.is-clickarea-action').get(0), 'click');
+		rbTest.simulate($mainElement.find('.u-clickarea-action').get(0), 'click');
 
 		assert.equal(i, 3);
 		assert.equal(ni, 2);
@@ -275,7 +275,7 @@
 
 		$mainElement.off('click', mainFn);
 		window.removeEventListener('click', fn, true);
-		$mainElement.find('.is-clickarea-action').off('click', nfn);
+		$mainElement.find('.u-clickarea-action').off('click', nfn);
 	});
 
 	QUnit.test("rb. $.scrollIntoView", function( assert ){

@@ -138,7 +138,7 @@
 
             });
 
-            wrapper.className = 'js-element-resize';
+            wrapper.className = 'js' + rb.nameSeparator + 'element' + rb.nameSeparator + 'resize';
             wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;-webkit-overflow-scrolling:auto;');
             wrapper.innerHTML = '<span style="' + wrapperStyle + 'overflow: scroll;-webkit-overflow-scrolling:auto;">' +
                 '<span style="' + posStyle + '"><\/span>' +

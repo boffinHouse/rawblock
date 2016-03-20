@@ -45,7 +45,7 @@
     var steps = {};
     var tween = function (element, endProps, options) {
 
-        var easing, isStopped, isJumpToEnd;
+        var easing, isStopped, isJumpToEnd, duration;
         var hardStop = false;
         var start = Date.now();
         var elementStyle = element.style;
@@ -78,7 +78,7 @@
                 return;
             }
             var prop, value, eased;
-            var pos = (Date.now() - start) / options.duration;
+            var pos = (Date.now() - start) / duration;
 
             if (pos > 1 || isJumpToEnd) {
                 pos = 1;
@@ -127,6 +127,8 @@
         };
 
         options = Object.assign({duration: 400, easing: 'ease'}, options || {});
+
+        duration = (Dom.fx.off) ? 0 : options.duration;
 
         tween.createPropValues(element, elementStyle, props, endProps, options);
 

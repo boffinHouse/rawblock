@@ -46,7 +46,7 @@
                 mouseDrag: true,
                 easing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
                 duration: 600,
-                paginationItemTpl: '<span class="{name}-pagination-btn"></span>',
+                paginationItemTpl: '<span class="{name}{-}pagination{-}btn"></span>',
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
@@ -133,12 +133,12 @@
 
                 this.options.paginationItemTpl = this.interpolateName(this.options.paginationItemTpl);
 
-                this.$scroller = this.$element.find('.' + this.name + '-content');
-                this.scroller = this.$scroller.get(0);
-                this.viewport = this.query('.{name}-viewport');
-                this.$pagination = $(this.query('.{name}-pagination'));
-                this.$pageLength = $(this.query('.{name}-page-length'));
-                this.$currentIndex = $(this.query('.{name}-current-index'));
+                this.scroller = this.query('.{name}{-}content');
+                this.$scroller = $(this.scroller);
+                this.viewport = this.query('.{name}{-}viewport');
+                this.$pagination = $(this.query('.{name}{-}pagination'));
+                this.$pageLength = $(this.query('.{name}{-}page{-}length'));
+                this.$currentIndex = $(this.query('.{name}{-}current{-}index'));
                 this.$paginationBtns = $([]);
 
 
@@ -169,7 +169,7 @@
                 }
             },
             events: {
-                'click .{name}-btn-next': function () {
+                'click .{name}{-}btn{-}next': function () {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -179,7 +179,7 @@
                         this.selectNextIndex();
                     }
                 },
-                'click .{name}-btn-prev': function () {
+                'click .{name}{-}btn{-}prev': function () {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -189,7 +189,7 @@
                         this.selectPrevIndex();
                     }
                 },
-                'click .{name}-pagination-btn': function (e) {
+                'click .{name}{-}pagination{-}btn': function (e) {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -207,8 +207,7 @@
                         this._calculatePages();
                         this._writeLayout();
                         if (name == 'carousel' && value) {
-                            this.$element
-                                .find('.' + this.name + '-btn-next, .' + this.name + '-btn-prev')
+                            $(this.queryAll('.{name}{-}btn{-}next, .{name}{-}btn{-}prev'))
                                 .prop({disabled: false})
                                 .removeClass(rb.statePrefix + 'disabled')
                             ;
@@ -251,9 +250,9 @@
                 }
                 var cellCSS = {};
                 this.$cells
-                    .removeClass(rb.statePrefix + 'active-done')
+                    .removeClass(rb.statePrefix + 'active' + rb.nameSeparator + 'done')
                     .removeClass(rb.statePrefix + 'active')
-                    .removeClass(rb.statePrefix + 'activated-done')
+                    .removeClass(rb.statePrefix + 'activated' + rb.nameSeparator + 'done')
                     .removeClass(rb.statePrefix + 'activated')
                 ;
 
@@ -276,7 +275,8 @@
                 this.setSwitchedOffClass();
             },
             setSwitchedOffClass: function(){
-                this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched-off');
+                this.element.classList
+                    [this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
             },
             _switchOn: function () {
                 this._mainSetup();
@@ -288,7 +288,7 @@
 
                 this.helperElem = $(document.createElement('div'))
                     .attr({
-                        'class': 'js-' + this.name + '-helper',
+                        'class': 'js' + rb.nameSeparator + this.name + rb.nameSeparator + 'helper',
                         style: 'width:0;padding:0;margin:0;visibility:hidden;border:0;height:100%;min-height:9px',
                     })
                     .css({
@@ -323,8 +323,9 @@
             },
             _setupFocusScroll: function () {
                 var that = this;
-                var cellSel = '.' + this.name + '-cell';
+                var cellSel = '.' + this.name + rb.nameSeparator + 'cell';
                 var isTestStopped = false;
+                var keyboardFocusClass = rb.statePrefix + 'keyboardfocus' + rb.nameSeparator + 'within';
                 var evtOpts = {capture: true, passive: true};
                 var resetScrollLeft = function () {
                     that.viewport.scrollLeft = 0;
@@ -343,7 +344,7 @@
                         }
 
                         if (focusedElement && focusedElement.closest &&
-                            rb.root.classList.contains(rb.statePrefix + 'keyboardfocus-within') &&
+                            rb.root.classList.contains(keyboardFocusClass) &&
                             (cell = focusedElement.closest(cellSel)) &&
                             that.isCellVisible(cell) !== true) {
                             pageIndex = that.getPageIndexOfCell(cell);
@@ -550,13 +551,14 @@
             },
             _slideComplete: function () {
                 var curPage = this.pageData[this._selectedIndex + this.baseIndex];
+                var activeDone = rb.statePrefix + 'active' + rb.nameSeparator + 'done';
                 this.isAnimated = false;
-                this.$cells.removeClass(rb.statePrefix + 'active-done');
+                this.$cells.removeClass(activeDone);
 
                 if (curPage) {
                     ( curPage.$cellElems || (curPage.$cellElems = $(curPage.cellElems)) )
-                        .addClass(rb.statePrefix + 'active-done')
-                        .addClass(rb.statePrefix + 'activated-done')
+                        .addClass(activeDone)
+                        .addClass(rb.statePrefix + 'activated' + rb.nameSeparator + 'done')
                     ;
                 }
                 this._trigger(this._evtName + 'completed');
@@ -692,15 +694,15 @@
                 if (!this.isCarousel) {
                     isEnd = this.isEndReached(pos);
                     isStart = this.isStartReached(pos);
-                    this.$element
-                        .find('.' + this.name + '-btn-next')
+
+                    this.$queryAll('.{htmlName}{-}btn{-}next')
                         .prop({disabled: isEnd})
-                        [isEnd ? 'addClass' : 'removeClass'](rb.statePrefix + 'disabled')
+                        .rbChangeState('disabled', isEnd)
                     ;
-                    this.$element
-                        .find('.' + this.name + '-btn-prev')
+
+                    this.$queryAll('.{htmlName}{-}btn{-}prev')
                         .prop({disabled: isStart})
-                        [isStart ? 'addClass' : 'removeClass'](rb.statePrefix + 'disabled')
+                        .rbChangeState('disabled', isStart)
                     ;
                 }
 
@@ -841,11 +843,11 @@
             },
             updateCells: function () {
                 var that = this;
-                this.$cells = this.$scroller.children(':not(.js-' + this.name + '-helper)');
+                this.$cells = this.$scroller.children(':not(.js'+ rb.nameSeparator + this.name + rb.nameSeparator + 'helper)');
                 this.calculateLayout();
                 rb.rAFQueue(function () {
                     that.$scroller.prepend(that.helperElem);
-                    that.$cells.addClass(that.name + '-cell');
+                    that.$cells.addClass(that.name + rb.nameSeparator + 'cell');
                 });
             },
             _getCellWidth: function (element) {
@@ -1059,8 +1061,6 @@
                     }
                 }
 
-                //console.log(this.posPages.left)
-
                 this.minUnwrapRight = viewport;
 
                 lastPos = this.posPages.right[this.posPages.right.length - 1];
@@ -1095,7 +1095,9 @@
                         paginationItems.push(this.options.paginationItemTpl.replace(regIndex, '' + (i + 1)));
                     }
                     this.$pagination.html(paginationItems.join(''));
-                    this.$paginationBtns = this.$pagination.find('.' + this.name + '-pagination-btn');
+                    this.$paginationBtns = this.$pagination
+                        .find('.' + this.name + rb.nameSeparator + 'pagination' + rb.nameSeparator + 'btn')
+                    ;
                     this.$paginationBtns.eq(this._selectedIndex).addClass(rb.statePrefix + 'selected');
                 }
             },
