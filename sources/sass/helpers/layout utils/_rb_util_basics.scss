@@ -1,18 +1,18 @@
 // A collection of general utility classes
 //
-// @param {String} $breakpointName - Breakpoint name added to end of class (with the exception of all) which correspond to the assigned screen size.
-// @param {Number} $gridMaxWidth - Maximal width set in corresponding breakpoint (em/px/%).
-@mixin rb-util-basics($breakpointName, $gridMaxWidth) {
+// @param {String} $breakpoint-name - Breakpoint name added to end of class (with the exception of all) which correspond to the assigned screen size.
+// @param {Number} $grid-max-width - Maximal width set in corresponding breakpoint (em/px/%).
+@mixin rb-util-basics($breakpoint-name, $grid-max-width) {
 
-    @if $breakpointName == 'all' {
+    @if $breakpoint-name == 'all' {
         $type: '';
     } @else {
-        $type: '-' + $breakpointName;
+        $type: '-' + $breakpoint-name;
     }
 
-    @if $gridMaxWidth {
+    @if $grid-max-width {
         .u-grid-maxwidth#{$type} {
-            max-width: $gridMaxWidth;
+            max-width: $grid-max-width;
         }
     }
 }

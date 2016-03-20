@@ -112,5 +112,11 @@ fieldset {
 //
 //	Layout classes (.u-*)
 // ---------------------
-@include rb-generate-layout-utils($breakpointConfig);
-@include rb-export-globaljs((mqs: $breakpointConfig));
+@include rb-generate-layout-utils($breakpoint-config);
+@include rb-export-globaljs((mqs: $breakpoint-config));
+
+.item-special {
+    display: flex;
+    flex-direction: column;
+}
+

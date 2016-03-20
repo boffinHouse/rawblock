@@ -1,117 +1,116 @@
 // Adds space between columns if "u-size-" is set on element.
 //
 // @param {List|Number} $gutters - list of horizontal and vertical gutter values (em/px/%).
-@mixin rb-util-gutters($breakpointName, $gutters) {
+@mixin rb-util-gutters($breakpoint-name, $gutters) {
 
-    @if $breakpointName == 'all' {
+    @if $breakpoint-name == 'all' {
         $type: '';
     } @else {
-        $type: '-' + $breakpointName;
+        $type: '-' + $breakpoint-name;
     }
 
     @if type-of($gutters) == 'map' {
 
         @if map-has-key($gutters, horizontal) {
-            $gutterHorizontal: map-get($gutters, horizontal);
+            $gutter-horizontal: map-get($gutters, horizontal);
         }
         @if map-has-key($gutters, vertical) {
-            $gutterVertical: map-get($gutters, vertical);
+            $gutter-vertical: map-get($gutters, vertical);
         }
 
         //Horizontal & vertical gutters
         .u-gutters {
-            margin-left: (-$gutterHorizontal);
+            margin-left: (-$gutter-horizontal);
 
             > [class*=u-size-] {
-                margin-bottom: $gutterVertical;
-                padding-left: ($gutterHorizontal);
+                margin-bottom: $gutter-vertical;
+                padding-left: ($gutter-horizontal);
             }
         }
 
         .u-gutters-half {
-            margin-left: (-$gutterHorizontal) / 2;
+            margin-left: (-$gutter-horizontal) / 2;
 
             > [class*=u-size-] {
-                margin-bottom: $gutterVertical / 2;
-                padding-left: ($gutterHorizontal) / 2;
+                margin-bottom: $gutter-vertical / 2;
+                padding-left: ($gutter-horizontal) / 2;
             }
         }
 
         .u-gutters-double {
-            margin-left: (-$gutterHorizontal) * 2;
+            margin-left: (-$gutter-horizontal) * 2;
 
             > [class*=u-size-] {
-                margin-bottom: $gutterVertical * 2;
-                padding-left: ($gutterHorizontal) * 2;
+                margin-bottom: $gutter-vertical * 2;
+                padding-left: ($gutter-horizontal) * 2;
             }
         }
 
         > [class*=u-size-].u-gutter {
-            margin-bottom: $gutterVertical;
-            padding-left: ($gutterHorizontal);
+            margin-bottom: $gutter-vertical;
+            padding-left: ($gutter-horizontal);
         }
 
         //Only vertical gutters
         .u-gutters-vertical {
 
             > [class*=u-size-]  {
-                margin-bottom: $gutterVertical;
+                margin-bottom: $gutter-vertical;
             }
         }
 
         .u-gutters-vertical-half {
 
             > [class*=u-size-]  {
-                margin-bottom: $gutterVertical / 2;
+                margin-bottom: $gutter-vertical / 2;
             }
         }
 
         .u-gutters-vertical-double {
 
             > [class*=u-size-]  {
-                margin-bottom: $gutterVertical * 2;
+                margin-bottom: $gutter-vertical * 2;
             }
         }
 
         > [class*=u-size-].u-gutter-vertical {
-            margin-bottom: $gutterVertical;
+            margin-bottom: $gutter-vertical;
         }
 
 
         //Only horizontal gutters
         .u-gutters-horizontal {
-            margin-left: (-$gutterHorizontal);
+            margin-left: (-$gutter-horizontal);
 
             > [class*=u-size-]  {
-                padding-left: ($gutterHorizontal);
+                padding-left: ($gutter-horizontal);
             }
         }
 
         .u-gutters-horizontal-half {
-            margin-left: (-$gutterHorizontal) / 2;
+            margin-left: (-$gutter-horizontal) / 2;
 
             > [class*=u-size-]  {
-                padding-left: ($gutterHorizontal) / 2;
+                padding-left: ($gutter-horizontal) / 2;
             }
         }
 
         .u-gutters-horizontal-double {
-            margin-left: (-$gutterHorizontal) * 2;
+            margin-left: (-$gutter-horizontal) * 2;
 
             > [class*=u-size-]  {
-                padding-left: ($gutterHorizontal) * 2;
+                padding-left: ($gutter-horizontal) * 2;
             }
         }
 
 
         > [class*=u-size-].u-gutter-horizontal {
-            padding-left: ($gutterHorizontal);
+            padding-left: ($gutter-horizontal);
         }
 
         //Remove gutter
         [class*=u-size-].u-no-gutter-vertical {
             margin-bottom: 0;
         }
-
     }
 }

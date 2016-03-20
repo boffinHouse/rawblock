@@ -1,20 +1,20 @@
 @mixin rb-fx-bounce($options: ()) {
-    $animationName: bounce;
+    $animation-name: bounce;
 
     @if not map_get($options, onlyInstall){
         transform-origin: center bottom;
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from, 20%, 53%, 80%, to {
                     animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
                     transform: translate3d(0,0,0);
@@ -39,21 +39,21 @@
 }
 
 @mixin rb-fx-flash($options: ()) {
-    $animationName: flash;
+    $animation-name: flash;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from, 50%, to {
                     opacity: 1;
                 }
@@ -67,22 +67,22 @@
 }
 
 @mixin rb-fx-headShake($options: ()) {
-    $animationName: headShake;
+    $animation-name: headShake;
 
     @if not map_get($options, onlyInstall){
         animation-timing-function: ease-in-out;
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     transform: translateX(0);
                 }
@@ -112,22 +112,22 @@
 }
 
 @mixin rb-fx-jello($options: ()) {
-    $animationName: jello;
+    $animation-name: jello;
 
     @if not map_get($options, onlyInstall){
         transform-origin: center;
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from, 11.1%, to {
                     transform: none;
                 }
@@ -165,21 +165,21 @@
 }
 
 @mixin rb-fx-pulse($options: ()) {
-    $animationName: pulse;
+    $animation-name: pulse;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     transform: scale3d(1, 1, 1);
                 }
@@ -197,21 +197,21 @@
 }
 
 @mixin rb-fx-rubberBand($options: ()) {
-    $animationName: rubberBand;
+    $animation-name: rubberBand;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     transform: scale3d(1, 1, 1);
                 }
@@ -245,21 +245,21 @@
 }
 
 @mixin rb-fx-shake($options: ()) {
-    $animationName: shake;
+    $animation-name: shake;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from, to {
                     transform: translate3d(0, 0, 0);
                 }
@@ -277,22 +277,22 @@
 }
 
 @mixin rb-fx-swing($options: ()) {
-    $animationName: swing;
+    $animation-name: swing;
 
     @if not map_get($options, onlyInstall){
         transform-origin: top center;
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     transform: rotate3d(0, 0, 1, 15deg);
                 }
@@ -318,21 +318,21 @@
 }
 
 @mixin rb-fx-tada($options: ()) {
-    $animationName: tada;
+    $animation-name: tada;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     transform: scale3d(1, 1, 1);
                 }
@@ -358,21 +358,21 @@
 }
 
 @mixin rb-fx-wobble($options: ()) {
-    $animationName: wobble;
+    $animation-name: wobble;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     transform: none;
                 }

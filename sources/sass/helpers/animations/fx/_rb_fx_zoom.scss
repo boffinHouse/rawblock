@@ -1,19 +1,19 @@
 @mixin rb-fx-zoomIn($options: ()) {
-    $animationName: zoomIn;
+    $animation-name: zoomIn;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 0;
                     transform: scale3d(.3, .3, .3);
@@ -28,21 +28,21 @@
 }
 
 @mixin rb-fx-zoomInSmall($options: ()) {
-    $animationName: zoomInSmall;
+    $animation-name: zoomInSmall;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 0;
                     transform: scale3d(.8, .8, .8);
@@ -57,21 +57,21 @@
 }
 
 @mixin rb-fx-zoomOut($options: ()) {
-    $animationName: zoomOut;
+    $animation-name: zoomOut;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 1;
                 }
@@ -90,21 +90,21 @@
 }
 
 @mixin rb-fx-zoomOutSmall($options: ()) {
-    $animationName: zoomOutSmall;
+    $animation-name: zoomOutSmall;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 1;
                 }
@@ -123,21 +123,21 @@
 }
 
 @mixin rb-fx-zoomOutDown($options: ()) {
-    $animationName: zoomOutDown;
+    $animation-name: zoomOutDown;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 40% {
                     opacity: 1;
                     transform: scale3d(.475, .475, .475) translate3d(0, -60px, 0);
@@ -156,21 +156,21 @@
 }
 
 @mixin rb-fx-zoomInDown($options: ()) {
-    $animationName: zoomInDown;
+    $animation-name: zoomInDown;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 0;
                     transform: scale3d(.1, .1, .1) translate3d(0, -1000px, 0);
@@ -188,21 +188,21 @@
 }
 
 @mixin rb-fx-zoomInLeft($options: ()) {
-    $animationName: zoomInLeft;
+    $animation-name: zoomInLeft;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 0;
                     transform: scale3d(.1, .1, .1) translate3d(-1000px, 0, 0);
@@ -220,21 +220,21 @@
 }
 
 @mixin rb-fx-zoomOutLeft($options: ()) {
-    $animationName: zoomOutLeft;
+    $animation-name: zoomOutLeft;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 40% {
                     opacity: 1;
                     transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);
@@ -251,21 +251,21 @@
 }
 
 @mixin rb-fx-zoomOutRight($options: ()) {
-    $animationName: zoomOutRight;
+    $animation-name: zoomOutRight;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 40% {
                     opacity: 1;
                     transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);
@@ -282,21 +282,21 @@
 }
 
 @mixin rb-fx-zoomInRight($options: ()) {
-    $animationName: zoomInRight;
+    $animation-name: zoomInRight;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 0;
                     transform: scale3d(.1, .1, .1) translate3d(1000px, 0, 0);
@@ -314,21 +314,21 @@
 }
 
 @mixin rb-fx-zoomOutUp($options: ()) {
-    $animationName: zoomOutUp;
+    $animation-name: zoomOutUp;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 40% {
                     opacity: 1;
                     transform: scale3d(.475, .475, .475) translate3d(0, 60px, 0);
@@ -347,21 +347,21 @@
 }
 
 @mixin rb-fx-zoomInUp($options: ()) {
-    $animationName: zoomInUp;
+    $animation-name: zoomInUp;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     opacity: 0;
                     transform: scale3d(.1, .1, .1) translate3d(0, 1000px, 0);

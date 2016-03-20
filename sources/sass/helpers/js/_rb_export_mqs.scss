@@ -1,6 +1,6 @@
-@mixin rb-export-globaljs($mainconfig, $asidebreakpoints: ()) {
+@mixin rb-export-globaljs($main-config, $asidebreakpoints: ()) {
     $rbExportMqMap: ();
-    $mainbreakpoints: map-get($mainconfig, 'mqs');
+    $main-breakpoints: map-get($main-config, 'mqs');
 
     @each $name, $mq in $asidebreakpoints {
         @if (type-of($mq) == string) {
@@ -11,7 +11,7 @@
     }
 
 
-    @each $name, $mqo in $mainbreakpoints {
+    @each $name, $mqo in $main-breakpoints {
         $mq: '';
 
         @if (type-of($mqo) == string) {
@@ -37,6 +37,6 @@
     }
 
     html {
-        @include rb-js-export(map-merge($mainconfig, (mqs: $rbExportMqMap)));
+        @include rb-js-export(map-merge($main-config, (mqs: $rbExportMqMap)));
     }
 }

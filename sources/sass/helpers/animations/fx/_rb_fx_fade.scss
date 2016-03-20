@@ -1,19 +1,19 @@
 @mixin rb-fx-fadeIn($options: ()) {
-    $animationName: fadeIn;
+    $animation-name: fadeIn;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     opacity: 0;
                 }
@@ -27,21 +27,21 @@
 }
 
 @mixin rb-fx-fadeOut($options: ()) {
-    $animationName: fadeOut;
+    $animation-name: fadeOut;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     opacity: 1;
                 }
@@ -55,21 +55,21 @@
 }
 
 @mixin rb-fx-fadeInDown($options: ()) {
-    $animationName: fadeInDown;
+    $animation-name: fadeInDown;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     opacity: 1;
                     transform: translate3d(0, -100%, 0);
@@ -85,21 +85,21 @@
 }
 
 @mixin rb-fx-fadeOutDown($options: ()) {
-    $animationName: fadeOutDown;
+    $animation-name: fadeOutDown;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     opacity: 1;
                 }

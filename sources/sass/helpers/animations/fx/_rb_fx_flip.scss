@@ -1,20 +1,20 @@
 @mixin rb-fx-flip($options: ()) {
-    $animationName: flip;
+    $animation-name: flip;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
         backface-visibility: visible;
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
                     animation-timing-function: ease-out;
@@ -45,22 +45,22 @@
 }
 
 @mixin rb-fx-flipInX($options: (duration: 800ms)) {
-    $animationName: flipInX;
+    $animation-name: flipInX;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
         backface-visibility: visible;
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 0% {
                     transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
                     animation-timing-function: ease-in;
@@ -90,22 +90,22 @@
 }
 
 @mixin rb-fx-flipOutX($options: (duration: 800ms)) {
-    $animationName: flipOutX;
+    $animation-name: flipOutX;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
         backface-visibility: visible;
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     transform: perspective(400px);
                 }
@@ -125,22 +125,22 @@
 }
 
 @mixin rb-fx-flipInY($options: (duration: 800ms)) {
-    $animationName: flipInY;
+    $animation-name: flipInY;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
         backface-visibility: visible;
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
                     animation-timing-function: ease-in;
@@ -170,22 +170,22 @@
 }
 
 @mixin rb-fx-flipOutY($options: (duration: 800ms)) {
-    $animationName: flipOutY;
+    $animation-name: flipOutY;
 
     @if not map_get($options, onlyInstall){
         @if not map_get($options, onlyName){
             @include rb-fx-options($options);
         }
         backface-visibility: visible;
-        animation-name: rb-fx-#{$animationName};
+        animation-name: rb-fx-#{$animation-name};
     }
 
-    @if not map_get($rb-included-animations, $animationName) {
-        $rb-included-animations: map-merge($rb-included-animations, (#{$animationName}: true)) !global;
+    @if not map_get($rb-included-animations, $animation-name) {
+        $rb-included-animations: map-merge($rb-included-animations, (#{$animation-name}: true)) !global;
 
         //keyframe begin:
         @at-root {
-            @keyframes rb-fx-#{$animationName} {
+            @keyframes rb-fx-#{$animation-name} {
                 from {
                     transform: perspective(400px);
                 }

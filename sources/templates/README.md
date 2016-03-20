@@ -190,7 +190,7 @@ Next to media breakpoints (set with property `media`) you can control additional
 <h3 class="docs-example-title">BreakpointConfigs</h3>
 
 ```css
-$breakpointConfigs: (
+$breakpoint-configs: (
     all: (
         gutter: (
         	vertical: 40px,

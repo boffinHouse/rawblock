@@ -1,12 +1,12 @@
 // Creates classes to define the visibility of an element
 //
-// @param {String} $breakpointName - Breakpoint name added to end of class (with the exception of all) which responds to assigned screen size.
-@mixin rb-util-visibility($breakpointName) {
-    @if $breakpointName == 'all' {
+// @param {String} $breakpoint-name - Breakpoint name added to end of class (with the exception of all) which responds to assigned screen size.
+@mixin rb-util-visibility($breakpoint-name) {
+    @if $breakpoint-name == 'all' {
         $type: '';
 
     } @else {
-        $type: '-' + $breakpointName;
+        $type: '-' + $breakpoint-name;
     }
 
     //Hides element in layout.
