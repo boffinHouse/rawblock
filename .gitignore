@@ -8,6 +8,7 @@ jsdoc-md
 tmp
 bower_components
 styleguide
+sources/components/**/tests/visual-tests/results
 
 .sass-cache
 .css
