@@ -10,7 +10,7 @@ $popover-arrow-size: 10px;
 
 // JS Config
 //**********************************************************
-$popoverJSCFG: ();
+$popover-js-cfg: ();
 
 // Dependencies (Helpers)
 //**********************************************************
@@ -95,28 +95,28 @@ $popoverJSCFG: ();
 
     //Popover JS Configs
     &.is-top {
-        @include rb-js-export(map_merge($popoverJSCFG, (
+        @include rb-js-export(map_merge($popover-js-cfg, (
             my: 'center bottom',
             at: 'center top'
         )));
     }
 
     &.is-bottom {
-        @include rb-js-export(map_merge($popoverJSCFG, (
+        @include rb-js-export(map_merge($popover-js-cfg, (
             my: 'center top',
             at: 'center bottom'
         )));
     }
 
     &.is-right {
-        @include rb-js-export(map_merge($popoverJSCFG, (
+        @include rb-js-export(map_merge($popover-js-cfg, (
             my: 'left middle',
             at: 'right middle'
         )));
     }
 
     &.is-left {
-        @include rb-js-export(map_merge($popoverJSCFG, (
+        @include rb-js-export(map_merge($popover-js-cfg, (
             my: 'right middle',
             at: 'left middle'
         )));

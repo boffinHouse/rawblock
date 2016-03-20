@@ -7,7 +7,7 @@
 
 // JS-Config
 //**********************************************************
-$itemscrollerJSCFG: (
+$itemscroller-js-cfg: (
     queries: '500:100%, 860:50%, 33.333%'
 );
 
@@ -19,7 +19,7 @@ $itemscrollerJSCFG: (
 
 //----------------------------------------------------------
 .rb-itemscroller {
-    //@include rb-js-export($itemscrollerJSCFG);
+    //@include rb-js-export($itemscroller-js-cfg);
     display: block;
     position: relative;
     transition: 300ms opacity;

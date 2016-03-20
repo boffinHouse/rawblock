@@ -7,7 +7,7 @@
 
 // JS-Config
 //**********************************************************
-$tabsJSCFG: (
+$tabs-js-cfg: (
     watchCss: false,
     //animation: 'adaptHeight',
     duration: 400,
@@ -20,7 +20,7 @@ $tabsJSCFG: (
 
 //----------------------------------------------------------
 .rb-tabs {
-    @include rb-js-export($tabsJSCFG);
+    @include rb-js-export($tabs-js-cfg);
     @include rb-fx-panel(tabs, fade);
     @include rb-fx-panel(tabs, slide);
     width: 100%;

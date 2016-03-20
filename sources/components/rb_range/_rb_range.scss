@@ -10,7 +10,7 @@ $range-thumb-width: 30px;
 
 // JS Config
 //**********************************************************
-$rangeJSCFG: (
+$range-js-cfg: (
 	watchCss: false,
 	animate: true,
 	axis: 'auto', // 'auto' || 'vertical' || 'horizontal' ('auto' does not work, if we are in a display none wrapper and also adds some perf penalty)

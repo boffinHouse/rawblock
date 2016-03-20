@@ -7,7 +7,7 @@
 
 // JS-Config
 //**********************************************************
-$scrollyJSCFG: (
+$scrolly-js-cfg: (
 	switchedOff: false,
 	from: '-90eh',
 	to: '100vh-10eh',
@@ -23,7 +23,7 @@ $scrollyJSCFG: (
 
 //----------------------------------------------------------
 .rb-scrolly {
-	@include rb-js-export($scrollyJSCFG);
+	@include rb-js-export($scrolly-js-cfg);
 	position: relative;
 	background: #999;
 	height: 100px;

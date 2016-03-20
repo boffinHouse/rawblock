@@ -7,7 +7,7 @@
 
 // JS Config
 //**********************************************************
-$accordionJSCFG: (
+$accordion-js-cfg: (
     multiple: false,
     selectedIndex: -1,
     toggle: true,
@@ -17,7 +17,7 @@ $accordionJSCFG: (
 
 //----------------------------------------------------------
 .rb-accordion {
-    @include rb-js-export($accordionJSCFG);
+    @include rb-js-export($accordion-js-cfg);
     width: 100%;
 }
 
@@ -79,7 +79,7 @@ $accordionJSCFG: (
 
 @media (max-width: 500px) {
     .rb-accordion {
-        @include rb-js-export(map_merge($accordionJSCFG, (
+        @include rb-js-export(map_merge($accordion-js-cfg, (
             switchedOff: true
         )));
     }

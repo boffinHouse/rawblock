@@ -7,7 +7,7 @@
 
 // JS Config
 //**********************************************************
-$dialogJSCFG: (
+$dialog-js-cfg: (
     watchCss: true,
     closeOnEsc: true,
     closeOnBackdropClick: false,
@@ -20,7 +20,7 @@ $dialogJSCFG: (
 
 //----------------------------------------------------------
 .rb-dialog {
-    //@include rb-js-export($dialogJSCFG);
+    //@include rb-js-export($dialog-js-cfg);
     @include rb-fx-zoomOutSmall;
     display: none;
     position: relative;
