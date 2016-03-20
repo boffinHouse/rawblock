@@ -7,7 +7,7 @@
 
 // JS-Config
 //**********************************************************
-$sticky-js-cfg: (
+$stickyJSCFG: (
     container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
     switchedOff: false,
     topOffset: false,
@@ -25,7 +25,7 @@ $sticky-js-cfg: (
 
 //----------------------------------------------------------
 .rb-sticky {
-    @include rb-js-export(map_merge($sticky-js-cfg, (
+    @include rb-js-export(map_merge($stickyJSCFG, (
         topOffset: 0,
         bottomOffset: false,
     )));
@@ -46,7 +46,7 @@ $sticky-js-cfg: (
     z-index: 5;
 
     &.is-bottom {
-        @include rb-js-export(map_merge($sticky-js-cfg, (
+        @include rb-js-export(map_merge($stickyJSCFG, (
             bottomOffset: 0,
             topOffset: false,
         )));
@@ -57,21 +57,21 @@ $sticky-js-cfg: (
     }
 
     &.is-top-150 {
-        @include rb-js-export(map_merge($sticky-js-cfg, (
+        @include rb-js-export(map_merge($stickyJSCFG, (
             topOffset: 150,
             bottomOffset: false,
         )));
     }
 
     &.is-bottom-15 {
-        @include rb-js-export(map_merge($sticky-js-cfg, (
+        @include rb-js-export(map_merge($stickyJSCFG, (
             bottomOffset: 150,
             topOffset: false,
         )));
     }
 
     &.progress-showcase {
-        @include exportToJS(map-merge($sticky-js-cfg, (
+        @include exportToJS(map-merge($stickyJSCFG, (
         	progress: 100
         )));
 
