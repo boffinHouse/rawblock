@@ -37,7 +37,7 @@
                 topOffset: false,
                 bottomOffset: false,
                 progress: 0,
-                childSel: 'find(.{name}-element)',
+                childSel: 'find(.{name}{-}element)',
                 setWidth: true,
                 resetSwitchedOff: true,
                 autoThrottle: true,
@@ -148,7 +148,7 @@
                 }
             },
             setSwitchedOffClass: function(){
-                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
             },
             _getElements: function () {
                 var offsetName;
@@ -352,7 +352,8 @@
                 }
             },
             _setProgressClass: function () {
-                this.element.classList[this.isProgressDone ? 'add' : 'remove'](rb.statePrefix + 'fixed-progressed');
+                this.element.classList
+                    [this.isProgressDone ? 'add' : 'remove'](rb.statePrefix + 'fixed' + rb.nameSeparator + 'progressed');
             },
             updateLayout: function (shouldFix, shouldScroll, shouldWidth) {
                 var offset, trigger;
@@ -431,8 +432,8 @@
                     //ToDo: remove life.initClass
                     this.$clone
                         .css({visibility: 'hidden'})
-                        .removeClass('js-rb-life')
-                        .addClass('sticky-clone')
+                        .removeClass('js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'life')
+                        .addClass('js' + rb.nameSeparator + 'sticky' + rb.nameSeparator + 'clone')
                         .attr({
                             'data-module': '',
                             'aria-hidden': 'true',

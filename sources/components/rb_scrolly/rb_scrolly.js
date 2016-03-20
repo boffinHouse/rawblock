@@ -175,7 +175,7 @@
                 }
             },
             setSwitchedOffClass: function(){
-                this.element.classList[this.options.switchedOff ? 'add' : 'remove']('is-switched-off');
+                this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
             },
             parseOffsets: function () {
                 this.parsedFrom = this.parseOffset(this.options.from);
@@ -282,7 +282,7 @@
                 var once = this.options.once;
                 if (this.entered != shouldEnter) {
                     this.entered = shouldEnter;
-                    this.element.classList[shouldEnter ? 'add' : 'remove'](rb.statePrefix + 'in-scrollrange');
+                    this.element.classList[shouldEnter ? 'add' : 'remove'](rb.statePrefix + 'in' + rb.nameSeparator + 'scrollrange');
                     this._trigger();
 
                     if (once == 'entered' || (once && (!this.childs || !this.childs.length))) {

@@ -169,7 +169,7 @@
                 }
             },
             events: {
-                'click .{name}{-}btn{-}next': function () {
+                'click:closest(.{name}{-}btn{-}next)': function () {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -179,7 +179,7 @@
                         this.selectNextIndex();
                     }
                 },
-                'click .{name}{-}btn{-}prev': function () {
+                'click:closest(.{name}{-}btn{-}prev)': function () {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -189,7 +189,7 @@
                         this.selectPrevIndex();
                     }
                 },
-                'click .{name}{-}pagination{-}btn': function (e) {
+                'click:closest(.{name}{-}pagination{-}btn)': function (e) {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -250,10 +250,10 @@
                 }
                 var cellCSS = {};
                 this.$cells
-                    .removeClass(rb.statePrefix + 'active' + rb.nameSeparator + 'done')
-                    .removeClass(rb.statePrefix + 'active')
-                    .removeClass(rb.statePrefix + 'activated' + rb.nameSeparator + 'done')
-                    .removeClass(rb.statePrefix + 'activated')
+                    .rbChangeState('active{-}done')
+                    .rbChangeState('active')
+                    .rbChangeState('activated{-}done')
+                    .rbChangeState('activated')
                 ;
 
                 cellCSS[orderProp] = '';

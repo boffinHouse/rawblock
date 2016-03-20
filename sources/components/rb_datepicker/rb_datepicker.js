@@ -52,11 +52,8 @@
                 this.renderMonth(new Date());
             },
             events: {
-                'click .{name}-btn-prev': 'previous',
-                'click .{name}-btn-next': 'next',
-                //'click .{name}-btn': function(e){
-                //	this.log(this);
-                //},
+                'click:closest(.{name}{-}btn{-}prev)': 'previous',
+                'click:closest(.{name}{-}btn{-}next)': 'next',
             },
             statics: {
                 views: {
@@ -113,8 +110,8 @@
 
                 this.element.innerHTML = wrapperHTML;
 
-                this.mainElement = this.query('.{name}-main');
-                this.headerElement = this.query('.{name}-btn-header');
+                this.mainElement = this.query('.{name}{-}main');
+                this.headerElement = this.query('.{name}{-}btn{-}header');
             },
             renderMonth: function (date) {
                 if (!date.getFullYear) {

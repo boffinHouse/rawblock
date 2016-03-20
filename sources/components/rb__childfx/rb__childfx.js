@@ -22,7 +22,7 @@
              */
             defaults: {
                 switchedOff: false,
-                childSel: 'find(.{name}-fx)',
+                childSel: 'find(.{name}{-}fx)',
             },
             statics: {
                 toNumber: function (i) {

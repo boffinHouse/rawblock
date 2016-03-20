@@ -7,6 +7,7 @@
 }(function () {
     'use strict';
     var rb = window.rb;
+    var $ = rb.$;
     var regInputs = /^(?:input|textarea)$/i;
 
     var Panel = rb.Component.extend('panel',
@@ -82,12 +83,12 @@
                     this.setOption('switchedOff', false);
                 } else {
                     rb.rAFQueue(function () {
-                        element.classList.add(rb.statePrefix + 'switched-off');
+                        element.classList.add(rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
                     });
                 }
             },
             events: {
-                'click .{name}-close': function (e) {
+                'click .{name}{-}close': function (e) {
                     this.close();
                     if (e) {
                         e.stopImmediatePropagation();
@@ -115,7 +116,7 @@
                     this.element.classList.remove(rb.statePrefix + 'open');
                 }
 
-                this.element.classList.add(rb.statePrefix + 'switched-off');
+                this.element.classList.add(rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
 
                 this.$element.css({
                     visibility: '',
@@ -129,7 +130,7 @@
                     this.element.classList.add(rb.statePrefix + 'open');
                 }
 
-                this.element.classList.remove(rb.statePrefix + 'switched-off');
+                this.element.classList.remove(rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
 
                 this.element.setAttribute('aria-hidden', '' + (!this.isOpen));
 
@@ -308,7 +309,8 @@
                 this.element.setAttribute('aria-hidden', 'false');
 
                 if(this.options.itemWrapper){
-                    rb.changeState(this.element.closest(this.interpolateName(this.options.itemWrapper)), 'selected-within', true);
+                    $(this.element.closest(this.interpolateName(this.options.itemWrapper)))
+                        .rbChangeState('selected{-}within', true);
                 }
 
                 if (this.groupComponent) {
@@ -372,8 +374,10 @@
             _closed: function (options) {
                 this.element.classList.remove(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'true');
+
                 if(this.options.itemWrapper){
-                    rb.changeState(this.element.closest(this.interpolateName(this.options.itemWrapper)), 'selected-within');
+                    $(this.element.closest(this.interpolateName(this.options.itemWrapper)))
+                        .rbChangeState('selected{-}within');
                 }
 
                 if (this.groupComponent) {

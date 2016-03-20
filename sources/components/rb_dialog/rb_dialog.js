@@ -73,10 +73,10 @@
                  */
                 this.isOpen = false;
 
-                this.$backdrop = $(document.createElement('div')).addClass(this.name + '-backdrop');
+                this.$backdrop = $(document.createElement('div')).addClass(this.name + rb.nameSeparator + 'backdrop');
 
 
-                this.contentElement = this.query('.{name}-content');
+                this.contentElement = this.query('.{name}{-}content');
 
                 rb.rAFs(this, {that: this, throttle: true}, '_setup', '_addContent', '_setDisplay');
 
@@ -89,7 +89,7 @@
                 }
             },
             events: {
-                'click .{name}-close': function (e) {
+                'click:closest(.{name}{-}close)': function (e) {
                     this.close();
                     e.preventDefault();
                     e.stopPropagation();
@@ -101,10 +101,10 @@
                 }
                 var backdrop, isWrapped;
                 var backdropDocument = this.element.parentNode;
-                var backdropDocumentName = this.name + '-backdrop-document';
+                var backdropDocumentName = this.name + rb.nameSeparator + 'backdrop' + rb.nameSeparator + 'document';
 
                 this.trapKeyboardElemBefore = $(document.createElement('span')).attr({
-                    'class': this.name + 'keyboard-trap',
+                    'class': this.name + 'keyboardtrap',
                     'tabindex': this.options.trapKeyboard ? 0 : -1,
                 }).get(0);
 
@@ -116,7 +116,7 @@
                     backdropDocument = document.createElement('div');
                     backdropDocument.className = backdropDocumentName;
                     this.$backdrop.append(backdropDocument);
-                } else if(backdropDocument && (backdrop = backdropDocument.parentNode) && backdrop.classList.contains(this.name + '-backdrop')) {
+                } else if(backdropDocument && (backdrop = backdropDocument.parentNode) && backdrop.classList.contains(this.name + rb.nameSeparator + 'backdrop')) {
                     this.$backdrop = $(backdrop);
                     isWrapped = true;
                 }
@@ -170,7 +170,7 @@
                 this.$backdrop.css({display: ''});
                 this.$backdrop.addClass(rb.statePrefix + 'open');
 
-                rb.$root.addClass(rb.statePrefix + 'open-' + this.name +'-within');
+                rb.$root.rbChangeState('open{-}' + this.name +'{-}within', true);
 
                 if(this._setScrollPadding && this.options.scrollPadding){
                     document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
@@ -244,7 +244,7 @@
                 }
 
                 this.$backdrop.removeClass(rb.statePrefix + 'open');
-                rb.$root.removeClass(rb.statePrefix + 'open-' + this.name +'-within');
+                rb.$root.rbChangeState('open{-}' + this.name +'{-}within');
 
                 if(this.options.setDisplay){
                     clearTimeout(this._displayTimer);
@@ -312,7 +312,7 @@
                 this.trapKeyboardElemBefore.addEventListener('focus', function(e){
                     var focusElem;
                     if(options.trapKeyboard) {
-                        focusElem = that.queryAll('.{name}-close');
+                        focusElem = that.queryAll('.{name}{-}close');
                         e.preventDefault();
                         try {
                             focusElem[focusElem.length - 1].focus();
@@ -332,19 +332,21 @@
         }
     );
 
-    rb.click.add('dialog', function(element, event, attr){
-        var dialog;
-        var opts = rb.jsonParse(attr);
+    rb.ready.then(function(){
+        rb.click.add('dialog', function(element, event, attr){
+            var dialog;
+            var opts = rb.jsonParse(attr);
 
-        if(typeof opts == 'string'){
-            opts = {id: opts};
-        }
-        dialog = document.getElementById(opts.id);
+            if(typeof opts == 'string'){
+                opts = {id: opts};
+            }
+            dialog = document.getElementById(opts.id);
 
-        if(dialog && (dialog = rb.getComponent(dialog))){
-            dialog.open(opts);
-            event.preventDefault();
-        }
+            if(dialog && (dialog = rb.getComponent(dialog))){
+                dialog.open(opts);
+                event.preventDefault();
+            }
+        });
     });
 
     return Dialog;

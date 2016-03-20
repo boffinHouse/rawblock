@@ -31,7 +31,7 @@
                 }
             },
             events: {
-                'click .{name}-cell': function (e) {
+                'click:closest(.{name}-cell)': function (e) {
                     if (!this.groupedMainComponent) {
                         return;
                     }
@@ -57,9 +57,9 @@
                     return;
                 }
 
-                this.$cells.removeClass(rb.statePrefix + 'selected-pagination');
+                this.$cells.rbChangeState('selected{-}pagination');
 
-                cell = this.$cells.eq(selectedIndex).addClass(rb.statePrefix + 'selected-pagination').get(0);
+                cell = this.$cells.eq(selectedIndex).rbChangeState('selected{-}pagination', true).get(0);
 
                 if (this.isCellVisible(cell) !== true) {
                     this.selectCell(selectedIndex);

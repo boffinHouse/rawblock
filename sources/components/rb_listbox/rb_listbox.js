@@ -72,10 +72,10 @@
                 }
             },
             events: {
-                'mousedown .{name}-item': function (e) {
+                'mousedown:closest(.{name}{-}item)': function (e) {
                     this.select(e.delegatedTarget);
                 },
-                'click .{name}-item:not([aria-disabled="true"])': function (e) {
+                'click .{name}{-}item:not([aria-disabled="true"])': function (e) {
                     this.select(e.delegatedTarget);
                     this.check(e.delegatedTarget);
                 }
@@ -101,7 +101,7 @@
                 }
             },
             _getElements: function () {
-                this.$items = $(this.queryAll('.{name}-item'));
+                this.$items = this.$queryAll('.{name}{-}item');
                 this.checkedItem = this.$items.filter('.' + rb.statePrefix + 'checked').get(0) || null;
                 this.checkedIndex = (this.checkedItem) ? this.$items.index(this.checkedItem) : -1;
                 this._isStatic = this.$element.css('position') == 'static';
@@ -266,7 +266,7 @@
             _changeChecked: function () {
                 this.$items
                     .filter('.' + rb.statePrefix + 'checked')
-                    .removeClass(rb.statePrefix + 'checked')
+                    .rbChangeState('checked')
                     .removeAttr('aria-checked')
                 ;
 

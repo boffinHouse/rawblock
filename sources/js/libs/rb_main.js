@@ -70,22 +70,32 @@ if (!window.rb) {
 
     /* End: global vars end */
 
-    /**
-     * Changes state class of an element.
-     * @param element
-     * @param state
-     * @param action
+	/**
+     * Creates a promise with a resolve and a reject method.
+     * @returns promise {Deferred}
      */
-    rb.changeState = function(element, state, action){
-        if(element && element.classList){
-            element.classList[action ? 'add' : 'remove'](rb.statePrefix + state);
-        }
+    rb.deferred = function(){
+        var tmp = {};
+        var promise = new Promise(function(resolve, reject){
+            tmp.resolve = resolve;
+            tmp.reject = reject;
+        });
+
+        Object.assign(promise, tmp);
+
+        return promise;
     };
 
-    $.fn.rbChangeState = function(state, action){
+    /**
+     * A jQuery/rb.$ plugin to add or remove state classes.
+     * @param state {string}
+     * @param [add] {boolean}
+     * @returns {jQueryfiedDOMList}
+     */
+    $.fn.rbChangeState = function(state, add){
         if(this.length){
             state = rb.statePrefix + (state.replace(regnameSeparator, rb.nameSeparator));
-            this[action ? 'addClass' : 'removeClass'](state);
+            this[add ? 'addClass' : 'removeClass'](state);
         }
         return this;
     };
@@ -1623,7 +1633,11 @@ if (!window.rb) {
         initClickCreate();
 
         initWatchCss();
+
+        rb.ready.resolve();
     };
+
+    rb.ready = rb.deferred();
 
     rb.life = life;
 
