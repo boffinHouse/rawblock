@@ -7,10 +7,10 @@ schemaPage: WebPage
     <div class="page-section-inner">
         <ul>
             {{#each pages }}
-                {{#isnt basename "index"}}
+                {{#contains basename "zdocs_"}}
                     <li><a href ="{{ basename }}.html">{{data.title}}</a></li >
-                {{/isnt}}
-            {{/each  }}
+                {{/contains}}
+            {{/each }}
         </ul>
     </div>
 </div>
