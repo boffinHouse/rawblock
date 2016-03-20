@@ -1,19 +1,19 @@
 $grid-max-width: 940px;
-$breakpointConfig: (
+$breakpoint-config: (
 	all: (
 		gutter: (
 			vertical: 40px,
 			horizontal: 40px
 		),
-		orderSize: 5,
-		gridMaxWidth: 940px
+		order-size: 5,
+		grid-max-width: 940px
 	),
 	l: (
 		media:'(min-width: 1240px)',
 	),
 	m: (
 		media:'(min-width: 569px) and (max-width: 1239px)',
-		orderSize: 2
+		order-size: 2
 	),
 	s: (
 		media: '(max-width: 568px)',
@@ -23,5 +23,5 @@ $breakpointConfig: (
 		)
 	)
 );
-$asideBreakpoints: ();
+$aside-breakpoints: ();
 
