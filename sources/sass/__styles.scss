@@ -14,6 +14,12 @@ Main Stylesheet
 @import "basics/normalize";
 @import "basics/rb_basics";
 
+//
+//	Layout classes (.u-*)
+// ---------------------
+@include rb-generate-layout-utils($breakpoint-config);
+@include rb-export-globaljs((mqs: $breakpoint-config));
+
 // All Components
 @import "../components/**/*.scss !../components/**/tests/**/*.scss !../components/**/*.async.scss !../components/**/*.js.scss";
 

@@ -15,12 +15,13 @@ $popover-js-cfg: ();
 // Dependencies (Helpers)
 //**********************************************************
 @import "../../sass/helpers/rb_arrow_icon";
+@import '../../sass/variables/rb_zindexes';
 
 //----------------------------------------------------------
 .rb-popover {
     position: absolute;
     width: 200px;
-    z-index: 30;
+    z-index: $zindex-popover;
     visibility: hidden;
     opacity: 0;
     transition: 400ms opacity, 400ms visibility;

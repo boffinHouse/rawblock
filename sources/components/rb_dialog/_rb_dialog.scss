@@ -17,6 +17,7 @@ $dialog-js-cfg: (
 // Dependencies (Helpers)
 //**********************************************************
 @import '../../sass/helpers/animations/fx/rb_fx_zoom';
+@import '../../sass/variables/rb_zindexes';
 
 //----------------------------------------------------------
 .rb-dialog {
@@ -61,7 +62,7 @@ $dialog-js-cfg: (
     right: 0;
     bottom: 0;
     overflow: auto;
-    z-index: 999;
+    z-index: $zindex-dialog;
     opacity: 0;
     background: rgba(0, 0, 0, 0.6);
     transition: 400ms visibility;

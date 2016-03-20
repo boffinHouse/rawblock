@@ -60,3 +60,55 @@ The SASS `@at-root` directive can be of good help here:
 Modifiers are flags set on **block** or **element** elements, they represent a different state or version. This is done with the modifier class, like `.is-collapsed` or `is-offset-left`.
 Modifier classes are only allowed as adjoining classes.
 
+####Separation of behavior and style
+A common technique to produce re-usable JS components is to use two different selectors one for styling and the other for behavior (often either prefixed with `js-*` or by using much slower attribute selectors).
+
+While rawblock JS supports the js-prefix technique automatically (Simply set the `jsPrefix` option to `'js-'`), rawblock advocates a different approach.
+
+The two-selector technique does not only separate two different concerns, it also separates the crucial functional design from the actual behavior.
+
+Rawblock instead allows to CSS developer to configure the component name by CSS. This way CSS extends the naming of the hole component and avoids clashes in JS.
+
+This can be expressed with the following code:
+
+```html
+<!-- default itemscroller component -->
+<style type="scss">
+.rb-itemscoller {
+    //some styles
+}
+
+.itemscoller-btn-next {
+    //some styles
+}
+</style>
+
+<div class="rb-itemscoller js-rb-life" data-module="itemscroller">
+    <!-- ... -->
+    <button type="button" class="itemscoller-btn-next">close</button>
+</div>
+
+<!-- new CSS component (heroscroller) re-uses untouched itemscroller JS component -->
+<style type="scss">
+.rb-heroscroller {
+
+    @include rb-js-export((
+        name: "heroscroller",
+        carousel: true,
+        centerMode: true,
+    ));
+
+    //some other styles
+}
+
+.heroscroller-btn-next {
+    //some other styles
+}
+</style>
+
+<div class="rb-heroscroller js-rb-life" data-module="itemscroller">
+    <!-- ... -->
+    <button type="button" class="heroscroller-btn-next">close</button>
+</div>
+```
+
