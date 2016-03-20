@@ -10,7 +10,7 @@ styleguide
 tests
 jsdoc-md
 grunt
-sources/components/**/tests/visual-tests/results
+sources/components/**/tests/visual/visual-tests/results
 
 .sass-cache
 .css
