@@ -113,7 +113,7 @@ fieldset {
 //	Layout classes (.u-*)
 // ---------------------
 @include rb-generate-layout-utils($breakpoint-config);
-@include rb-export-globaljs((mqs: $breakpoint-config));
+@include rb-export-globaljs($js-export);
 
 .item-special {
     display: flex;
