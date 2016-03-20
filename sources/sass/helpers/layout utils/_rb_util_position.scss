@@ -1,11 +1,11 @@
 //Reposition a column
 //
 //
-@mixin rb-util-position($breakpointName) {
+@mixin rb-util-position($breakpoint-name) {
     $i: 5;
     $steps: 5;
 
-    @if $breakpointName == 'all' {
+    @if $breakpoint-name == 'all' {
         $type: '';
 
         [class*=u-offset-],
@@ -14,8 +14,9 @@
         }
 
     } @else {
-        $type: '-' + $breakpointName;
+        $type: '-' + $breakpoint-name;
     }
+
 
     .u-offset-right#{$type} {
         margin-left: auto;
@@ -58,7 +59,7 @@
 
 
     //TODO: check if all push classes are needed or just some.
-    @if $breakpointName == 'all' {
+    @if $breakpoint-name == 'all' {
         @while $i <= 100 {
 
             // create width: 33%
