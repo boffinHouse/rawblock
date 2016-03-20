@@ -49,17 +49,17 @@ $base-fontsize: 100% !default;
 /// @param {Number} $base-value - Value to use as base. If null then $base-fontsize is used.
 @function rb-rem-calc($values, $base-value: null) {
     $value-length: length($values);
-    $remValues: ();
+    $rem-values: ();
 
     @if $value-length == 1 {
         @return rb-convert-px-to-unit(nth($values, 1));
     }
 
     @for $i from 1 through $value-length {
-        $remValues: append($remValues, rb-convert-px-to-unit(nth($values, $i), $base-value));
+        $rem-values: append($rem-values, rb-convert-px-to-unit(nth($values, $i), $base-value));
     }
 
-    @return $remValues;
+    @return $rem-values;
 }
 
 /// Convert one or more pixel values to em unit.
@@ -68,15 +68,15 @@ $base-fontsize: 100% !default;
 /// @param {Number} $base-value - Value to use as base. If null then $base-fontsize is used.
 @function rb-em-calc($values, $base-value: null) {
     $value-length: length($values);
-    $emValues: ();
+    $em-values: ();
 
     @if $value-length == 1 {
         @return rb-convert-px-to-unit(nth($values, 1), $base-value, em);
     }
 
     @for $i from 1 through $value-length {
-        $emValues: append($emValues, rb-convert-px-to-unit(nth($values, $i), $base-value, em));
+        $em-values: append($em-values, rb-convert-px-to-unit(nth($values, $i), $base-value, em));
     }
 
-    @return $emValues;
+    @return $em-values;
 }
