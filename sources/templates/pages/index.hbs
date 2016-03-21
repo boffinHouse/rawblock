@@ -1,18 +1,7 @@
 ---
 title: Index – Project-Overview
-layout: default_tpl.hbs
+layout: docs_tpl.hbs
 schemaPage: WebPage
 ---
-<div class="page-section">
-    <div class="page-section-inner">
-        <ul>
-            {{#each pages }}
-                {{#contains basename "zdocs_"}}
-                    <li><a href ="{{ basename }}.html">{{data.title}}</a></li >
-                {{/contains}}
-            {{/each }}
-        </ul>
-    </div>
-</div>
 
 
