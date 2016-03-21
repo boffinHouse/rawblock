@@ -34,26 +34,25 @@ Good examples
 - a input box in the search form: `.search-box.is-focused`
 - an item in main nav: `.rb-mainnav.is-fixed .mainnav-item`
 
-The SASS `@at-root` directive can be of good help here:
 
 ```scss
 
 .rb-mainnav {
+    ...
+}
 
-    @at-root .mainnav- {
-        &item {
-
-        }
-
-        .rb-mainnav.is-fixed &item {
-
-        }
-
-        &link {
-
-        }
+.mainnav-item {
+    ...
+    
+    .rb-mainnav.is-fixed & {
+        ...
     }
 }
+
+.main-link {
+    ...
+}
+
 ```
 
 ####Modifiers/States
