@@ -50,15 +50,8 @@
 
         grunt.registerTask('svg', [
             'svgmin:svgIcons',
-            //'svgstore:svgIcons',
+            'svgstore:svgIcons',
             'clean:tmp',
-        ]);
-
-        // Build task
-        grunt.registerTask('build', [
-            'dev',
-            'connect:livereload',
-            'watch'
         ]);
 
         grunt.registerTask('css', [
@@ -68,6 +61,13 @@
             'clean:scssglobbing',
         ]);
 
+        // Build task
+        grunt.registerTask('build', [
+            'dev',
+            'connect:livereload',
+            'watch'
+        ]);
+
         grunt.registerTask('dev', [
             'clean:dev',
             'clean:tmp',
@@ -75,7 +75,7 @@
             'css',
             'jshint',
             'uglify:inline',
-            'concurrent:dev2',
+            'assemble:dev',
             'handlebars:dev',
             'jst',
             'webpack:dev',
