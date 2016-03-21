@@ -10,7 +10,7 @@
 // JS-Config
 //**********************************************************
 $itemscroller-js-cfg: (
-    queries: '500:100%, 860:50%, 33.333%'
+    queries: "500:100%, 860:50%, 33.333%"
 );
 
 
@@ -28,22 +28,22 @@ $itemscroller-js-cfg: (
     //@include rb-js-export($itemscroller-js-cfg);
     display: block;
     position: relative;
-    transition: 300ms opacity;
     user-select: none;
+    transition: 300ms opacity;
 }
 
 .itemscroller-viewport {
-    position: relative;
     overflow: hidden;
+    position: relative;
     width: 100%;
 }
 
 .itemscroller-content {
     display: flex;
     flex-wrap: nowrap;
+    overflow: visible;
     position: relative;
     left: 0;
-    overflow: visible;
     width: auto;
     height: 100%;
     backface-visibility: hidden;
@@ -62,27 +62,27 @@ $itemscroller-js-cfg: (
 //Pagination
 .itemscroller-pagination {
     position: absolute;
-    width: 100%;
-    bottom: 20px;
-    margin: 0 auto;
     z-index: 2;
+    bottom: 20px;
+    width: 100%;
+    margin: 0 auto;
     text-align: center;
 }
 
 .itemscroller-pagination-btn {
     display: inline-block;
-    height: 15px;
     width: 15px;
-    border-radius: 50%;
+    height: 15px;
     margin: 0 4px;
-    background: #fff;
-    transition: background 400ms ease-in;
     cursor: pointer;
     touch-action: manipulation;
+    border-radius: 50%;
+    background: #fff;
+    transition: background 400ms ease-in;
 
     &.is-selected {
-        background: #666;
         cursor: not-allowed;
+        background: #666;
     }
 }
 
@@ -91,19 +91,19 @@ $itemscroller-js-cfg: (
 .itemscroller-btn-next {
     @include rb-hide-text;
     position: absolute;
+    z-index: 5;
     top: 0;
     bottom: 0;
-    height: 40px;
     width: 40px;
-    z-index: 5;
+    height: 40px;
     margin: auto 0;
-    border: none;
     cursor: pointer;
+    touch-action: manipulation;
+    border: none;
+    border-radius: 50%;
+    outline: none;
     background: #000;
     transition: background 400ms ease-in;
-    outline: none;
-    border-radius: 50%;
-    touch-action: manipulation;
 
     &:hover,
     &:focus {
@@ -152,12 +152,3 @@ $itemscroller-js-cfg: (
 //        }
 //    }
 //}
-
-
-
-
-
-
-
-
-

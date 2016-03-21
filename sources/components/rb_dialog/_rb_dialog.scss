@@ -19,8 +19,8 @@ $dialog-js-cfg: (
 
 // Dependencies (Helpers)
 //**********************************************************
-@import '../../sass/helpers/animations/fx/rb_fx_zoom';
-@import '../../sass/settings/rb_zindexes';
+@import "../../sass/helpers/animations/fx/rb_fx_zoom";
+@import "../../sass/settings/rb_zindexes";
 
 
 //----------------------------------------------------------
@@ -31,16 +31,16 @@ $dialog-js-cfg: (
     @include rb-fx-zoomOutSmall;
     display: none;
     position: relative;
-    background: #fff;
     max-width: 680px;
     margin: auto;
     outline: none;
+    background: #fff;
 
     @media (max-width: 620px), (max-height: 320px) {
-        margin: 0;
         width: 100%;
-        min-height: 100%;
         max-width: none;
+        min-height: 100%;
+        margin: 0;
 
         @at-root {
             .dialog-backdrop-document {
@@ -51,7 +51,6 @@ $dialog-js-cfg: (
 }
 
 .dialog-close {
-
 }
 
 //body styles
@@ -62,13 +61,13 @@ $dialog-js-cfg: (
 .dialog-backdrop {
     @include rb-fx-fadeOut();
     visibility: hidden;
+    overflow: auto;
     position: fixed;
+    z-index: $zindex-dialog;
     top: 0;
-    left: 0;
     right: 0;
     bottom: 0;
-    overflow: auto;
-    z-index: $zindex-dialog;
+    left: 0;
     opacity: 0;
     background: rgba(0, 0, 0, 0.6);
     transition: 400ms visibility;
@@ -90,13 +89,8 @@ $dialog-js-cfg: (
 }
 
 .dialog-backdrop-document {
-    display: flex;
     align-items: center;
+    display: flex;
     height: 100%;
     min-height: 100%;
 }
-
-
-
-
-

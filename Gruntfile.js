@@ -71,6 +71,7 @@
         grunt.registerTask('dev', [
             'clean:dev',
             'clean:tmp',
+            'csscomb',
             'svg',
             'css',
             'jshint',

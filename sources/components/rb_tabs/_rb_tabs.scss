@@ -51,13 +51,13 @@ $tabs-js-cfg: (
 }
 
 .tabs-btn {
-    width: 100%;
     position: relative;
+    width: 100%;
+    padding: 10px;
+    touch-action: manipulation;
     border: none;
     border-top: 3px solid transparent;
-    padding: 10px;
     background: #e7e7e7;
-    touch-action: manipulation;
 
     &:hover:not(:disabled),
     &:focus:not(:disabled) {
@@ -65,8 +65,8 @@ $tabs-js-cfg: (
     }
 
     &:disabled {
-        border-color: #dc0f6e;
         z-index: 10;
+        border-color: #dc0f6e;
         background: #fff;
     }
 }
@@ -87,10 +87,3 @@ $tabs-js-cfg: (
 .tabs-content {
     padding: 20px;
 }
-
-
-
-
-
-
-

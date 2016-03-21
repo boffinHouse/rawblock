@@ -50,7 +50,7 @@ h3 {
     }
 }
 
-h4  {
+h4 {
     .rb-richtext & {
         margin: rb-rem-calc(0 0 10);
         font: 400 rb-em-calc(18)/1.2 $richtext-header-font;
@@ -107,24 +107,25 @@ p {
 //Different Stylings
 a {
     .rb-richtext & {
-        color: #1a90bb;
         cursor: pointer;
+        color: #1a90bb;
 
         &:hover,
         &:focus {
             text-decoration: underline;
         }
     }
-
 }
 
-strong, b {
+strong,
+b {
     .rb-richtext & {
         font-weight: 600;
     }
 }
 
-em, i {
+em,
+i {
     .rb-richtext & {
         font-style: italic;
     }
@@ -132,23 +133,23 @@ em, i {
 
 code {
     .rb-richtext & {
-        border: 1px solid #c1c1c1;
         padding: 3px 7px;
         font-size: 14px;
         color: #008cd5;
+        border: 1px solid #c1c1c1;
         background: #e8e8e8;
     }
 }
 
 pre {
     .rb-richtext & {
-        border: 1px solid #c1c1c1;
         padding: 12px 10px;
+        border: 1px solid #c1c1c1;
         background: #e8e8e8;
 
         code {
-            border: none;
             padding: 0;
+            border: none;
             background: inherit;
         }
     }
@@ -156,8 +157,8 @@ pre {
 
 hr {
     .rb-richtext & {
-        border: 2px solid #e6e6e6;
         margin-bottom: 20px;
+        border: 2px solid #e6e6e6;
     }
 }
 
@@ -185,12 +186,12 @@ ul {
             line-height: 24px;
 
             &::before {
-                content: "";
                 position: absolute;
                 top: 8px;
                 left: 3px;
                 width: rb-rem-calc(6);
                 height: 6px;
+                content: "";
                 border-radius: 50%;
                 background: #666;
             }
@@ -200,8 +201,8 @@ ul {
 
 ol {
     .rb-richtext & {
-        list-style: decimal;
         margin-left: 25px;
+        list-style: decimal;
 
         ul,
         ol {
@@ -240,8 +241,8 @@ dd {
 blockquote {
     .rb-richtext & {
         margin: rb-rem-calc(0 0 40);
-        border-left: 5px solid #e5e5e5;
         padding: rb-rem-calc(0 0 0 20px);
+        border-left: 5px solid #e5e5e5;
 
 
         p {
@@ -301,8 +302,8 @@ tbody {
         }
 
         td {
-            border-right: 2px solid #666;
             color: #666;
+            border-right: 2px solid #666;
 
             &:first-child {
                 border-left: 2px solid #666;
@@ -347,10 +348,9 @@ tfoot {
         font-weight: 400;
 
         &::before {
-            content:'- \00a9';
             padding: 0 4px 0 2px;
+            content: "- \00a9";
         }
-
     }
 
     &.is-floated-left {

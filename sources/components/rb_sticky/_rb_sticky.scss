@@ -10,15 +10,15 @@
 // JS-Config
 //**********************************************************
 $sticky-js-cfg: (
-    container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
+    container: ".is-sticky-parent", // false || 'parent' || 'positionedParent' || '.selector'
     switchedOff: false,
     topOffset: false,
     bottomOffset: false,
     progress: 0,
-    childSel: 'find(.sticky-element)',
+    childSel: "find(.sticky-element)",
     setWidth: true,
     resetSwitchedOff: true,
-    childStyle: '',
+    childStyle: "",
 );
 
 
@@ -35,21 +35,19 @@ $sticky-js-cfg: (
         topOffset: 0,
         bottomOffset: false,
     )));
-
     //DONT CHANGE: important set properties shouldn't be changed, use an outer or inner element to apply does styles */
     float: none !important;
-    left: auto !important;
-    right: auto !important;
-    border: none !important;
-    padding: 0 !important;
     position: static;
-    backface-visibility: hidden;
+    z-index: 5;
     //END DONT CHANGE
-
     //Default is top
     top: auto;
+    right: auto !important;
     bottom: auto;
-    z-index: 5;
+    left: auto !important;
+    padding: 0 !important;
+    backface-visibility: hidden;
+    border: none !important;
 
     &.is-bottom {
         @include rb-js-export(map_merge($sticky-js-cfg, (
@@ -80,7 +78,6 @@ $sticky-js-cfg: (
         @include exportToJS(map-merge($sticky-js-cfg, (
         	progress: 100
         )));
-
         height: auto;
         transition: 300ms background-color;
 
@@ -89,15 +86,12 @@ $sticky-js-cfg: (
         }
 
         .sticky-element {
-            font-size: 18px;
-            min-height: 100px;
-
             @include exportToJS((
                 fontSize: 12,
                 minHeight: 50,
             ));
-
+            min-height: 100px;
+            font-size: 18px;
         }
     }
 }
-

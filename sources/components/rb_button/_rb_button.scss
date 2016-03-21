@@ -9,7 +9,7 @@
 
 // Dependencies (Helpers)
 //**********************************************************
-@import '../../sass/helpers/rb_px_to_units';
+@import "../../sass/helpers/rb_px_to_units";
 
 
 //----------------------------------------------------------
@@ -17,14 +17,14 @@
 
 .rb-button {
     display: inline-block;
-    border: none;
     padding: rb-em-calc(15 20);
     font-size: 1rem;
     font-weight: 400;
+    touch-action: manipulation;
     color: #fff;
+    border: none;
     background: #aaa;
     transition: background 400ms ease;
-    touch-action: manipulation;
 
     &:hover:not(.is-disabled),
     &:focus:not(.is-disabled) {
@@ -38,7 +38,7 @@
 
     //Color modifiers
     &.is-primary {
-        background: #0000ff;
+        background: #00f;
 
         &:hover:not(.is-disabled),
         &:focus:not(.is-disabled) {
@@ -47,7 +47,7 @@
     }
 
     &.is-secondary {
-        background: #00aaff;
+        background: #0af;
 
         &:hover:not(.is-disabled),
         &:focus:not(.is-disabled) {
@@ -59,7 +59,7 @@
         background: #22bd5e;
 
         &:hover:not(.is-disabled),
-        &:focus:not(.is-disabled)  {
+        &:focus:not(.is-disabled) {
             background: #1b8643;
         }
     }
@@ -69,7 +69,7 @@
 
         &:hover:not(.is-disabled),
         &:focus:not(.is-disabled) {
-            background: #bb0011;
+            background: #b01;
         }
     }
 
@@ -88,5 +88,4 @@
         opacity: 0.3;
         outline: none;
     }
-
 }

@@ -52,7 +52,6 @@ $docs-example-border: 1px solid #f1f1f1;
     }
 
     > ul {
-
         ul,
         ol {
             margin-top: 6px;
@@ -65,12 +64,12 @@ $docs-example-border: 1px solid #f1f1f1;
             line-height: 24px;
 
             &::before {
-                content: "";
                 position: absolute;
                 top: 8px;
                 left: 3px;
                 width: rb-rem-calc(6);
                 height: 6px;
+                content: "";
                 border-radius: 50%;
                 background: #666;
             }
@@ -78,8 +77,8 @@ $docs-example-border: 1px solid #f1f1f1;
     }
 
     ol {
-        list-style: decimal;
         margin-left: 25px;
+        list-style: decimal;
 
         ul,
         ol {
@@ -110,39 +109,41 @@ $docs-example-border: 1px solid #f1f1f1;
     .is-strike {
         text-decoration: line-through;
     }
-    strong, b {
+    strong,
+    b {
         font-weight: 600;
     }
 
-    em, i {
+    em,
+    i {
         font-style: italic;
     }
 
     code {
-        border: $docs-example-border;
         padding: 2px 3px;
         font-size: 13px;
         font-weight: 400;
-        color: rgb(198, 20, 20);;
-        background: $docs-example-bg-color;
+        color: rgb(198, 20, 20);
+        border: $docs-example-border;
+        background: $docs-example-bg-color;;
     }
 
     pre {
         margin: 0 0 20px;
-        border: $docs-example-border;
         padding: 12px 10px;
+        border: $docs-example-border;
         background: $docs-example-bg-color;
 
         code {
-            border: none;
             padding: 0;
+            border: none;
             background: inherit;
         }
     }
 
     hr {
-        border: 2px solid #e6e6e6;
         margin-bottom: 20px;
+        border: 2px solid #e6e6e6;
     }
 
     //Table
@@ -154,7 +155,6 @@ $docs-example-border: 1px solid #f1f1f1;
     }
 
     thead {
-
         tr {
             border-bottom: 1px solid #d6d6d6;
         }
@@ -168,7 +168,6 @@ $docs-example-border: 1px solid #f1f1f1;
     }
 
     tbody {
-
         tr {
             border-bottom: 1px solid #d6d6d6;
         }
@@ -201,8 +200,8 @@ $docs-example-border: 1px solid #f1f1f1;
         &intro {
             margin-bottom: rb-em-calc(25);
             font-size: rb-em-calc(18);
+            font-weight: 600;
             line-height: rb-em-calc(22);
-            font-weight: 600
         }
 
 
@@ -227,8 +226,8 @@ $docs-example-border: 1px solid #f1f1f1;
             display: block!important;
             position: relative;
             margin-bottom: rb-em-calc(40);
-            border: $docs-example-border;
             padding: 20px 20px 10px;
+            border: $docs-example-border;
             background: #c7d9e0;
 
             &:nth-child(2n+1) {
@@ -255,28 +254,28 @@ $docs-example-border: 1px solid #f1f1f1;
         }
 
         &demo-title {
-            margin-bottom: 10px;
             width: 100%;
+            margin-bottom: 10px;
             color: #555;
         }
 
         &gutters {
             > [class*=u-size-] {
-                padding-right: 10px;
                 margin-bottom: 10px;
+                padding-right: 10px;
             }
         }
 
         &item {
-            position: relative;
-            display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #aaa;
+            display: flex;
+            position: relative;
+            z-index: 2;
             height: 150px;
             color: #444;
+            border: 1px solid #aaa;
             background: #dbdbdb;
-            z-index: 2;
         }
 
         &info {
@@ -285,13 +284,13 @@ $docs-example-border: 1px solid #f1f1f1;
             border-left: 10px solid #008cd5;
 
             p {
-                font-size: 15px;
                 margin-bottom: 10px;
+                font-size: 15px;
             }
         }
     }
 
-    br  {
-       display: none;
+    br {
+        display: none;
     }
 }

@@ -6,11 +6,11 @@
 module.exports = {
    dev: {
        options: {
-           config: '<%= paths.helpers %>/task-configs/csscomb.json'
+           config: 'taskrunner/task-settings/.csscomb.json',
        },
        expand: true,
        cwd: '<%= paths.src %>',
-       src: ['sass/**/*.scss', 'components/**/*.scss'],
+       src: ['components/**/*.scss'],
        dest: '<%= paths.src %>'
    }
 };

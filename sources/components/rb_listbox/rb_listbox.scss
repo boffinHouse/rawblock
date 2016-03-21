@@ -20,11 +20,11 @@ $listbox-js-cfg: (
 
 .listbox-item {
     margin-bottom: 5px;
-    border: 1px solid #333;
     padding: rb-em-calc(8px 10px);
     cursor: pointer;
-    transition: all 300ms ease-in;
     touch-action: manipulation;
+    border: 1px solid #333;
+    transition: all 300ms ease-in;
 
     &.is-selected {
         color: #fff;
@@ -33,6 +33,6 @@ $listbox-js-cfg: (
 
     &.is-checked {
         color: #fff;
-        background: #00aaff;
+        background: #0af;
     }
 }

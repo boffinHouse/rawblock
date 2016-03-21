@@ -17,55 +17,55 @@
 
 
 .rb-form {
-	width: 100%;
-	font-size: 1rem;
+    width: 100%;
+    font-size: 1rem;
 }
 
 .form-section-legend {
-	margin: 0 0 20px;
-	font: 600 rb-em-calc(32)/1 sans-serif;
-	color: #333;
+    margin: 0 0 20px;
+    font: 600 rb-em-calc(32)/1 sans-serif;
+    color: #333;
 }
 
 .form-subsection-legend {
-	margin: 0 0 20px;
-	font: 600 rb-em-calc(24)/1 sans-serif;
-	color: #333;
+    margin: 0 0 20px;
+    font: 600 rb-em-calc(24)/1 sans-serif;
+    color: #333;
 }
 
 .form-intro {
-	margin: rb-em-calc(0 0 30);
-	font-size: rb-em-calc(18);
-	line-height: rb-em-calc(24);
+    margin: rb-em-calc(0 0 30);
+    font-size: rb-em-calc(18);
+    line-height: rb-em-calc(24);
 }
 
 .form-box {
-	align-items: flex-end;
+    align-items: flex-end;
 }
 
 .form-field {
-	position: relative;
-	width: 100%;
+    position: relative;
+    width: 100%;
 }
 
 .form-note {
-	padding: 10px;
-	margin-bottom: rb-rem-calc(20);
-	font: 600 rb-em-calc(12)/1.5 sans-serif;
-	color: #333;
+    margin-bottom: rb-rem-calc(20);
+    padding: 10px;
+    font: 600 rb-em-calc(12)/1.5 sans-serif;
+    color: #333;
 }
 
 .form-errorbox {
-	display: none;
+    display: none;
 
-	.is-invalid & {
-		display: block;
-	}
+    .is-invalid & {
+        display: block;
+    }
 }
 
 .form-errormessage {
-	margin: 0;
-	color: red;
+    margin: 0;
+    color: red;
 }
 
 @include generate-label(form, true);
@@ -73,5 +73,3 @@
 @include generate-input-textarea(form, true);
 @include generate-state-btn(form, checkbox, true);
 @include generate-state-btn(form, radio, true);
-
-

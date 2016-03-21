@@ -16,7 +16,7 @@ $accordion-js-cfg: (
     selectedIndex: -1,
     toggle: true,
     adjustScroll: 10,
-    animation: 'slide',
+    animation: "slide",
 );
 
 //----------------------------------------------------------
@@ -30,13 +30,12 @@ $accordion-js-cfg: (
 .accordion-btn {
     display: block;
     width: 100%;
-    border: none;
-    border-bottom: 1px solid #aaa;
-
     padding: rb-em-calc(20);
     text-align: left;
-    background: #e6e6e6;
     touch-action: manipulation;
+    border: none;
+    border-bottom: 1px solid #aaa;
+    background: #e6e6e6;
 
     &:hover,
     &:focus {
@@ -47,11 +46,11 @@ $accordion-js-cfg: (
 .accordion-panel {
     @include rb-clearfix;
     display: block;
-    height: 0;
-    overflow: hidden;
-    background: #f7f7f7;
     visibility: hidden;
+    overflow: hidden;
+    height: 0;
     opacity: 0;
+    background: #f7f7f7;
     transition: opacity 400ms, visibility 400ms;
 
     &.is-open {
@@ -72,9 +71,9 @@ $accordion-js-cfg: (
 
 .accordion-ctrl-btn {
     padding: rb-em-calc(7 10);
+    touch-action: manipulation;
     border: none;
     transition: background 300ms ease-in;
-    touch-action: manipulation;
 
     &:hover,
     &:focus {
@@ -97,6 +96,3 @@ $accordion-js-cfg: (
         opacity: 1;
     }
 }
-
-
-

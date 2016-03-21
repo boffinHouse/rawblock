@@ -16,35 +16,33 @@
 
 
 .rb-sitemap {
-	width: 100%;
-	font-size: 1rem;
+    width: 100%;
+    font-size: 1rem;
 }
 
 .sitemap-inner {
-	max-width: 1240px;
-	margin: 0 auto;
+    max-width: 1240px;
+    margin: 0 auto;
 }
 
 .sitemap-title-link {
-	display: block;
-	padding: rb-em-calc(0 0 10);
-	color: #666;
+    display: block;
+    padding: rb-em-calc(0 0 10);
+    color: #666;
 }
 
 .sitemap-item {
-	font: rb-em-calc(14)/rb-em-calc(16) $font-sans-serif;
-	color: #ccc;
+    font: rb-em-calc(14)/rb-em-calc(16) $font-sans-serif;
+    color: #ccc;
 }
 
 .sitemap-link {
-	display: block;
-	padding: rb-em-calc(4 0);
-	color: #ccc;
+    display: block;
+    padding: rb-em-calc(4 0);
+    color: #ccc;
 
-	&:hover,
-	&:focus {
-		text-decoration: underline;
-	}
+    &:hover,
+    &:focus {
+        text-decoration: underline;
+    }
 }
-
-
