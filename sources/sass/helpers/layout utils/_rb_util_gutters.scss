@@ -12,7 +12,7 @@
     @if type-of($gutters) == 'map' {
 
         @if map-has-key($gutters, horizontal) {
-            $gutter-horizontal: map-get($gutters, horizontal);
+            $gutter-horizontal: map-get($gutters, horizontal) / 2;
         }
         @if map-has-key($gutters, vertical) {
             $gutter-vertical: map-get($gutters, vertical);
@@ -20,35 +20,37 @@
 
         //Horizontal & vertical gutters
         .u-gutters {
-            margin-left: (-$gutter-horizontal);
+            margin-left: -$gutter-horizontal;
+            margin-right: -$gutter-horizontal;
 
             > [class*=u-size-] {
                 margin-bottom: $gutter-vertical;
-                padding-left: ($gutter-horizontal);
+                padding-left: $gutter-horizontal;
+                padding-right: $gutter-horizontal;
             }
         }
 
         .u-gutters-half {
-            margin-left: (-$gutter-horizontal) / 2;
+            margin-left: -$gutter-horizontal / 2;
+            margin-right: -$gutter-horizontal / 2;
 
             > [class*=u-size-] {
-                margin-bottom: $gutter-vertical / 2;
-                padding-left: ($gutter-horizontal) / 2;
+                margin-bottom: -$gutter-vertical / 2;
+                padding-left: -$gutter-horizontal / 2;
+                padding-right: -$gutter-horizontal / 2;
             }
         }
 
         .u-gutters-double {
-            margin-left: (-$gutter-horizontal) * 2;
+            margin-left: -$gutter-horizontal * 2;
+            margin-right: -$gutter-horizontal * 2;
+
 
             > [class*=u-size-] {
                 margin-bottom: $gutter-vertical * 2;
-                padding-left: ($gutter-horizontal) * 2;
+                padding-left: $gutter-horizontal * 2;
+                padding-right: $gutter-horizontal * 2;
             }
-        }
-
-        > [class*=u-size-].u-gutter {
-            margin-bottom: $gutter-vertical;
-            padding-left: ($gutter-horizontal);
         }
 
         //Only vertical gutters
@@ -73,44 +75,35 @@
             }
         }
 
-        > [class*=u-size-].u-gutter-vertical {
-            margin-bottom: $gutter-vertical;
-        }
-
-
         //Only horizontal gutters
         .u-gutters-horizontal {
-            margin-left: (-$gutter-horizontal);
+            margin-left: -$gutter-horizontal;
+            margin-right: -$gutter-horizontal;
 
             > [class*=u-size-]  {
-                padding-left: ($gutter-horizontal);
+                padding-left: $gutter-horizontal;
+                padding-right: $gutter-horizontal;
             }
         }
 
         .u-gutters-horizontal-half {
-            margin-left: (-$gutter-horizontal) / 2;
+            margin-left: -$gutter-horizontal / 2;
+            margin-right: -$gutter-horizontal / 2;
 
             > [class*=u-size-]  {
-                padding-left: ($gutter-horizontal) / 2;
+                padding-left: $gutter-horizontal / 2;
+                padding-right: $gutter-horizontal / 2;
             }
         }
 
         .u-gutters-horizontal-double {
-            margin-left: (-$gutter-horizontal) * 2;
+            margin-left: -$gutter-horizontal * 2;
+            margin-right: -$gutter-horizontal * 2;
 
             > [class*=u-size-]  {
-                padding-left: ($gutter-horizontal) * 2;
+                padding-left: $gutter-horizontal * 2;
+                padding-right: $gutter-horizontal * 2;
             }
-        }
-
-
-        > [class*=u-size-].u-gutter-horizontal {
-            padding-left: ($gutter-horizontal);
-        }
-
-        //Remove gutter
-        [class*=u-size-].u-no-gutter-vertical {
-            margin-bottom: 0;
         }
     }
 }
