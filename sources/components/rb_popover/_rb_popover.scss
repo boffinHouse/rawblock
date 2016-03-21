@@ -2,22 +2,28 @@
  * Component: Popover
 **********************************************************/
 
+
 // Variables
 //**********************************************************
 $popover-margin: 10px;
 $popover-bg-color: #111;
 $popover-arrow-size: 10px;
 
+
 // JS Config
 //**********************************************************
 $popover-js-cfg: ();
 
+
 // Dependencies (Helpers)
 //**********************************************************
 @import "../../sass/helpers/rb_arrow_icon";
-@import '../../sass/variables/rb_zindexes';
+@import '../../sass/settings/rb_zindexes';
+
 
 //----------------------------------------------------------
+
+
 .rb-popover {
     position: absolute;
     width: 200px;

@@ -2,8 +2,10 @@
  * Component: Dialog
 **********************************************************/
 
+
 // Variables
 //**********************************************************
+
 
 // JS Config
 //**********************************************************
@@ -14,12 +16,16 @@ $dialog-js-cfg: (
     open: true,
 );
 
+
 // Dependencies (Helpers)
 //**********************************************************
 @import '../../sass/helpers/animations/fx/rb_fx_zoom';
-@import '../../sass/variables/rb_zindexes';
+@import '../../sass/settings/rb_zindexes';
+
 
 //----------------------------------------------------------
+
+
 .rb-dialog {
     //@include rb-js-export($dialog-js-cfg);
     @include rb-fx-zoomOutSmall;

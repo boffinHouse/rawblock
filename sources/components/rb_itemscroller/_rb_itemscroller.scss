@@ -2,8 +2,10 @@
  * Component: Itemscroller
 **********************************************************/
 
+
 // Variables
 //**********************************************************
+
 
 // JS-Config
 //**********************************************************
@@ -11,13 +13,17 @@ $itemscroller-js-cfg: (
     queries: '500:100%, 860:50%, 33.333%'
 );
 
+
 // Dependencies (Helpers)
 //**********************************************************
 @import "../../sass/helpers/rb_hide_text";
 @import "../../sass/helpers/rb_arrow_icon";
 @import "../../sass/helpers/rb_px_to_units";
 
+
 //----------------------------------------------------------
+
+
 .rb-itemscroller {
     //@include rb-js-export($itemscroller-js-cfg);
     display: block;

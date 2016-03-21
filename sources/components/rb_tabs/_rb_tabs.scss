@@ -2,8 +2,10 @@
  * Component: Tabs
 **********************************************************/
 
+
 // Variables
 //**********************************************************
+
 
 // JS-Config
 //**********************************************************
@@ -13,12 +15,16 @@ $tabs-js-cfg: (
     duration: 400,
 );
 
+
 // Dependencies (Helpers)
 //**********************************************************
 @import "../../sass/helpers/rb_px_to_units";
 @import "../../sass/helpers/animations/rb_fx_panel";
 
+
 //----------------------------------------------------------
+
+
 .rb-tabs {
     @include rb-js-export($tabs-js-cfg);
     @include rb-fx-panel(tabs, fade);
