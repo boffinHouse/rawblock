@@ -15,9 +15,9 @@ rb.life.autoStart = false;
 //if webpack is used:
 __webpack_public_path__ = ASSETBASEPATH + 'js/';
 
-require('../../grunt/webpack/globloader!./glob.paths');
+require('../../taskrunner/grunt/webpack/globloader!./glob.paths');
 
-require('../../grunt/webpack/lazyglobloader!./lazyglob.paths');
+require('../../taskrunner/grunt/webpack/lazyglobloader!./lazyglob.paths');
 
 
 /* init after all modules are loaded or imports are configured. */

@@ -10,14 +10,17 @@
         // Project settings
         var options = {
             config: {
-                src: "grunt/configs/*.js"
+                src: "taskrunner/grunt/configs/*.js"
             },
             paths: {
                 src: 'sources',
                 dev: 'dev',
                 dist: 'dist',
                 tmp: 'tmp',
-                helper: 'grunt/configs'
+                helper: {
+                    task: 'taskrunner/grunt/configs',
+                    settings: 'taskrunner/task-settings'
+                }
             },
             ports: {
                 app: '8000',
@@ -29,9 +32,10 @@
         grunt._rbOptions = options;
 
         var configs = require('load-grunt-configs')(grunt, options);
+
         grunt.initConfig(configs);
 
-        grunt.task.loadTasks('grunt/tasks');
+        grunt.task.loadTasks('taskrunner/grunt/tasks');
 
         grunt.registerTask('default', [
             'build'

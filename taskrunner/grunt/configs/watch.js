@@ -11,7 +11,7 @@ module.exports = {
             reload: true
         },
         files: [
-            '<%= paths.helper %>/*.js',
+            '<%= paths.helper.task %>/*.js',
             'Gruntfile.js'
         ]
     },
