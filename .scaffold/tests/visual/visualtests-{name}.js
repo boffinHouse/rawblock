@@ -5,6 +5,7 @@
 //        var promise = casperHelpers.deferred();
 //
 //        casper.waitFor(casperHelpers.waitForJsReady(), function(){
+//            casperHelpers.disableFx();
 //
 //            phantomcss.screenshot('#test-1', '{name}-default');
 //
