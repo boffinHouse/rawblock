@@ -1,4 +1,4 @@
-// Generates all utility styles with devices
+// Generates all utility styles
 //
 // @param {List} $configs - A list of all breakpoint specific settings used on utility classes.
 //
@@ -12,7 +12,7 @@
 
         @if $breakpoint-name == 'all' {
             @include rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width);
-            @include rb-util-gridcontainer;
+            @include rb-util-gridcontainer();
             @include rb-util-columns();
         } @else {
             @if $media {

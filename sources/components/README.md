@@ -27,11 +27,11 @@ An element represents a descendant within the block. It should only make sense i
 
 The descendant name can have any W3C allowed class name characters. For brevity the child of a descendant element should not repeat the descendant name, but only the component name as its prefix.
 
-Element classes are always unique and should be declared not in context of the component name as long as this is not needed for modifier class
+Element classes are always unique and should be declared not in context of the component name as long as this is not needed for modifier class.
 
 Good examples
 - the image of the logo component: `.logo-img`
-- a input box in the search form: `.search-box.is-focused`
+- a input box in the search form: `.searchbox-input`
 - an item in main nav: `.rb-mainnav.is-fixed .mainnav-item`
 
 
