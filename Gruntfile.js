@@ -57,7 +57,7 @@
         grunt.registerTask('css', [
             'scssglobbing',
             'sass:dev',
-            'autoprefixer:dev',
+            'postcss',
             'clean:scssglobbing',
         ]);
 
