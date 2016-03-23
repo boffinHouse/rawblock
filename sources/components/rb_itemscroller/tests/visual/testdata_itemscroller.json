@@ -4,16 +4,14 @@
       "pagination": true,
       "autoplay": false,
       "itemsIndex": false,
-      "attrs": {
-        "data-duration": 2
-      },
+      "attrs": {},
       "buttons": {
           "prev": "previous",
           "next": "next"
       },
       "items": [
           {
-              "sizes": "u-size-20"
+              "sizes": "u-size-100"
           },
           {
               "sizes": "u-size-100"
