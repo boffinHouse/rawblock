@@ -8,14 +8,14 @@ $breakpoint-config: (
 		grid-max-width: 940px
 	),
 	l: (
-		media:'(min-width: 1240px)',
+		media: 1440px,
 	),
 	m: (
-		media:'(min-width: 569px) and (max-width: 1239px)',
+		media: 1239px,
 		order-size: 2
 	),
 	s: (
-		media: '(max-width: 568px)',
+		media: 568px,
 		gutter: (
 			vertical: 10px,
 			horizontal: 10px

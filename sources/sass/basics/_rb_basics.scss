@@ -106,3 +106,8 @@ fieldset {
     border: none;
 }
 
+body {
+    @include rb-create-mq($and: '(min-height: 600px)') {
+        background: black;
+    }
+}

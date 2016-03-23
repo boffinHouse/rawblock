@@ -2,6 +2,7 @@
     $rbExportMqMap: ();
     $main-breakpoints: map-get($main-config, 'mqs');
 
+
     @each $name, $mq in $asidebreakpoints {
         @if (type-of($mq) == string) {
             $rbExportMqMap: map-merge($rbExportMqMap, ($name: $mq));
@@ -23,7 +24,7 @@
         @if ($mq != '') {
             $rbExportMqMap: map-merge($rbExportMqMap, ($name: $mq));
             html {
-                @media #{$mq}{
+                @include rb-create-mq($from: $mq) {
                     &::after {
                         position: absolute;
                         left: -999px;
