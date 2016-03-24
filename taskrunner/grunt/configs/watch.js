@@ -39,7 +39,7 @@ module.exports = {
     },
     sync_img: {
         files: ['<%= paths.src %>/img/{,*/}*.{svg, png, jpg}'],
-        tasks: ['sync:image']
+        tasks: ['sync:images']
     },
     inline_js: {
         files: ['<%= paths.src %>/js/_inlinehead-behavior.js'],
