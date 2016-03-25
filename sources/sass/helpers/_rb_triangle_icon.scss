@@ -13,7 +13,7 @@
 // }
 //
 @mixin rb-triangle-icon($height, $width, $color, $direction) {
-	content: '';
+	content: " ";
 	position: absolute;
 	height: $height;
 	pointer-events: none;

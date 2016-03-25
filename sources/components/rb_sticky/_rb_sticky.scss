@@ -35,19 +35,18 @@ $sticky-js-cfg: (
         topOffset: 0,
         bottomOffset: false,
     )));
-    //DONT CHANGE: important set properties shouldn't be changed, use an outer or inner element to apply does styles */
-    float: none !important;
+    //[1] DONT CHANGE: important set properties shouldn't be changed, use an outer or inner element to apply does styles
+    //[2] Default is top
+    float: none !important; //[1]
     position: static;
     z-index: 5;
-    //END DONT CHANGE
-    //Default is top
     top: auto;
-    right: auto !important;
+    right: auto !important; //[1]
     bottom: auto;
-    left: auto !important;
-    padding: 0 !important;
+    left: auto !important; //[1]
+    padding: 0 !important; //[1]
     backface-visibility: hidden;
-    border: none !important;
+    border: none !important; //[1]
 
     &.is-bottom {
         @include rb-js-export(map_merge($sticky-js-cfg, (

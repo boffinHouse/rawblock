@@ -10,17 +10,6 @@ module.exports = {
 			indent_size : 1
 		}
 	},
-	svgLogo: {
-		options: {
-			prefix : 'page-',
-			svg: {
-				style: "display: none;"
-			}
-		},
-		files: {
-			'<%= paths.dev %>/img/logo.svg': ['<%= paths.tmp %>/svgmin/logo/logo.svg']
-		}
-	},
 	svgIcons: {
 		options: {
 			prefix : 'icon-',

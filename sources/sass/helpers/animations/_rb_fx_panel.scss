@@ -48,7 +48,7 @@
         }
     }
 
-    @if $animation == "slide" {
+    @if $animation == 'slide' {
         &.is-slide {
             @include rb-fx-panel-common($name, $options);
 

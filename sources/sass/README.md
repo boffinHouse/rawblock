@@ -36,6 +36,15 @@ All strings in classes are delimeited with a hyphen (-).
 
 ##CSS Rule Sets
 
+##Declarartion order
+Related property declarations should be grouped together following the order:
+
+1. Box model
+2. Positioning
+3. Typographic
+4. Visual
+
+For a complete list of properties and their order, see [RawBlock's CSS combination](https://github.com/boffinHouse/rawblock/blob/gh-pages/taskrunner/task-settings/.rawblock-csscomb.json).
 
 ##Commenting
 
@@ -47,6 +56,7 @@ Always use double quotes if possible.
 > Good
 
 	.listbox-link[href=".pdf"] {
+		content: "";
 		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 		background-image: url("../img/your.svg");
 	}
@@ -54,6 +64,7 @@ Always use double quotes if possible.
 > Bad
 
 	.listbox-link[href=.pdf] {
+		content: '';
 		font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 		background-image: url(../img/your.svg);
 	}
@@ -63,7 +74,7 @@ Always use double quotes if possible.
 - Don't mix spaces with tabs for indentation
 - Improve readability by using white-space
 
-
+###Preprocessors: additional format considerations
 
 ##Components
 The base of RawBlock is modularity. This is archieved by creating isolated components who are context unaware. While rawblock's naming convention gives the same grade of isolation/ re-usage of components compared to BEM it leads to much shorter class names.

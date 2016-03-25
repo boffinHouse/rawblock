@@ -15,7 +15,7 @@ $base-fontsize: 100% !default;
         $base-value: $base-fontsize;
     }
 
-    @if($values == "auto") {
+    @if($values == 'auto') {
         @return $values;
     }
 
@@ -36,7 +36,7 @@ $base-fontsize: 100% !default;
 
     $values: ($values / $base-value) + $unit;
 
-    @if ($values == ("0" + $unit)) {
+    @if ($values == ('0' + $unit)) {
         $values: 0;  // Turn 0rem/0em into 0
     }
 

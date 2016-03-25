@@ -8,7 +8,7 @@
     &::after,
     &::before {
         clear: both;
-        content: "";
+        content: " ";
         display: table;
         visibility: hidden;
         flex-basis: 0;

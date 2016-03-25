@@ -45,7 +45,7 @@ module.exports = {
 	svgIcons: {
 		files: [
 			{
-				cwd: '<%= paths.src %>/components/',
+				cwd: '<%= paths.src %>/img/icons',
 				dest: '<%= paths.tmp %>/svgmin/icons',
 				expand: true,
 				ext: '.svg',
