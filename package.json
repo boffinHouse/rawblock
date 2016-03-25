@@ -16,7 +16,7 @@
     }
   ],
   "engines": {
-    "node": ">=0.12"
+    "node": ">=4.2"
   },
   "scripts": {
     "test": "grunt test"

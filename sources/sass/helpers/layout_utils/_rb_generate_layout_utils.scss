@@ -16,7 +16,7 @@
             @include rb-util-columns();
         } @else {
             @if $media {
-               @include rb-create-mq($from: $breakpoint-name) {
+               @include rb-create-mq($until: $breakpoint-name) {
                    @include rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width);
                }
             } @else {
