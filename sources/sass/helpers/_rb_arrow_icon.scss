@@ -14,7 +14,7 @@
 // }
 //
 @mixin rb-arrow-icon($height, $width, $thickness, $color, $direction) {
-    content: '';
+    content: " ";
     position: absolute;
     height: $height;
     width: $width;

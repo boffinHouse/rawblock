@@ -27,13 +27,12 @@ $scrolly-js-cfg: (
 
 //----------------------------------------------------------
 
-
+//[1] Performance: try this or the following
 .rb-scrolly {
     @include rb-js-export($scrolly-js-cfg);
     position: relative;
     height: 100px;
-    /* performance: try this or the following */
-    backface-visibility: hidden;
+    backface-visibility: hidden; //[1]
     background: #999;
 
     //&.is-in-scrollrange {
