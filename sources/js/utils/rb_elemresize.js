@@ -77,6 +77,7 @@
 
                 heightChange = false;
                 widthChange = false;
+                block = false;
             };
 
             var scrollWrite = function () {
@@ -93,7 +94,6 @@
                     first = false;
                     addEvents();
                 }
-                block = false;
             };
 
             var write = rb.rAF(function () {
@@ -136,7 +136,7 @@
                     read();
                 }
 
-            });
+            }, {read: true});
 
             wrapper.className = 'js' + rb.nameSeparator + 'element' + rb.nameSeparator + 'resize';
             wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;-webkit-overflow-scrolling:auto;');

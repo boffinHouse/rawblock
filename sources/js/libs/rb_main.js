@@ -460,9 +460,33 @@ if (!window.rb) {
     /* End: parseValue */
 
     /* Begin: idleCallback */
-        rb.rIC = function(fn){
-            return (window.requestIdleCallback || setTimeout)(fn);
+    rb.rIC = function(fn){
+        return (window.requestIdleCallback || setTimeout)(fn);
+    };
+    /* End: idleCallback */
+
+    /* Begin: ReadCallback */
+    rb.rRC = (function(){
+        var running;
+        var fns = [];
+        var flush = function(){
+            while (fns.length) {
+                fns.shift()();
+            }
+            running = false;
         };
+        var rAF = function(){
+            setTimeout(flush);
+        };
+
+        return function(fn){
+            fns.push(fn);
+            if(!running){
+                running = true;
+                rb.rAFQueue(rAF);
+            }
+        };
+    })();
     /* End: idleCallback */
 
     /* Begin: rAF helpers */
