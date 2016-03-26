@@ -1,26 +1,28 @@
+$rb-name-separator: "-";
+
 $breakpoint-config: (
-	all: (
-		gutter: (
-			vertical: 40px,
-			horizontal: 40px
-		),
-		order-size: 5,
-		grid-max-width: 940px
-	),
-	l: (
-		media: 1440px,
-	),
-	m: (
-		media: 1239px,
-		order-size: 2
-	),
-	s: (
-		media: 568px,
-		gutter: (
-			vertical: 10px,
-			horizontal: 10px
-		)
-	)
+    all: (
+        gutter: (
+            vertical: 40px,
+            horizontal: 40px
+        ),
+        order-size: 5,
+        grid-max-width: 940px
+    ),
+    l: (
+        media: 1440px,
+    ),
+    m: (
+        media: 1239px,
+        order-size: 2
+    ),
+    s: (
+        media: 568px,
+        gutter: (
+            vertical: 10px,
+            horizontal: 10px
+        )
+    )
 );
 $aside-breakpoints: ();
 
