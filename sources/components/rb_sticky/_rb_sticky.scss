@@ -10,6 +10,7 @@
 // JS-Config
 //**********************************************************
 $sticky-js-cfg: (
+    name: sticky,
     container: ".is-sticky-parent", // false || 'parent' || 'positionedParent' || '.selector'
     switchedOff: false,
     topOffset: false,

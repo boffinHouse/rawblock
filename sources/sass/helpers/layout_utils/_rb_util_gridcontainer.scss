@@ -1,35 +1,35 @@
 @mixin rb-util-gridcontainer() {
 
     //Turns container in a column group (left to right)
-    .u-column-group {
+    .u#{$rb-name-separator}column#{$rb-name-separator}group {
         display: flex;
         flex-wrap: wrap;
 
-        .u-column-group,
-        .u-row-group {
+        .u#{$rb-name-separator}column#{$rb-name-separator}group,
+        .u#{$rb-name-separator}row#{$rb-name-separator}group {
             flex: 1;
         }
     }
 
     //Turns container in a row group (top to bottom)
-    .u-row-group {
+    .u#{$rb-name-separator}row#{$rb-name-separator}group {
         display: flex;
         flex-direction: column;
 
 
-        .u-column-group,
-        .u-row-group {
+        .u#{$rb-name-separator}column#{$rb-name-separator}group,
+        .u#{$rb-name-separator}row#{$rb-name-separator}group {
             flex: 1;
         }
     }
 
     //Reverse column container (right to left)
-    .u-column-group-reverse {
+    .u#{$rb-name-separator}column#{$rb-name-separator}group#{$rb-name-separator}reverse {
         flex-direction: row-reverse;
     }
 
     //Reverse row container (bottom to top)
-    .u-row-group-reverse {
+    .u#{$rb-name-separator}row#{$rb-name-separator}group#{$rb-name-separator}reverse {
         flex-direction: column-reverse;
     }
 }

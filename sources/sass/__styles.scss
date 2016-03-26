@@ -4,6 +4,8 @@ Main Stylesheet
 ----------------------------------------------------------
 
 **********************************************************/
+$rb-name-separator: "-";
+
 // Functions / Mixins
 @import "helpers/**/*.scss";
 
@@ -18,7 +20,13 @@ Main Stylesheet
 //	Layout classes (.u-*)
 // ---------------------
 @include rb-generate-layout-utils($breakpoint-config);
-@include rb-export-globaljs((mqs: $breakpoint-config));
+@include rb-export-globaljs((
+    mqs: $breakpoint-config,
+    nameSeparator: $rb-name-separator,
+    statePrefix: "is" + $rb-name-separator,
+    utilPrefix: "u" + $rb-name-separator,
+    //jsPrefix: "js" + $rb-name-separator,
+));
 
 // All Components
 @import "../components/**/*.scss !../components/**/tests/**/*.scss !../components/**/*.async.scss !../components/**/*.js.scss";

@@ -11,7 +11,7 @@
     }
 
     @if $grid-max-width {
-        .u-grid-maxwidth#{$type} {
+        .u#{$rb-name-separator}grid-maxwidth#{$type} {
             max-width: $grid-max-width;
         }
     }

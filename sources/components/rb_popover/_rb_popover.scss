@@ -12,7 +12,9 @@ $popover-arrow-size: 10px;
 
 // JS Config
 //**********************************************************
-$popover-js-cfg: ();
+$popover-js-cfg: (
+    name: popover,
+);
 
 
 // Dependencies (Helpers)

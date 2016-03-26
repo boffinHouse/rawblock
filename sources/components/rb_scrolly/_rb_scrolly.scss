@@ -10,13 +10,14 @@
 // JS-Config
 //**********************************************************
 $scrolly-js-cfg: (
-	switchedOff: false,
-	from: "-90eh",
-	to: "100vh-10eh",
-	once: false,
-	restSwitchedOff: true,
-	childSel: "find(.scrolly-element)",
-	throttleDelay: 0,
+    name: scrolly,
+    switchedOff: false,
+    from: "-90eh",
+    to: "100vh-10eh",
+    once: false,
+    restSwitchedOff: true,
+    childSel: "find(.scrolly-element)",
+    throttleDelay: 0,
 );
 
 

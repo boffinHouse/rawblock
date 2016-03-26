@@ -18,41 +18,41 @@
     }
 
 
-    .u-offset-right#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}right#{$type} {
         margin-left: auto;
     }
 
-    .u-offset-left#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}left#{$type} {
         margin-right: auto;
     }
 
-    .u-offset-center#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}center#{$type} {
         margin-right: auto;
         margin-left: auto;
     }
 
     //Position all columns inside container (justify-content: for main-axis / align-items: for cross axis)
-    .u-offset-columns-left#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}columns#{$rb-name-separator}left#{$type} {
         justify-content: flex-start;
     }
 
-    .u-offset-columns-center#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}columns#{$rb-name-separator}center#{$type} {
         justify-content: center;
     }
 
-    .u-offset-columns-right#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}columns#{$rb-name-separator}right#{$type} {
         justify-content: flex-end;
     }
 
-    .u-offset-columns-top#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}columns#{$rb-name-separator}top#{$type} {
         align-items: flex-start;
     }
 
-    .u-offset-columns-middle#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}columns#{$rb-name-separator}middle#{$type} {
         align-items: center;
     }
 
-    .u-offset-columns-bottom#{$type} {
+    .u#{$rb-name-separator}offset#{$rb-name-separator}columns#{$rb-name-separator}bottom#{$type} {
         align-items: flex-end;
     }
 
@@ -60,22 +60,22 @@
 
     //TODO: check if all push classes are needed or just some.
     @if $breakpoint-name == 'all' {
-        .u-push-66#{$type} {
+        .u#{$rb-name-separator}push#{$rb-name-separator}66#{$type} {
             left: 66.6666%;
         }
 
-        .u-push-33#{$type} {
+        .u#{$rb-name-separator}push#{$rb-name-separator}33#{$type} {
             left: 33.3333%;
         }
 
-        .u-push-16#{$type} {
+        .u#{$rb-name-separator}push#{$rb-name-separator}16#{$type} {
             left: 16.6666%;
         }
 
         @while $i <= 100 {
 
             // create
-            &.u-push-#{$i}#{$type} {
+            &.u#{$rb-name-separator}push#{$rb-name-separator}#{$i}#{$type} {
                 left: $i * 1%;
             }
 

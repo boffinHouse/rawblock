@@ -43,7 +43,7 @@ Good examples
 
 .mainnav-item {
     ...
-    
+
     .rb-mainnav.is-fixed & {
         ...
     }
@@ -60,13 +60,13 @@ Modifiers are flags set on **block** or **element** elements, they represent a d
 Modifier classes are only allowed as adjoining classes.
 
 ####Separation of behavior and style
-A common technique to produce re-usable JS components is to use two different selectors one for styling and the other for behavior (often either prefixed with `js-*` or by using much slower attribute selectors).
+A common technique to produce re-usable JS components is to use two different selectors one for styling and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
 
 While rawblock JS supports the js-prefix technique automatically (Simply set the `jsPrefix` option to `'js-'`), rawblock advocates a different approach.
 
 The two-selector technique does not only separate two different concerns, it also separates the crucial functional design from the actual behavior.
 
-Rawblock instead allows to CSS developer to configure the component name by CSS. This way CSS extends the naming of the hole component and avoids clashes in JS.
+Rawblock instead allows CSS developer to configure the component name by CSS. This way CSS extends the naming of the hole component and avoids clashes in JS.
 
 This can be expressed with the following code:
 
@@ -92,7 +92,7 @@ This can be expressed with the following code:
 .rb-heroscroller {
 
     @include rb-js-export((
-        name: "heroscroller",
+        name: heroscroller,
         carousel: true,
         centerMode: true,
     ));

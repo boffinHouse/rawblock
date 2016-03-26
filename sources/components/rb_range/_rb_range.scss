@@ -13,15 +13,7 @@ $range-thumb-width: 30px;
 // JS Config
 //**********************************************************
 $range-js-cfg: (
-	watchCss: false,
-	animate: true,
-	axis: "auto", // 'auto' || 'vertical' || 'horizontal' ('auto' does not work, if we are in a display none wrapper and also adds some perf penalty)
-	//either use inputs or values, step, max, min
-	inputs: "find(input)", // false || 'find(input)' || white space separated ids or
-	values: 50,
-	step: 1, //'any' or number
-	max: 100,
-	min: 0,
+    name: range,
 );
 
 

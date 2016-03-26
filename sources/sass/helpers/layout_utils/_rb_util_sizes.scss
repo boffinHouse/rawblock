@@ -14,38 +14,38 @@
         $type: '-' + $breakpoint-name;
     }
 
-    .u-size-auto#{$type} {
+    .u#{$rb-name-separator}size#{$rb-name-separator}auto#{$type} {
         width: auto;
     }
 
     //Element will take available space
-    .u-size-flex#{$type} {
+    .u#{$rb-name-separator}size#{$rb-name-separator}flex#{$type} {
         flex: 1;
         width: auto;
     }
 
     //Element will take twice the available space
-    .u-size-flex-double {
+    .u#{$rb-name-separator}size#{$rb-name-separator}flex#{$rb-name-separator}double {
         flex: 2;
         width: auto;
     }
 
-    .u-size-66#{$type} {
+    .u#{$rb-name-separator}size#{$rb-name-separator}66#{$type} {
         width: 66.6666%;
     }
 
-    .u-size-33#{$type} {
+    .u#{$rb-name-separator}size#{$rb-name-separator}33#{$type} {
         width: 33.3333%;
     }
 
-    .u-size-16#{$type} {
+    .u#{$rb-name-separator}size#{$rb-name-separator}16#{$type} {
         width: 16.6666%;
     }
 
     @while $i <= 100 {
 
         // create
-        &.u-size-#{$i}#{$type} {
+        &.u#{$rb-name-separator}size#{$rb-name-separator}#{$i}#{$type} {
             width: $i * 1%;
         }
 
