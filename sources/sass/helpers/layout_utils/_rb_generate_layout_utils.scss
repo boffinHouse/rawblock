@@ -16,9 +16,9 @@
             @include rb-util-columns();
         } @else {
             @if $media {
-               @include rb-create-mq($until: $breakpoint-name) {
+                @media #{$media}  {
                    @include rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width);
-               }
+                }
             } @else {
                 @warn 'No media query is found for breakpoint property "#{$breakpoint-name}" inside $breakpoint-config';
             }

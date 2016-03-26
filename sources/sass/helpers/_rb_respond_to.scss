@@ -1,33 +1,96 @@
 // Managing responsive breakpoints from breakpointConfig
 //
-// @param {List} $breakpoint - screen dimension where styles apply to. (breakpoint name must be available in breakpointConfig)
+// @param {List} $breakpoints - screen dimension where styles apply to. (breakpoint name must be available in breakpointConfig)
 //
 // @require $breakpoint-config
 //
 // @example
-// .your-component {
-//      @include rb-respond-to(l, m) { Change elements in breakpoint l (large screen) and m (medium screen).
-//          .your-element {
-//              ...
-//          }
-//      }
-//  }
+////Change elements in breakpoint l (large screen) and m (medium screen).
+//@include rb-respond-to(l, m) {
+//    .your-element {
+//        //...
+//    }
+//}
 //
-@mixin rb-respond-to($breakpoint) {
+////Change elements from breakpoint m till largest.
+//@include rb-respond-to((from: m)) {
+//    .your-element {
+//        //...
+//    }
+//}
+//
+////Change elements from smallest to breakpoint m.
+//@include rb-respond-to((to: m)) {
+//    .your-element {
+//        //...
+//    }
+//}
+//
+////Change elements from breakpoint s to breakpoint m.
+//@include rb-respond-to((from: s, to: m)) {
+//    .your-element {
+//        //...
+//    }
+//}
+
+
+@function rb-get-mq($breakpoint, $media-definition: ""){
     @if map-has-key($breakpoint-config, $breakpoint) {
         $breakpoint-data: map-get($breakpoint-config, $breakpoint);
         $breakpoint-media: map-get( $breakpoint-data, media);
 
-        @if($breakpoint == 'all') {
-            @content;
+        @if($media-definition == "") {
+            $media-definition: #{$breakpoint-media};
         }
         @else {
-            @media #{$breakpoint-media} {
-                @content;
-            }
+            $media-definition: $media-definition + ", " + #{$breakpoint-media};
         }
     }
     @else {
         @warn "Value #{$breakpoint} not found in $breakpoint-configs"
     }
+
+    @return $media-definition;
 }
+
+@mixin rb-respond-to($breakpoints...) {
+    $media-definition: "";
+
+    @each $breakpoint in $breakpoints {
+        $media-type: type-of($breakpoint);
+
+        @if $media-type == "string" {
+            $media-definition: rb-get-mq($breakpoint, $media-definition);
+        } @else if $media-type == "map" {
+
+            $is-range-started: false;
+            $is-range-ended: false;
+            $from: map-get($breakpoint, "from") or nth(nth($breakpoint-config, 2), 1);
+            $to: map-get($breakpoint, "to") or nth(nth($breakpoint-config, length($breakpoint-config)), 1);
+
+            @each $cfg in $breakpoint-config {
+                $cfg-name: nth($cfg, 1);
+
+                @if $cfg-name == $from {
+                    $is-range-started: true;
+                }
+
+                @if $is-range-started and $is-range-ended == false {
+                    @debug "dund";
+                    $media-definition: rb-get-mq($cfg-name, $media-definition);
+                }
+
+                @if $cfg-name == $to {
+                    $is-range-ended: true;
+                }
+            }
+        }
+    }
+
+    @if $media-definition != "" {
+        @media #{$media-definition} {
+            @content;
+        }
+    }
+}
+

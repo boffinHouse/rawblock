@@ -24,7 +24,7 @@
         @if ($mq != '') {
             $rbExportMqMap: map-merge($rbExportMqMap, ($name: $mq));
             html {
-                @include rb-create-mq($until: $mq) {
+                @media #{$mq} {
                     &::after {
                         position: absolute;
                         left: -999px;

@@ -1,5 +1,6 @@
 $rb-name-separator: "-";
 
+// mediaqueries has to be ordered from none (all), smallest to largest!
 $breakpoint-config: (
     all: (
         gutter: (
@@ -9,20 +10,20 @@ $breakpoint-config: (
         order-size: 5,
         grid-max-width: 940px
     ),
-    l: (
-        media: 1440px,
-    ),
-    m: (
-        media: 1239px,
-        order-size: 2
-    ),
     s: (
-        media: 568px,
+        media: "(max-width: 568px)",
         gutter: (
             vertical: 10px,
             horizontal: 10px
         )
-    )
+    ),
+    m: (
+        media: "(min-width: 569px) and (max-width: 1239px)",
+        order-size: 2
+    ),
+    l: (
+        media: "(min-width: 1240px)",
+    ),
 );
 $aside-breakpoints: ();
 
