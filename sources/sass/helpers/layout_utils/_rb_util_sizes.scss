@@ -11,7 +11,7 @@
     @if $breakpoint-name == 'all' {
         $type: '';
     } @else {
-        $type: '-' + $breakpoint-name;
+        $type: $rb-name-separator + $breakpoint-name;
     }
 
     .u#{$rb-name-separator}size#{$rb-name-separator}auto#{$type} {

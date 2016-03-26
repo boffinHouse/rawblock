@@ -8,13 +8,13 @@
     @if $breakpoint-name == 'all' {
         $type: '';
 
-        [class*=u-offset-],
-        [class*=u-push-] {
+        [class*=u#{$rb-name-separator}offset#{$rb-name-separator}],
+        [class*=u#{$rb-name-separator}push#{$rb-name-separator}] {
             position: relative;
         }
 
     } @else {
-        $type: '-' + $breakpoint-name;
+        $type: $rb-name-separator + $breakpoint-name;
     }
 
 
