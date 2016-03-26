@@ -67,6 +67,7 @@
             $is-range-ended: false;
             $from: map-get($breakpoint, "from") or nth(nth($breakpoint-config, 2), 1);
             $to: map-get($breakpoint, "to") or nth(nth($breakpoint-config, length($breakpoint-config)), 1);
+            $except: map-get($breakpoint, "except");
 
             @each $cfg in $breakpoint-config {
                 $cfg-name: nth($cfg, 1);
@@ -75,8 +76,7 @@
                     $is-range-started: true;
                 }
 
-                @if $is-range-started and $is-range-ended == false {
-                    @debug "dund";
+                @if $is-range-started and $is-range-ended == false and $cfg-name != $except {
                     $media-definition: rb-get-mq($cfg-name, $media-definition);
                 }
 

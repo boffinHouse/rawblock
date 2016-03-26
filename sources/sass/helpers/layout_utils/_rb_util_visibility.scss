@@ -1,12 +1,12 @@
 // Creates classes to define the visibility of an element
 //
 // @param {String} $breakpoint-name - Breakpoint name added to end of class (with the exception of all) which responds to assigned screen size.
-@mixin rb-util-visibility($breakpoint-name) {
+@mixin rb-util-visibility-hide($breakpoint-name) {
     @if $breakpoint-name == 'all' {
         $type: '';
 
     } @else {
-        $type: '-' + $breakpoint-name;
+        $type: $rb-name-separator + $breakpoint-name;
     }
 
     //Hides element in layout.
@@ -14,31 +14,27 @@
         display: none !important;
     }
 
-    //Shows element in layout
-    .u#{$rb-name-separator}show#{$type} {
-        display: inherit !important;
-    }
-
     //Hides content elements visually while still allowing accessibility for assistive technology.
     .u#{$rb-name-separator}visually#{$rb-name-separator}hidden#{$type} {
-        display: block;
-        position: absolute;
-        clip: rect(1px, 1px, 1px, 1px);
-        clip-path: circle(1% at 1% 1%);
-        width: 1px;
-        height: 1px;
-        border: 0;
-        padding: 0;
-        overflow: hidden;
+        @include rb-hide-visually;
+    }
+}
+
+
+@mixin rb-util-visibility-show($breakpoint-name) {
+    @if $breakpoint-name == 'all' {
+        $type: '';
+
+    } @else {
+        $type: $rb-name-separator + $breakpoint-name;
     }
 
-    //Shows content elements what was visually hidden.
+    //Hides element in other layout
+    .u#{$rb-name-separator}show#{$type} {
+        display: none !important;
+    }
+
     .u#{$rb-name-separator}visually#{$rb-name-separator}shown#{$type} {
-        position: static;
-        clip: auto;
-        clip-path: none;
-        height: auto;
-        width: auto;
-        overflow: visible;
+        @include rb-hide-visually;
     }
 }

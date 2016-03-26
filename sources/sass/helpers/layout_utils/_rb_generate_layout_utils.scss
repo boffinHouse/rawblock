@@ -19,6 +19,9 @@
                 @media #{$media}  {
                    @include rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width);
                 }
+                @include rb-respond-to((except: $breakpoint-name)){
+                    @include rb-util-visibility-show($breakpoint-name);
+                }
             } @else {
                 @warn 'No media query is found for breakpoint property "#{$breakpoint-name}" inside $breakpoint-config';
             }
@@ -37,7 +40,7 @@
     @include rb-util-sizes($breakpoint-name);
     @include rb-util-gutters($breakpoint-name, $gutters);
     @include rb-util-position($breakpoint-name);
-    @include rb-util-visibility($breakpoint-name);
+    @include rb-util-visibility-hide($breakpoint-name);
     @include rb-util-basics($breakpoint-name, $grid-max-width);
 }
 

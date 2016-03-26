@@ -28,11 +28,3 @@ Main Stylesheet
 
 // All Components
 @import "../components/**/*.scss !../components/**/tests/**/*.scss !../components/**/*.async.scss !../components/**/*.js.scss";
-
-
-
-@include rb-respond-to((to: m)){
-    .test {
-        content: "bla";
-    }
-}
