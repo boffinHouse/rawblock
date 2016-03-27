@@ -899,7 +899,7 @@
 
                 this.selectIndex(this._selectedIndex, true);
 
-                if (this.isCarousel && wasPos == this._pos) {
+                if (wasPos == this._pos) {
                     this._setPos(wasPos);
                 }
             },

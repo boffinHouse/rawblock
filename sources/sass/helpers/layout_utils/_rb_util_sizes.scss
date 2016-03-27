@@ -25,7 +25,7 @@
     }
 
     //Element will take twice the available space
-    .u#{$rb-name-separator}size#{$rb-name-separator}flex#{$rb-name-separator}double {
+    .u#{$rb-name-separator}size#{$rb-name-separator}flex#{$rb-name-separator}double#{$type} {
         flex: 2;
         width: auto;
     }

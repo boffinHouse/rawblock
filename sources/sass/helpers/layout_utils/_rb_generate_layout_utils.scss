@@ -4,6 +4,10 @@
 //
 @mixin rb-generate-layout-utils($configs) {
     //Styles breakpoints
+    $first: nth(nth($breakpoint-config, 2), 1);
+    $last: nth(nth($breakpoint-config, length($breakpoint-config)), 1);
+    $length: length($breakpoint-config);
+
     @each $breakpoint-name, $config in $configs {
         $media: map-get($config, media);
         $gutters: map-get($config, gutter);
@@ -16,11 +20,41 @@
             @include rb-util-columns();
         } @else {
             @if $media {
+                $lte-name: "lte" + $rb-name-separator + $breakpoint-name;
+                $gte-name: "gte" + $rb-name-separator + $breakpoint-name;
+
                 @media #{$media}  {
                    @include rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width);
                 }
+
                 @include rb-respond-to((except: $breakpoint-name)){
                     @include rb-util-visibility-show($breakpoint-name);
+                }
+
+                //only needed if more than 3 real breakpoints
+                @if $length > 4 {
+                    @if $last != $breakpoint-name and $first != $breakpoint-name {
+                        @include rb-respond-to((to: $breakpoint-name)) {
+                            @include rb-util-sizes($lte-name);
+                            @include rb-util-visibility-hide($lte-name);
+                        }
+
+                        @include rb-respond-to((from: $breakpoint-name)) {
+                            @include rb-util-sizes($gte-name);
+                            @include rb-util-visibility-hide($gte-name);
+                        }
+
+                        //makes no sense with less than 4 breakpoints
+                        @if $length > 4 {
+                            @include rb-respond-to((from: $breakpoint-name, except: $breakpoint-name)) {
+                                @include rb-util-visibility-show($lte-name);
+                            }
+
+                            @include rb-respond-to((to: $breakpoint-name, except: $breakpoint-name)) {
+                                @include rb-util-visibility-show($greater-name);
+                            }
+                        }
+                    }
                 }
             } @else {
                 @warn 'No media query is found for breakpoint property "#{$breakpoint-name}" inside $breakpoint-config';

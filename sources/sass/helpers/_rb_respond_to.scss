@@ -65,6 +65,7 @@
 
             $is-range-started: false;
             $is-range-ended: false;
+
             $from: map-get($breakpoint, "from") or nth(nth($breakpoint-config, 2), 1);
             $to: map-get($breakpoint, "to") or nth(nth($breakpoint-config, length($breakpoint-config)), 1);
             $except: map-get($breakpoint, "except");

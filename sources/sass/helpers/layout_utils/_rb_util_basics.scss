@@ -7,7 +7,7 @@
     @if $breakpoint-name == 'all' {
         $type: '';
     } @else {
-        $type: '-' + $breakpoint-name;
+        $type: $rb-name-separator + $breakpoint-name;
     }
 
     @if $grid-max-width {
