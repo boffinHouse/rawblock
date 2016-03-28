@@ -51,7 +51,7 @@
                             }
 
                             @include rb-respond-to((to: $breakpoint-name, except: $breakpoint-name)) {
-                                @include rb-util-visibility-show($greater-name);
+                                @include rb-util-visibility-show($gte-name);
                             }
                         }
                     }
