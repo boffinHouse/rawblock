@@ -26,6 +26,8 @@
              * @prop {Boolean} defaults.switchedOff=false Turns off panel.
              * @prop {Boolean} defaults.resetSwitchedOff=true Resets panel to initial state on reset switch.
              * @prop {Boolean} defaults.closeOnEsc=false Whether panel should be closed on esc key.
+             * @prop {Boolean|Number} defaults.adjustScroll=false If a panel closes and the activeElement is below the panel, the scroll position might be adjusted to hold the activeElement in view. The adjustScroll option can be combined with the 'slide' animation in a accordion component. So that closing a large panel doesn't move the opening panel out of view. Possible values: `true`, `false`, any Number but not 0.
+             * @prop {Boolean|Number} defaults.scrollIntoView=false If a panel opens tries to scroll it into view.
              * @prop {String} defaults.itemWrapper='' Wheter the closest itemWrapper should get the class `is-selected-within'.
              */
             defaults: {
@@ -38,6 +40,8 @@
                 switchedOff: false,
                 closeOnEsc: false,
                 closeOnFocusout: false,
+                scrollIntoView: false,
+                adjustScroll: false,
                 itemWrapper: '',
             },
             /**
@@ -202,15 +206,14 @@
                     }
                 }
             },
-            _handleAnimation: function (e) {
-                var $panel, animationComponent, animation, animationOptions, animationData;
+            getAnimationData: function(){
+                var animationComponent;
                 var panel = this;
 
-                if (e.defaultPrevented || !e.detail || e.detail.animationPrevented) {
-                    return;
-                }
-
-                $panel = this.$element;
+                var animationData = {
+                    panel: panel,
+                    options: {}
+                };
 
                 if (panel.options.animation) {
                     animationComponent = this;
@@ -218,22 +221,32 @@
                     animationComponent = this.groupComponent;
                 }
 
-                if (!animationComponent) {
-                    return;
+                if(animationComponent){
+                    animationData.component = animationComponent;
+                    animationData.options = {
+                        duration: animationComponent.options.duration,
+                        easing: animationComponent.options.easing
+                    };
+                    animationData.animation = animationComponent.options.animation;
                 }
 
-                animation = animationComponent.options.animation;
-                animationOptions = {
-                    duration: animationComponent.options.duration,
-                    easing: animationComponent.options.easing
-                };
+                return animationData;
+            },
+            _handleAnimation: function (e) {
+                var $panel;
+                var panel = this;
+                var animationData = {};
 
-                animationData = {
-                    animation: animation,
-                    options: animationOptions,
-                    event: e,
-                    panel: panel
-                };
+                if (e.defaultPrevented || !e.detail || e.detail.animationPrevented) {
+                    return animationData;
+                }
+
+                animationData = this.getAnimationData();
+                $panel = this.$element;
+
+                if (!animationData.component) {
+                    return animationData;
+                }
 
                 if(panel.groupComponent && panel.groupComponent._handleAnimation){
                     panel.groupComponent._handleAnimation(animationData);
@@ -242,8 +255,10 @@
                 if(animationData.animation == 'slide'){
                     $panel.stop();
                     if (panel.isOpen) {
-                        $panel.rbSlideDown(animationData.options);
+                        animationData.options.getHeight = true;
+                        animationData.height = $panel.rbSlideDown(animationData.options);
                     } else {
+                        animationData.height = 0;
                         $panel.rbSlideUp(animationData.options);
                     }
                 }
@@ -281,7 +296,7 @@
                 clearTimeout(this._closeTimer);
 
                 this.isOpen = true;
-                this._handleAnimation(changeEvent);
+                options.animationData = this._handleAnimation(changeEvent);
 
                 if (options.setFocus !== false && (mainOpts.setFocus || options.setFocus) && !options.focusElement) {
                     options.focusElement = this.getFocusElement();
@@ -327,6 +342,8 @@
                     this.setupOnOpenEvts();
                 }
 
+                this.scrollIntoView(options);
+
                 this._trigger();
             },
 
@@ -365,6 +382,8 @@
 
                 this.isOpen = false;
 
+                this.adjustScroll();
+
                 this._handleAnimation(changeEvent);
 
                 this._closed(options);
@@ -393,6 +412,86 @@
                     this.restoreFocus(true);
                 }
             },
+            _scroll: function(relPos, animationData){
+                var scrollingElement, scrollTop;
+
+                if (relPos) {
+                    scrollingElement = rb.getPageScrollingElement();
+
+                    scrollTop = Math.max(scrollingElement.scrollTop + relPos, 0);
+
+                    if(animationData.animation){
+                        $(scrollingElement)
+                            .animate(
+                                {
+                                    scrollTop: scrollTop
+                                },
+                                animationData.options
+                            )
+                        ;
+                    } else {
+                        scrollingElement.scrollTop = scrollTop;
+                    }
+                }
+            },
+            scrollIntoView: function(opts){
+                var activeElement, animationData, box, viewHeight, comparePos,
+                    elemHeight, scrollTop;
+                var options = this.options;
+
+                if(!options.scrollIntoView){return;}
+
+
+                activeElement = document.activeElement;
+
+                if(!activeElement || !activeElement.compareDocumentPosition ||
+                    !(comparePos = activeElement.compareDocumentPosition(this.element)) ||
+                    (comparePos != 4 && comparePos != 2)){
+                    return;
+                }
+
+                animationData = opts.animationData;
+                box = this.element.getBoundingClientRect();
+                viewHeight = rb.root.clientHeight;
+                elemHeight = animationData.height || box.height;
+
+                if(comparePos == 4 && box.top + elemHeight > viewHeight){
+                    scrollTop = box.top + Math.min(elemHeight, viewHeight - 9) - viewHeight;
+                } else if(comparePos == 2 && box.top < 0) {
+                    scrollTop = box.top;
+                }
+
+                if(scrollTop){
+                    if(typeof options.scrollIntoView == 'number'){
+                        scrollTop += options.scrollIntoView;
+                    }
+                    this._scroll(scrollTop, animationData);
+                }
+            },
+            adjustScroll: function(){
+                var activeElement, animationData, height;
+                var options = this.options;
+                var adjustScroll = options.adjustScroll;
+                if(!adjustScroll){return;}
+
+                activeElement = document.activeElement;
+
+                if(!activeElement || !activeElement.compareDocumentPosition ||
+                    activeElement.compareDocumentPosition(this.element) != 2){
+                    return;
+                }
+
+                animationData = this.getAnimationData();
+                height = this.$element.outerHeight();
+
+                if (typeof adjustScroll == 'number') {
+                    height -= activeElement.getBoundingClientRect().top - adjustScroll;
+                }
+
+                if(height > 0){
+                    this._scroll(height * -1, animationData);
+                }
+            }
         }
     );
 

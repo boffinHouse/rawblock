@@ -36,6 +36,6 @@ The panel component consists of an panel element and action button:
     ...
 </div>
 ```
-                   
+
 {{> docs_js_life }}
 <hr>

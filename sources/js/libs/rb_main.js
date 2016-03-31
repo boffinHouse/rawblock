@@ -142,10 +142,12 @@ if (!window.rb) {
      * Also does not animate padding, margin, borders (use child elements)
      * @function external:"jQuery.fn".rbSlideDown
      * @param options {object} All jQuery animate options
-     * @returns {jQueryfiedDOMList}
+     * @returns {jQueryfiedDOMList|Number}
      */
     $.fn.rbSlideDown = function (options) {
         var opts;
+        var ret = this;
+
         if (!options) {
             options = {};
         }
@@ -163,7 +165,7 @@ if (!window.rb) {
             });
         }
 
-        return this.each(function () {
+        this.each(function () {
             var endValue;
             var $panel = $(this);
             var startHeight = this.clientHeight + 'px';
@@ -172,15 +174,22 @@ if (!window.rb) {
 
             endValue = this.clientHeight;
 
+            if(options.getHeight){
+                ret = endValue;
+            }
+
             $panel
                 .css({height: startHeight})
                 .animate({height: endValue}, opts)
             ;
         });
+
+        return ret;
     };
 
     /* End: rbSlideUp / rbSlideDown */
 
+    /* Begin: getScrollingElement */
     /**
      * @memberof rb
      * @returns {Element} The DOM element that scrolls the viewport (either html or body)
@@ -194,7 +203,15 @@ if (!window.rb) {
 
         return scrollingElement || rb.root;
     };
-    /* End: getScrollingElement/scrollIntoView */
+
+	/**
+     * Alias to `getScrollingElement` can be used to override scrollingElement for project-specific needs.
+     * @type function
+     * @memberof rb
+     * @type {Element}
+     */
+    rb.getPageScrollingElement = rb.getScrollingElement;
+    /* End: getScrollingElement */
 
     /* Begin: contains */
     var _contains = function (element) {

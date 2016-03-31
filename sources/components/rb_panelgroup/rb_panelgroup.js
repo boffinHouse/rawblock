@@ -39,7 +39,8 @@
              * @property {String}  defaults.animation='' Possible animations: `adaptHeight` or `slide`. These should be combined with CSS transitions or animations.
              * @property {String}  defaults.easing='' Easing function for the animation.
              * @property {Number}  defaults.duration=400 Duration of the animation.
-             * @property {Boolean|Number}  defaults.adjustScroll=false The adjustScroll option can be combined with the 'slide' animation in a accordion component. So that closing a large panel doesn't move the opening panel out of view. Possible values: `true`, `false`, any Number but not 0.
+             * @property {Boolean|Number}  defaults.adjustScroll=false Sets the adjustScroll option on the panel components.
+             * @property {Boolean|Number}  defaults.scrollIntoView=false Sets the scrollIntoView option on the panel components.
              * @property {Boolean}  defaults.setFocus=true Whether component should try to focus a `js-autofocus` element inside of an opening panel.
              * @property {Boolean}  defaults.preventDefault=false Whether default click action on "{name}-btn" should be prevented.
              * @property {String}  defaults.itemWrapper='' Set itemWrapper option of the panel instance.
@@ -61,7 +62,8 @@
                 duration: 400,
                 closeOnFocusout: false,
                 selectedIndex: -1,
-                adjustScroll: false, //true || false
+                adjustScroll: false,
+                scrollIntoView: false,
                 setFocus: true,
                 switchedOff: false,
                 resetSwitchedOff: true,
@@ -137,9 +139,7 @@
                 this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
             },
             _handleAnimation: function(animationData){
-                if(animationData.animation == 'slide' && animationData.panel.isOpen){
-                    this.adjustScroll(animationData.panel, animationData.options);
-                } else if(animationData.animation == 'adaptHeight' && animationData.panel.isOpen){
+                if(animationData.animation == 'adaptHeight' && animationData.panel.isOpen){
                     this.animateWrapper(animationData.panel.element);
                 }
             },
@@ -200,42 +200,6 @@
                 ;
 
             },
-            adjustScroll: function (openingPanelComponent, options, force) {
-                var opts = this.options;
-                if (!force && (!opts.adjustScroll || opts.multiple)) {
-                    return;
-                }
-
-                var compareElem = opts.adjustScroll && document.activeElement || false;
-                var scrollingElement = rb.getScrollingElement();
-                var scrollTop = scrollingElement.scrollTop;
-                var $panels = this.$panels;
-                var index = this.$panels.index(openingPanelComponent.element);
-                var adjustHeight = this.selectedItems.reduce(function (height, item) {
-                    var position;
-                    if ($panels.index(item) < index && (!compareElem || ((position = compareElem.compareDocumentPosition(item)) && position != 4 && position != 20))) {
-                        height += item.offsetHeight;
-                    }
-                    return height;
-                }, 0);
-
-                if (adjustHeight > 0) {
-
-                    if (compareElem && typeof opts.adjustScroll == 'number') {
-                        adjustHeight -= compareElem.getBoundingClientRect().top - opts.adjustScroll;
-                    }
-
-                    if (adjustHeight > 0) {
-                        $(scrollingElement)
-                            .animate(
-                                {
-                                    scrollTop: Math.max(scrollTop - adjustHeight, 0)
-                                },
-                                options
-                            );
-                    }
-                }
-            },
             setSelectedState: function () {
                 this.element.classList
                     [this.selectedIndexes.length ? 'add' : 'remove'](rb.statePrefix + 'selected' + rb.nameSeparator + 'within');
@@ -294,6 +258,8 @@
                         setFocus: options.setFocus,
                         itemWrapper: itemWrapper,
                         closeOnEsc: options.closeOnEsc,
+                        adjustScroll: options.adjustScroll,
+                        scrollIntoView: options.scrollIntoView,
                     });
 
                     panel.group = that.element;
@@ -474,7 +440,7 @@
                     this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open');
                 } else if (name == 'easing' && value && typeof value == 'string') {
                     rb.addEasing(value);
-                } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc') {
+                } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView') {
                     this.setChildOption(this.$panels, name, value);
                 } else if (name == 'closeOnFocusout') {
                     this._addRemoveFocusOut();

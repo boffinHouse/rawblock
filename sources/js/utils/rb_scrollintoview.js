@@ -30,7 +30,7 @@
             options = options || {};
             bbox = elem.getBoundingClientRect();
             distance = Math.max(Math.abs(bbox.top), Math.abs(bbox.left));
-            scrollingElement = options.scrollingElement || rb.getScrollingElement();
+            scrollingElement = options.scrollingElement || rb.getPageScrollingElement();
             pos = {
                 scrollTop: bbox.top + (options.offsetTop || 0),
                 scrollLeft: bbox.left + (options.offsetLeft || 0),
