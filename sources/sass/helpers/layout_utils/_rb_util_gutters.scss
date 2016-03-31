@@ -18,38 +18,76 @@
             $gutter-vertical: map-get($gutters, vertical);
         }
 
+        //Mixin for minus margin on container wrapper
+        @mixin gutters-outer($size: null) {
+
+            @if $size == "half" {
+                $outergutter: -$gutter-horizontal / 2;
+            } @else if( $size == "double") {
+                $outergutter: -$gutter-horizontal * 2;
+            } @else {
+                $outergutter: -$gutter-horizontal;
+            }
+
+            margin-left: $outergutter;
+            margin-right: $outergutter;
+        }
+
+        //Mixin for vertical gutters
+        @mixin gutters-horizontal($size: null) {
+
+            @if $size == "half" {
+                $horizontalgutter: $gutter-horizontal / 2;
+            } @else if( $size == "double") {
+                $horizontalgutter: $gutter-horizontal * 2;
+            } @else {
+                $horizontalgutter: $gutter-horizontal;
+            }
+
+            padding-left: $horizontalgutter;
+            padding-right: $horizontalgutter;
+        }
+
+        //Mixin for horizontal gutters
+        @mixin gutters-vertical($size: null) {
+
+            @if $size == "half" {
+                $verticalgutter:  $gutter-vertical / 2;
+            } @else if( $size == "double") {
+                $verticalgutter: $gutter-vertical * 2;
+            } @else {
+                $verticalgutter: $gutter-vertical;
+            }
+
+            margin-bottom: $verticalgutter;
+        }
+
         //Horizontal & vertical gutters
         .u#{$rb-name-separator}gutters {
-            margin-left: -$gutter-horizontal;
-            margin-right: -$gutter-horizontal;
+            @include gutters-outer();
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
-                margin-bottom: $gutter-vertical;
-                padding-left: $gutter-horizontal;
-                padding-right: $gutter-horizontal;
+                @include gutters-vertical();
+                @include gutters-horizontal();
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}half {
-            margin-left: -$gutter-horizontal / 2;
-            margin-right: -$gutter-horizontal / 2;
+            @include gutters-outer(half);
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
-                margin-bottom: -$gutter-vertical / 2;
-                padding-left: -$gutter-horizontal / 2;
-                padding-right: -$gutter-horizontal / 2;
+                @include gutters-vertical(half);
+                @include gutters-horizontal(half);
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}double {
-            margin-left: -$gutter-horizontal * 2;
-            margin-right: -$gutter-horizontal * 2;
+            @include gutters-outer(double);
 
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
-                margin-bottom: $gutter-vertical * 2;
-                padding-left: $gutter-horizontal * 2;
-                padding-right: $gutter-horizontal * 2;
+                @include gutters-vertical(double);
+                @include gutters-horizontal(double);
             }
         }
 
@@ -57,52 +95,46 @@
         .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical {
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                margin-bottom: $gutter-vertical;
+                @include gutters-vertical();
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical#{$rb-name-separator}half {
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                margin-bottom: $gutter-vertical / 2;
+                @include gutters-vertical(half);
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical#{$rb-name-separator}double {
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                margin-bottom: $gutter-vertical * 2;
+                @include gutters-vertical(double);
             }
         }
 
         //Only horizontal gutters
         .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal {
-            margin-left: -$gutter-horizontal;
-            margin-right: -$gutter-horizontal;
+            @include gutters-outer();
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                padding-left: $gutter-horizontal;
-                padding-right: $gutter-horizontal;
+                @include gutters-horizontal();
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal#{$rb-name-separator}half {
-            margin-left: -$gutter-horizontal / 2;
-            margin-right: -$gutter-horizontal / 2;
+            @include gutters-outer(half);
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                padding-left: $gutter-horizontal / 2;
-                padding-right: $gutter-horizontal / 2;
+                @include gutters-horizontal(half);
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal#{$rb-name-separator}double {
-            margin-left: -$gutter-horizontal * 2;
-            margin-right: -$gutter-horizontal * 2;
+            @include gutters-outer(double);
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                padding-left: $gutter-horizontal * 2;
-                padding-right: $gutter-horizontal * 2;
+                @include gutters-horizontal(double);
             }
         }
     }

@@ -39,12 +39,14 @@ All strings in classes are delimeited with a hyphen (-).
 ##Declarartion order
 Related property declarations should be grouped together following the order:
 
+1. @extend
+1. @include
 1. Box model
-2. Positioning
-3. Typographic
-4. Visual
+1. Positioning
+1. Typographic
+1. Visual
 
-For a complete list of properties and their order, see [RawBlock's CSS combination](https://github.com/boffinHouse/rawblock/blob/gh-pages/taskrunner/task-settings/.rawblock-csscomb.json).
+For a complete list of properties and their order, see [RawBlock's CSS combination](https://github.com/boffinHouse/rawblock/blob/gh-pages/taskrunner/task-settings/.rawblock-csscomb.json). 
 
 ##Commenting
 
@@ -71,8 +73,33 @@ Always use double quotes if possible.
 
 ###Indentation
 - Use a soft-tab of 4 spaces.
-- Don't mix spaces with tabs for indentation
-- Improve readability by using white-space
+- Don't mix spaces with tabs for indentation.
+- Improve readability by using white-space.
+
+###Spacing
+- CSS rules should be comma separated but live on new lines.
+- Include a single space before the opening brace of a rule-set
+- Include a single space after the colon of a declaration.
+- Include a semi-colon at the end of every declaration in a declaration block.
+- Include a space after each comma in comma-separated property or function values.
+- Place the closing brace of a rule-set on its own line.
+- CSS blocks should be separated by a single clear line.
+
+> Good 
+
+	.rb-yourcomponent {
+		display: block;
+		width: 100%;
+	}
+	
+	.yourcomponent-link {
+		...
+	}
+	
+	.yourcomponent-text {
+		...
+	}
+	
 
 ###Preprocessors: additional format considerations
 
@@ -169,5 +196,30 @@ Element classes are always unique and should be declared not in context of the c
 ###componentname-modifiername (versions or states)
 Modifiers are flags set on **block** or **element** elements, they represent a different state or version. This is done with the modifier class, like `.is-collapsed` or `is-offset-left`. Modifier classes are only allowed as adjoining classes.
 
+###Commenting
+TODO add short intro
+
+	/*
+ 	* Component: Yourcomponentname
+	**********************************************************/
+
+
+	// Variables
+	//**********************************************************
+	$yourcomponentname-variable: ...;
+
+
+	// JS Config
+	//**********************************************************
+	${yourcomponentname}-js-cfg: (
+	    name: "{name}",
+	);
+
+
+	// Dependencies (Helpers)
+	//**********************************************************
+	@import '../../sass/helpers/you-are-using';
+
+	//----------------------------------------------------------
 
 
