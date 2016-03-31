@@ -4,26 +4,32 @@ $rb-name-separator: "-";
 $breakpoint-config: (
     all: (
         gutter: (
-            vertical: 40px,
-            horizontal: 40px
+            vertical: 2.5em,
+            horizontal: 2.5em,
         ),
         order-size: 5,
-        grid-max-width: 940px
+        grid-max-width: 77.5em //1240px
+    ),
+    xs: (
+        media: "(max-width: 35.5em)" //< 568px
     ),
     s: (
-        media: "(max-width: 568px)",
+        media: "(min-width: 35.5625em) and (max-width: 49.9375em)", //599px to 799px
         gutter: (
-            vertical: 10px,
-            horizontal: 10px
+            vertical: 1.25em,
+            horizontal: 1.25em
         )
     ),
     m: (
-        media: "(min-width: 569px) and (max-width: 1239px)",
+        media: "(min-width: 50em) and (max-width: 67.4375em)", //800px to 1079px
         order-size: 2
     ),
     l: (
-        media: "(min-width: 1240px)",
+        media: "(min-width: 67.5em) and (max-width: 87.4375em)", //1080px to 1399px
     ),
+    xl: (
+        media: "(min-width: 87.5em)" //> 1400px
+    )
 );
 $aside-breakpoints: ();
 
