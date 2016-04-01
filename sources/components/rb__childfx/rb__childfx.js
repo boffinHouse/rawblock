@@ -112,7 +112,7 @@
 
                     var options = {
                         start: {},
-                        end: Object.assign({}, that.parseCSSOptions(elem), that.parseHTMLOptions(elem)),
+                        end: Object.assign({}, rb.parsePseudo(elem), that.parseHTMLOptions(elem)),
                         from: 0,
                         to: 1,
                     };

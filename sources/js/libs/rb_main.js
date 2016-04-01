@@ -1525,14 +1525,16 @@ if (!window.rb) {
         var elements = document.getElementsByClassName(attachedClass);
 
         rb.checkCssCfgs = function () {
-            var i, elem, component;
+            var i, elem, component, contentStr;
             var len = elements.length;
             for (i = 0; i < len; i++) {
                 elem = elements[i];
                 component = elem && elem[componentExpando];
 
-                if (component && component.parseOptions && component._afterStyle &&
-                    component._afterStyle.content != component._styleOptsStr) {
+                contentStr = component._afterStyle.content || component._elementStyle.content;
+
+                if (component && component.parseOptions && contentStr &&
+                    contentStr != component._styleOptsStr) {
                     component.parseOptions();
                 }
             }
@@ -2312,6 +2314,7 @@ if (!window.rb) {
                  * @type {{}}
                  */
                 this.options = {};
+                this._elementStyle = rb.getStyles(element);
                 this._afterStyle = rb.getStyles(element, '::before');
 
                 this._initialDefaults = initialDefaults;
@@ -2771,19 +2774,13 @@ if (!window.rb) {
             },
 
             /*
-             * parses the CSS options (::before pseudo) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.
-             * @param [element] {Element}
+             * parses the CSS options (::before pseudo) of the component
              * @returns {{}}
              */
-            parseCSSOptions: function (element) {
-                if (element == this.element) {
-                    element = null;
-                }
-                var style = (element ? rb.getStyles(element, '::before') : this._afterStyle).content || '';
-                if (element || !this._styleOptsStr || style != this._styleOptsStr) {
-                    if (!element) {
-                        this._styleOptsStr = style;
-                    }
+            parseCSSOptions: function() {
+                var style = this._afterStyle.content || this._elementStyle.content;
+                if (!this._styleOptsStr || style != this._styleOptsStr) {
+                    this._styleOptsStr = style;
                     style = rb.parsePseudo(style);
                 }
                 return style || false;

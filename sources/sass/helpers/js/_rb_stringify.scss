@@ -59,8 +59,10 @@
 }
 
 @mixin rb-js-export($data) {
+    $string: rb-stringify($data);
+    content: $string !important;
+
     &::before {
-        $string: rb-stringify($data);
         content: $string !important;
         visibility: hidden !important;
         display: block !important;

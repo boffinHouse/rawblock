@@ -42,6 +42,11 @@ if (!window.rb) {
                 element :
                 rb.getStyles(element, pseudo || '::before').content
             ;
+
+        if(!value && element){
+            value = rb.getStyles(element).content;
+        }
+
         ret = rb.jsonParse(removeLeadingQuotes(value));
         return ret;
     };
