@@ -37,7 +37,7 @@
                 topOffset: false,
                 bottomOffset: false,
                 progress: 0,
-                childSel: 'find(.{name}{-}element)',
+                childSel: 'find(.{name}{e}element)',
                 setWidth: true,
                 resetSwitchedOff: true,
                 autoThrottle: true,

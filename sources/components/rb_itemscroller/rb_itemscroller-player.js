@@ -34,7 +34,7 @@
                 }, {that: this});
             },
             events: {
-                'click:closest(.{name}{-}autoplay{-}btn)': function () {
+                'click:closest(.{name}{e}autoplay{-}btn)': function () {
                     this.setOption('autoplay', !this.options.autoplay);
                 }
             },

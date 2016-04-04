@@ -31,7 +31,7 @@
                 }
             },
             events: {
-                'click:closest(.{name}-cell)': function (e) {
+                'click:closest(.{name}{e}cell)': function (e) {
                     if (!this.groupedMainComponent) {
                         return;
                     }

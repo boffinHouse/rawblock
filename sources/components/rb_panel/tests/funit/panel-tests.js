@@ -71,7 +71,7 @@
         ;
     });
 
-    QUnit.test('panel and panelbutton', function (assert) {
+    QUnit.test('panel and panelbutton2', function (assert) {
         var done = assert.async();
         var button = rb.$('#qunit-fixture button[data-module="panelbutton"]').get(0);
         var panel = rb.$('#panel-id-id-1').get(0);
@@ -81,7 +81,7 @@
 
         syn.click(button);
 
-        QUnit.afterAF()
+        QUnit.afterAF(30)
             .then(function () {
                 assert.equal(button.getAttribute('aria-expanded'), 'true');
                 assert.ok(panel.classList.contains('is-open'));

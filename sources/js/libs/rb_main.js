@@ -67,6 +67,7 @@ if (!window.rb) {
     rb.utilPrefix = 'u-';
     rb.jsPrefix = '';
     rb.nameSeparator = '-';
+    rb.elementSeparator = '-';
 
     /* End: global vars end */
 
@@ -1651,7 +1652,7 @@ if (!window.rb) {
     };
     var extendOptions = function(obj){
         if(obj){
-            ['statePrefix', 'utilPrefix', 'jsPrefix', 'nameSeparator'].forEach(function(prefixName){
+            ['statePrefix', 'utilPrefix', 'jsPrefix', 'nameSeparator', 'elementSeparator'].forEach(function(prefixName){
                 if(prefixName in obj && typeof obj[prefixName] == 'string') {
                     rb[prefixName] = obj[prefixName];
                 }
@@ -2147,6 +2148,7 @@ if (!window.rb) {
     var regJsName = /\{jsName}/g;
     var regHtmlName = /\{htmlName}/g;
     var regnameSeparator = /\{-}/g;
+    var regElementSeparator = /\{e}/g;
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
     var _setupEventsByEvtObj = function (that) {
         var eventsObjs, evt;
@@ -2606,6 +2608,7 @@ if (!window.rb) {
                     .replace(regJsName, this.jsName)
                     .replace(regHtmlName, this.name)
                     .replace(regnameSeparator, rb.nameSeparator)
+                    .replace(regElementSeparator, rb.elementSeparator)
                 ;
             },
 

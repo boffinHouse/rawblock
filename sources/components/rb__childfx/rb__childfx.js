@@ -18,11 +18,11 @@
             /**
              * @prop {{}} defaults
              * @prop {Boolean} defaults.switchedOff=false Switches the component off.
-             * @prop {String} defaults.childSel='find(.child-fx)' Child elements that should be animated. String is processed by rb.elementFromStr.
+             * @prop {String} defaults.childSel='find(.child{e}fx)' Child elements that should be animated. String is processed by rb.elementFromStr.
              */
             defaults: {
                 switchedOff: false,
-                childSel: 'find(.{name}{-}fx)',
+                childSel: 'find(.{name}{e}fx)',
             },
             statics: {
                 toNumber: function (i) {

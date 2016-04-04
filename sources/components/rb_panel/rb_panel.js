@@ -92,7 +92,7 @@
                 }
             },
             events: {
-                'click .{name}{-}close': function (e) {
+                'click .{name}{e}close': function (e) {
                     this.close();
                     if (e) {
                         e.stopImmediatePropagation();
