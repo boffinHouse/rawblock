@@ -19,7 +19,7 @@
         }
 
         //Mixin for minus margin on container wrapper
-        @mixin gutters-outer($size: null) {
+        @mixin rb-gutters-outer($size: null) {
 
             @if $size == "half" {
                 $outergutter: -$gutter-horizontal / 2;
@@ -34,7 +34,7 @@
         }
 
         //Mixin for vertical gutters
-        @mixin gutters-horizontal($size: null) {
+        @mixin rb-gutters-horizontal($size: null) {
 
             @if $size == "half" {
                 $horizontalgutter: $gutter-horizontal / 2;
@@ -49,7 +49,7 @@
         }
 
         //Mixin for horizontal gutters
-        @mixin gutters-vertical($size: null) {
+        @mixin rb-gutters-vertical($size: null) {
 
             @if $size == "half" {
                 $verticalgutter:  $gutter-vertical / 2;
@@ -64,30 +64,30 @@
 
         //Horizontal & vertical gutters
         .u#{$rb-name-separator}gutters {
-            @include gutters-outer();
+            @include rb-gutters-outer();
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
-                @include gutters-vertical();
-                @include gutters-horizontal();
+                @include rb-gutters-vertical();
+                @include rb-gutters-horizontal();
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}half {
-            @include gutters-outer(half);
+            @include rb-gutters-outer(half);
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
-                @include gutters-vertical(half);
-                @include gutters-horizontal(half);
+                @include rb-gutters-vertical(half);
+                @include rb-gutters-horizontal(half);
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}double {
-            @include gutters-outer(double);
+            @include rb-gutters-outer(double);
 
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
-                @include gutters-vertical(double);
-                @include gutters-horizontal(double);
+                @include rb-gutters-vertical(double);
+                @include rb-gutters-horizontal(double);
             }
         }
 
@@ -95,46 +95,46 @@
         .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical {
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                @include gutters-vertical();
+                @include rb-gutters-vertical();
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical#{$rb-name-separator}half {
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                @include gutters-vertical(half);
+                @include rb-gutters-vertical(half);
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical#{$rb-name-separator}double {
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                @include gutters-vertical(double);
+                @include rb-gutters-vertical(double);
             }
         }
 
         //Only horizontal gutters
         .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal {
-            @include gutters-outer();
+            @include rb-gutters-outer();
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                @include gutters-horizontal();
+                @include rb-gutters-horizontal();
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal#{$rb-name-separator}half {
-            @include gutters-outer(half);
+            @include rb-gutters-outer(half);
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                @include gutters-horizontal(half);
+                @include rb-gutters-horizontal(half);
             }
         }
 
         .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal#{$rb-name-separator}double {
-            @include gutters-outer(double);
+            @include rb-gutters-outer(double);
 
             > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
-                @include gutters-horizontal(double);
+                @include rb-gutters-horizontal(double);
             }
         }
     }
