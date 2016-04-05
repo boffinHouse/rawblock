@@ -129,7 +129,7 @@ $docs-example-border: 1px solid #f1f1f1;
     }
 
     pre {
-        overflow-x: scroll;
+        overflow-x: auto;
         margin: 0 0 20px;
         padding: 12px 10px;
         border: $docs-example-border;
