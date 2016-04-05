@@ -1,0 +1,43 @@
+// Get gutter values set in $breakpoint-config
+//
+// @param {String} $breakpoint - Breakpoint name to get values from.
+// @param {String} $element (default: column) - Differentiate between column (padding) and container (minus margin) element.
+// @param {String | Boolean} $axis (default: false) - Differentiate between horizontal (padding left/right) and horizontal (margin bottom). If no value then both are used..
+// @param {Number} $size (default: 1) - The value multiple the gutter with.
+@mixin rb-grid-gutters($breakpoint, $element: column, $axis: false, $size: 1) {
+    $breakpoint-data: map-get($breakpoint-config, $breakpoint);
+    $gutters: map-get($breakpoint-data, gutter);
+
+    @if type-of($gutters) == "map" {
+        @if map-has-key($gutters, horizontal) {
+            $gutter-horizontal: map-get($gutters, horizontal) / 2;
+        }
+        @if map-has-key($gutters, vertical) {
+            $gutter-vertical: map-get($gutters, vertical);
+        }
+
+
+        // Calculate gutter value
+        //
+        // @param {Number} $gutter - The gutter (horizontal or vertical) used for specific breakpoint.
+        // @param {Number} $size (default: 1) - The value multiple the gutter with.
+        @function get-gutter-value($gutter, $size) {
+            @return $gutter * $size;
+        }
+
+        @if $element == "column" {
+            @if $axis != "vertical" {
+                padding-left: get-gutter-value($gutter-horizontal, $size);
+                padding-right: get-gutter-value($gutter-horizontal, $size);
+            }
+            @if $axis != "horizontal" {
+                margin-bottom: get-gutter-value($gutter-vertical, $size);
+            }
+        } @else if($element == "container") {
+            margin-left: get-gutter-value( -$gutter-horizontal, $size);
+            margin-right: get-gutter-value(-$gutter-horizontal, $size);
+        } @else {
+            @warn 'No values are found for breakpoint property "#{$breakpoint-name}" inside $breakpoint-config';
+        }
+    }
+}

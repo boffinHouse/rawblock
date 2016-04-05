@@ -1,5 +1,7 @@
 $rb-name-separator: "-";
 
+$grid-max-width: rb-em-calc(1240px);
+
 // mediaqueries has to be ordered from none (all), smallest to largest!
 $breakpoint-config: (
     all: (
