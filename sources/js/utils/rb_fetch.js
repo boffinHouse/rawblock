@@ -54,16 +54,16 @@
             password: null,
         }, options);
 
+        var oReq = new XMLHttpRequest();
         var promise = new Promise(function (resolve, reject) {
             var header;
-            var oReq = new XMLHttpRequest();
 
             oReq.addEventListener('load', function () {
                 var value;
                 var status = oReq.status;
                 var isSuccess = status >= 200 && status < 300 || status == 304;
 
-                value = {data: getData(oReq)};
+                value = {data: getData(oReq), opts: options};
 
                 if (isSuccess) {
                     resolve(value, oReq);
@@ -74,7 +74,7 @@
             });
 
             oReq.addEventListener('error', function () {
-                var value = {data: getData(oReq)};
+                var value = {data: getData(oReq), opts: options};
                 reject(value, oReq);
                 oReq = null;
             });
@@ -93,6 +93,16 @@
 
             oReq.send(options.data || null);
         });
+
+        promise.abort = function(){
+            if(oReq){
+                oReq.abort();
+            }
+        };
+
+        promise.getXhr = function(){
+            return oReq;
+        };
 
         return promise;
     };
