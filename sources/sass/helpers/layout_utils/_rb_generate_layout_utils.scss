@@ -10,12 +10,9 @@
 
     @each $breakpoint-name, $config in $configs {
         $media: map-get($config, media);
-        $gutters: map-get($config, gutter);
-        $grid-max-width: map-get($config, grid-max-width);
-        $order-size: map-get($config, flex-order-size);
 
         @if $breakpoint-name == 'all' {
-            @include rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width);
+            @include rb-layout-utils($breakpoint-name);
             @include rb-util-gridcontainer();
             @include rb-util-columns();
         } @else {
@@ -24,7 +21,7 @@
                 $gte-name: "gte" + $rb-name-separator + $breakpoint-name;
 
                 @media #{$media}  {
-                   @include rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width);
+                   @include rb-layout-utils($breakpoint-name);
                 }
 
                 @include rb-respond-to((except: $breakpoint-name)){
@@ -68,13 +65,10 @@
 //
 // @param {String} $breakpoint-name - Breakpoint name added to end of class (with the exception of all) which correspond to the assigned screen size.
 // @param {List|Number} $gutters - List of horizontal and vertical gutter values (em/px/%).
-// @param {Number} $orderSize - Amount of order set.
-// @param {Number} $grid-max-width - Maximal width set in corresponding breakpoint (em/px/%).
-@mixin rb-layout-utils($breakpoint-name, $gutters, $order-size, $grid-max-width) {
+@mixin rb-layout-utils($breakpoint-name) {
     @include rb-util-sizes($breakpoint-name);
-    @include rb-util-gutters($breakpoint-name, $gutters);
+    @include rb-util-gutters($breakpoint-name);
     @include rb-util-position($breakpoint-name);
     @include rb-util-visibility-hide($breakpoint-name);
-    @include rb-util-basics($breakpoint-name, $grid-max-width);
 }
 
