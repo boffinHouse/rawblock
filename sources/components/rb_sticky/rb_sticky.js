@@ -37,7 +37,7 @@
                 topOffset: false,
                 bottomOffset: false,
                 progress: 0,
-                childSel: 'find(.{name}{-}element)',
+                childSel: 'find(.{name}{e}element)',
                 setWidth: true,
                 resetSwitchedOff: true,
                 autoThrottle: true,
@@ -450,6 +450,7 @@
                 }
             },
             attached: function () {
+                this._setScrollingElement();
                 rb.resize.on(this.reflow);
                 clearInterval(this.layoutInterval);
                 this.layoutInterval = setInterval(this.reflow, Math.round((999 * Math.random()) + 9999));

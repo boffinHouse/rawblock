@@ -52,8 +52,8 @@
                 this.renderMonth(new Date());
             },
             events: {
-                'click:closest(.{name}{-}btn{-}prev)': 'previous',
-                'click:closest(.{name}{-}btn{-}next)': 'next',
+                'click:closest(.{name}{e}btn{-}prev)': 'previous',
+                'click:closest(.{name}{e}btn{-}next)': 'next',
             },
             statics: {
                 views: {
@@ -110,8 +110,8 @@
 
                 this.element.innerHTML = wrapperHTML;
 
-                this.mainElement = this.query('.{name}{-}main');
-                this.headerElement = this.query('.{name}{-}btn{-}header');
+                this.mainElement = this.query('.{name}{e}main');
+                this.headerElement = this.query('.{name}{e}btn{-}header');
             },
             renderMonth: function (date) {
                 if (!date.getFullYear) {

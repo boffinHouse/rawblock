@@ -73,10 +73,10 @@
                  */
                 this.isOpen = false;
 
-                this.$backdrop = $(document.createElement('div')).addClass(this.name + rb.nameSeparator + 'backdrop');
+                this.$backdrop = $(document.createElement('div')).addClass(this.name + rb.elementSeparator + 'backdrop');
 
 
-                this.contentElement = this.query('.{name}{-}content');
+                this.contentElement = this.query('.{name}{e}content');
 
                 rb.rAFs(this, {that: this, throttle: true}, '_setup', '_addContent', '_setDisplay');
 
@@ -89,7 +89,7 @@
                 }
             },
             events: {
-                'click:closest(.{name}{-}close)': function (e) {
+                'click:closest(.{name}{e}close)': function (e) {
                     this.close();
                     e.preventDefault();
                     e.stopPropagation();
@@ -101,7 +101,7 @@
                 }
                 var backdrop, isWrapped;
                 var backdropDocument = this.element.parentNode;
-                var backdropDocumentName = this.name + rb.nameSeparator + 'backdrop' + rb.nameSeparator + 'document';
+                var backdropDocumentName = this.name + rb.elementSeparator + 'backdrop' + rb.nameSeparator + 'document';
 
                 this.trapKeyboardElemBefore = $(document.createElement('span')).attr({
                     'class': this.name + 'keyboardtrap',
@@ -116,7 +116,7 @@
                     backdropDocument = document.createElement('div');
                     backdropDocument.className = backdropDocumentName;
                     this.$backdrop.append(backdropDocument);
-                } else if(backdropDocument && (backdrop = backdropDocument.parentNode) && backdrop.classList.contains(this.name + rb.nameSeparator + 'backdrop')) {
+                } else if(backdropDocument && (backdrop = backdropDocument.parentNode) && backdrop.classList.contains(this.name + rb.elementSeparator + 'backdrop')) {
                     this.$backdrop = $(backdrop);
                     isWrapped = true;
                 }
@@ -312,7 +312,7 @@
                 this.trapKeyboardElemBefore.addEventListener('focus', function(e){
                     var focusElem;
                     if(options.trapKeyboard) {
-                        focusElem = that.queryAll('.{name}{-}close');
+                        focusElem = that.queryAll('.{name}{e}close');
                         e.preventDefault();
                         try {
                             focusElem[focusElem.length - 1].focus();

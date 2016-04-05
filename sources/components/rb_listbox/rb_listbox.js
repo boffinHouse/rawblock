@@ -72,10 +72,10 @@
                 }
             },
             events: {
-                'mousedown:closest(.{name}{-}item)': function (e) {
+                'mousedown:closest(.{name}{e}item)': function (e) {
                     this.select(e.delegatedTarget);
                 },
-                'click .{name}{-}item:not([aria-disabled="true"])': function (e) {
+                'click .{name}{e}item:not([aria-disabled="true"])': function (e) {
                     this.select(e.delegatedTarget);
                     this.check(e.delegatedTarget);
                 }
@@ -101,7 +101,7 @@
                 }
             },
             _getElements: function () {
-                this.$items = this.$queryAll('.{name}{-}item');
+                this.$items = this.$queryAll('.{name}{e}item');
                 this.checkedItem = this.$items.filter('.' + rb.statePrefix + 'checked').get(0) || null;
                 this.checkedIndex = (this.checkedItem) ? this.$items.index(this.checkedItem) : -1;
                 this._isStatic = this.$element.css('position') == 'static';

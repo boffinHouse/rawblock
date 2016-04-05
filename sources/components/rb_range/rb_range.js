@@ -1,4 +1,10 @@
-(function () {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        factory();
+    }
+}(function () {
     'use strict';
     /* jshint eqnull: true */
     var rb = window.rb;
@@ -294,7 +300,7 @@
                 var $progress, list, tmp;
                 var that = this;
                 var $rail = $(document.createElement('span'));
-                var namePrefix = this.name + rb.nameSeparator;
+                var namePrefix = this.name + rb.elementSeparator;
                 var progressClass = namePrefix + 'progress';
                 var thumbClass = namePrefix + 'thumb';
                 var tooltipClass = namePrefix + 'tooltip';
@@ -340,7 +346,7 @@
                 this._setThumbValues();
                 this._updateMinMax();
 
-                list = that.element.querySelector(that.name + rb.nameSeparator + 'list');
+                list = that.element.querySelector(that.name + rb.elementSeparator + 'list');
                 if (list) {
                     that.track.appendChild(list);
                 }
@@ -663,4 +669,4 @@
             },
         }
     );
-})();
+}));

@@ -46,7 +46,7 @@
                 mouseDrag: true,
                 easing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
                 duration: 600,
-                paginationItemTpl: '<span class="{name}{-}pagination{-}btn"></span>',
+                paginationItemTpl: '<span class="{name}{e}pagination{-}btn"></span>',
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
@@ -133,12 +133,12 @@
 
                 this.options.paginationItemTpl = this.interpolateName(this.options.paginationItemTpl);
 
-                this.scroller = this.query('.{name}{-}content');
+                this.scroller = this.query('.{name}{e}content');
                 this.$scroller = $(this.scroller);
-                this.viewport = this.query('.{name}{-}viewport');
-                this.$pagination = $(this.query('.{name}{-}pagination'));
-                this.$pageLength = $(this.query('.{name}{-}page{-}length'));
-                this.$currentIndex = $(this.query('.{name}{-}current{-}index'));
+                this.viewport = this.query('.{name}{e}viewport');
+                this.$pagination = $(this.query('.{name}{e}pagination'));
+                this.$pageLength = $(this.query('.{name}{e}page{-}length'));
+                this.$currentIndex = $(this.query('.{name}{e}current{-}index'));
                 this.$paginationBtns = $([]);
 
 
@@ -169,7 +169,7 @@
                 }
             },
             events: {
-                'click:closest(.{name}{-}btn{-}next)': function () {
+                'click:closest(.{name}{e}btn{-}next)': function () {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -179,7 +179,7 @@
                         this.selectNextIndex();
                     }
                 },
-                'click:closest(.{name}{-}btn{-}prev)': function () {
+                'click:closest(.{name}{e}btn{-}prev)': function () {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -189,7 +189,7 @@
                         this.selectPrevIndex();
                     }
                 },
-                'click:closest(.{name}{-}pagination{-}btn)': function (e) {
+                'click:closest(.{name}{e}pagination{-}btn)': function (e) {
                     if (this.options.switchedOff) {
                         return;
                     }
@@ -207,7 +207,7 @@
                         this._calculatePages();
                         this._writeLayout();
                         if (name == 'carousel' && value) {
-                            $(this.queryAll('.{name}{-}btn{-}next, .{name}{-}btn{-}prev'))
+                            this.$queryAll('.{name}{e}btn{-}next, .{name}{e}btn{-}prev')
                                 .prop({disabled: false})
                                 .removeClass(rb.statePrefix + 'disabled')
                             ;
@@ -288,7 +288,7 @@
 
                 this.helperElem = $(document.createElement('div'))
                     .attr({
-                        'class': 'js' + rb.nameSeparator + this.name + rb.nameSeparator + 'helper',
+                        'class': 'js' + rb.nameSeparator + this.name + rb.elementSeparator + 'helper',
                         style: 'width:0;padding:0;margin:0;visibility:hidden;border:0;height:100%;min-height:9px',
                     })
                     .css({
@@ -323,7 +323,7 @@
             },
             _setupFocusScroll: function () {
                 var that = this;
-                var cellSel = '.' + this.name + rb.nameSeparator + 'cell';
+                var cellSel = '.' + this.name + rb.elementSeparator + 'cell';
                 var isTestStopped = false;
                 var keyboardFocusClass = rb.statePrefix + 'keyboardfocus' + rb.nameSeparator + 'within';
                 var evtOpts = {capture: true, passive: true};
@@ -695,12 +695,12 @@
                     isEnd = this.isEndReached(pos);
                     isStart = this.isStartReached(pos);
 
-                    this.$queryAll('.{htmlName}{-}btn{-}next')
+                    this.$queryAll('.{htmlName}{e}btn{-}next')
                         .prop({disabled: isEnd})
                         .rbChangeState('disabled', isEnd)
                     ;
 
-                    this.$queryAll('.{htmlName}{-}btn{-}prev')
+                    this.$queryAll('.{htmlName}{e}btn{-}prev')
                         .prop({disabled: isStart})
                         .rbChangeState('disabled', isStart)
                     ;
@@ -843,11 +843,11 @@
             },
             updateCells: function () {
                 var that = this;
-                this.$cells = this.$scroller.children(':not(.js'+ rb.nameSeparator + this.name + rb.nameSeparator + 'helper)');
+                this.$cells = this.$scroller.children(':not(.js'+ rb.nameSeparator + this.name + rb.elementSeparator + 'helper)');
                 this.calculateLayout();
                 rb.rAFQueue(function () {
                     that.$scroller.prepend(that.helperElem);
-                    that.$cells.addClass(that.name + rb.nameSeparator + 'cell');
+                    that.$cells.addClass(that.name + rb.elementSeparator + 'cell');
                 });
             },
             _getCellWidth: function (element) {
@@ -1096,7 +1096,7 @@
                     }
                     this.$pagination.html(paginationItems.join(''));
                     this.$paginationBtns = this.$pagination
-                        .find('.' + this.name + rb.nameSeparator + 'pagination' + rb.nameSeparator + 'btn')
+                        .find('.' + this.name + rb.elementSeparator + 'pagination' + rb.nameSeparator + 'btn')
                     ;
                     this.$paginationBtns.eq(this._selectedIndex).addClass(rb.statePrefix + 'selected');
                 }

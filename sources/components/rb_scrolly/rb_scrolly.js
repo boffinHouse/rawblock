@@ -120,8 +120,6 @@
 
                 this.onprogress = $.Callbacks();
 
-                this.scrollingElement = rb.getScrollingElement();
-
                 this.updateChilds = this.updateChilds || $.noop;
 
                 rb.rAFs(this, 'changeState', 'setSwitchedOffClass');
@@ -139,6 +137,7 @@
                     this.calculateLayout();
                 }, {that: this});
 
+                this._setScrollinElement();
                 this.parseOffsets();
                 this.calculateLayout();
 
@@ -168,6 +167,9 @@
                     if (rb.root.contains(this.element)) {
                         this.attached();
                     }
+                } else if(name == 'scrollContainer'){
+                    this._setScrollinElement();
+                    this.calculateLayout();
                 }
 
                 if(name == 'switchedOff'){
@@ -290,15 +292,40 @@
                     }
                 }
             },
+            _setScrollinElement: function(){
+                var oldScrollingEvtElement = this.scrollingEvtElement;
+
+                if(this.options.scrollContainer){
+                    this.scrollingElement = this.element.closest(this.options.scrollContainer);
+                }
+
+                if(!this.scrollingElement || !this.options.scrollContainer){
+                    this.scrollingElement = rb.getPageScrollingElement();
+                }
+
+                this.scrollingEvtElement = (this.scrollingElement.matches('html, body')) ?
+                    window :
+                    this.scrollingElement
+                ;
+
+                if(oldScrollingEvtElement){
+                    oldScrollingEvtElement.removeEventListener('scroll', this.throtteldCheckPosition);
+                }
+
+                this.scrollingEvtElement.addEventListener('scroll', this.throtteldCheckPosition);
+            },
             attached: function () {
                 this.detached();
-                window.addEventListener('scroll', this.throtteldCheckPosition);
+                this._setScrollinElement();
+
                 rb.resize.on(this.reflow);
                 clearInterval(this.layoutInterval);
                 this.layoutInterval = setInterval(this.reflow, Math.round(9999 + (5000 * Math.random())));
             },
             detached: function () {
-                window.removeEventListener('scroll', this.throtteldCheckPosition);
+                if(this.scrollingEvtElement){
+                    this.scrollingEvtElement.removeEventListener('scroll', this.throtteldCheckPosition);
+                }
                 rb.resize.off(this.reflow);
                 clearInterval(this.layoutInterval);
             },

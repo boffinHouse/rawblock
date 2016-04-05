@@ -46,13 +46,13 @@
              * @property {String}  defaults.itemWrapper='' Set itemWrapper option of the panel instance.
              * @property {Boolean}  defaults.switchedOff=false Turns off panelgroup.
              * @property {Boolean} defaults.resetSwitchedOff=true Resets panels to initial state on reset switch.
-             * @property {String} defaults.panelName='{name}{-}panel' Name of the constructed panels.
+             * @property {String} defaults.panelName='{name}{e}panel' Name of the constructed panels.
              * @property {Boolean}  defaults.closeOnEsc=false Panel closes on ESC keydown.
-             * @property {String}  defaults.panelSel='find(.{name}{-}panel)' Reference to find all panels associated with this component group. For a nested accordion/tab use "children(.{name}-panel)".
-             * @property {String}  defaults.btnSel='find(.{name}{-}btn)' Reference to find all panel buttons associated with this component group. For a nested accordion/tab use "children(.{name}-btn)".
-             * @property {String}  defaults.groupBtnSel='find(.{name}{-}ctrl{-}btn)' Reference to find all panelgroup buttons associated with this component group. For a nested accordion/tab use "children(.{name}-ctrl-btn)".
-             * @property {String}  defaults.panelWrapperSel='find(.{name}{-}panel{-}wrapper):0' Reference to find the panelwrapper(s) associated with this component group. If no panelwrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-wrapper)".
-             * @property {String}  defaults.btnWrapperSel='find(.{name}{-}btn{-}wrapper):0'  Reference to find the button wrapper(s) associated with this component group. If no button wrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-btn-wrapper)".
+             * @property {String}  defaults.panelSel='find(.{name}{e}panel)' Reference to find all panels associated with this component group. For a nested accordion/tab use "children(.{name}-panel)".
+             * @property {String}  defaults.btnSel='find(.{name}{e}btn)' Reference to find all panel buttons associated with this component group. For a nested accordion/tab use "children(.{name}-btn)".
+             * @property {String}  defaults.groupBtnSel='find(.{name}{e}ctrl{-}btn)' Reference to find all panelgroup buttons associated with this component group. For a nested accordion/tab use "children(.{name}-ctrl-btn)".
+             * @property {String}  defaults.panelWrapperSel='find(.{name}{e}panel{-}wrapper):0' Reference to find the panelwrapper(s) associated with this component group. If no panelwrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-wrapper)".
+             * @property {String}  defaults.btnWrapperSel='find(.{name}{e}btn{-}wrapper):0'  Reference to find the button wrapper(s) associated with this component group. If no button wrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-btn-wrapper)".
              */
             defaults: {
                 multiple: false,
@@ -67,12 +67,12 @@
                 setFocus: true,
                 switchedOff: false,
                 resetSwitchedOff: true,
-                panelName: '{name}{-}panel',
-                panelSel: 'find(.{name}{-}panel)',
-                btnSel: 'find(.{name}{-}btn)',
-                groupBtnSel: 'find(.{name}{-}ctrl{-}btn)',
-                panelWrapperSel: 'find(.{name}{-}panel{-}wrapper):0',
-                btnWrapperSel: 'find(.{name}{-}btn{-}wrapper):0',
+                panelName: '{name}{e}panel',
+                panelSel: 'find(.{name}{e}panel)',
+                btnSel: 'find(.{name}{e}btn)',
+                groupBtnSel: 'find(.{name}{e}ctrl{-}btn)',
+                panelWrapperSel: 'find(.{name}{e}panel{-}wrapper):0',
+                btnWrapperSel: 'find(.{name}{e}btn{-}wrapper):0',
                 itemWrapper: '',
             },
             statics: {},
@@ -565,7 +565,7 @@
                 toggle: false,
                 animation: 'slide',
                 adjustScroll: 10,
-                itemWrapper: '.{name}{-}item',
+                itemWrapper: '.{name}{e}item',
             }
         }
     );
