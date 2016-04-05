@@ -450,6 +450,7 @@
                 }
             },
             attached: function () {
+                this._setScrollingElement();
                 rb.resize.on(this.reflow);
                 clearInterval(this.layoutInterval);
                 this.layoutInterval = setInterval(this.reflow, Math.round((999 * Math.random()) + 9999));

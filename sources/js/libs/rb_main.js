@@ -738,36 +738,6 @@ if (!window.rb) {
     ;
     /* End: cssSupports */
 
-    /* Begin: ID/Symbol */
-    /**
-     * Returns a Symbol or unique String
-     * @memberof rb
-     * @param {String} description ID or description of the symbol
-     * @type {Function}
-     * @returns {String|Symbol}
-     */
-    rb.Symbol = window.Symbol;
-    var id = Math.round(Date.now() * Math.random());
-
-    /**
-     * Returns a unique id based on Math.random and Date.now().
-     * @memberof rb
-     * @returns {string}
-     */
-    rb.getID = function () {
-        id += Math.round(Math.random() * 1000);
-        return id.toString(36);
-    };
-
-    if (!rb.Symbol) {
-        rb.Symbol = function (name) {
-            name = name || '_';
-            return name + rb.getID();
-        };
-    }
-
-    /* End: ID/Symbol */
-
     /* Begin: rb.events */
 
     rb.events = {
@@ -1526,16 +1496,13 @@ if (!window.rb) {
         var elements = document.getElementsByClassName(attachedClass);
 
         rb.checkCssCfgs = function () {
-            var i, elem, component, contentStr;
+            var i, elem, component;
             var len = elements.length;
             for (i = 0; i < len; i++) {
                 elem = elements[i];
                 component = elem && elem[componentExpando];
 
-                contentStr = component._afterStyle.content || component._elementStyle.content;
-
-                if (component && component.parseOptions && contentStr &&
-                    contentStr != component._styleOptsStr) {
+                if (component && component.parseOptions && rb.hasPseudoChanged(elem)) {
                     component.parseOptions();
                 }
             }
@@ -2316,8 +2283,6 @@ if (!window.rb) {
                  * @type {{}}
                  */
                 this.options = {};
-                this._elementStyle = rb.getStyles(element);
-                this._afterStyle = rb.getStyles(element, '::before');
 
                 this._initialDefaults = initialDefaults;
                 element[componentExpando] = this;
@@ -2781,12 +2746,7 @@ if (!window.rb) {
              * @returns {{}}
              */
             parseCSSOptions: function() {
-                var style = this._afterStyle.content || this._elementStyle.content;
-                if (!this._styleOptsStr || style != this._styleOptsStr) {
-                    this._styleOptsStr = style;
-                    style = rb.parsePseudo(style);
-                }
-                return style || false;
+                return rb.parsePseudo(this.element) || false;
             },
 
             destroy: function () {

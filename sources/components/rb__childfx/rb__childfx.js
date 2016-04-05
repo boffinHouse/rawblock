@@ -28,7 +28,7 @@
                 toNumber: function (i) {
                     return parseFloat(i) || 0;
                 },
-                regNumber: /(\d+[\.\d]*)/g,
+                regNumber: /(-*\d+[\.\d]*)/g,
                 regWhite: /\s/g,
             },
             /**
@@ -117,8 +117,6 @@
                         to: 1,
                     };
 
-                    elem[pseudoExpando] = rb.getStyles(elem, '::after').content;
-
                     for (prop in options.end) {
                         if (prop == 'easing') {
                             options.easing = rb.addEasing(options.end[prop]);
@@ -136,14 +134,14 @@
 
                 if (this.childs && this.childs.length && !this.options.switchedOff) {
                     this.childs.forEach(function (elem) {
-                        if (!ret && elem[pseudoExpando] != rb.getStyles(elem, '::after').content) {
+                        if (!ret && rb.hasPseudoChanged(elem)) {
                             ret = true;
                         }
                     });
                 }
 
                 if (ret) {
-                    this.updateChilds._rbUnrafedFn(true);
+                    this.updateChilds._rbUnrafedFn.call(this, true);
                     this.progress = -2;
                 }
 

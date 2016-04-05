@@ -4,16 +4,53 @@ if (!window.rb) {
 
 (function () {
     'use strict';
+    var pseudoExpando;
 
     var rb = window.rb;
 
     var regStartQuote = /^"?'?"?/;
     var regEndQuote = /"?'?"?$/;
     var regEscapedQuote = /\\"/g;
+    var getPseudoToParse = function(element, pseudo){
+        var value = rb.getStyles(element, pseudo || '::before').content;
+        if(!value && element){
+            value = rb.getStyles(element).content;
+        }
+
+        return value;
+    };
 
     var removeLeadingQuotes = function (str) {
         return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
     };
+
+    /* Begin: ID/Symbol */
+    /**
+     * Returns a Symbol or unique String
+     * @memberof rb
+     * @param {String} description ID or description of the symbol
+     * @type {Function}
+     * @returns {String|Symbol}
+     */
+    rb.Symbol = window.Symbol;
+    var id = Math.round(Date.now() * Math.random());
+
+    /**
+     * Returns a unique id based on Math.random and Date.now().
+     * @memberof rb
+     * @returns {string}
+     */
+    rb.getID = function () {
+        id += Math.round(Math.random() * 1000);
+        return id.toString(36);
+    };
+
+    if (!rb.Symbol) {
+        rb.Symbol = function (name) {
+            name = name || '_';
+            return name + rb.getID();
+        };
+    }
 
     /**
      * Parses a string using JSON.parse without throwing an error.
@@ -40,15 +77,26 @@ if (!window.rb) {
         var ret;
         var value = typeof element == 'string' ?
                 element :
-                rb.getStyles(element, pseudo || '::before').content
+                getPseudoToParse(element, pseudo)
             ;
 
-        if(!value && element){
-            value = rb.getStyles(element).content;
+        if(element){
+            element[pseudoExpando] = value;
         }
 
         ret = rb.jsonParse(removeLeadingQuotes(value));
         return ret;
+    };
+
+	/**
+     * @memberof rb
+     * @param element {Element}
+     * @param [pseudo='::before'] {String}
+     * @returns {boolean}
+     */
+    rb.hasPseudoChanged = function(element, pseudo){
+        var value = element[pseudoExpando];
+        return getPseudoToParse(element, pseudo) != value;
     };
 
     /**
@@ -148,4 +196,6 @@ if (!window.rb) {
             return cssConfig;
         },
     });
+
+    pseudoExpando = rb.Symbol('_rbPseudoExpando');
 })();
