@@ -13,13 +13,17 @@
 
     var rb = window.rb;
 
-    var getData = function (oReq) {
+    var getData = function (oReq, obj) {
         var data = oReq.responseXML || oReq.responseText;
-        var contentType = (oReq.getResponseHeader('Content-Type') || '').split(';')[0];
-        if (contentType.endsWith('json')) {
-            data = rb.jsonParse(oReq.responseText) || data;
+
+        obj.data = oReq.response;
+        obj.text = oReq.responseText;
+        obj.xml = oReq.responseXML;
+
+        if (typeof obj.data != 'object' &&
+            (oReq.getResponseHeader('Content-Type') || '').split(';')[0].endsWith('json')) {
+            obj.data = rb.jsonParse(oReq.responseText) || data;
         }
-        return data;
     };
 
     /**
@@ -58,12 +62,13 @@
         var promise = new Promise(function (resolve, reject) {
             var header;
 
+            var value = {opts: options};
+
             oReq.addEventListener('load', function () {
-                var value;
                 var status = oReq.status;
                 var isSuccess = status >= 200 && status < 300 || status == 304;
 
-                value = {data: getData(oReq), opts: options};
+                getData(oReq, value);
 
                 if (isSuccess) {
                     resolve(value, oReq);
@@ -74,7 +79,7 @@
             });
 
             oReq.addEventListener('error', function () {
-                var value = {data: getData(oReq), opts: options};
+                getData(oReq, value);
                 reject(value, oReq);
                 oReq = null;
             });

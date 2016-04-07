@@ -41,6 +41,7 @@
     };
     var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
     var regUnit = /^\d+\.*\d*(px|em|rem|%|deg)$/;
+    var regWhite = /\s+/g;
     var fn = Dom.prototype;
     var steps = {};
     var tween = function (element, endProps, options) {
@@ -542,9 +543,12 @@
     fn.detach = fn.remove;
 
     ['add', 'remove', 'toggle'].forEach(function (action) {
+        var isToggle = action == 'toggle';
         fn[action + 'Class'] = function (cl) {
+            var args = isToggle ? arguments : cl.split(regWhite);
             this.elements.forEach(function (elem) {
-                elem.classList[action](cl);
+                var list = elem.classList;
+                list[action].apply(list, args);
             });
             return this;
         };
