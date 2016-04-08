@@ -14,15 +14,14 @@
     var rb = window.rb;
 
     var getData = function (oReq, obj) {
-        var data = oReq.responseXML || oReq.responseText;
-
-        obj.data = oReq.response;
+        obj.xhr = oReq;
+        obj.data = oReq.response || oReq.responseXML || oReq.responseText;
         obj.text = oReq.responseText;
         obj.xml = oReq.responseXML;
 
         if (typeof obj.data != 'object' &&
             (oReq.getResponseHeader('Content-Type') || '').split(';')[0].endsWith('json')) {
-            obj.data = rb.jsonParse(oReq.responseText) || data;
+            obj.data = rb.jsonParse(oReq.responseText) || obj.data;
         }
     };
 

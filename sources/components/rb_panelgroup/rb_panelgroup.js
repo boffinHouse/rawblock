@@ -139,8 +139,12 @@
                 this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
             },
             _handleAnimation: function(animationData){
-                if(animationData.animation == 'adaptHeight' && animationData.panel.isOpen){
-                    this.animateWrapper(animationData.panel.element);
+                if(animationData.animation == 'adaptHeight'){
+                    if(animationData.panel.isOpen){
+                        this.animateWrapper(animationData.panel.element);
+                    } else if(!this._closedByOpen){
+                        this.animateWrapper();
+                    }
                 }
             },
             animateWrapper: function (openedPanel) {
@@ -150,7 +154,7 @@
                 var panels = this.$panels.get();
                 var curIndex = -1;
                 var panelWrapper = this.$panelWrapper.get(0);
-                var nextIndex = panels.indexOf(openedPanel);
+                var nextIndex = openedPanel ? panels.indexOf(openedPanel) : 0;
                 var closingPanels = [];
 
                 var start = panelWrapper.offsetHeight;
@@ -165,16 +169,21 @@
                     closingPanels.push(panel);
                 });
 
-                openedPanel.style.display = 'block';
-                openedPanel.style.position = 'relative';
+                if(openedPanel){
+                    openedPanel.style.display = 'block';
+                    openedPanel.style.position = 'relative';
+                }
 
                 end = panelWrapper.offsetHeight;
 
                 this.selectedItems.forEach(function (panel) {
                     panel.style.display = '';
                 });
-                openedPanel.style.display = '';
-                openedPanel.style.position = '';
+
+                if(openedPanel){
+                    openedPanel.style.display = '';
+                    openedPanel.style.position = '';
+                }
 
                 $(closingPanels).addClass(rb.statePrefix + 'closing');
 
@@ -337,7 +346,9 @@
                 switch (action) {
                     case 'beforeopen':
                         if (!options.multiple && this.selectedItems.length) {
+                            this._closedByOpen = true;
                             this.closeAll(panelComponent);
+                            this._closedByOpen = false;
                         }
                         break;
                     case 'afteropen':
