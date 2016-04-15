@@ -37,6 +37,7 @@
              * @property {String}  paginationItemTpl The markup for the pagination buttons.
              * @property {Boolean} switchedOff=false Whether the scroller should be turned off.
              * @property {Boolean} useTransform=true Whether the scroller should use CSS transform3d or left property.
+             * @property {Boolean} usePx=false Whether the scroller should use CSS px units instead of % units. Set this to `true` if items are not using % as width unit.
              */
             defaults: {
                 switchedOff: false,
@@ -52,6 +53,7 @@
                 mandatorySnap: false,
                 startOrder: -1,
                 endOrder: 99,
+                usePx: false,
             },
             /**
              * @constructs
@@ -529,6 +531,7 @@
                 }
 
                 cellData = this.cellData[cellIndex];
+
                 if (cellData) {
                     roundingTolerance = (0.6 * cellIndex) + 1;
                     viewportLeft -= roundingTolerance;
@@ -770,7 +773,7 @@
                 elem.style[orderProp] = order;
             },
             _changeWrap: function (side, prop) {
-                var i, len, curCell, order;
+                var i, len, curCell, order, unitPos;
                 var posPages = this.posPages[side];
                 var cells = this.posPages[side].rbCells;
 
@@ -787,10 +790,22 @@
                         ''
                 ;
 
-                this.helperElem.style.marginLeft = this.isWrap ?
+                unitPos = this.options.usePx ?
                     posPages._helperLeft + 'px' :
+                    (posPages._helperLeft / this.viewportWidth * 100) + '%'
+                ;
+
+                this.helperElem.style.marginLeft = this.isWrap ?
+                    unitPos :
                     ''
                 ;
+
+                if(this._isPageDirty){
+                    this._isPageDirty = false;
+                    for(i = 0, len = this.$cells.length; i < len; i++){
+                        this.$cells.get(i).style[orderProp] = '';
+                    }
+                }
 
                 for (i = 0, len = cells.length; i < len; i++) {
                     curCell = cells[i];
@@ -799,7 +814,7 @@
                 }
             },
             _setPos: function (pos) {
-                var shouldWrapLeft, shouldWrapRight, unWrapLeft, unWrapRight;
+                var shouldWrapLeft, shouldWrapRight, unWrapLeft, unWrapRight, unitPos;
 
                 if (this.isCarousel) {
                     if (pos >= this.maxWrapLeft || pos <= this.minWrapRight) {
@@ -831,13 +846,18 @@
                 this._pos = pos;
                 this.scroller.rbItemscrollerPos = this._pos;
 
+                unitPos = this.options.usePx ?
+                    pos + 'px' :
+                    (pos / this.viewportWidth * 100) + '%'
+                ;
+
                 if (this.usesTransform) {
                     this.scroller.style[transformProp] = (supports3dTransform) ?
-                        'translate3d(' + pos + 'px, 0, 0)' :
-                        'translateX(' + pos + 'px)'
+                        'translate3d(' + unitPos + ', 0, 0)' :
+                        'translateX(' + unitPos + ')'
                     ;
                 } else {
-                    this.scroller.style.left = pos + 'px';
+                    this.scroller.style.left = unitPos;
                 }
                 this.onslide.fireWith(this);
             },
@@ -862,8 +882,7 @@
                     return;
                 }
 
-                this.viewportWidth = this.scroller.offsetWidth - rb.getCSSNumbers(this.scroller, ['padding-right', 'padding-left'], true);
-
+                this.viewportWidth = this.$scroller.width();
 
                 this._calculateCellLayout();
 
@@ -951,6 +970,8 @@
 
                 this.pageData = [];
                 nextPageLeft = 0;
+
+                this._isPageDirty = true;
 
                 for (i = 0, len = this.cellData.length - 1; i < len; i++) {
                     roundingTolerance = (i * 0.5) + 0.5;

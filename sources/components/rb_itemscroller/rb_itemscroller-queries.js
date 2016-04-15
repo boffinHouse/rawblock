@@ -8,31 +8,30 @@
 }(function () {
     'use strict';
     var rb = window.rb;
-    var regComma = /\s*?,\s*?/;
-    var regColon = /\s*?:\s*?/;
-    var regUnit = /(px|%)$/;
+    var regSizes = /(\(\s*(min|max)(-width)?\s*:\s*(\d+\.*\d*)(px)?\)\s*)?(\d+\.*\d*)(px|%)?/g;
 
-    var createCondition = function (value) {
-        var unit;
-        var obj = {
-            condition: Number.MAX_VALUE,
-            str: value,
-        };
-        value = value.split(regColon);
+    var createConditions = rb.memoize(function (value) {
 
-        if (value.length == 1) {
-            obj.css = value[0];
-        } else {
-            obj.condition = parseFloat(value[0]);
-            obj.css = value[1];
+        var match, size;
+
+        var sizes = [];
+
+        while((match = regSizes.exec(value))){
+            size = {
+                condition: parseFloat(match[4]),
+                type: match[2],
+                str: match[0],
+                value: parseFloat(match[6]),
+                unit: match[7] || 'px',
+            };
+
+            size.css = size.value + size.unit;
+
+            sizes.push(size);
         }
 
-        unit = obj.css.match(regUnit);
-        obj.unit = unit && unit[1] || 'px';
-        obj.value = parseFloat(obj.css);
-
-        return obj;
-    };
+        return sizes;
+    }, true);
 
     var ItemScroller = rb.Component.mixin(rb.components.itemscroller,
         /** @lends rb.components.itemscroller.prototype */
@@ -40,10 +39,12 @@
             /**
              * @static
              * @mixes rb.components.itemscroller.prototype.defaults
-             * @prop {String} queries="" Container queries configuration represented by a `sizes` like comma separated string. `"maxWidthCondition1:cellWidthSize1(%|px), maxWidthCondition2:cellWidthSize2(%|px), defaultCellWidthSize(%|px)"` (i.e.: `"500:100%, 860:50%, 33.333%"`).
+             * @prop {String} queries="" Container queries configuration represented by a `sizes` like comma separated string. `"(max-width: 480px) cellWidthSize1(%|px), (max-width: 1024px) cellWidthSize2(%|px), defaultCellWidthSize(%|px)"` (i.e.: `"(max-width: 480px) 100%, (max-width: 1024px) 50%, 600px"`).
+             * @prop {String} modifyUsePx=true Wether the `usePx` option should automatically changed.
              */
             defaults: {
                 queries: '',
+                modifyUsePx: true,
             },
             _parseQueries: function () {
                 var queries = this.options.queries;
@@ -55,7 +56,7 @@
                     return;
                 }
 
-                this._parsedQueries = queries.split(regComma).map(createCondition);
+                this._parsedQueries = createConditions(queries);
                 this._parsedQueries.queryString = queries;
             },
             setOption: function (name, value) {
@@ -79,15 +80,22 @@
 
                 for (i = 0; i < this._parsedQueries.length; i++) {
                     currentQuery = this._parsedQueries[i];
-                    if (this.viewportWidth < currentQuery.condition) {
+                    if(!currentQuery.condition ||
+                        !currentQuery.type ||
+                        (currentQuery.type == 'max' && this.viewportWidth <= currentQuery.condition) ||
+                        (currentQuery.type == 'min' && this.viewportWidth >= currentQuery.condition)){
                         break;
                     }
                 }
 
                 currentQuery.computedValue = currentQuery.unit == '%' ?
-                this.viewportWidth * currentQuery.value / 100 :
+                    this.viewportWidth * currentQuery.value / 100 :
                     currentQuery.value
                 ;
+
+                if(this.options.modifyUsePx){
+                    this.options.usePx = currentQuery.unit == 'px';
+                }
 
                 if (currentQuery != this._parsedQueries.currentQuery) {
                     this._parsedQueries.currentQuery = currentQuery;

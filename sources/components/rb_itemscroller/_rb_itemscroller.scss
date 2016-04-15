@@ -11,15 +11,15 @@
 //**********************************************************
 $itemscroller-js-cfg: (
     name: itemscroller,
-    //queries: "500:100%, 860:50%, 33.333%",
+    //queries: "(min-width: 480px) 100%, (min-width: 1024) 50%, 650px",
 );
 
 
 // Dependencies (Helpers)
 //**********************************************************
-@import "../../sass/helpers/rb_hide_text";
-@import "../../sass/helpers/rb_arrow_icon";
-@import "../../sass/helpers/rb_px_to_units";
+@import "../../sass/helpers/utils/rb_hide_text";
+@import "../../sass/helpers/utils/rb_arrow_icon";
+@import "../../sass/helpers/utils/rb_px_to_units";
 
 
 //----------------------------------------------------------
