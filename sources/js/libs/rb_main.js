@@ -483,30 +483,6 @@ if (!window.rb) {
     };
     /* End: idleCallback */
 
-    /* Begin: ReadCallback */
-    rb.rRC = (function(){
-        var running;
-        var fns = [];
-        var flush = function(){
-            while (fns.length) {
-                fns.shift()();
-            }
-            running = false;
-        };
-        var rAF = function(){
-            setTimeout(flush);
-        };
-
-        return function(fn){
-            fns.push(fn);
-            if(!running){
-                running = true;
-                rb.rAFQueue(rAF);
-            }
-        };
-    })();
-    /* End: idleCallback */
-
     /* Begin: rAF helpers */
 
     rb.rAFQueue = (function () {
@@ -536,7 +512,7 @@ if (!window.rb) {
         return function (fn, inProgress) {
 
             if (inProgress && isInProgress) {
-                inProgressStack.push(fn);
+                fn();
             } else {
                 curFns.push(fn);
                 if (curFns.length == 1) {
