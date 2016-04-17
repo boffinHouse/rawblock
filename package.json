@@ -29,7 +29,7 @@
     "array.from": "^1.0.0",
     "array.prototype.find": "^2.0.0",
     "bezier-easing": "^1.1.1",
-    "dom4": "^1.7.0",
+    "dom4": "^1.8.2",
     "es6-promise": "^3.1.2",
     "function-bind": "^1.1.0",
     "is-nan": "^1.2.1",

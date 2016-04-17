@@ -87,9 +87,9 @@
             var that = this;
             if (!this._iframe) {
                 this._iframe = document.createElement('iframe');
-                this._iframe.style.position = 'absolute';
-                this._iframe.style.top = '-99999999px';
-                this._iframe.style.left = '-99999999px';
+                //this._iframe.style.position = 'absolute';
+                //this._iframe.style.top = '-99999999px';
+                //this._iframe.style.left = '-99999999px';
                 document.body.appendChild(this._iframe);
             }
             this._resize();
@@ -139,7 +139,7 @@
                 clientY: pos.left + ((pos.height || 1) / 2),
             };
         };
-        var supportMouse = typeof MouseEvent == 'function';
+        var supportMouse = !!window.MouseEvent;
         var actions = {
             mouse: {
                 dispatch: function (elem, type, props) {
@@ -229,6 +229,12 @@
                 reg: /.*/
             }
         };
+
+        if(supportMouse){
+            try { new MouseEvent('_', {}); } catch (o_O) {
+                supportMouse = false;
+            }
+        }
 
         rbTest.simulate = function (elem, type, props, options) {
             var action;

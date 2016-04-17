@@ -1,96 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title></title>
-	<link rel="stylesheet" href="itemscroller-tests.css" />
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        (function (docElem) {
+            //polyfills
+            if (!Object.assign || !window.fetch || !docElem.closest || !String.prototype.includes || !window.cancelAnimationFrame || !Array.from || !Array.prototype.find || !('sizes' in document.createElement('img'))) { //  || !docElem.before || !docElem.queryAll
+                document.write('<script src="../../../../../../dev/js/_rb_polyfills.js"><\/script>');
+            }
+        })(document.documentElement);
+    </script>
+    <link rel="stylesheet" href="itemscroller-tests.css"/>
 </head>
 <body>
-	<div id="qunit-fixture">
-		<div class="rb-itemscroller" data-module="itemscroller">
+<div id="qunit-fixture">
+    <div class="rb-itemscroller" data-module="itemscroller">
 
 
-			<button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">previous</button>
-			<button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
+        <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">previous</button>
+        <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
 
-			<div class="itemscroller-viewport">
-				<div class="itemscroller-content is-column-group is-gutter-horizontal">
+        <div class="itemscroller-viewport">
+            <div class="itemscroller-content is-column-group is-gutter-horizontal">
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							0
-							<input class="focus-element" />
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        0
+                        <input class="focus-element"/>
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							1
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        1
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							2
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        2
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							3
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        3
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							4
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        4
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							5
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        5
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							6
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        6
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							7
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        7
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							8
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        8
+                    </div>
+                </div>
 
-					<div class="itemscroller-cell">
-						<div class="dummy-item">
-							9
-						</div>
-					</div>
+                <div class="itemscroller-cell">
+                    <div class="dummy-item">
+                        9
+                    </div>
+                </div>
 
-				</div>
-			</div>
+            </div>
+        </div>
 
-			<div class="itemscroller-pagination"></div>
+        <div class="itemscroller-pagination"></div>
 
-		</div>
-	</div>
-    <script src="../../../../../../sources/js/libs/rb_$.js"></script>
-    <script src="../../../../../../sources/js/libs/rb_crucial.js"></script>
-    <script src="../../../../../../sources/js/libs/rb_main.js"></script>
+    </div>
+</div>
+<script src="../../../../../../sources/js/libs/rb_$.js"></script>
+<script src="../../../../../../sources/js/libs/rb_crucial.js"></script>
+<script src="../../../../../../sources/js/libs/rb_main.js"></script>
 
-    <script src="../../../../../js/utils/rb_draggy.js"></script>
-    <script src="../../../../../js/utils/rb_elemresize.js"></script>
-    <script src="../../../../../js/utils/rb_prefixed.js"></script>
-    <script src="../../../rb_itemscroller.js"></script>
+<script src="../../../../../js/utils/rb_draggy.js"></script>
+<script src="../../../../../js/utils/rb_elemresize.js"></script>
+<script src="../../../../../js/utils/rb_prefixed.js"></script>
+<script src="../../../rb_itemscroller.js"></script>
 </body>
 </html>
