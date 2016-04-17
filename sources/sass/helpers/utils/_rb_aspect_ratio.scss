@@ -1,0 +1,20 @@
+@mixin rb-aspect-ratio($width, $height, $child: false) {
+    position: relative;
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: ($height / $width) * 100%;
+
+    @if $child {
+        #{$child} {
+            position: absolute;
+            display: block;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
+}

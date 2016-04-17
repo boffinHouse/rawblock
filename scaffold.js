@@ -42,7 +42,7 @@ var groups = [
     {
         id: 'visualTests',
         name: 'Visual tests',
-        isMinimal: true,
+        isMinimal: false,
     },
     {
         id: 'docs',

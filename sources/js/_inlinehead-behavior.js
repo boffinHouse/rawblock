@@ -100,10 +100,15 @@
 
     //uncomment if you have crucial fonts placed above inline script
     //if (document.fonts && document.fonts.forEach) {
-    //    setTimeout(function () {
+    //    (function(fonts){
     //        document.fonts.forEach(function(font){
-    //            font.load();
+    //            fonts.push(font);
     //        });
-    //    }, 200);
+    //        setTimeout(function () {
+    //            fonts.forEach(function(font){
+    //                font.load();
+    //            });
+    //        }, 200);
+    //    })([]);
     //}
 })(window);
