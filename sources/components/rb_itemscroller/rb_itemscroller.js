@@ -913,7 +913,7 @@
                 var wasPos = this._pos;
 
                 if(this.isWrap){
-                    this._changeWrap(this.isWrap, 'ul');
+                    this._changeWrap(this.isWrap, this.isCarousel ? 'ul' : 'l');
                 }
 
                 this.selectIndex(this._selectedIndex, true);
@@ -1018,10 +1018,22 @@
                 this.pageLength = this.baseLength - overkillLength;
 
                 if (this.pageLength != pageLength) {
+                    if(pageLength != null){
+                        this._adjustSelectedIndex();
+                    }
                     this._createPagination();
                     if (pageLength > -1) {
                         this._trigger('pagelengthchanged');
                     }
+                }
+            },
+            _adjustSelectedIndex: function(){
+                var getIndex;
+                var active = this.$cells.filter('.' + rb.statePrefix + 'active').get(0);
+                if(active){
+                    this._selectedIndex = this.getPageIndexOfCell(active);
+                } else if(this.pageLength < this.selectedIndex){
+                    this.selectedIndex = this.pageLength - 1;
                 }
             },
             _addPosCorrect: function (pageData, cells, pageCorrect, wrappedIndex) {
@@ -1051,7 +1063,7 @@
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
 
-                this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2) >= this.viewportWidth;
+                this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2.1) > this.viewportWidth;
 
                 if (!this.isCarousel) {
                     return;

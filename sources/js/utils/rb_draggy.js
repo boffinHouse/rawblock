@@ -3,7 +3,13 @@
     var rb = window.rb;
     var $ = rb.$;
 
-    var regInputs = /^(?:input|select|textarea|button)$/i;
+    var btnsMap = {
+        image: 1,
+        file: 1,
+        button: 1,
+        submit: 1,
+    };
+    var regInputs = /^(?:input|textarea)$/i;
 
     function Draggy(element, options) {
 
@@ -170,6 +176,9 @@
             };
             this.element.addEventListener('click', this._onclick, true);
         },
+        allowedDragTarget: function(target){
+            return btnsMap[target.type] || !regInputs.test(target.nodeName || '');
+        },
         setupMouse: function () {
             var timer;
             var that = this;
@@ -197,7 +206,7 @@
 
             this._onmousedown = function (e) {
                 that._destroyMouse();
-                if (e.defaultPrevented || !that.options.useMouse || !that.allowMouse || regInputs.test(e.target.nodeName || '')) {
+                if (e.defaultPrevented || !that.options.useMouse || !that.allowMouse || !that.allowedDragTarget(e.target)) {
                     return;
                 }
 
@@ -236,7 +245,7 @@
                     return;
                 }
                 that._destroyTouch();
-                if (e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0] || regInputs.test(e.touches[0].target.nodeName || '')) {
+                if (e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0] || !that.allowedDragTarget(e.target)) {
                     return;
                 }
                 that.allowMouse = false;
