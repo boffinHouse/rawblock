@@ -24,7 +24,7 @@
         if(!added){
             added = true;
             (document.body || rb.root).appendChild(scrollbarDiv);
-            (window.requestIdleCallback || setTimeout)(read);
+            rb.rIC(read);
         }
     };
     var getWidth = function(){

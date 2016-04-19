@@ -12,7 +12,8 @@
     }
 
     var rb = window.rb;
-
+    var $ = rb.$;
+    var regQuery = ( /\?/ );
     var getData = function (oReq, obj) {
         obj.xhr = oReq;
         obj.data = oReq.response || oReq.responseXML || oReq.responseText;
@@ -55,12 +56,13 @@
             type: 'get',
             username: null,
             password: null,
+            processData: true,
         }, options);
 
         var oReq = new XMLHttpRequest();
         var promise = new Promise(function (resolve, reject) {
             var header;
-
+            var data = options.data || null;
             var value = {opts: options};
 
             oReq.addEventListener('load', function () {
@@ -83,7 +85,22 @@
                 oReq = null;
             });
 
-            oReq.open(options.type.toUpperCase(), url, true, options.username, options.password);
+            options.type = options.type.toUpperCase();
+
+            if(options.processData && data && $.param && typeof data == 'object'){
+                data = $.param(data);
+
+                if(options.type == 'GET'){
+                    url += (regQuery.test(url) ? '&' : '?') + data;
+                    data = null;
+                }
+            }
+
+            oReq.open(options.type, url, true, options.username, options.password);
+
+            if(options.type == 'POST' && typeof data == 'string' && (!options.headers || !options.headers['Content-type'])){
+                oReq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            }
 
             if(options.headers){
                 for(header in options.headers){
@@ -95,7 +112,7 @@
                 options.beforeSend(oReq);
             }
 
-            oReq.send(options.data || null);
+            oReq.send(data);
         });
 
         promise.abort = function(){

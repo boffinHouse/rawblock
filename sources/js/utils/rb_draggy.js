@@ -1,5 +1,6 @@
 (function () {
     'use strict';
+    //Todo: add passive eventlistener + touch-action: pan-x/y
     var rb = window.rb;
     var $ = rb.$;
 
@@ -127,7 +128,7 @@
             }
 
             if (this.options.preventMove && this.relevantChange != 'undecided') {
-                evt.preventDefault();
+                //evt.preventDefault();
             }
             this.movedPos.x = this.startPos.x - this.curPos.x;
             this.movedPos.y = this.startPos.y - this.curPos.y;

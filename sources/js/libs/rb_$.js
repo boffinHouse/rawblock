@@ -587,6 +587,12 @@
         };
     });
 
+    ['slice'].forEach(function(name){
+        fn[name] = function () {
+            return new Dom(this.elements[name].apply(this.elements, arguments));
+        };
+    });
+
     //['every', 'findIndex', 'includes', 'indexOf', 'lastIndexOf', 'some'].forEach(function(name){
     //	fn[name] = function(){
     //		return this.elements[name].apply(this.elements, arguments);

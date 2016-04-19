@@ -1,9 +1,13 @@
+@function rb-get-ratio($width, $height){
+    @return ($height / $width) * 100%;
+}
+
 @mixin rb-aspect-ratio($width, $height, $child: false) {
     position: relative;
     display: block;
     content: "";
     width: 100%;
-    padding-top: ($height / $width) * 100%;
+    padding-bottom: rb-get-ratio($height / $width);
 
     @if $child {
         #{$child} {
