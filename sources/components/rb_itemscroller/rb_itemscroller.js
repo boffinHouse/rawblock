@@ -48,6 +48,7 @@
                 easing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
                 duration: 600,
                 paginationItemTpl: '<span class="{name}{e}pagination{-}btn"></span>',
+                excludeCell: false,
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
@@ -230,6 +231,9 @@
                             this._switchOn();
                         }
                         break;
+                    case 'excludeCell':
+                        this.updateCells();
+                        break;
                 }
             },
             /**
@@ -281,9 +285,9 @@
                     [this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
             },
             _switchOn: function () {
-                this._mainSetup();
                 this.updateCells();
                 this._setupTouch();
+                this._mainSetup();
                 this.setSwitchedOffClass();
             },
             _generateHelper: function(){
@@ -863,7 +867,13 @@
             },
             updateCells: function () {
                 var that = this;
-                this.$cells = this.$scroller.children(':not(.js'+ rb.nameSeparator + this.name + rb.elementSeparator + 'helper)');
+                var cellSelector = ':not(.js'+ rb.nameSeparator + this.name + rb.elementSeparator + 'helper)';
+
+                if(this.options.excludeCell){
+                    cellSelector += ':not(' + this.options.excludeCell + ')';
+                }
+
+                this.$cells = this.$scroller.children(cellSelector);
                 this.calculateLayout();
                 rb.rAFQueue(function () {
                     that.$scroller.prepend(that.helperElem);
