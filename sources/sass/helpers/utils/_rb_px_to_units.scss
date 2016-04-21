@@ -3,7 +3,7 @@
 /// @group functions
 ////
 
-$base-fontsize: 100% !default;
+$rb-base-fontsize: 100% !default;
 
 /// Convert one or more pixel values to matching unit values.
 ///
@@ -12,7 +12,7 @@ $base-fontsize: 100% !default;
 /// @param {String} $unit | default: rem | Set unit rem or em.
 @function rb-convert-px-to-unit($values, $base-value: null, $unit: rem)  {
     @if $base-value == null {
-        $base-value: $base-fontsize;
+        $base-value: $rb-base-fontsize;
     }
 
     @if($values == 'auto') {
@@ -22,7 +22,6 @@ $base-fontsize: 100% !default;
     @if (unitless($values)) {
         $values: $values * 1px;
     }
-
 
     @if type-of($base-value ) == number {
         @if (unit($base-value) == '%') {

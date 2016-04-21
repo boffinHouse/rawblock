@@ -197,11 +197,14 @@ Element classes are always unique and should be declared not in context of the c
 Modifiers are flags set on **block** or **element** elements, they represent a different state or version. This is done with the modifier class, like `.is-collapsed` or `is-offset-left`. Modifier classes are only allowed as adjoining classes.
 
 ###Separation of behavior and style
-A common technique to produce re-usable JS components is to use two different selectors one for styling and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
+A common technique to produce reusable JS components is to use two different selectors:
+
+1. one for styling 
+2. and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
 
 This technique allows to generate multiple style components which use the exact same JS code.
 
-While rawblock JS supports the js-prefix technique automatically (Simply set the `jsPrefix` option to `'js-'`), rawblock advocates a different approach.
+While **Rawblock JS** automatically supports the js-prefix technique (Set the `jsPrefix` option to `'js-'`), rawblock advocates a different approach.
 
 The two-selector technique does not only separate two different concerns, it also separates the crucial functional design from the actual behavior.
 

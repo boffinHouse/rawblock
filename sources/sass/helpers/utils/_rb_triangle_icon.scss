@@ -16,6 +16,7 @@
 	content: " ";
 	position: absolute;
 	height: $height;
+    width: $width;
 	pointer-events: none;
 
     @if $direction == "right" {
