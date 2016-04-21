@@ -10,8 +10,6 @@
     var rb = window.rb;
     var $ = rb.$;
 
-    var pseudoExpando = rb.Symbol('_rbPseudoExpando');
-
     var _ChildFX = rb.Component.extend('_childfx',
         /** @lends rb.components._childfx.prototype */
         {

@@ -166,7 +166,6 @@
                 offsetName = this.posProp + 'Offset';
 
                 this.offset = 0;
-                this.nativeOffset = 0;
 
                 if (options[offsetName] !== false) {
                     this.offset -= options[offsetName];
@@ -429,7 +428,6 @@
                     this.clone = this.element.cloneNode();
                     this.$clone = $(this.clone);
 
-                    //ToDo: remove life.initClass
                     this.$clone
                         .css({visibility: 'hidden'})
                         .removeClass('js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'life')

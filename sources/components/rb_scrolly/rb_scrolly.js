@@ -250,7 +250,7 @@
 
                 if (Date.now() - this.lastCheck > this.checkTime) {
                     this.lastCheck = Date.now();
-                    setTimeout(this.calculateLayout, 99 * Math.random());
+                    rb.rIC(this.calculateLayout);
                 }
 
                 shouldEnter = this.minScroll <= pos && this.maxScroll >= pos;
