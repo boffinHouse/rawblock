@@ -255,32 +255,20 @@ However sometimes you might want to opt-in to the `js-` prefix selector techniqu
 In this case you should also use the JS prefixed class name in your styles. As explained above you only need the prefix to signalize a JS dependency, but you don't need to separate the technologies.
 
 ```html
-<!-- default itemscroller component -->
 <style type="scss">
-.rb-itemscoller {
-    //some styles
-}
-
-.itemscoller-btn-next {
-    //some styles
-}
+//main setting for all components
+//set jsPrefix to "js-".
+@include rb-export-globaljs((
+    mqs: $breakpoint-config,
+    jsPrefix: "js-",
+));
 </style>
-
-<div class="rb-itemscoller js-rb-life" data-module="itemscroller">
-    <!-- ... -->
-    <button type="button" class="itemscoller-btn-next">close</button>
-</div>
-
-<!-- new CSS component (heroscroller) re-uses untouched itemscroller JS component -->
 <style type="scss">
 .rb-heroscroller {
-
     @include rb-js-export((
-        name: js-heroscroller,
-        carousel: true,
-        centerMode: true,
+        //will be automatically prefixed with jsPrefix.
+        name: heroscroller,
     ));
-
     //some styles
 }
 
