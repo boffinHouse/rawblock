@@ -199,7 +199,7 @@ Modifiers are flags set on **block** or **element** elements, they represent a d
 ###Separation of behavior and style
 A common technique to produce re-usable JS components is to use two different selectors one for styling and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
 
-This technique allows to generate multiple style components which use the exact same JS code.
+This technique allows to generate multiple different style components based on the same JS component without CSS conflicts between those components.
 
 While rawblock supports the js-prefix technique automatically (Simply set the `jsPrefix` option to `'js-'`), rawblock advocates a different approach.
 
