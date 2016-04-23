@@ -103,7 +103,7 @@
             },
             setupChilds: function () {
                 var that = this;
-                this.childs = rb.elementFromStr(this.options.childSel, this.element);
+                this.childs = this.getElementsByString(this.options.childSel, this.element);
                 this.childAnimations = this.childs.map(function (elem) {
                     var prop;
                     var styles = rb.getStyles(elem);

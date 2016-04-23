@@ -35,6 +35,8 @@
                 once: false,
                 restSwitchedOff: true,
                 throttleDelay: 0,
+                fixedSel: 'find(.{name}{e}scrollfixed)',
+                setFixedWidth: true,
             },
             statics: {
                 regWhite: /\s/g,
@@ -122,7 +124,7 @@
 
                 this.updateChilds = this.updateChilds || $.noop;
 
-                rb.rAFs(this, 'changeState', 'setSwitchedOffClass');
+                rb.rAFs(this, 'changeState', 'setSwitchedOffClass', 'updateScrollFixedElement');
 
                 rb.rAFs(this.onprogress, 'fireWith');
 
@@ -232,28 +234,40 @@
                     return;
                 }
 
-                this.minScroll = box.top + this.scrollingElement.scrollTop;
+                this.boxTop = box.top + this.scrollingElement.scrollTop;
+                this.boxWidth = box.width;
+                this.scrollPos = this.scrollingElement.scrollTop;
+
+                this.minScroll = this.boxTop;
                 this.maxScroll = this.minScroll;
 
                 this.minScroll -= this.addOffset(this.parsedTo);
                 this.maxScroll -= this.addOffset(this.parsedFrom);
 
+                this.minFixed = this.minScroll - 666;
+                this.maxFixed = this.maxScroll + 666;
+
+                this.scrollFixedElement = this.getElementsByString(this.options.fixedSel)[0];
+
                 this.checkPosition();
             },
             checkPosition: function () {
-                var that, wasProgress, shouldEnter;
+                var that, wasProgress, shouldEnter, shouldEnterScrollFix;
                 if (this.options.switchedOff) {
                     return;
                 }
                 var progress;
                 var pos = this.scrollingElement.scrollTop;
 
+                this.scrollPos = pos;
+
                 if (Date.now() - this.lastCheck > this.checkTime) {
                     this.lastCheck = Date.now();
                     rb.rIC(this.calculateLayout);
                 }
 
-                shouldEnter = this.minScroll <= pos && this.maxScroll >= pos;
+                shouldEnterScrollFix = this.minFixed <= pos && this.maxFixed >= pos;
+                shouldEnter = shouldEnterScrollFix && this.minScroll <= pos && this.maxScroll >= pos;
 
                 if (shouldEnter || (this.progress !== 0 && this.progress !== 1)) {
                     progress = Math.max(Math.min((pos - this.minScroll) / (this.maxScroll - this.minScroll), 1), 0);
@@ -276,15 +290,50 @@
                     }
                 }
 
+                if(this.scrollFixedElement && (shouldEnterScrollFix || shouldEnterScrollFix != this.enteredFixed)){
+                    this.updateScrollFixedElement(shouldEnterScrollFix);
+                }
+
                 if (this.entered != shouldEnter) {
                     this.changeState(shouldEnter);
                 }
+            },
+            updateScrollFixedElement: function(isEntered){
+                var elemStyle = this.scrollFixedElement.style;
+
+                if(this.enteredFixed != isEntered){
+                    this.scrollFixedElement.classList.toggle(rb.statePrefix + 'fixed-entered', isEntered);
+                    if(isEntered){
+                        elemStyle.position = 'fixed';
+                    }
+                }
+
+                if(isEntered){
+                    elemStyle.top = this.boxTop - this.scrollPos + 'px';
+
+                    if(this.options.setFixedWidth && this.boxWidth != this.setBoxWidth){
+                        this.setBoxWidth = this.boxWidth;
+                        elemStyle.width = this.boxWidth + 'px';
+                    }
+                } else {
+                    elemStyle.position = '';
+                    elemStyle.top = '';
+
+                    if(this.options.setFixedWidth){
+                        this.setBoxWidth = '';
+                        elemStyle.width = '';
+                    }
+                }
+
+                this.enteredFixed = isEntered;
             },
             changeState: function (shouldEnter) {
                 var once = this.options.once;
                 if (this.entered != shouldEnter) {
                     this.entered = shouldEnter;
                     this.element.classList[shouldEnter ? 'add' : 'remove'](rb.statePrefix + 'in' + rb.nameSeparator + 'scrollrange');
+
+
                     this._trigger();
 
                     if (once == 'entered' || (once && (!this.childs || !this.childs.length))) {
