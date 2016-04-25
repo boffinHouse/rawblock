@@ -197,7 +197,10 @@ Element classes are always unique and should be declared not in context of the c
 Modifiers are flags set on **block** or **element** elements, they represent a different state or version. This is done with the modifier class, like `.is-collapsed` or `is-offset-left`. Modifier classes are only allowed as adjoining classes.
 
 ###Separation of behavior and style
-A common technique to produce re-usable JS components is to use two different selectors one for styling and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
+A common technique to produce reusable JS components is to use two different selectors:
+
+1. one for styling 
+2. and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
 
 This technique allows to generate multiple different style components based on the same JS component without CSS conflicts between those components.
 
