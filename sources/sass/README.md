@@ -202,9 +202,9 @@ A common technique to produce reusable JS components is to use two different sel
 1. one for styling 
 2. and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
 
-This technique allows to generate multiple style components which use the exact same JS code.
+This technique allows to generate multiple different style components based on the same JS component without CSS conflicts between those components.
 
-While **Rawblock JS** automatically supports the js-prefix technique (Set the `jsPrefix` option to `'js-'`), rawblock advocates a different approach.
+While rawblock supports the js-prefix technique automatically (Simply set the `jsPrefix` option to `'js-'`), rawblock advocates a different approach.
 
 The two-selector technique does not only separate two different concerns, it also separates the crucial functional design from the actual behavior.
 
@@ -253,7 +253,7 @@ This can be expressed with the following code:
 </div>
 ```
 
-However sometimes you might want to opt-in to the `js-` prefix selector technique, because this technique also signalizes other developers, that this class name has also a dependency to JS and any change to it also need a JS change.
+However sometimes you might want to opt-in to the `js-` prefix selector technique, because this technique also signalizes other developers, that this class name has a dependency to JS and any change to it also need a JS change.
 
 In this case you should also use the JS prefixed class name in your styles. As explained above you only need the prefix to signalize a JS dependency, but you don't need to separate the technologies.
 
