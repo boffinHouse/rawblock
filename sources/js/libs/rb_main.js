@@ -633,16 +633,13 @@ if (!window.rb) {
      */
     $.fn.rbComponent = function (name, initialOpts) {
         var ret;
-        this.each(function () {
-            if (ret === undefined) {
-                ret = rb.getComponent(this, name, initialOpts);
-            }
-        });
+        var elem = this.get(0);
 
-        return ret === undefined ?
-            this :
-            ret
-            ;
+        if(elem){
+            ret = rb.getComponent(elem, name, initialOpts);
+        }
+
+        return ret;
     };
     /* End: rbComponent */
 

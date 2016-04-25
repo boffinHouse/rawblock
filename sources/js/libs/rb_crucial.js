@@ -56,10 +56,10 @@ if (!window.rb) {
      * Parses a string using JSON.parse without throwing an error.
      * @memberof rb
      * @param str
-     * @returns {Object}
+     * @returns {*}
      */
     rb.jsonParse = function (str) {
-        var ret = null;
+        var ret;
         try {
             ret = JSON.parse(str);
         } catch (e) { }
