@@ -68,6 +68,7 @@ if (!window.rb) {
     rb.jsPrefix = '';
     rb.nameSeparator = '-';
     rb.elementSeparator = '-';
+    rb.attrSel = '';
 
     /* End: global vars end */
 
@@ -1592,7 +1593,7 @@ if (!window.rb) {
     };
     var extendOptions = function(obj){
         if(obj){
-            ['statePrefix', 'utilPrefix', 'jsPrefix', 'nameSeparator', 'elementSeparator'].forEach(function(prefixName){
+            ['statePrefix', 'utilPrefix', 'jsPrefix', 'nameSeparator', 'elementSeparator', 'attrSel'].forEach(function(prefixName){
                 if(prefixName in obj && typeof obj[prefixName] == 'string') {
                     rb[prefixName] = obj[prefixName];
                 }
@@ -2084,6 +2085,7 @@ if (!window.rb) {
     var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
     var regComma = /\s*,\s*(?=[^\)]*(?:\(|$))/g;
     var regColon = /\s*:\s*(?=[^\)]*(?:\(|$))/g;
+    var regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}))/g;
     var regName = /\{name}/g;
     var regJsName = /\{jsName}/g;
     var regHtmlName = /\{htmlName}/g;
@@ -2124,6 +2126,14 @@ if (!window.rb) {
             })(eventsObjs, evts[evt]);
         }
     };
+    var replaceHTMLSel = rb.memoize((function(){
+        var replacer = function(full, f1, f2){
+            return '[' + rb.attrSel + '="{htmlName}' + f2 +'"]';
+        };
+        return function(str){
+            return str.replace(regHTMLSel, replacer);
+        };
+    })(), true);
 
     rb.parseEventString = rb.memoize(function(evtStr){
 
@@ -2542,7 +2552,13 @@ if (!window.rb) {
              * this.interpolateName('.{name}__button'); //return '.dialog__button'
              */
             interpolateName: function (str, isJs) {
-                return str.replace(regName, isJs ? this.jsName : this.name)
+
+                if(!isJs && rb.attrSel){
+                    str = replaceHTMLSel(str);
+                }
+
+                return str
+                    .replace(regName, isJs ? this.jsName : this.name)
                     .replace(regJsName, this.jsName)
                     .replace(regHtmlName, this.name)
                     .replace(regnameSeparator, rb.nameSeparator)

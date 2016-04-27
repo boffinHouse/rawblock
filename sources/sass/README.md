@@ -199,7 +199,7 @@ Modifiers are flags set on **block** or **element** elements, they represent a d
 ###Separation of behavior and style
 A common technique to produce reusable JS components is to use two different selectors:
 
-1. one for styling 
+1. one for styling
 2. and the other for behavior (often either prefixed with `js-*` or by using slower attribute selectors).
 
 This technique allows to generate multiple different style components based on the same JS component without CSS conflicts between those components.
@@ -208,7 +208,7 @@ While rawblock supports the js-prefix technique automatically (Simply set the `j
 
 The two-selector technique does not only separate two different concerns, it also separates the crucial functional design from the actual behavior.
 
-Rawblock instead allows CSS developer to configure the component name by HTML or CSS. This way CSS extends the naming of the hole component and avoids clashes with JS.
+Rawblock instead allows CSS developer to configure the component name by HTML or CSS. This way CSS extends the naming of the hole component and avoids clashes with other components depending on the same JS component.
 
 This can be expressed with the following code:
 
