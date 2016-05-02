@@ -210,7 +210,6 @@ if (!window.rb) {
      * Alias to `getScrollingElement` can be used to override scrollingElement for project-specific needs.
      * @type function
      * @memberof rb
-     * @type {Element}
      */
     rb.getPageScrollingElement = rb.getScrollingElement;
     /* End: getScrollingElement */
@@ -260,7 +259,7 @@ if (!window.rb) {
             fn.apply(that, args);
         };
         var afterAF = function () {
-            setTimeout(_run);
+            rb.rIC(_run);
         };
         var getAF = function () {
             rb.rAFQueue(afterAF);
@@ -356,7 +355,7 @@ if (!window.rb) {
 
             this.fire();
         }
-    }, {that: rb.resize});
+    }, {that: rb.resize, read: true});
 
     /* End: resize */
 
@@ -2085,7 +2084,7 @@ if (!window.rb) {
     var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
     var regComma = /\s*,\s*(?=[^\)]*(?:\(|$))/g;
     var regColon = /\s*:\s*(?=[^\)]*(?:\(|$))/g;
-    var regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}))/g;
+    var regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}|,|'|"|:))/g;
     var regName = /\{name}/g;
     var regJsName = /\{jsName}/g;
     var regHtmlName = /\{htmlName}/g;
