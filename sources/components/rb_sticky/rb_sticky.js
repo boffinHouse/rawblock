@@ -50,7 +50,7 @@
              * @param element
              *
              * @example
-             * <header class=".rb-header js-rb-life" data-module="sticky">
+             * <header class="rb-header js-rb-life" data-module="sticky">
              *     <div class="header-fx">
              *          <img class="logo" />
              *          <nav><!-- ... --></nav>
