@@ -37,6 +37,7 @@
                 throttleDelay: 0,
                 fixedSel: 'find(.{name}{e}scrollfixed)',
                 setFixedWidth: true,
+                preparePadding: 0,
             },
             statics: {
                 regWhite: /\s/g,
@@ -124,7 +125,7 @@
 
                 this.updateChilds = this.updateChilds || $.noop;
 
-                rb.rAFs(this, 'changeState', 'setSwitchedOffClass', 'updateScrollFixedElement');
+                rb.rAFs(this, {throttle: true}, 'changeState', 'setSwitchedOffClass', 'updateScrollFixedElement', 'changePrepareState');
 
                 rb.rAFs(this.onprogress, 'fireWith');
 
@@ -247,12 +248,15 @@
                 this.minFixed = this.minScroll - 666;
                 this.maxFixed = this.maxScroll + 666;
 
+                this.minPrepareScroll = this.minScroll - this.options.preparePadding;
+                this.maxPrepareScroll = this.maxScroll + this.options.preparePadding;
+
                 this.scrollFixedElement = this.getElementsByString(this.options.fixedSel)[0];
 
                 this.checkPosition();
             },
             checkPosition: function () {
-                var that, wasProgress, shouldEnter, shouldEnterScrollFix;
+                var that, wasProgress, shouldEnter, shouldEnterScrollFix, prepareEntered;
                 if (this.options.switchedOff) {
                     return;
                 }
@@ -267,7 +271,8 @@
                 }
 
                 shouldEnterScrollFix = this.minFixed <= pos && this.maxFixed >= pos;
-                shouldEnter = shouldEnterScrollFix && this.minScroll <= pos && this.maxScroll >= pos;
+                prepareEntered = this.minPrepareScroll <= pos && this.maxPrepareScroll >= pos;
+                shouldEnter = prepareEntered && shouldEnterScrollFix && this.minScroll <= pos && this.maxScroll >= pos;
 
                 if (shouldEnter || (this.progress !== 0 && this.progress !== 1)) {
                     progress = Math.max(Math.min((pos - this.minScroll) / (this.maxScroll - this.minScroll), 1), 0);
@@ -292,6 +297,11 @@
 
                 if(this.scrollFixedElement && (shouldEnterScrollFix || shouldEnterScrollFix != this.enteredFixed)){
                     this.updateScrollFixedElement(shouldEnterScrollFix);
+                }
+
+                if(this.prepareEntered != prepareEntered){
+                    this.prepareEntered = prepareEntered;
+                    this.changePrepareState();
                 }
 
                 if (this.entered != shouldEnter) {
@@ -326,6 +336,9 @@
                 }
 
                 this.enteredFixed = isEntered;
+            },
+            changePrepareState: function(){
+                this.element.classList.toggle(rb.statePrefix + 'scrollrange' + rb.nameSeparator + 'prepared', this.prepareEntered);
             },
             changeState: function (shouldEnter) {
                 var once = this.options.once;

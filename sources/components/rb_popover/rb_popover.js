@@ -121,7 +121,7 @@
                 }
 
                 if(!e || (this.options.updateOnResize && e.target.contains &&
-                    (anchor = this.getAnchor(this.lastOpeningOptions)) && e.target.contains(anchor) != e.target.contains(this.element))){
+                    (anchor = this.getAnchor(this.lastOpeningOptions)))){
                     this._reflow();
                 }
             },

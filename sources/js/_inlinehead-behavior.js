@@ -108,7 +108,7 @@
     //            fonts.forEach(function(font){
     //                font.load();
     //            });
-    //        }, 200);
+    //        }, 50);
     //    })([]);
     //}
 })(window);
