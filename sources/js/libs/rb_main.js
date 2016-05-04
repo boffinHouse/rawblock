@@ -1475,7 +1475,7 @@ if (!window.rb) {
                 elem = elements[i];
                 component = elem && elem[componentExpando];
 
-                if (component && component.parseOptions && rb.hasPseudoChanged(elem)) {
+                if (component && component.parseOptions && component._pseudoStr != rb.getPseudo(elem)) {
                     component.parseOptions();
                 }
             }
@@ -2734,7 +2734,8 @@ if (!window.rb) {
              * @returns {{}}
              */
             parseCSSOptions: function() {
-                return rb.parsePseudo(this.element) || false;
+                this._pseudoStr = rb.getPseudo(this.element);
+                return rb.parsePseudo(this._pseudoStr) || false;
             },
 
             destroy: function () {

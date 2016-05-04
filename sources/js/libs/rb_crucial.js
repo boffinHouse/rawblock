@@ -4,21 +4,13 @@ if (!window.rb) {
 
 (function () {
     'use strict';
-    var pseudoExpando;
+    var pseudoExpando, getPseudoToParse;
 
     var rb = window.rb;
 
     var regStartQuote = /^"?'?"?/;
     var regEndQuote = /"?'?"?$/;
     var regEscapedQuote = /\\"/g;
-    var getPseudoToParse = function(element, pseudo){
-        var value = rb.getStyles(element, pseudo || '::before').content;
-        if(!value && element){
-            value = rb.getStyles(element).content;
-        }
-
-        return value;
-    };
 
     var removeLeadingQuotes = function (str) {
         return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
@@ -75,12 +67,13 @@ if (!window.rb) {
      */
     rb.parsePseudo = function (element, pseudo) {
         var ret;
-        var value = typeof element == 'string' ?
+        var isString = typeof element == 'string';
+        var value = isString ?
                 element :
                 getPseudoToParse(element, pseudo)
             ;
 
-        if(element){
+        if(element && !isString){
             element[pseudoExpando] = value;
         }
 
@@ -89,6 +82,21 @@ if (!window.rb) {
     };
 
 	/**
+     *
+     * @param element
+     * @param pseudo
+     * @returns {*}
+     */
+    rb.getPseudo = function(element, pseudo){
+        var value = rb.getStyles(element, pseudo || '::before').content;
+        if(!value && element){
+            value = rb.getStyles(element).content;
+        }
+
+        return value;
+    };
+
+    /**
      * @memberof rb
      * @param element {Element}
      * @param [pseudo='::before'] {String}
@@ -196,6 +204,8 @@ if (!window.rb) {
             return cssConfig;
         },
     });
+
+    getPseudoToParse = rb.getPseudo;
 
     pseudoExpando = rb.Symbol('_rbPseudoExpando');
 })();
