@@ -33,6 +33,7 @@
              * @property {String}  easing Easing value for the slide animation.
              * @property {Number}  duration=600 Average duration for the slide animation.
              * @property {Boolean} mouseDrag=true Whether scroller should be draggable via mouse.
+             * @property {String|false} dragExclude=false Whether drag/swipe should be excluded on certain element selectors.
              * @property {Boolean} mandatorySnap=false Whether each page generates a mandatory snap point.
              * @property {String}  paginationItemTpl The markup for the pagination buttons.
              * @property {Boolean} switchedOff=false Whether the scroller should be turned off.
@@ -45,6 +46,7 @@
                 selectedIndex: 0,
                 scrollStep: 'auto',
                 mouseDrag: true,
+                dragExclude: false,
                 easing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
                 duration: 600,
                 paginationItemTpl: '<span class="{name}{e}pagination{-}btn"></span>',
@@ -768,6 +770,7 @@
                         }
                     },
                     useMouse: this.options.mouseDrag,
+                    exclude: this.options.dragExclude,
                 });
             },
             _setRelPos: function (relPos) {

@@ -1849,27 +1849,6 @@ if (!window.rb) {
         return instance;
     };
 
-    /**
-     * Callback method to delay creation of components. Mainly for optimization tasks.
-     * @memberof rb
-     *
-     * @param timeElapsed
-     * @param componentCounter
-     * @param moduleId
-     * @param element
-     *
-     * @returns {Boolean|undefined}
-     *
-     * @example
-     *
-     * rb.life.deferConstruct = function(timeElapsed, componentCounter, moduleId, element){
-	 *      return (timeElapsed > 9 && componentCounter > 3);
-	 * };
-     */
-    life.deferConstruct = function (timeElapsed, componentCounter, moduleId, element) {
-
-    };
-
     life.searchModules = (function () {
         var removeInitClass = rb.rAF(function () {
             while (removeElements.length) {
@@ -1884,7 +1863,7 @@ if (!window.rb) {
 
         var findElements = rb.throttle(function () {
 
-            var element, modulePath, moduleId, i, hook, start, deferred, len;
+            var element, modulePath, moduleId, i, hook, len;
 
             if(mainInit){
                 mainInit();
@@ -1895,8 +1874,6 @@ if (!window.rb) {
             if (!len) {
                 return;
             }
-
-            start = Date.now();
 
             for (i = 0; i < len; i++) {
                 element = elements[i];
@@ -1911,13 +1888,8 @@ if (!window.rb) {
                 moduleId = moduleId[moduleId.length - 1];
 
                 if (rb.components[moduleId]) {
-
-                    if (life.deferConstruct(Date.now() - start, i, moduleId, element)) {
-                        deferred = true;
-                    } else {
-                        life.create(element, rb.components[moduleId]);
-                        removeElements.push(element);
-                    }
+                    life.create(element, rb.components[moduleId]);
+                    removeElements.push(element);
                 }
                 else if (life._failed[moduleId]) {
                     failed(element, moduleId);
@@ -1940,9 +1912,6 @@ if (!window.rb) {
 
             removeInitClass();
             lifeBatch.run();
-            if (deferred) {
-                setTimeout(findElements, 99);
-            }
         }, {delay: 50});
 
         return findElements;
@@ -2271,6 +2240,7 @@ if (!window.rb) {
 
                 this.parseOptions(this.options);
 
+                this.origName = origName;
                 this.name = this.options.name || rb.jsPrefix + this.name;
                 this.jsName = this.options.jsName || origName;
 
@@ -2716,7 +2686,7 @@ if (!window.rb) {
                 element = (element || this.element);
                 var i, name;
                 var attributes = element.attributes;
-                var options = rb.jsonParse(element.getAttribute('data-options')) || {};
+                var options = rb.jsonParse(element.getAttribute('data-' + this.origName + '-options')) || {};
                 var len = attributes.length;
 
                 for (i = 0; i < len; i++) {

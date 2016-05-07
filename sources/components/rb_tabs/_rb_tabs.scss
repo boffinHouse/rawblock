@@ -59,12 +59,18 @@ $tabs-js-cfg: (
     border-top: 3px solid transparent;
     background: #e7e7e7;
 
-    &:hover:not(:disabled),
-    &:focus:not(:disabled) {
-        background: #dfdfdf;
+    &:not(:disabled){
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+            background: #dfdfdf;
+        }
     }
 
-    &:disabled {
+
+
+    &[aria-expanded="true"] {
         z-index: 10;
         border-color: #dc0f6e;
         background: #fff;
