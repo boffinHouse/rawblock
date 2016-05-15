@@ -13,32 +13,61 @@
 
     var rb = window.rb;
 
-    rb.createPubSub = function(obj){
+	/**
+     * extends an object with subscribe, unsubscribe and optionally with a publish method.
+     * @param obj {{}}
+     * @param [options] {{}}
+     *  @param options.privatePublish=false {boolean}
+     *  @param options.topicSeparator=':/' {boolean|string}
+     * @returns {function} the publish function.
+     */
+    rb.createPubSub = function(obj, options){
         var stores = {};
         var stored = {};
 
+        var publish = function(topic, data, memoize){
+            if(stores[topic]){
+                stores[topic].fireWith(data, [data]);
+            }
+
+            if(memoize){
+                stored[topic] = data;
+            } else if(topic in stored){
+                rb.log('memoize once, memoize always');
+            }
+        };
+
+        var pub = function(topic, data, memoize){
+            var topics, tmp;
+            if(arguments.length == 3){
+                if(typeof memoize != 'boolean'){
+                    tmp = data;
+                    data = memoize;
+                    memoize = tmp;
+                }
+            }
+
+            if(options.topicSeparator){
+                topics = topic.split(options.topicSeparator);
+
+                if(topics.length > 1){
+                    topic = topics.reduce(function(mainTpoic, subTopic){
+                        publish(mainTpoic, data, memoize);
+                        return mainTpoic + options.topicSeparator + subTopic;
+                    });
+                }
+            }
+
+            publish(topic, data, memoize);
+        };
+
+        options = Object.assign({
+            privatePublish: false,
+            topicSeparator: ':/',
+        }, options || {});
+
         Object.assign(obj, {
-            pub: function(topic, data, memoize){
-                var tmp;
-                if(arguments.length == 3){
-                    if(typeof memoize != 'boolean'){
-                        tmp = data;
-                        data = memoize;
-                        memoize = tmp;
-                    }
-                }
-
-                if(stores[topic]){
-                    stores[topic].fireWith(data, [data]);
-                }
-
-                if(memoize){
-                    stored[topic] = data;
-                } else if(topic in stored){
-                    rb.log('memoize once, memoize always');
-                }
-            },
-            sub: function(topic, handler, getStored){
+            subscribe: function(topic, handler, getStored){
                 var tmp;
                 if(typeof getStored == 'function'){
                     tmp = handler;
@@ -55,12 +84,18 @@
                     handler.call(stored[topic], stored[topic]);
                 }
             },
-            unsub: function(topic, handler){
+            unsubscribe: function(topic, handler){
                 if(stores[topic]){
                     stores[topic].remove(handler);
                 }
             },
         });
+
+        if(!options.privatePublish){
+            obj.publish = pub;
+        }
+
+        return pub;
     };
 
     rb.createPubSub(rb);

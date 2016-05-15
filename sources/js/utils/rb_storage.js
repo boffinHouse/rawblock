@@ -17,21 +17,42 @@
 
     ['session', 'local'].forEach(function(type){
         var storage = window[type + 'Storage'];
+        var testStr = rb.getID();
+
         rb.storage[type] = {
             set: function(name, value){
                 try {
                     storage.setItem(name, JSON.stringify(value));
-                } catch(e){}
+                } catch(e){
+                    return false;
+                }
             },
             get: function(name){
                 var value;
                 try {
                     value = JSON.parse(storage.getItem(name));
-                } catch(e){}
+                } catch(e){
+                    return false;
+                }
 
                 return value;
             },
+            remove: function(name){
+                try {
+                    storage.removeItem(name);
+                } catch(e){
+                    return false;
+                }
+            }
         };
+
+        Object.defineProperty(rb.storage[type], 'supported', {
+            value: rb.storage[type].set(testStr, testStr) !== false && rb.storage[type].get(testStr) == testStr,
+            configurable: true,
+        });
+
+        rb.storage[type].remove(testStr);
+
     });
 
     return rb.storage;

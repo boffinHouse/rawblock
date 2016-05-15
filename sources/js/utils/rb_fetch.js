@@ -19,6 +19,7 @@
         obj.data = oReq.response || oReq.responseXML || oReq.responseText;
         obj.text = oReq.responseText;
         obj.xml = oReq.responseXML;
+        obj.status = oReq.status;
 
         if (typeof obj.data != 'object' &&
             (oReq.getResponseHeader('Content-Type') || '').split(';')[0].endsWith('json')) {
@@ -71,6 +72,8 @@
 
                 getData(oReq, value);
 
+                promise.catch(rb.log);
+
                 if (isSuccess) {
                     resolve(value, oReq);
                 } else {
@@ -81,6 +84,7 @@
 
             oReq.addEventListener('error', function () {
                 getData(oReq, value);
+                promise.catch(rb.log);
                 reject(value, oReq);
                 oReq = null;
             });

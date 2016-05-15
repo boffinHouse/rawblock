@@ -212,6 +212,18 @@ if (!window.rb) {
      * @memberof rb
      */
     rb.getPageScrollingElement = rb.getScrollingElement;
+
+    rb.getScrollingEventObject = function(element){
+        var scrollObj;
+        if(element.matches && element.ownerDocument && element.matches('html, body')){
+            scrollObj = element.ownerDocument.defaultView;
+        } else if('addEventListener' in element){
+            scrollObj = element;
+        } else {
+            scrollObj = window;
+        }
+        return scrollObj;
+    };
     /* End: getScrollingElement */
 
     /* Begin: contains */
@@ -1224,7 +1236,7 @@ if (!window.rb) {
 
         document.addEventListener('keydown', function (e) {
             var elem = e.target;
-            if ((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains(clickClass) && elem.getAttribute('data-module')) {
+            if ((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains(clickClass)) {
                 applyBehavior(elem, e);
             }
         }, true);
