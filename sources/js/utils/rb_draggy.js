@@ -38,6 +38,8 @@
         useTouch: true,
         horizontal: true,
         vertical: true,
+        exclude: false,
+        stopPropagation: true,
     };
 
     Object.assign(Draggy.prototype, {
@@ -92,6 +94,7 @@
             this.velTime = Date.now();
         },
         start: function (pos, evt) {
+            var options = this.options;
 
             this.startPos = {
                 x: pos.clientX,
@@ -107,13 +110,19 @@
 
             this.relevantChange = false;
 
+            if(options.stopPropagation){
+                evt.stopImmediatePropagation();
+            }
+
             clearInterval(this._velocityTimer);
             this._velocityTimer = setInterval(this.velocitySnapShot, this._velDelay);
             this.velocitySnapShot();
 
-            this.options.start(this);
+            options.start(this);
         },
         move: function (pos, evt) {
+            var options = this.options;
+
             this.lastPos = this.curPos;
             this.curPos = {
                 x: pos.clientX,
@@ -127,18 +136,23 @@
                 return;
             }
 
-            if (this.options.preventMove && this.relevantChange != 'undecided') {
-                //evt.preventDefault();
+            if (options.preventMove && this.relevantChange != 'undecided') {
+                evt.preventDefault();
             }
+            if(options.stopPropagation){
+                evt.stopImmediatePropagation();
+            }
+
             this.movedPos.x = this.startPos.x - this.curPos.x;
             this.movedPos.y = this.startPos.y - this.curPos.y;
             this.relPos.x = this.lastPos.x - this.curPos.x;
             this.relPos.y = this.lastPos.y - this.curPos.y;
 
-            this.options.move(this);
+            options.move(this);
         },
         end: function (pos, evt) {
-            var preventClick = this.options.preventClick;
+            var options = this.options;
+            var preventClick = options.preventClick;
             clearInterval(this._velocityTimer);
             this.velocitySnapShot();
 
@@ -149,10 +163,16 @@
             this._destroyMouse();
             this.movedPos.x = this.startPos.x - this.curPos.x;
             this.movedPos.y = this.startPos.y - this.curPos.y;
-            this.options.end(this);
 
-            if (preventClick && (Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)) {
-                this.preventClick(evt);
+            options.end(this);
+
+            if((Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
+                if(options.stopPropagation){
+                    evt.stopImmediatePropagation();
+                }
+                if (preventClick) {
+                    this.preventClick(evt);
+                }
             }
             this.reset();
         },
@@ -178,7 +198,7 @@
             this.element.addEventListener('click', this._onclick, true);
         },
         allowedDragTarget: function(target){
-            return btnsMap[target.type] || !regInputs.test(target.nodeName || '');
+            return (btnsMap[target.type] || !regInputs.test(target.nodeName || '') && (!this.options.exclude || !target.closest(this.options.exclude)));
         },
         setupMouse: function () {
             var timer;
