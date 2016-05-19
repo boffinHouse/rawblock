@@ -407,6 +407,7 @@
                 var prop, curDiff;
                 var smallestDif = Number.MAX_VALUE;
                 var index = 0;
+                var nowIndex = this.selectedIndex;
                 var pos = {
                     prev: this.getPrev() + this.baseIndex,
                     next: this.getNext() + this.baseIndex,
@@ -418,7 +419,7 @@
 
                 for (prop in pos) {
                     curDiff = Math.abs(this._pos - this._getPosition(pos[prop]));
-                    if (curDiff < smallestDif) {
+                    if (curDiff < smallestDif || (nowIndex == pos[prop] && curDiff - 0.9 <= smallestDif)) {
                         smallestDif = curDiff;
                         index = pos[prop];
                     }
