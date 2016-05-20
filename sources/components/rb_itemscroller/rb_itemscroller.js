@@ -30,7 +30,8 @@
              * @property {Boolean}  carousel=false Whether scroller should be an infinite carousel.
              * @property {Number} selectedIndex=0 Initially selected index.
              * @property {Number|String} scrollStep='auto' How many cells to scroll. Either number of cells or 'view' (i.e. viewport component). 'auto' means 1 for centerMode and 'view' otherwise.
-             * @property {String}  easing Easing value for the slide animation.
+             * @property {String}  easing='ease-in-out' Easing value for the slide animation.
+             * @property {String}  dragEasing='0.1, 0.25, 0.1, 1.03' Easing value for the slide animation after drag.
              * @property {Number}  duration=600 Average duration for the slide animation.
              * @property {Boolean} mouseDrag=true Whether scroller should be draggable via mouse.
              * @property {String|false} dragExclude=false Whether drag/swipe should be excluded on certain element selectors.
@@ -47,7 +48,8 @@
                 scrollStep: 'auto',
                 mouseDrag: true,
                 dragExclude: false,
-                easing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
+                easing: 'ease-in-out',//0.045, 0.235, 0.025, 1.025
+                dragEasing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
                 duration: 600,
                 paginationItemTpl: '<span class="{name}{e}pagination{-}btn"></span>',
                 excludeCell: false,
@@ -150,6 +152,7 @@
                 this.onslide = $.Callbacks();
 
                 this.setOption('easing', this.options.easing);
+                this.setOption('dragEasing', this.options.dragEasing);
                 this.setOption('duration', this.options.duration);
 
                 this.calculateLayout = this.calculateLayout.bind(this);
@@ -219,7 +222,11 @@
                         }
                         break;
                     case 'easing':
-                        this.easing = rb.addEasing(value);
+                        this._easing = rb.addEasing(value);
+                        this.easing = this._easing;
+                        break;
+                    case 'dragEasing':
+                        this._dragEasing = rb.addEasing(value);
                         break;
                     case 'duration':
                         this.duration = value;
@@ -386,6 +393,8 @@
                 var fullVel = velocity + Math.abs(dir);
 
                 length = Math.abs(length);
+
+                this.easing = this._dragEasing;
 
                 if (dir && (fullVel > 33 || (fullVel > 9 && length > 99) || (fullVel > 3 && length > 200))) {
 
@@ -564,6 +573,8 @@
                 var activeDone = rb.statePrefix + 'active' + rb.nameSeparator + 'done';
                 this.isAnimated = false;
                 this.$cells.removeClass(activeDone);
+
+                this.easing = this._easing;
 
                 if (curPage) {
                     ( curPage.$cellElems || (curPage.$cellElems = $(curPage.cellElems)) )
