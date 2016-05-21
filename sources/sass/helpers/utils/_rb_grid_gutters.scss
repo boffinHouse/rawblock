@@ -7,6 +7,8 @@
 @mixin rb-grid-gutters($breakpoint: "all", $element: "column", $axis: false, $size: 1) {
     $breakpoint-data: map-get($breakpoint-config, $breakpoint);
     $gutters: map-get($breakpoint-data, gutter);
+	$gutter-horizontal: null;
+	$gutter-vertical: null;
 
     @if type-of($gutters) == "map" {
         @if map-has-key($gutters, horizontal) {

@@ -40,10 +40,10 @@
         $breakpoint-media: map-get( $breakpoint-data, media);
 
         @if($media-definition == "") {
-            $media-definition: #{$breakpoint-media};
+            $media-definition: $breakpoint-media;
         }
         @else {
-            $media-definition: $media-definition + ", " + #{$breakpoint-media};
+            $media-definition: $media-definition + ", " + $breakpoint-media;
         }
     }
     @else {

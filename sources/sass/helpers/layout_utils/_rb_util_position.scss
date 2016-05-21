@@ -4,6 +4,7 @@
 @mixin rb-util-position($breakpoint-name) {
     $i: 5;
     $steps: 5;
+	$type: null;
 
     @if $breakpoint-name == 'all' {
         $type: '';
