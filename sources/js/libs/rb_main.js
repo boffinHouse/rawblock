@@ -132,8 +132,8 @@ if (!window.rb) {
             }
             this
                 .stop()
-                .css({overflow: 'hidden', display: 'block', visibility: 'inherit'})
                 .animate({height: 0}, opts)
+                .css({overflow: 'hidden', display: 'block', visibility: 'inherit'})
             ;
         }
         return this;
@@ -158,7 +158,7 @@ if (!window.rb) {
             opts = Object.assign({}, options, {
                 always: function () {
                     this.style.overflow = '';
-                    this.style.height = '';
+                    this.style.height = 'auto';
 
                     if (options.always) {
                         return options.always.apply(this, arguments);
@@ -520,15 +520,16 @@ if (!window.rb) {
          * @alias rb#rAFQueue
          * @param fn {Function} the function that should be invoked
          * @param inProgress {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
+         * @param hiddenRaf {boolean} Whether the rAF should also be used if document is hidden.
          */
-        return function (fn, inProgress) {
+        return function (fn, inProgress, hiddenRaf) {
 
             if (inProgress && isInProgress) {
                 fn();
             } else {
                 curFns.push(fn);
                 if (curFns.length == 1) {
-                    requestAnimationFrame(run);
+                    ((hiddenRaf || !document.hidden) ? requestAnimationFrame : setTimeout)(run);
                 }
             }
         };
@@ -1036,7 +1037,7 @@ if (!window.rb) {
         };
 
         return function(givenElement, delay){
-            if (givenElement !== document.activeElement && element !== givenElement) {
+            if (givenElement && givenElement !== document.activeElement && element !== givenElement) {
                 cleanup();
 
                 element = givenElement;

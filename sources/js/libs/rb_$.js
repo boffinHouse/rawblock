@@ -112,7 +112,7 @@
 
             if (pos < 1) {
                 if (!isStopped) {
-                    rAF(step);
+                    rAF(step, false, true);
                 } else {
                     alwaysEnd();
                 }
@@ -138,7 +138,7 @@
         tweenObj.opts = options;
         tweenObj.props = endProps;
 
-        rAF(step);
+        rAF(step, false, true);
     };
 
     tween.createPropValues = function (element, elementStyle, props, endProps, options) {
