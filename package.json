@@ -89,7 +89,7 @@
     "loader-utils": "~0.2.12",
     "lodash": "~4.5.0",
     "node-sass": "~3.4.2",
-    "normalize.css": "~4.0.0",
+    "normalize.css": "~-4.0.0",
     "npm": "~3.7.3",
     "phantomjs": "~1.9.19",
     "postcss-import": "~8.0.2",

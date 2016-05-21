@@ -25,7 +25,7 @@ $rb-base-fontsize: 100% !default;
 
     @if type-of($base-value ) == number {
         @if (unit($base-value) == '%') {
-            $base-value: strip-unit($base-value);
+            $base-value: rb-strip-unit($base-value);
             $base-value: (16 / 100) * $base-value * 1px;
         }
         @elseif (unitless($base-value)) {

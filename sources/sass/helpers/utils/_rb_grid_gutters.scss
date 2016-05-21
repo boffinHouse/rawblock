@@ -16,14 +16,6 @@
             $gutter-vertical: map-get($gutters, vertical);
         }
 
-        // Calculate gutter value
-        //
-        // @param {Number} $gutter - The gutter (horizontal or vertical) used for specific breakpoint.
-        // @param {Number} $size (default: 1) - The value multiple the gutter with.
-        @function rb-get-gutter-value($gutter, $size) {
-            @return $gutter * $size;
-        }
-
         @if $element == "column" {
             @if $axis != "vertical" {
                 padding-left: rb-get-gutter-value($gutter-horizontal, $size);
@@ -39,4 +31,12 @@
             @warn 'No values are found for breakpoint property "#{$breakpoint-name}" inside $breakpoint-config';
         }
     }
+}
+
+// Calculate gutter value
+//
+// @param {Number} $gutter - The gutter (horizontal or vertical) used for specific breakpoint.
+// @param {Number} $size (default: 1) - The value multiple the gutter with.
+@function rb-get-gutter-value($gutter, $size) {
+    @return $gutter * $size;
 }
