@@ -2993,3 +2993,15 @@ if (!window.rb) {
 
 })(window, document);
 
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        factory();
+    }
+}(function () {
+    'use strict';
+    return window.rb;
+}));
+
+
