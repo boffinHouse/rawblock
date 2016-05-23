@@ -95,7 +95,7 @@
                 'click .{name}{e}close': function (e) {
                     this.close();
                     if (e) {
-                        e.stopImmediatePropagation();
+                        e.stopPropagation();
                         e.preventDefault();
                     }
                 },

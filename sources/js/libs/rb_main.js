@@ -914,7 +914,7 @@ if (!window.rb) {
         var supportMouse = typeof window.MouseEvent == 'function';
         var clickAreaSel = '.' + rb.utilPrefix + 'clickarea';
         var clickAreaactionSel = '.' + rb.utilPrefix + 'clickarea' + rb.nameSeparator + 'action';
-        var abortSels = 'a[href], a[href] *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
+        var abortSels = 'a[href], a[href] *, button *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
 
         var getSelection = window.getSelection || function () {
                 return {};
@@ -2993,15 +2993,10 @@ if (!window.rb) {
 
 })(window, document);
 
-(function (factory) {
+(function () {
     if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        factory();
+        module.exports = window.rb;
     }
-}(function () {
-    'use strict';
-    return window.rb;
-}));
+})();
 
 
