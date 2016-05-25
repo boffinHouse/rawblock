@@ -24,8 +24,9 @@
             var last = Date.now() - timestamp;
 
             if (last < opts.delay) {
-                setTimeout(later, opts.delay - last);
+                timeout = setTimeout(later, opts.delay - last);
             } else {
+                timeout = null;
                 fn.apply(that, args);
             }
         };
