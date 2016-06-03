@@ -27,6 +27,7 @@
              * @prop {Boolean} restSwitchedOff=true Whether there should be a full reset after switchedOff option change.
              * @prop {Number} throttleDelay=0 Delay in ms to check for position change. Setting this to a higher number (50-300) can improve performance.
              * @prop {String} defaults.childSel='find(.{name}-element)' Child elements that should be animated. String is processed by rb.elementFromStr.
+             * @prop {String|Boolean} defaults.scrollContainer=false Defines a scrollcontainer, if different from html.
              */
             defaults: {
                 switchedOff: false,
@@ -38,6 +39,7 @@
                 fixedSel: 'find(.{name}{e}scrollfixed)',
                 setFixedWidth: true,
                 preparePadding: 0,
+                scrollContainer: false,
             },
             statics: {
                 regWhite: /\s/g,

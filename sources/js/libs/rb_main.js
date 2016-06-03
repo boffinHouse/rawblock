@@ -2278,7 +2278,7 @@ if (!window.rb) {
              * @see rb.Component.prototype.setOption
              *
              * @prop {Object} defaults
-             * @prop {Boolean} defaults.isDebug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
+             * @prop {Boolean} defaults.debug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
              * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
              * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
              * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
