@@ -66,6 +66,8 @@
                     cbs: $.Callbacks(),
                     value: getScrollPosition(element),
                 };
+
+                element[scrollPositionProp] = positionObj;
                 rb.events.add(element, 'rb_layoutchange', checkScrollPosition, {scroll: true});
             }
 
