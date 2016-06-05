@@ -92,6 +92,7 @@
                 }
 
                 if(remove){
+                    element[intersectProp] = null;
                     rb.events.remove(element, 'rb_layoutchange', checkIntersect, {scroll: true});
                 }
             }

@@ -340,7 +340,7 @@
                 var that = this;
                 var cellSel = '.' + this.name + rb.elementSeparator + 'cell';
                 var isTestStopped = false;
-                var keyboardFocusClass = rb.statePrefix + 'keyboardfocus' + rb.nameSeparator + 'within';
+                var keyboardFocusClass = rb.utilPrefix + 'keyboardfocus' + rb.nameSeparator + 'within';
                 var evtOpts = {capture: true, passive: true};
                 var resetScrollLeft = function () {
                     that.viewport.scrollLeft = 0;

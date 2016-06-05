@@ -6,26 +6,31 @@
     }
 }(function () {
     'use strict';
+    /*
+    use relatedTarget in the future (needs POC):
+    https://bugzilla.mozilla.org/show_bug.cgi?id=962251
+    */
+
     var rb = window.rb;
     var $ = rb.$ || window.jQuery;
+    var sym = rb.Symbol('focusEnterLeave');
 
-    ['rbfocusenter', 'rbfocusleave'].forEach(function (type) {
-        var isLeave = type == 'rbfocusleave';
-        var sym = rb.Symbol('_' + type);
+    ['rb_focusenter', 'rb_focusleave'].forEach(function (type) {
 
         rb.events.special[type] = {
             setup: function (element) {
-                var evt, reset;
-                var isEntered = false;
+                var evt, reset, isFocused, isEntered;
                 var data = element[sym];
 
                 if (!data) {
+                    isFocused = function(){
+                        return document.activeElement && (element == document.activeElement || element.contains(document.activeElement));
+                    };
+
                     reset = function () {
-                        if (element != document.activeElement && !element.contains(document.activeElement)) {
+                        if (!isFocused()) {
                             isEntered = false;
-                            if (isLeave) {
-                                data.cbs.fireWith(evt.target, [{target: evt.target, type: 'rbfocusleave'}]);
-                            }
+                            data.rb_focusleaveCbs.fireWith(evt.target, [{target: evt.target, type: 'rb_focusleave'}]);
                         }
                     };
 
@@ -33,23 +38,22 @@
                         enter: function (e) {
                             if (!isEntered) {
                                 isEntered = true;
-                                if (!isLeave) {
-                                    data.cbs.fireWith(e.target, [{target: e.target, type: 'rbfocusenter'}]);
-                                }
+                                data.rb_focusenterCbs.fireWith(e.target, [{target: e.target, type: 'rb_focusenter'}]);
                             }
                         },
                         leave: function (e) {
-                            if (isLeave || isEntered) {
+                            if (isEntered) {
                                 evt = e;
                                 setTimeout(reset);
                             }
                         },
-                        cbs: $.Callbacks(),
+                        rb_focusenterCbs: $.Callbacks(),
+                        rb_focusleaveCbs: $.Callbacks(),
                     };
 
-                    if (!isLeave) {
-                        element.addEventListener('focus', data.enter, true);
-                    }
+                    isEntered = isFocused();
+
+                    element.addEventListener('focus', data.enter, true);
                     element.addEventListener('blur', data.leave, true);
                     element[sym] = data;
                 }
@@ -58,21 +62,21 @@
 
             },
             add: function (element, fn) {
-                this.setup(element).cbs.add(fn);
+                this.setup(element)[type + 'Cbs'].add(fn);
             },
             remove: function (elem, fn) {
                 var data = elem[sym];
 
                 if (data && data.cbs) {
-                    data.cbs.remove(fn);
+                    data[type + 'Cbs'].remove(fn);
 
-                    if (!data.cbs.has()) {
+                    if (!data.rb_focusenterCbs.has() && !data.rb_focusleaveCbs.has()) {
                         elem.removeEventListener('focus', data.enter, true);
                         elem.removeEventListener('blur', data.leave, true);
                         elem[sym] = null;
                     }
                 }
-            }
+            },
         };
     });
 

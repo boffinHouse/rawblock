@@ -88,6 +88,7 @@
             }
 
             if(!resizeObj.heightCbs.has() && !resizeObj.widthCbs.has() && !resizeObj.cbs.has()){
+                element[resizeProp] = null;
                 rb.events.remove(element, 'rb_layoutchange', checkDimension, opts);
             }
         }
