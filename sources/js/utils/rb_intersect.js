@@ -1,7 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
         require('./rb_viewport');
-        require('./rb_lazyeach');
+        require('./rb_layoutobserve');
         module.exports = factory();
     } else {
         factory();
@@ -11,117 +11,91 @@
     /* jshint eqnull: true */
     var rb = window.rb;
     var $ = rb.$;
-    var intersectClass = 'js-rb-intersect';
     var intersectProp = rb.Symbol('intersect');
     var checkInViewport = rb.checkInViewport;
-    var lazyEach = rb.lazyEach;
-    var elements = document.getElementsByClassName(intersectClass);
-    var right, bottom, callItems;
 
-    function checkElement(element){
-        var intersect, margin, intersectItem, inViewport, callItems;
-        intersect = element[intersectProp];
+    rb.intersects = function(element, margin){
+        var intersectValue = element[intersectProp];
 
-        if(intersect) {
-            for (margin in intersect) {
-                intersectItem = intersect[margin];
-                if (intersectItem) {
+        margin = parseInt(margin, 10) || 0;
 
-                    inViewport = checkInViewport(element, margin, right, bottom);
+        return (intersectValue && intersectValue[margin]) ?
+            intersectValue[margin].value :
+            checkInViewport(element, margin)
+        ;
+    };
 
-                    if (intersectItem.inView != inViewport) {
-                        intersectItem.inView = inViewport;
-                        if (!callItems) {
-                            callItems = [];
-                        }
-                        callItems.push([intersectItem, {
-                            target: elem,
-                            type: 'rb_intersect',
-                            inView: inViewport,
-                            initial: false
-                        }]);
+    function checkIntersect(e){
+        var margin, inViewport;
+        var element = e.target;
+        var intersectValue = element[intersectProp];
+
+        if(intersectValue){
+            for(margin in intersectValue){
+                if(intersectValue[margin]){
+                    inViewport = checkInViewport(element, intersectValue[margin].margin);
+
+                    if(intersectValue[margin].value != inViewport){
+                        intersectValue[margin].value = inViewport;
+                        intersectValue[margin].cbs.fireWith(element, [{target: element, type: 'rb_intersect', inViewport: inViewport, originalEvent: e}]);
                     }
                 }
             }
-        }
-    }
-
-    function checkElements(){
-        var callItem;
-        var length, index;
-
-        right = window.innerWidth;
-        bottom = window.innerHeight;
-
-        lazyEach(elements, checkElement);
-
-        if(callItems){
-            for(index = 0, length = callItems.length; index < length; index++){
-                callItem = callItems[index];
-                callItem[0].callbacks.fireWith(callItem[1].target, [callItem[1]]);
-            }
-            callItems = null;
         }
     }
 
     rb.events.special.rb_intersect = {
-        add: function (elem, fn, opts) {
-            var intersect = elem[intersectProp];
-            var getInitial = opts.initial;
-            var margin = opts.margin || 0;
+        add: function (element, fn, opts) {
+            var intersectValue = element[intersectProp];
+            var margin = opts && opts.margin && parseInt(opts.margin, 10) || 0;
 
-            if(!intersect){
-                intersect = {};
-                elem[intersectProp] = intersect;
+            if(!intersectValue){
+                intersectValue = {};
+                element[intersectProp] = intersectValue;
 
-                rb.rAFQueue(function(){
-                    elem.classList.add(intersectClass);
-                }, true);
+                rb.events.add(element, 'rb_layoutchange', checkIntersect, {scroll: true});
             }
 
-            if(!intersect[margin]){
-                intersect[margin] = {
-                    callbacks: $.Callbacks(),
-                    inView: checkInViewport(elem, margin),
+            if(!intersectValue[margin]){
+                intersectValue[margin] = {
+                    value: checkInViewport(element, margin),
+                    margin: margin,
+                    cbs: $.Callbacks(),
                 };
             }
 
-            intersect[margin].callbacks.add(fn);
-
-            if(getInitial && intersect[margin].inView){
-                rb.rIC(function(){
-                    fn.call(elem, {target: elem, type: 'rb_intersect', inView: true, initial: true});
-                });
-            }
+            intersectValue[margin].cbs.add(fn);
         },
-        remove: function (elem, fn, opts) {
-            var prop, intersectItem;
-            var del = true;
-            var intersect = elem[intersectProp];
-            var margin = opts.margin || 0;
+        remove: function (element, fn, opts) {
+            var margin;
+            var remove = true;
+            var intersectValue = element[intersectProp];
 
-            if(!intersect || !intersect[margin]){
+            if(!intersectValue){
                 return;
             }
 
-            intersect[margin].callbacks.remove(fn);
+            margin = opts && opts.margin && parseInt(opts.margin, 10) || 0;
 
-            if(!intersect[margin].callbacks.has()){
-                for(prop in intersect){
-                    intersectItem = intersect[prop];
-                    if(intersectItem && intersectItem.callbacks.has()){
-                        del = false;
+            if(!intersectValue[margin]){return;}
+
+            intersectValue[margin].cbs.remove(fn);
+
+            if(!intersectValue[margin].cbs.has()){
+                intersectValue[margin] = null;
+
+                for(margin in intersectValue){
+                    if(intersectValue[margin]){
+                        remove = false;
                         break;
                     }
                 }
 
-                delete elem[intersectProp];
-
-                rb.rAFQueue(function(){
-                    elem.classList.remove(intersectClass);
-                }, true);
+                if(remove){
+                    rb.events.remove(element, 'rb_layoutchange', checkIntersect, {scroll: true});
+                }
             }
         }
     };
-    return rb.events.special.rb_intersect;
+    return rb.intersects;
 }));

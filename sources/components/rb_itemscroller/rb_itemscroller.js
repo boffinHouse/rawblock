@@ -1,7 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
         require('../../js/utils/rb_draggy');
-        require('../../js/utils/rb_elemresize');
+        require('../../js/utils/rb_resize');
         require('../../js/utils/rb_prefixed');
         module.exports = factory();
     } else {
@@ -204,7 +204,7 @@
                     var index = this.$paginationBtns.index(e.delegatedTarget || e.currentTarget);
                     this.selectedIndex = index;
                 },
-                elemresizewidth: 'reflow',
+                'rb_resize:width()': 'reflow',
             },
             setOption: function (name, value) {
                 this._super(name, value);

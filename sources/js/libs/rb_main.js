@@ -323,7 +323,7 @@ if (!window.rb) {
 
     /**
      *
-     * Resize uitility object to listen/unlisten (on/off) for throttled window.resize events (also see jQuery.fn.elementResize).
+     * Resize uitility object to listen/unlisten (on/off) for throttled window.resize events.
      * @memberof rb
      * @extends jQuery.Callbacks
      * @property {object} resize
@@ -641,6 +641,7 @@ if (!window.rb) {
      * @function external:"jQuery.fn".rbComponent
      * @see rb.getComponent
      * @param [name] {String} The name of the property or method.
+     * @param [initialOpts] {Object}
      *
      * @returns {ComponentInstance|jQueryfiedDOMList}
      */
@@ -829,16 +830,31 @@ if (!window.rb) {
                 }
 
                 return proxy;
-
-            }
+            },
+            once: function(handler, once, opts, type){
+                var proxy = rb.events.proxy(handler, 'conce', '');
+                if(!proxy){
+                    proxy = function(e){
+                        var ret = handler.apply(this, arguments);
+                        rb.events.remove(e && e.target || this, type, handler, opts);
+                        return ret;
+                    };
+                    rb.events.proxy(handler, 'conce', '', proxy);
+                }
+                return proxy;
+            },
         },
-        applyProxies: function(handler, opts){
+        applyProxies: function(handler, opts, type){
             var proxy;
             if(opts){
                 for(proxy in opts){
-                    if(this.proxies[proxy]){
-                        handler = this.proxies[proxy](handler, opts[proxy], opts);
+                    if(this.proxies[proxy] && proxy != 'once'){
+                        handler = this.proxies[proxy](handler, opts[proxy], opts, type);
                     }
+                }
+
+                if('once' in opts){
+                    handler = this.proxies.once(handler, opts.once, opts, type);
                 }
             }
 
@@ -869,14 +885,12 @@ if (!window.rb) {
          * @param opts
          */
         rb.events[action[0]] = function(element, type, handler, opts){
+            if(!this.special[type] || this.special[type].applyProxies !== false){
+                handler = rb.events.applyProxies(handler, opts, type);
+            }
             if(this.special[type]){
-                if(this.special[type].applyProxies){
-                    handler = rb.events.applyProxies(handler, opts);
-                }
                 this.special[type][action[0]](element, handler, opts);
             } else {
-                handler = rb.events.applyProxies(handler, opts);
-
                 element[action[1]](type, handler, !!(opts && opts.capture));
             }
         };
