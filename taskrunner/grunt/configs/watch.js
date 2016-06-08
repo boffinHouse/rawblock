@@ -45,10 +45,10 @@ module.exports = {
         files: ['<%= paths.src %>/js/_inlinehead-behavior.js'],
         tasks: ['uglify:inline']
     },
-    js: {
-        files: ['<%= paths.src %>/**/*.{js,es6,es2015}'],
-        tasks: ['webpack:dev'] //
-    },
+    //js: {
+    //    files: ['<%= paths.src %>/**/*.{js,es6,es2015}'],
+    //    tasks: ['webpack:dev'] //
+    //},
     //test: {
     //	files: ['<%= paths.src %>/js/**/*.js'],
     //	tasks: ['test'] //

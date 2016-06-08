@@ -1,7 +1,3 @@
-if (!window.rb) {
-    window.rb = {};
-}
-
 (function () {
     'use strict';
     var pseudoExpando, getPseudoToParse;
@@ -208,4 +204,11 @@ if (!window.rb) {
     getPseudoToParse = rb.getPseudo;
 
     pseudoExpando = rb.Symbol('_rbPseudoExpando');
+
+    if (!window.rb) {
+        window.rb = {};
+    }
+    if (typeof module === 'object' && module.exports) {
+        module.exports = rb;
+    }
 })();

@@ -2265,9 +2265,10 @@ if (!window.rb) {
                 this._initialDefaults = initialDefaults;
                 element[componentExpando] = this;
 
+                this.origName = origName;
+
                 this.parseOptions(this.options);
 
-                this.origName = origName;
                 this.name = this.options.name || rb.jsPrefix + this.name;
                 this.jsName = this.options.jsName || origName;
 

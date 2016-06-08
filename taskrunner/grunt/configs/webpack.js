@@ -74,6 +74,7 @@ module.exports = {
 	},
 	dev: {
 		devtool: 'sourcemap',
+        watch: true,
 		debug: true,
 		output: {
 			path: '<%= paths.dev %>/js/',
