@@ -120,7 +120,7 @@
 
             this.interval = setInterval(this._listener, 999);
 
-            if (this.mode == 'history') {
+            if (this.mode == 'hash') {
                 window.addEventListener('hashchange', this._listener);
             } else {
                 window.addEventListener('popstate', this._listener);
