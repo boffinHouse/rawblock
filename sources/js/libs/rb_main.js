@@ -1196,34 +1196,59 @@ if (!window.rb) {
     };
     /* End: keyboard-focus */
 
-    var console = window.console || {};
-    var log = console.log && console.log.bind ? console.log : rb.$.noop;
 
-    /**
-     * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
-     * @memberof rb
-     * @param obj    {Object}
-     * @param [initial] {Boolean}
-     */
-    rb.addLog = function (obj, initial) {
-        var realLog = log.bind(console);
-        var fakeLog = rb.$.noop;
-
-        obj.__isDebug = initial;
-        obj.log = obj.__isDebug ? realLog : fakeLog;
-
-        Object.defineProperty(obj, 'isDebug', {
-            configurable: true,
-            enumerable: true,
-            get: function () {
-                return this.__isDebug;
-            },
-            set: function (value) {
-                this.__isDebug = !!value;
-                this.log = (this.__isDebug) ? realLog : fakeLog;
-            }
+    (function(){
+        var console = window.console || {};
+        var log = console.log && console.log.bind ? console.log : rb.$.noop;
+        var logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
+            var fnName = (errorName == 'log') ?
+                'log' :
+                'log' + (errorName.charAt(0).toUpperCase()) + (errorName.substr(1))
+            ;
+            return {
+                name: fnName,
+                errorLevel: errorLevel,
+                fn: (console[errorName] && console[errorName].bind ? console[errorName] : rb.$.noop).bind(console)
+            };
         });
-    };
+
+
+        /**
+         * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
+         * @memberof rb
+         * @param obj    {Object}
+         * @param [initial] {Boolean}
+         */
+        rb.addLog = function (obj, initial) {
+            var fakeLog = rb.$.noop;
+
+            var setValue = function(){
+                var level = obj.__isDebug;
+                logs.forEach(function(log){
+                    var fn = (level === true || level >= log.errorLevel) ?
+                        log.fn :
+                        fakeLog;
+
+                    obj[log.name] = fn;
+                });
+            };
+
+            obj.__isDebug = initial;
+            setValue();
+
+            Object.defineProperty(obj, 'isDebug', {
+                configurable: true,
+                enumerable: true,
+                get: function () {
+                    return this.__isDebug;
+                },
+                set: function (value) {
+                    this.__isDebug = value;
+                    setValue();
+                }
+            });
+        };
+    })();
 
     rb.addLog(rb, true);
 

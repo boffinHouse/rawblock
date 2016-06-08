@@ -16,6 +16,9 @@
     }
 
     var rb = window.rb;
+    var regSlashEnd = /\/$/;
+    var regSlashBegin = /^\//;
+    var regFullHash = /#(.*)$/;
 
     rb.Router = {
         routes: [],
@@ -49,7 +52,7 @@
             return this.clearSlashes(fragment);
         },
         clearSlashes: function (path) {
-            return path.toString().replace(/\/$/, '').replace(/^\//, '');
+            return path.toString().replace(regSlashEnd, '').replace(regSlashBegin, '');
         },
         add: function (re, handler) {
             if (typeof re == 'function') {
@@ -130,9 +133,9 @@
         navigate: function (path) {
             path = path ? path : '';
             if (this.mode === 'history') {
-                history.pushState(null, null, this.root + this.clearSlashes(path));
+                history.pushState(null, '', this.root + this.clearSlashes(path));
             } else {
-                window.location.href = window.location.href.replace(/#(.*)$/, '') + '#' + path;
+                window.location.href = window.location.href.replace(regFullHash, '') + '#' + path;
             }
             if (this._listener) {
                 this._listener();
