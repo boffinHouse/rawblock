@@ -1,5 +1,9 @@
 (function () {
     'use strict';
+    if (!window.rb) {
+        window.rb = {};
+    }
+
     var pseudoExpando, getPseudoToParse;
 
     var rb = window.rb;
@@ -205,9 +209,6 @@
 
     pseudoExpando = rb.Symbol('_rbPseudoExpando');
 
-    if (!window.rb) {
-        window.rb = {};
-    }
     if (typeof module === 'object' && module.exports) {
         module.exports = rb;
     }
