@@ -134,7 +134,7 @@
         navigate: function (path) {
             path = path ? path : '';
             if (this.mode === 'history') {
-                history.pushState(null, '', this.root + this.clearSlashes(path.replace(rootDomain, '')));
+                history.pushState(null, '', this.root + this.clearSlashes(path));
             } else {
                 window.location.href = window.location.href.replace(regFullHash, '') + '#' + path;
             }
