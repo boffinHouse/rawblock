@@ -19,6 +19,7 @@
     var regSlashEnd = /\/$/;
     var regSlashBegin = /^\//;
     var regFullHash = /#(.*)$/;
+    var rootDomain = location.protocol + location.host;
 
     rb.Router = {
         routes: [],
@@ -133,7 +134,7 @@
         navigate: function (path) {
             path = path ? path : '';
             if (this.mode === 'history') {
-                history.pushState(null, '', this.root + this.clearSlashes(path));
+                history.pushState(null, '', this.root + this.clearSlashes(path.replace(rootDomain, '')));
             } else {
                 window.location.href = window.location.href.replace(regFullHash, '') + '#' + path;
             }
