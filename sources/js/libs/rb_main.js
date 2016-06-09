@@ -2739,12 +2739,13 @@ if (!window.rb) {
                 element = (element || this.element);
                 var i, name;
                 var attributes = element.attributes;
-                var options = rb.jsonParse(element.getAttribute('data-' + this.origName + '-options')) || {};
+                var optionsAttr = 'data-' + this.origName + '-options';
+                var options = rb.jsonParse(element.getAttribute(optionsAttr)) || {};
                 var len = attributes.length;
 
                 for (i = 0; i < len; i++) {
                     name = attributes[i].nodeName;
-                    if (name != 'data-options' && name.startsWith('data-')) {
+                    if (name != optionsAttr && name.startsWith('data-') && !name.endsWith('-options')) {
                         options[rb.camelCase(name.replace(regData, ''))] = rb.parseValue(attributes[i].nodeValue);
                     }
                 }
