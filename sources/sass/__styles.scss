@@ -22,6 +22,7 @@ Main Stylesheet
 @include rb-export-globaljs((
     mqs: $breakpoint-config,
     nameSeparator: $rb-name-separator,
+    elementSeparator: $rb-name-separator,
     statePrefix: "is" + $rb-name-separator,
     utilPrefix: "u" + $rb-name-separator,
     //jsPrefix: "js" + $rb-name-separator,
