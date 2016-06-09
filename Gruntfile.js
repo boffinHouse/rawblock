@@ -45,7 +45,7 @@
             'jshint',
             //'connect:casper',
             //'phantomcss',
-            'qunit',
+            //'qunit',
         ]);
 
         grunt.registerTask('svg', [

@@ -11,7 +11,7 @@
     var Dom = function (elements, context) {
 
         if (!(this instanceof Dom)) {
-            return new Dom(elements);
+            return new Dom(elements, context);
         }
         if (typeof elements == 'string') {
             elements = Array.from((context || document).querySelectorAll(elements));
