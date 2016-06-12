@@ -70,5 +70,44 @@
         };
     }
 
+    if(!$.fn.serializeArray || $.fn.serialize){
+        var rCRLF = /\r?\n/g;
+        var rcheckableType = ( /^(?:checkbox|radio)$/i );
+        var rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i;
+        var rsubmittable = /^(?:input|select|textarea|keygen)/i;
+
+        $.fn.serializeArray = function(){
+            var array = [];
+
+            this.each(function(){
+                var elements = Array.from(this.elements) || [this];
+
+                elements.forEach(function(element){
+                    var type, options, i, len;
+                    if( element.name && !element.matches(':disabled') &&
+                        rsubmittable.test( element.nodeName || '' ) &&
+                        (type = element.type) && !rsubmitterTypes.test(type) &&
+                        (element.checked || !rcheckableType.test( type )) ) {
+
+                        if( (options = element.selectedOptions) ){
+                            for(i = 0, len = options.length; i < len; i++){
+                                array.push({name: element.name, value: (options[i].value || '').replace( rCRLF, '\r\n' )});
+                            }
+                        } else {
+                            array.push({name: element.name, value: (element.value || '').replace( rCRLF, '\r\n' )});
+                        }
+
+                    }
+                });
+            });
+
+            return array;
+        };
+
+        $.fn.serialize = function(){
+            return $.param(this.serializeArray());
+        };
+    }
+
     return $.param;
 }));

@@ -39,6 +39,7 @@
      *  @param {object} [options.data=null] The send data.
      *  @param {object} [options.headers=null] headers to send.
      *  @param {boolean} [options.processData=true] Data should be processed.
+     *  @param {boolean} [options.contentType=true] Wether cCntent-Type should be changed.
      *  @param {boolean} [options.rejectAbort=true] XHR abort/cancel will reject promise.
      *  @param {function} [options.beforeSend] A callback function to allow modification of the XHR object before it is send.
      * @returns {Promise}
@@ -61,6 +62,7 @@
             username: null,
             password: null,
             processData: true,
+            contentType: true,
             rejectAbort: true,
         }, options);
 
@@ -127,8 +129,10 @@
 
             oReq.open(options.type, url, true, options.username, options.password);
 
-            if(options.type == 'POST' && typeof data == 'string' && (!options.headers || !options.headers['Content-type'])){
-                oReq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            if((!options.headers || !options.headers['Content-type']) && options.contentType){
+                if(options.type == 'POST' && typeof data == 'string'){
+                    oReq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                }
             }
 
             if(options.headers){

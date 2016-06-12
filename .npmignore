@@ -10,6 +10,7 @@ styleguide
 tests
 jsdoc-md
 grunt
+taskrunner
 sources/components/**/tests/visual/visual-tests/results
 
 .sass-cache
