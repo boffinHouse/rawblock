@@ -68,7 +68,7 @@
             startAutoplay: function () {
                 var that = this;
                 var options = this.options;
-                var keyboardFocusSel = '.' + rb.utilPrefix + 'keyboardfocus';
+                var keyboardFocusSel = '.' + rb.utilPrefix + rb.nameSeparator + 'keyboardfocus';
                 if (!options.autoplay) {
                     return;
                 }

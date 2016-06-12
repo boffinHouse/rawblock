@@ -37,6 +37,9 @@
      *  @param {String|null} [options.password=null] The URL for the request.
      *  @param {String} [options.type='GET'] The request type to use.
      *  @param {object} [options.data=null] The send data.
+     *  @param {object} [options.headers=null] headers to send.
+     *  @param {boolean} [options.processData=true] Data should be processed.
+     *  @param {boolean} [options.rejectAbort=true] XHR abort/cancel will reject promise.
      *  @param {function} [options.beforeSend] A callback function to allow modification of the XHR object before it is send.
      * @returns {Promise}
      *
@@ -58,21 +61,26 @@
             username: null,
             password: null,
             processData: true,
+            rejectAbort: true,
         }, options);
 
+        var abort;
         var oReq = new XMLHttpRequest();
+        var abortCb = $.Callbacks();
+
         var promise = new Promise(function (resolve, reject) {
             var header;
             var data = options.data || null;
             var value = {opts: options};
+            var isAborted = false;
 
             oReq.addEventListener('load', function () {
                 var status = oReq.status;
                 var isSuccess = status >= 200 && status < 300 || status == 304;
-
+                if(isAborted){return;}
                 getData(oReq, value);
 
-                promise.catch(rb.log);
+                promise.catch(rb.logWarn);
 
                 if (isSuccess) {
                     resolve(value, oReq);
@@ -83,11 +91,28 @@
             });
 
             oReq.addEventListener('error', function () {
+                if(isAborted){return;}
                 getData(oReq, value);
-                promise.catch(rb.log);
+                promise.catch(rb.logWarn);
                 reject(value, oReq);
                 oReq = null;
             });
+
+            abort = function(){
+                if(oReq){
+                    getData(oReq, value);
+                    isAborted = true;
+                    oReq.abort();
+
+                    value.status = 'canceled';
+                    promise.catch(rb.logWarn);
+                    abortCb.fire(value);
+
+                    if(options.rejectAbort){
+                        reject(value);
+                    }
+                }
+            };
 
             options.type = options.type.toUpperCase();
 
@@ -119,11 +144,10 @@
             oReq.send(data);
         });
 
-        promise.abort = function(){
-            if(oReq){
-                oReq.abort();
-            }
-        };
+        promise.abort = abort;
+
+        promise.onAbort = abortCb.add;
+        promise.offAbort = abortCb.remove;
 
         promise.getXhr = function(){
             return oReq;

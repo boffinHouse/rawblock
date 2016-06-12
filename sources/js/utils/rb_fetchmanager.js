@@ -8,17 +8,26 @@
     }
 }(function () {
     'use strict';
+    var rb = window.rb;
+    var $ = rb.$;
     var param = rb.param;
     var fetch = rb.fetch;
 
     var FetchManager = function(managerId, options){
-        if (!(this instanceof FetchManager)) {
-            return new FetchManager(managerId, options);
-        }
 
         if(typeof managerId != 'string'){
             options = managerId;
             managerId = null;
+        }
+
+        if(FetchManager.managers[managerId]){
+            rb.logInfo(managerId + ' already exists. Extending options');
+            FetchManager.managers[managerId].setOptions(options);
+            return FetchManager.managers[managerId];
+        }
+
+        if (!(this instanceof FetchManager)) {
+            return new FetchManager(managerId, options);
         }
 
         if(managerId){
@@ -43,6 +52,11 @@
             var id;
             var managerOptions = this.options;
 
+            if(typeof url == 'object'){
+                options = url;
+                url = options;
+            }
+
             options = options || {};
 
             if(typeof url == 'string'){
@@ -60,32 +74,49 @@
                 id += rb.getID();
             }
 
-            this.generateFetchPromise(id);
+            this.generateFetchPromise(id, options);
 
             this.startFetch();
 
             return this.promises[id];
+        },
+        getCombindedPromise: function(all){
+            var promises = this.requestingPromises;
 
+            if(all){
+                promises = promises.concat(this.waitingPromises);
+            }
+
+            return Promise.all(promises).catch(function (error){
+                return error;
+            });
         },
         generateFetchPromise: function(id, options){
             var that = this;
+            var promise = rb.deferred();
 
-            var completed = function(){
-                this.completed(id);
+            var onComplete = function(){
+                that.onComplete(id);
             };
 
-            this.promises[id] = rb.deferred();
+            Object.assign(promise, {
+                id: id,
+                options: options,
+                abortCb: $.Callbacks(),
+                abort: function(){
+                    that.abort(id);
+                },
+            });
 
-            this.promises[id].id = id;
-            this.promises[id].options = options;
-            this.promises[id].abort = function(){
-                that.abort(id);
-            };
+            promise.onAbort = promise.abortCb.add;
+            promise.offAbort = promise.abortCb.remove;
 
-            this.waitingPromises.push(this.promises[id]);
-            this.promises[id].then(completed, completed);
+            this.waitingPromises.push(promise);
+            promise.then(onComplete, onComplete);
+
+            this.promises[id] = promise;
         },
-        completed: function(id){
+        onComplete: function(id){
             this.removePromise(id);
 
             this.startFetch();
@@ -94,7 +125,9 @@
             var requestingPromisesIndex = this.requestingPromises.findIndex(findById, id);
             var waitingPromisesIndex = this.waitingPromises.findIndex(findById, id);
 
-            this.promises[id] = null;
+            if(this.promises[id]){
+                this.promises[id] = null;
+            }
 
             if(requestingPromisesIndex != -1){
                 this.requestingPromises.splice(requestingPromisesIndex, 1);
@@ -104,16 +137,21 @@
             }
         },
         startFetch: function(){
-            var promise;
+            var promise, that;
             var managerOptions = this.options;
 
             if(!this.waitingPromises.length){return;}
 
             if(this.requestingPromises.length < managerOptions.maxRequests){
+                that = this;
                 promise = this.waitingPromises.shift();
 
                 this.requestingPromises.push(promise);
                 promise.fetch = fetch(promise.options);
+
+                promise.onAbort(function(){
+                    that.onComplete(id);
+                });
 
                 promise.fetch.then(
                     function(data){
@@ -135,9 +173,29 @@
             if(managerOptions.type == 'abort' && this.requestingPromises[0] && this.requestingPromises[0].fetch){
                 this.requestingPromises[0].fetch.abort();
 
-                this.completed(this.requestingPromises[0].id);
+                this.onComplete(this.requestingPromises[0].id);
             }
 
+        },
+        _onOptionChange: function(){
+            do {
+                this.startFetch();
+            } while(this.waitingPromises.length && this.requestingPromises.length < managerOptions.maxRequests);
+        },
+        setOption: function(name, value){
+            var managerOptions = this.options;
+
+            managerOptions[name] = value;
+
+            this._onOptionChange();
+        },
+        setOptions: function(options){
+            // no deep assign
+            if(options.fetchOpts){
+                options.fetchOpts = Object.assign(this.options.fetchOpts, options.fetchOpts);
+            }
+            Object.assign(this.options, options);
+            this._onOptionChange();
         },
         abort: function(id){
             if(!this.promises[id]){return;}
@@ -146,7 +204,7 @@
                 this.promises[id].fetch.abort();
             }
 
-            this.completed(id);
+            this.onComplete(id);
         },
         generateId: function(options){
             var id = [options.url];
@@ -170,7 +228,12 @@
         return manager && manager.fetch(url, options);
     };
 
-    rb.FetchManager = FetchManager;
+    FetchManager.setOption = function(managerId, name, value){
+        var manager = FetchManager.managers[managerId];
+        return manager && manager.setOption(name, value);
+    };
+
+    rb.fetchManager = FetchManager;
 
     /* jshint validthis: true */
     function findById(item){

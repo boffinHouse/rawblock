@@ -21,6 +21,7 @@
                 focusElement: '',
                 defaultSelected: 0,
                 checkWithSpace: false,
+                disconnected: false,
             },
             statics: {
                 regList: /^(?:ol|ul)$/i,
