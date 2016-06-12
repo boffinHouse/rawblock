@@ -22,7 +22,7 @@ require('../../taskrunner/grunt/webpack/lazyglobloader!./lazyglob.paths');
 
 
 /* init after all modules are loaded or imports are configured. */
-setTimeout(rb.life.init);
+rb.life.init();
 
 
 

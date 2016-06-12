@@ -1695,7 +1695,6 @@ if (!window.rb) {
 
     life.init = function (options) {
         if (started) {
-            rb.log('only once');
             return;
         }
 
@@ -1870,6 +1869,10 @@ if (!window.rb) {
      */
     life.create = function (element, LifeClass, initialOpts) {
         var instance;
+
+        if (mainInit) {
+            mainInit();
+        }
 
         if (!(instance = element[componentExpando])) {
             instance = new LifeClass(element, initialOpts);
