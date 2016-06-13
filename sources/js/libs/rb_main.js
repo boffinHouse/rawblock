@@ -1225,7 +1225,7 @@ if (!window.rb) {
             var setValue = function(){
                 var level = obj.__isDebug;
                 logs.forEach(function(log){
-                    var fn = (level === true || level >= log.errorLevel) ?
+                    var fn = (level !== false && (level === true || level >= log.errorLevel)) ?
                         log.fn :
                         fakeLog;
 
@@ -1240,10 +1240,10 @@ if (!window.rb) {
                 configurable: true,
                 enumerable: true,
                 get: function () {
-                    return this.__isDebug;
+                    return obj.__isDebug;
                 },
                 set: function (value) {
-                    this.__isDebug = value;
+                    obj.__isDebug = value;
                     setValue();
                 }
             });
@@ -2666,10 +2666,10 @@ if (!window.rb) {
              */
             setOption: function (name, value) {
                 this.options[name] = value;
-                if (name == 'debug' && value) {
-                    this.isDebug = true;
+                if (name == 'debug') {
+                    this.isDebug = value;
                 } else if (name == 'name' || name == 'jsName') {
-                    rb.log('don\'t change name after init.');
+                    this.logWarn('don\'t change name after init.');
                 }
             },
             setChildOption: function ($childs, name, value) {
