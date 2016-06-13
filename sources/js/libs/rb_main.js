@@ -2303,13 +2303,13 @@ if (!window.rb) {
                 this._evtName = this.jsName + 'changed';
                 this._beforeEvtName = this.jsName + 'change';
 
+                rb.addLog(this, this.options.debug == null ? rb.isDebug : this.options.debug);
+
                 /**
                  * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.
                  * @type {Function|{}}
                  */
                 this.templates = rb.templates[this.name] || rb.templates[origName] || {};
-
-                rb.addLog(this, this.options.debug == null ? rb.isDebug : this.options.debug);
 
                 _setupEventsByEvtObj(this);
             },
@@ -2669,7 +2669,7 @@ if (!window.rb) {
                 this.options[name] = value;
                 if (name == 'debug') {
                     this.isDebug = value;
-                } else if (name == 'name' || name == 'jsName') {
+                } else if ((name == 'name' || name == 'jsName') && this.name && this.jsName && this.logWarn) {
                     this.logWarn('don\'t change name after init.');
                 }
             },
