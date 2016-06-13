@@ -10,7 +10,7 @@ require('./libs/rb_main');
 //require('./utils/rb_$$');
 
 /* configuration */
-rb.isDebug = true;
+rb.isDebug = 1;
 rb.life.autoStart = false;
 
 //if webpack is used:

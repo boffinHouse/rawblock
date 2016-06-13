@@ -1250,7 +1250,7 @@ if (!window.rb) {
         };
     })();
 
-    rb.addLog(rb, true);
+    rb.addLog(rb, 1);
 
     var cbs = [];
     var setupClick = function () {
@@ -2309,7 +2309,7 @@ if (!window.rb) {
                  */
                 this.templates = rb.templates[this.name] || rb.templates[origName] || {};
 
-                this.setOption('debug', this.options.debug == null ? rb.isDebug : this.options.debug);
+                rb.addLog(this, this.options.debug == null ? rb.isDebug : this.options.debug);
 
                 _setupEventsByEvtObj(this);
             },
@@ -2369,6 +2369,7 @@ if (!window.rb) {
              */
             defaults: {
                 focusDelay: 0,
+                debug: null,
             },
 
             /**
@@ -2783,13 +2784,6 @@ if (!window.rb) {
     );
 
     rb.Component.prototype.getElementsFromString = rb.Component.prototype.getElementsByString;
-
-    /**
-     * Logs arguments to the console, if debug option of the component is turned on.
-     * @name rb.Component.prototype
-     * @type function
-     */
-    rb.addLog(rb.Component.prototype, false);
 
     rb.Component.extend = function (name, prop, noCheck) {
         var Class = rb.Class.extend.call(this, prop);
