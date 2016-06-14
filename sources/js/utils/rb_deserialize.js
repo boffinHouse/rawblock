@@ -16,7 +16,7 @@
         this[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || '');
     };
 
-    rb.deSerialize = function(str){
+    rb.deserialize = function(str){
         var obj = {};
 
         str.replace('+', ' ').split('&').forEach(addProps, obj);
@@ -24,5 +24,5 @@
         return obj;
     };
 
-    return rb.deSerialize;
+    return rb.deserialize;
 }));
