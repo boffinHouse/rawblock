@@ -8,7 +8,8 @@
     'use strict';
     /* jshint eqnull: true */
     var rb = window.rb;
-    var $ = rb.$;
+
+    var regQ = /^\?/;
 
     var addProps = function(param){
         param = param.split('=');
@@ -19,7 +20,7 @@
     rb.deserialize = function(str){
         var obj = {};
 
-        str.replace('+', ' ').split('&').forEach(addProps, obj);
+        str.replace(regQ, '').replace('+', ' ').split('&').forEach(addProps, obj);
 
         return obj;
     };
