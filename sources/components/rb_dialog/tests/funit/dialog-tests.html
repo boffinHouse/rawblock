@@ -38,11 +38,15 @@
 
 <script>
     (function () {
-        var src = '../../../../../sources/js/libs/rb_$.js';
         if (location.search.indexOf('jqueryinsteadrb') != -1) {
-            src = 'http://code.jquery.com/jquery-2.1.4.js';
+            document.write('<script src="https://code.jquery.com/jquery-3.0.0.js"><\/script>');
+        } else if (location.search.indexOf('jquerysliminsteadrb') != -1){
+            document.write('<script src="https://code.jquery.com/jquery-3.0.0.slim.js"><\/script>');
+            document.write('<script src=../../../../../sources/js/libs/rb_$/$_fx.js"><\/script>');
+        } else {
+            document.write('<script src="../../../../../sources/js/libs/rb_$/$_slim.js"><\/script>');
+            document.write('<script src="../../../../../sources/js/libs/rb_$/$_fx.js"><\/script>');
         }
-        document.write('<script src="' + src + '"><\/script>');
     })();
 </script>
 
