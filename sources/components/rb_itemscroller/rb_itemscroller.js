@@ -166,8 +166,6 @@
 
                 rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff', 'setSwitchedOffClass');
 
-                this._wheelEnd = rb.debounce(this._wheelEnd, {delay: 50});
-
                 this._slideProgress = this._slideProgress.bind(this);
                 this._slideComplete = this._slideComplete.bind(this);
 
