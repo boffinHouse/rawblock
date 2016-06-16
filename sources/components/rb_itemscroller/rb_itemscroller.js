@@ -3,6 +3,7 @@
         require('../../js/utils/rb_draggy');
         require('../../js/utils/rb_resize');
         require('../../js/utils/rb_prefixed');
+        require('../../js/utils/rb_debounce');
         module.exports = factory();
     } else {
         factory();
@@ -59,6 +60,7 @@
                 startOrder: -1,
                 endOrder: 99,
                 usePx: false,
+                wheel: true,
             },
             /**
              * @constructs
@@ -164,6 +166,8 @@
 
                 rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff', 'setSwitchedOffClass');
 
+                this._wheelEnd = rb.debounce(this._wheelEnd, {delay: 50});
+
                 this._slideProgress = this._slideProgress.bind(this);
                 this._slideComplete = this._slideComplete.bind(this);
 
@@ -175,6 +179,8 @@
                 } else {
                     this.setSwitchedOffClass();
                 }
+
+
             },
             events: {
                 'click:closest(.{name}{e}btn{-}next)': function () {
@@ -206,6 +212,7 @@
                 },
                 'rb_resize:width()': 'reflow',
             },
+
             setOption: function (name, value) {
                 this._super(name, value);
                 switch (name) {
@@ -289,6 +296,34 @@
 
                 this.setSwitchedOffClass();
             },
+            addWheel: function(){
+                if(!this.options.wheel || !rb.debounce){return;}
+
+                var _isWheelStarted = false;
+                var that = this;
+                var options = this.options;
+
+                var wheelEnd = rb.debounce(function(){
+                    _isWheelStarted = false;
+                    that.selectNearest();
+                }, {delay: 40});
+
+                this.viewport.addEventListener('wheel', function(e){
+                    if(!e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+
+                        if(!_isWheelStarted){
+                            _isWheelStarted = true;
+                            $(that.scroller).stop();
+                        }
+
+                        that._setRelPos(e.deltaX * -1);
+
+                        wheelEnd();
+
+                        e.preventDefault();
+                    }
+                });
+            },
             setSwitchedOffClass: function(){
                 this.element.classList
                     [this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
@@ -335,6 +370,7 @@
             _setupEvents: function () {
                 this.element.addEventListener('load', this.throttledCalculateLayout, true);
                 this._setupFocusScroll();
+                this.addWheel();
             },
             _setupFocusScroll: function () {
                 var that = this;
