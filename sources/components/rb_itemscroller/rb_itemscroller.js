@@ -178,7 +178,6 @@
                     this.setSwitchedOffClass();
                 }
 
-
             },
             events: {
                 'click:closest(.{name}{e}btn{-}next)': function () {
