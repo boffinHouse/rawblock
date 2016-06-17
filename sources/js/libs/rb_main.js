@@ -2633,7 +2633,7 @@ if (!window.rb) {
              * @param initialOpts
              */
             parseOptions: function (opts) {
-                var options = Object.assign(opts || {}, this.constructor.defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions());
+                var options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions());
                 this.setOptions(options);
             },
 
@@ -2642,9 +2642,17 @@ if (!window.rb) {
              * @param opts
              */
             setOptions: function (opts) {
-                for (var prop in opts) {
-                    if (opts[prop] !== this.options[prop]) {
-                        this.setOption(prop, opts[prop]);
+                var oldValue, newValue;
+
+                if(opts !== this.options){
+                    for (var prop in opts) {
+                        newValue = opts[prop];
+                        oldValue = this.options[prop];
+                        if (newValue !== oldValue &&
+                            (!oldValue || typeof newValue != 'object' || typeof oldValue != 'object' ||
+                            JSON.stringify(newValue) != JSON.stringify(oldValue))) {
+                            this.setOption(prop, newValue);
+                        }
                     }
                 }
             },
