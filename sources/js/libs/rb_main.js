@@ -1486,7 +1486,7 @@ if (!window.rb) {
             configurable: true,
             enumerable: true,
             writable: true,
-            value: Object.assign({}, SuperClasss[prop], proto[prop], Class[prop])
+            value: $.extend(true, {}, SuperClasss[prop], proto[prop], Class[prop])
         });
 
         if (proto[prop]) {
