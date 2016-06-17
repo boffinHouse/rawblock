@@ -12,6 +12,8 @@
     var regQ = /^\?/;
 
     var addProps = function(param){
+        if(!param) return;
+
         param = param.split('=');
 
         this[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || '');
