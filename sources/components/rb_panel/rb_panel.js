@@ -289,13 +289,14 @@
                     return false;
                 }
 
+                this.isOpen = true;
+
                 if (this.groupComponent) {
                     this.groupComponent.panelChangeCB(this, 'beforeopen');
                 }
 
                 clearTimeout(this._closeTimer);
 
-                this.isOpen = true;
                 options.animationData = this._handleAnimation(changeEvent);
 
                 if (options.setFocus !== false && (mainOpts.setFocus || options.setFocus) && !options.focusElement) {
@@ -376,11 +377,11 @@
                     return false;
                 }
 
+                this.isOpen = false;
+
                 if (this.groupComponent) {
                     this.groupComponent.panelChangeCB(this, 'beforeclose');
                 }
-
-                this.isOpen = false;
 
                 this.adjustScroll();
 

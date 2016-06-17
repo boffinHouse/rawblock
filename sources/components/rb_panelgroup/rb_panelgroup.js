@@ -353,10 +353,11 @@
                         break;
                     case 'afteropen':
                     case 'afterclose':
-                        this._updatePanelInformation();
                         this._triggerOnce();
                         break;
                 }
+
+                this._updatePanelInformation();
             },
             /**
              * Selects next panel.
