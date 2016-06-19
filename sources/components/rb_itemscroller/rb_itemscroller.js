@@ -300,7 +300,10 @@
                 var _isWheelStarted = false;
                 var that = this;
                 var options = this.options;
-
+                var block = false;
+                var unblock = function(){
+                    block = false;
+                };
                 var wheelEnd = rb.debounce(function(){
                     var nearestIndex = that.getNearest();
                     var diff = that._pos - startValue;
@@ -315,11 +318,12 @@
                     } else {
                         that.selectNext();
                     }
+                    setTimeout(unblock, 66);
 
-                }, {delay: 40});
+                }, {delay: 44});
 
                 this.viewport.addEventListener('wheel', function(e){
-                    if(!e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+                    if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
 
                         if(!_isWheelStarted){
                             _isWheelStarted = true;
