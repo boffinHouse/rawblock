@@ -16,7 +16,7 @@
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-tabs js-rb-life" data-module="tabs">
+<div class="rb-tabs js-rb-live" data-module="tabs">
     <ul class="tabs-nav">
          <li class="tabs-nav-item">
              <button type="button" class="tabs-btn">Heading</button>
@@ -42,7 +42,7 @@ Panel animations can be applied by adding an modifier class to the component, fo
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-{{#mergeJSON rb_tabs.default 'type: "is-fade js-rb-life"'}}
+{{#mergeJSON rb_tabs.default 'type: "is-fade js-rb-live"'}}
 {{> rb_tabs }}
 {{/mergeJSON}}
 </div>
@@ -51,14 +51,14 @@ Panel animations can be applied by adding an modifier class to the component, fo
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-tabs is-fade js-rb-life" data-module="tabs">
+<div class="rb-tabs is-fade js-rb-live" data-module="tabs">
     ...
 </div>
 ```
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-{{#mergeJSON rb_tabs.default 'type: "is-slide js-rb-life "'}}
+{{#mergeJSON rb_tabs.default 'type: "is-slide js-rb-live "'}}
 {{> rb_tabs }}
 {{/mergeJSON}}
 </div>
@@ -67,7 +67,7 @@ Panel animations can be applied by adding an modifier class to the component, fo
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-tabs is-slide js-rb-life" data-module="tabs">
+<div class="rb-tabs is-slide js-rb-live" data-module="tabs">
     ...
 </div>
 ```

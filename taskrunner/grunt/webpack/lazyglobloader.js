@@ -46,7 +46,7 @@ module.exports = function (content, sourceMap) {
         ;
     });
 
-    ret = "module.exports = (function(addImportHook){" + files.join("\n") + "})(rb.life.addImportHook);";
+    ret = "module.exports = (function(addImportHook){" + files.join("\n") + "})(rb.live.addImportHook);";
 
     return ret;
 };

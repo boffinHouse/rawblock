@@ -1254,7 +1254,7 @@ if (!window.rb) {
 
     var cbs = [];
     var setupClick = function () {
-        var clickClass = ['js', 'click'].join(rb.nameSeparator);
+        var clickClass = ['js', 'rb', 'click'].join(rb.nameSeparator);
         var clickSel = '.' + clickClass;
         var applyBehavior = function (clickElem, e) {
             var i, len, attr, found;
@@ -1302,11 +1302,11 @@ if (!window.rb) {
     };
 
     /**
-     * Allows to add click listeners for fast event delegation. For elements with the class `js-click` and a data-{name} attribute.
+     * Allows to add click listeners for fast event delegation. For elements with the class `js-rb-click` and a data-{name} attribute.
      * @property rb.click.add {Function} add the given name and the function as a delegated click handler.
      * @memberof rb
      * @example
-     * //<a class="js-click" data-lightbox="1"></a>
+     * //<a class="js-rb-click" data-lightbox="1"></a>
      * rb.click.add('lightbox', function(element, event, attrValue){
 	 *
 	 * });
@@ -1468,9 +1468,9 @@ if (!window.rb) {
 (function (window, document) {
     'use strict';
 
-    var elements, useMutationEvents, implicitlyStarted, lifeBatch, initClass, attachedClass, started;
+    var elements, useMutationEvents, implicitlyStarted, liveBatch, initClass, attachedClass, started;
 
-    var life = {};
+    var live = {};
     var removeElements = [];
     var rb = window.rb;
     var $ = rb.$;
@@ -1503,16 +1503,16 @@ if (!window.rb) {
         initClickCreate = $.noop;
         rb.click.add('module', function (elem) {
             if(!rb.getComponent(elem)){
-                rb.log('js-click component not found', elem);
+                rb.log('js-rb-click component not found', elem);
             }
             rb.rAFQueue(function () {
                 elem.classList.remove(rb.click.clickClass);
                 if(!elem.classList.contains(attachedClass)){
                     elem.classList.add(initClass);
-                    life.searchModules();
+                    live.searchModules();
                 }
             }, true);
-            lifeBatch.run();
+            liveBatch.run();
         });
     };
 
@@ -1543,12 +1543,12 @@ if (!window.rb) {
             var main = function () {
                 var len, instance, element;
                 var start = Date.now();
-                for (len = life._attached.length; i < len && Date.now() - start < 6; i++) {
-                    element = life._attached[i];
+                for (len = live._attached.length; i < len && Date.now() - start < 6; i++) {
+                    element = live._attached[i];
 
                     if (element && (instance = element[componentExpando]) && !docElem.contains(element)) {
                         element.classList.add(initClass);
-                        life.destroyComponent(instance, i, element);
+                        live.destroyComponent(instance, i, element);
 
                         i--;
                         len--;
@@ -1581,7 +1581,7 @@ if (!window.rb) {
             for (i = 0; i < len; i++) {
                 mutation = mutations[i];
                 if (mutation.addedNodes.length) {
-                    life.searchModules();
+                    live.searchModules();
                 }
                 if (mutation.removedNodes.length) {
                     removeComponents();
@@ -1594,8 +1594,8 @@ if (!window.rb) {
                 .observe(docElem, {subtree: true, childList: true})
             ;
         } else {
-            docElem.addEventListener('DOMNodeInserted', life.searchModules);
-            document.addEventListener('DOMContentLoaded', life.searchModules);
+            docElem.addEventListener('DOMNodeInserted', live.searchModules);
+            document.addEventListener('DOMContentLoaded', live.searchModules);
             docElem.addEventListener('DOMNodeRemoved', (function () {
                 var mutation = {
                     addedNodes: []
@@ -1651,13 +1651,14 @@ if (!window.rb) {
             });
         }
     };
-
     var mainInit = function(){
         mainInit = false;
 
+        window.removeEventListener('click', mainInit, true);
+
         extendOptions(rb.cssConfig);
 
-        initClass = ['js', 'rb', 'life'].join(rb.nameSeparator);
+        initClass = ['js', 'rb', 'live'].join(rb.nameSeparator);
         attachedClass = ['js', 'rb', 'attached'].join(rb.nameSeparator);
 
         elements = document.getElementsByClassName(initClass);
@@ -1675,25 +1676,25 @@ if (!window.rb) {
 
     rb.ready = rb.deferred();
 
-    rb.life = life;
+    rb.live = live;
 
-    life.autoStart = true;
+    live.autoStart = true;
 
-    life.expando = expando;
-    life.componentExpando = componentExpando;
+    live.expando = expando;
+    live.componentExpando = componentExpando;
 
-    life._failed = {};
+    live._failed = {};
 
     /**
-     * List of all component classes registered by `rb.life.register`.
+     * List of all component classes registered by `rb.live.register`.
      * @memberof rb
      * @type {{}}
      */
     rb.components = {};
-    life._attached = [];
-    life.customElements = false;
+    live._attached = [];
+    live.customElements = false;
 
-    life.init = function (options) {
+    live.init = function (options) {
         if (started) {
             return;
         }
@@ -1706,17 +1707,21 @@ if (!window.rb) {
             extendOptions(options);
         }
 
-        lifeBatch = createBatch();
+        if(mainInit){
+            window.addEventListener('click', mainInit, true);
+        }
 
-        life.searchModules();
+        liveBatch = createBatch();
+
+        live.searchModules();
     };
 
     /**
-     * Registers a component class with a name and manages its lifecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an `attached` or `detached` instance method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
+     * Registers a component class with a name and manages its livecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an `attached` or `detached` instance method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
      *
-     * The DOM element/markup of a component class must have a `data-module` attribute with the name as its value. The `data-module` is split by a "/" and only the last part is used as the component name. The part before can be optionally used for [`rb.life.addImportHook`]{@link rb.life.addImportHook}.
+     * The DOM element/markup of a component class must have a `data-module` attribute with the name as its value. The `data-module` is split by a "/" and only the last part is used as the component name. The part before can be optionally used for [`rb.live.addImportHook`]{@link rb.live.addImportHook}.
      *
-     * Usually the element should also have the class `js-rb-life` to make sure it is constructed as soon as it is attached to the document. If the component element has the class `js-click` instead it will be constructed on first click.
+     * Usually the element should also have the class `js-rb-live` to make sure it is constructed as soon as it is attached to the document. If the component element has the class `js-rb-click` instead it will be constructed on first click.
      *
      * @memberof rb
      * @param {String} name The name of your component.
@@ -1729,8 +1734,8 @@ if (!window.rb) {
 	 *
 	 * }
      *
-     * //<button class="js-rb-life" data-module="my-button"></button>
-     * rb.life.register('my-button', MyButton);
+     * //<button class="js-rb-live" data-module="my-button"></button>
+     * rb.live.register('my-button', MyButton);
      *
      * @example
      * class Time {
@@ -1749,11 +1754,11 @@ if (!window.rb) {
 	 *      }
 	 * }
      *
-     * //<span class="js-rb-life" data-module="time"></span>
-     * rb.life.register('time', Time);
+     * //<span class="js-rb-live" data-module="time"></span>
+     * rb.live.register('time', Time);
      *
      */
-    life.register = function (name, Class, _noCheck) {
+    live.register = function (name, Class, _noCheck) {
         var proto = Class.prototype;
         var superProto = Object.getPrototypeOf(proto);
         var superClass = superProto.constructor;
@@ -1781,12 +1786,12 @@ if (!window.rb) {
             if (!started && !implicitlyStarted) {
                 implicitlyStarted = true;
                 setTimeout(function () {
-                    if (!elements && life.autoStart) {
+                    if (!elements && live.autoStart) {
                         $(function () {
                             if (!elements) {
                                 setTimeout(function () {
                                     if (!elements) {
-                                        life.init();
+                                        live.init();
                                     }
                                 });
                             }
@@ -1794,7 +1799,7 @@ if (!window.rb) {
                     }
                 }, 9);
             } else if (elements) {
-                life.searchModules();
+                live.searchModules();
             }
         }
     };
@@ -1811,7 +1816,7 @@ if (!window.rb) {
      *
      * @example
      * //create a short cut.
-     * var addImportHook = rb.life.addImportHook;
+     * var addImportHook = rb.live.addImportHook;
      *
      * addImportHook('slider', function(moduleName, moduleAttributeValue, reject, element){
 	 *      //non-standard futuristic import
@@ -1838,7 +1843,7 @@ if (!window.rb) {
 	 *      require(['./components/' + moduleAttributeValue]);
 	 * });
      */
-    life.addImportHook = function (names, importCallback) {
+    live.addImportHook = function (names, importCallback) {
         var add = function (name) {
             if (unregisteredFoundHook[name]) {
                 rb.log('overrides ' + name + ' import hook', names, importCallback);
@@ -1864,10 +1869,10 @@ if (!window.rb) {
      * @see rb.getComponent
      *
      * @param element
-     * @param LifeClass
+     * @param liveClass
      * @returns {Object}
      */
-    life.create = function (element, LifeClass, initialOpts) {
+    live.create = function (element, liveClass, initialOpts) {
         var instance;
 
         if (mainInit) {
@@ -1875,7 +1880,7 @@ if (!window.rb) {
         }
 
         if (!(instance = element[componentExpando])) {
-            instance = new LifeClass(element, initialOpts);
+            instance = new liveClass(element, initialOpts);
             element[componentExpando] = instance;
         }
 
@@ -1886,17 +1891,17 @@ if (!window.rb) {
         if (!element[expando] && instance && (instance.attached || instance.detached)) {
 
             if ((instance.attached || instance.detached)) {
-                if (life._attached.indexOf(element) == -1) {
-                    life._attached.push(element);
+                if (live._attached.indexOf(element) == -1) {
+                    live._attached.push(element);
                 }
                 if (instance.attached) {
-                    lifeBatch.add(function () {
+                    liveBatch.add(function () {
                         instance.attached();
                     });
                 }
             }
 
-            lifeBatch.timedRun();
+            liveBatch.timedRun();
         }
         element[expando] = true;
         instance._created = true;
@@ -1904,14 +1909,14 @@ if (!window.rb) {
         return instance;
     };
 
-    life.searchModules = (function () {
+    live.searchModules = (function () {
         var removeInitClass = rb.rAF(function () {
             while (removeElements.length) {
                 removeElements.shift().classList.remove(initClass);
             }
         });
         var failed = function (element, id) {
-            life._failed[id] = true;
+            live._failed[id] = true;
             removeElements.push(element);
             rb.log('failed', id, element);
         };
@@ -1943,10 +1948,10 @@ if (!window.rb) {
                 moduleId = moduleId[moduleId.length - 1];
 
                 if (rb.components[moduleId]) {
-                    life.create(element, rb.components[moduleId]);
+                    live.create(element, rb.components[moduleId]);
                     removeElements.push(element);
                 }
-                else if (life._failed[moduleId]) {
+                else if (live._failed[moduleId]) {
                     failed(element, moduleId);
                 }
                 else if ((hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*']))) {
@@ -1966,20 +1971,20 @@ if (!window.rb) {
             }
 
             removeInitClass();
-            lifeBatch.run();
+            liveBatch.run();
         }, {delay: 50});
 
         return findElements;
     })();
 
-    life.destroyComponent = function (instance, index, element) {
+    live.destroyComponent = function (instance, index, element) {
 
         if (!element) {
             element = instance.element;
         }
 
         if (index == null) {
-            index = life._attached.indexOf(element);
+            index = live._attached.indexOf(element);
         }
         element.classList.remove(attachedClass);
 
@@ -1990,10 +1995,10 @@ if (!window.rb) {
             instance.detached(element, instance);
         }
 
-        life._attached.splice(index, 1);
+        live._attached.splice(index, 1);
     };
 
-    return life;
+    return live;
 })(window, document);
 
 /* Simple JavaScript Inheritance
@@ -2098,12 +2103,12 @@ if (!window.rb) {
     rb.Class = ES5Class;
 })();
 
-(function (window, document, life, undefined) {
+(function (window, document, live, undefined) {
     'use strict';
 
     var rb = window.rb;
     var $ = rb.$;
-    var componentExpando = life.componentExpando;
+    var componentExpando = live.componentExpando;
     var regData = /^data-/;
     var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
     var regComma = /\s*,\s*(?=[^\)]*(?:\(|$))/g;
@@ -2210,13 +2215,13 @@ if (!window.rb) {
             }
 
             if (rb.components[componentName]) {
-                component = life.create(element, rb.components[componentName], initialOpts);
+                component = live.create(element, rb.components[componentName], initialOpts);
             }
         }
         return component || null;
     };
 
-    life.getComponent = rb.getComponent;
+    live.getComponent = rb.getComponent;
 
     rb.Component = rb.Class.extend(
         /** @lends rb.Component.prototype */
@@ -2225,13 +2230,13 @@ if (!window.rb) {
              * constructs the class
              * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
              *
-             * For the life cycle features see [rb.life.register]{@link rb.life.register}.
+             * For the live cycle features see [rb.live.register]{@link rb.live.register}.
              * @param element
              * @param [initialDefaults] {Object}
              * @constructs
              *
              * @example
-             * //<div class="js-rb-life" data-module="my-module"></div>
+             * //<div class="js-rb-live" data-module="my-module"></div>
              * rb.Component.extend('my-component', {
 			 *      defaults: {
 			 *          className: 'toggle-class',
@@ -2248,11 +2253,11 @@ if (!window.rb) {
 			 *          this.$element.toggleClass(this.options.className);
 			 *      }
 			 * });
-             * //If ES5 static extend method is used, rb.life.register is called implicitly.
+             * //If ES5 static extend method is used, rb.live.register is called implicitly.
              *
              * @example
-             * //<div class="js-rb-life" data-module="my-module"></div>
-             * rb.life.register('my-component', class MyComponent extends rb.Component {
+             * //<div class="js-rb-live" data-module="my-module"></div>
+             * rb.live.register('my-component', class MyComponent extends rb.Component {
 			 *      static get defaults(){
 			 *          return {
 			 *              className: 'toggle-class',
@@ -2334,7 +2339,7 @@ if (!window.rb) {
              * @example
              *
              * //creating a new component with different defaults:
-             * rb.life.register('special-accordion', class SpecialAccordion extends rb.components.accordion {
+             * rb.live.register('special-accordion', class SpecialAccordion extends rb.components.accordion {
 			 *      static get defaults(){
 			 *          return {
 			 *              multiple: true,
@@ -2721,7 +2726,7 @@ if (!window.rb) {
              *
              * //require('sources/js/_templates/my-component.js');
              *
-             * rb.life.register('my-component', class MyComponent extends rb.Component {
+             * rb.live.register('my-component', class MyComponent extends rb.Component {
 			 *      renderMain(){
 			 *          this.element.innerHTML = this.render('main', {title: 'foo'});
 			 *      }
@@ -2780,7 +2785,7 @@ if (!window.rb) {
             },
 
             destroy: function () {
-                life.destroyComponent(this);
+                live.destroyComponent(this);
             },
 
             _super: function () {
@@ -2806,7 +2811,7 @@ if (!window.rb) {
             Class.prototype.statics = null;
         }
 
-        life.register(name, Class, noCheck);
+        live.register(name, Class, noCheck);
         return Class;
     };
 
@@ -2826,7 +2831,7 @@ if (!window.rb) {
         return Class;
     };
 
-})(window, document, rb.life);
+})(window, document, rb.live);
 
 (function (window, document, undefined) {
     'use strict';
@@ -2859,7 +2864,7 @@ if (!window.rb) {
              * ```html
              * <button type="button"
              *  data-module="button"
-             *  class="js-click"
+             *  class="js-rb-click"
              *  aria-controls="panel-1"
              *  data-type="open">
              *      click me

@@ -10,8 +10,8 @@
 
     var rb = window.rb;
     var $ = rb.$;
-    var life = rb.life;
-    var componentExpando = life.componentExpando;
+    var live = rb.live;
+    var componentExpando = live.componentExpando;
     var components = rb.components;
 
     var cleanupCSS = function () {
@@ -90,7 +90,7 @@
              * @prop {Element[]} selectedItems The dom element(s) of the open panel(s)
              *
              * @example
-             * <div class="rb-tabs js-click" data-module="panelgroup" data-toggle="false">
+             * <div class="rb-tabs js-rb-click" data-module="panelgroup" data-toggle="false">
              *      <button type="button" class="panelgroup-ctrl-btn" data-type="prev">&lt;</button>
              *      <button type="button" class="panelgroup-ctrl-btn" data-type="next">&gt;</button>
              *
@@ -260,7 +260,7 @@
                 this.$panelWrapper = $(this.getElementsFromString(options.panelWrapperSel));
 
                 this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0))).each(function (index) {
-                    var panel = life.create(this, rb.components.panel, {
+                    var panel = live.create(this, rb.components.panel, {
                         jsName: jsPanelName,
                         name: panelName,
                         resetSwitchedOff: options.resetSwitchedOff,
@@ -280,7 +280,7 @@
                 panels = this.$panels;
 
                 this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper)).each(function (index) {
-                    var btn = life.create(this, components.panelbutton, {
+                    var btn = live.create(this, components.panelbutton, {
                         type: (options.toggle) ? 'toggle' : 'open',
                         preventDefault: options.preventDefault,
                     });
@@ -288,7 +288,7 @@
                 });
 
                 this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function (index) {
-                    var btn = life.create(this, components.panelgroupbutton, {
+                    var btn = live.create(this, components.panelgroupbutton, {
                         preventDefault: options.preventDefault
                     });
                     btn.setTarget(that.element);
@@ -300,7 +300,7 @@
              */
             closeAll: function (except) {
                 this.selectedItems.forEach(function (panel, i) {
-                    var component = life.getComponent(panel);
+                    var component = live.getComponent(panel);
                     if (component && component != except && panel != except && i !== except) {
                         component.close();
                     }
@@ -312,7 +312,7 @@
              */
             openAll: function(except){
                 this.$panels.get().forEach(function(panel, i){
-                    var component = life.getComponent(panel);
+                    var component = live.getComponent(panel);
                     if (component && component != except && panel != except && i !== except) {
                         component.open();
                     }
@@ -496,7 +496,7 @@
      * @extends rb.components.panelgroup
      *
      * @example
-     * <div class="rb-tabs js-click" data-module="tabs">
+     * <div class="rb-tabs js-rb-click" data-module="tabs">
      *      <button type="button" class="tabs-btn" aria-expanded="true">1</button>
      *      <button type="button" class="tabs-btn">2</button>
      *
@@ -544,7 +544,7 @@
      *
      *
      * @example
-     * <div class="rb-accordion js-click" data-module="accordion">
+     * <div class="rb-accordion js-rb-click" data-module="accordion">
      *      <button type="button" class="accordion-btn" aria-expanded="true">1</button>
      *      <div class="accordion-panel is-open">
      *          {{panelContent}}

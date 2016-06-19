@@ -14,7 +14,7 @@ To apply the itemscroller component add class `rb-listbox` and attribute `data-m
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<ul class="rb-listbox js-rb-life" data-module="listbox">
+<ul class="rb-listbox js-rb-live" data-module="listbox">
     <li class="listbox-item">...</li>
 </ul>
 ```

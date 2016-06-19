@@ -21,7 +21,7 @@
         if (obj.module != 'panel') {
             return;
         }
-        rb.$('#qunit-fixture').html('<button type="button" aria-controls="panel-id-id-1" class="rb-button js-click" data-module="panelbutton">Toggle</button>' +
+        rb.$('#qunit-fixture').html('<button type="button" aria-controls="panel-id-id-1" class="rb-button js-rb-click" data-module="panelbutton">Toggle</button>' +
             '<div id="panel-id-id-1" class="rb-panel js-panel" data-module="panel">' +
             '<input class="js-autofocus" />' +
             '<button type="button" class="panel-close">sdsd</button>' +

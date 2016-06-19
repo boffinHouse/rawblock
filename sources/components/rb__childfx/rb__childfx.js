@@ -56,7 +56,7 @@
 			 *     }
              * </style>
              *
-             * <div class="rb-main js-rb-life" data-module="childfxExtension">
+             * <div class="rb-main js-rb-live" data-module="childfxExtension">
              *     <img class="logo" src="..." />
              * </div>
              *

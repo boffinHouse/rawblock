@@ -17,7 +17,7 @@ Inside this container you add items `accordion-item`. Each item has an header/bu
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-accordion js-rb-life" data-module="accordion">
+<div class="rb-accordion js-rb-live" data-module="accordion">
     <div class="accordion-item">
         <button type="button" class="accordion-btn">Heading 1</button>
         <div class="accordion-panel is-open">

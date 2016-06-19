@@ -233,7 +233,7 @@
             rbTest
                 .load('fixtures/itemscroller-fixture.html')
                 .then(function () {
-                    rbTest.win.rb.life.init();
+                    rbTest.win.rb.live.init();
                     var component = rbTest.win.rb.$('.rb-itemscroller')
                         .css({width: '100%'})
                         .rbComponent('itemscroller', {duration: 0, carousel: true});

@@ -57,7 +57,7 @@
              * @param element
              *
              * @example
-             * <button aria-controls="popover-1" data-module="panelbutton" type="button" class="js-click">button</button>
+             * <button aria-controls="popover-1" data-module="panelbutton" type="button" class="js-rb-click">button</button>
              * <div id="popover-1" data-module="popover">
              *    {{popoverContent}}
              * </div>

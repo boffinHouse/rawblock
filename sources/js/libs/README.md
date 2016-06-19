@@ -11,28 +11,28 @@ For older browsers some polyfills (IE11-), namely DOM4 and some ES6 Promise/Stri
 Basic Component Markup
 ---------
 
-In general the component markup consists of a `"js-rb-life"` class and `data-module` attribute with the name of the component as its value.
+In general the component markup consists of a `"js-rb-live"` class and `data-module` attribute with the name of the component as its value.
 
 ```html
-<div class="js-rb-life" data-module="my-component"></div>
+<div class="js-rb-live" data-module="my-component"></div>
 ```
 
 Getting started: Writing new components
 ---------
 
-A good starting point is to read the API documentation for the [`rb.life.register` method]{@link rb.life.register} and the [`rb.Component` class]{@link rb.Component}.
+A good starting point is to read the API documentation for the [`rb.live.register` method]{@link rb.live.register} and the [`rb.Component` class]{@link rb.Component}.
 
 A simple backbone to start playing around would look like this:
 
 ```html
-<div class="js-rb-life" data-module="my-component"></div>
+<div class="js-rb-live" data-module="my-component"></div>
 ```
 
 ```js
 (function(){
 	'use strict';
 
-	rb.life.register('my-component', class MyComponent extends rb.Component {
+	rb.live.register('my-component', class MyComponent extends rb.Component {
 		constructor(element){
 			super(element);
 

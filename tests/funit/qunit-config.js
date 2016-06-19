@@ -3,7 +3,7 @@
 	var fixtureHTML = document.getElementById('qunit-fixture').innerHTML;
 
 	QUnit.begin(function(){
-		rb.life.init();
+		rb.live.init();
 	});
 
 	QUnit.testDone(function() {

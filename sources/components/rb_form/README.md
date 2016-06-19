@@ -3,7 +3,7 @@
 
 ##Usage
 To apply this component:
-- Add class `rb-form` to the form element. If validation is needed add also attribute `data-module="validate"` and class `js-rb-life`.
+- Add class `rb-form` to the form element. If validation is needed add also attribute `data-module="validate"` and class `js-rb-live`.
 - Form element are nested inside container `form-field` and a corresponding modifier class is added to the container. For example when you use element `<select>` you
 add class `is-select` the container `form-field`.
 
@@ -15,11 +15,11 @@ add class `is-select` the container `form-field`.
             {{#mergeJSON rb_form.input 'label: "input"'}}
                 {{> rb_input}}
             {{/mergeJSON}}
-            
+
             {{#mergeJSON rb_form.select 'label: "select"'}}
                 {{> rb_input}}
             {{/mergeJSON}}
-            
+
             {{#mergeJSON rb_form.checkbox 'label: "Checkbox"'}}
                 {{> rb_input}}
             {{/mergeJSON}}
@@ -140,7 +140,7 @@ TIP: You can apply utility classes `u-column-group`, `u-gutters` and `u-size-*` 
 <hr>
 
 ##Grouping
-Grouping related form elements makes forms better understandable. 
+Grouping related form elements makes forms better understandable.
 Main sections are grouped with `<fieldset>`, but smaller chunks can be grouped with
 a container element `form-group` and attribute `role="group"`.
 
@@ -165,7 +165,7 @@ a container element `form-group` and attribute `role="group"`.
                     {{> rb_input}}
                 {{/mergeJSON}}
             </div>
-        </div>        
+        </div>
         {{> rb_grouped_end}}
         {{/mergeJSON}}
         {{#mergeJSON 'label: "Radio Grouped"'}}
@@ -210,12 +210,12 @@ a container element `form-group` and attribute `role="group"`.
                </div>
                {{> rb_grouped_end}}
                {{/mergeJSON}}
-    </form>        
-      
-</div> 
+    </form>
+
+</div>
 
 <h3 class="docs-example-title">Markup</h3>
- 
+
 ```html
 ...
 <div class="form-group role="group">
@@ -232,7 +232,7 @@ a container element `form-group` and attribute `role="group"`.
 <hr>
 
 ##Disabled
-Add attribute `disabled` to a form element and it will appear muted. 
+Add attribute `disabled` to a form element and it will appear muted.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
@@ -242,7 +242,7 @@ Add attribute `disabled` to a form element and it will appear muted.
          {{#mergeJSON rb_form.input 'label: "Disabled field", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
          {{> rb_input}}
          {{/mergeJSON}}
-     </div> 
+     </div>
      <div class="form-box u-size-50">
          {{#mergeJSON rb_form.select 'label: "Disabled select", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
          {{> rb_input}}
@@ -252,17 +252,17 @@ Add attribute `disabled` to a form element and it will appear muted.
           {{#mergeJSON rb_form.radio 'label: "Disabled radio", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
           {{> rb_input}}
           {{/mergeJSON}}
-      </div>  
+      </div>
       <div class="form-box u-size-50">
           {{#mergeJSON rb_form.checkbox 'label: "Disabled checkbox", booleans:["disabled"], attrs:{"value":"disabled field"}'}}
           {{> rb_input}}
           {{/mergeJSON}}
-      </div>  
- </div>  
-</form>  
+      </div>
+ </div>
+</form>
 </div>
 <h3 class="docs-example-title">Markup</h3>
- 
+
 ```html
 ...
 <input type="text" disabled="disabled">
@@ -274,17 +274,17 @@ Add attribute `disabled` to a form element and it will appear muted.
 
 <h2>Validation</h2>
 Apply form validation by added attribute `required` to form elements who are required. Apply custom validation by
-adding attribute `data-module="validate"` and class `js-rb-life`  to component `<form>`.
+adding attribute `data-module="validate"` and class `js-rb-live`  to component `<form>`.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-<form action="#" class="rb-form js-rb-life" data-module="validate">
+<form action="#" class="rb-form js-rb-live" data-module="validate">
  <div class="form-row u-column-group u-gutters">
      <div class="form-box u-size-50">
          {{#mergeJSON rb_form.input 'label: "Required field", booleans:["required"]'}}
          {{> rb_input}}
          {{/mergeJSON}}
-     </div> 
+     </div>
      <div class="form-box u-size-50">
          {{#mergeJSON rb_form.select 'label: "Required select", booleans:["required"]'}}
          {{> rb_input}}
@@ -294,28 +294,28 @@ adding attribute `data-module="validate"` and class `js-rb-life`  to component `
           {{#mergeJSON rb_form.radio 'label: "Required radio", booleans:["required"]'}}
           {{> rb_input}}
           {{/mergeJSON}}
-      </div>  
+      </div>
       <div class="form-box u-size-50">
           {{#mergeJSON rb_form.checkbox 'label: "Required checkbox", booleans:["required"]'}}
           {{> rb_input}}
           {{/mergeJSON}}
-      </div>  
- </div> 
+      </div>
+ </div>
  <button>Submit</button>
-</form>  
+</form>
 </div>
 
 <h3 class="docs-example-title">Markup</h3>
- 
+
 ```html
 ...
-<form class="rb-form js-rb-life" data-module="rb-validate">
-    .. 
+<form class="rb-form js-rb-live" data-module="rb-validate">
+    ..
     <input type="text" required="required">
     ..
 </form>
 ...
 ```
 <hr>
-       
+
 

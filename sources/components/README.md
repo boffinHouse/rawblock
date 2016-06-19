@@ -82,7 +82,7 @@ This can be expressed with the following code:
 }
 </style>
 
-<div class="rb-itemscoller js-rb-life" data-module="itemscroller">
+<div class="rb-itemscoller js-rb-live" data-module="itemscroller">
     <!-- ... -->
     <button type="button" class="itemscoller-btn-next">close</button>
 </div>
@@ -105,7 +105,7 @@ This can be expressed with the following code:
 }
 </style>
 
-<div class="rb-heroscroller js-rb-life" data-module="itemscroller">
+<div class="rb-heroscroller js-rb-live" data-module="itemscroller">
     <!-- ... -->
     <button type="button" class="heroscroller-btn-next">close</button>
 </div>

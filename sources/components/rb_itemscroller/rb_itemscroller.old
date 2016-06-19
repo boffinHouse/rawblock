@@ -63,7 +63,7 @@
              *
              * @example
              * <!--  markup example -->
-             * <div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+             * <div class="rb-itemscroller js-rb-live" data-module="itemscroller">
              *      {{#if buttons }}
              *          <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">{{buttons.prev}}</button>
              *          <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">{{buttons.next}}</button>

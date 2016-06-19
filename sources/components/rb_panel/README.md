@@ -13,7 +13,7 @@ The panel component consists of an panel element and action button:
     <div class="u-column-group u-gutters">
         {{#uniqueID}}
             <div class="u-size-50">
-                <button class="rb-button is-primary js-rb-life" type="button" aria-controls="panel-{{id}}" data-module="panelbutton">Panel Button</button>
+                <button class="rb-button is-primary js-rb-live" type="button" aria-controls="panel-{{id}}" data-module="panelbutton">Panel Button</button>
             </div>
 
             <div class="u-size-100">
@@ -29,7 +29,7 @@ The panel component consists of an panel element and action button:
 
 ```html
 <!-- Panelbutton -->
-<button class="YourButtonClass js-click" type="button" aria-controls="dummy-your-unique-id" data-module="panelbutton">Panel Button</button>
+<button class="YourButtonClass js-rb-click" type="button" aria-controls="dummy-your-unique-id" data-module="panelbutton">Panel Button</button>
 
 <!-- Panel -->
 <div id="dummy-your-unique-id" class="rb-panel" data-module="panel">

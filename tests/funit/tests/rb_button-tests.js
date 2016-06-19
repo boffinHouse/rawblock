@@ -52,7 +52,7 @@
     QUnit.test("rb.$", function (assert) {
         var $button, $panel1, $panel2;
         var done = assert.async();
-        var content = '<button id="test-button" data-module="button" data-target="next()" class="js-click"></button><div id="test-panel1" data-module="' + module.name + '"></div><div id="test-panel2" data-module="' + module.name + '"></div>';
+        var content = '<button id="test-button" data-module="button" data-target="next()" class="js-rb-click"></button><div id="test-panel1" data-module="' + module.name + '"></div><div id="test-panel2" data-module="' + module.name + '"></div>';
 
         rb.$('#qunit-fixture').html(content);
 

@@ -224,7 +224,7 @@ This can be expressed with the following code:
 }
 </style>
 
-<div class="rb-itemscoller js-rb-life" data-module="itemscroller">
+<div class="rb-itemscoller js-rb-live" data-module="itemscroller">
     <!-- ... -->
     <button type="button" class="itemscoller-btn-next">close</button>
 </div>
@@ -247,7 +247,7 @@ This can be expressed with the following code:
 }
 </style>
 
-<div class="rb-heroscroller js-rb-life" data-module="itemscroller">
+<div class="rb-heroscroller js-rb-live" data-module="itemscroller">
     <!-- ... -->
     <button type="button" class="heroscroller-btn-next">close</button>
 </div>
@@ -286,7 +286,7 @@ In this case you should also use the JS prefixed class name in your styles. As e
 }
 </style>
 
-<div class="rb-heroscroller js-rb-life" data-module="itemscroller">
+<div class="rb-heroscroller js-rb-live" data-module="itemscroller">
     <!-- ... -->
     <div class="heroscroller-element"></div>
     <button type="button" class="js-heroscroller-btn-next">close</button>
