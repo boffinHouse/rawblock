@@ -296,13 +296,26 @@
             addWheel: function(){
                 if(!this.options.wheel || !rb.debounce){return;}
 
+                var startValue;
                 var _isWheelStarted = false;
                 var that = this;
                 var options = this.options;
 
                 var wheelEnd = rb.debounce(function(){
+                    var nearestIndex = that.getNearest();
+                    var diff = that._pos - startValue;
+                    var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 350);
+
                     _isWheelStarted = false;
-                    that.selectNearest();
+
+                    if(nearestIndex != that._selectedIndex || Math.abs(diff) < threshold){
+                        that.selectedIndex = nearestIndex;
+                    } else if(diff > 0){
+                        that.selectPrev();
+                    } else {
+                        that.selectNext();
+                    }
+
                 }, {delay: 40});
 
                 this.viewport.addEventListener('wheel', function(e){
@@ -310,6 +323,7 @@
 
                         if(!_isWheelStarted){
                             _isWheelStarted = true;
+                            startValue = that._pos;
                             $(that.scroller).stop();
                         }
 

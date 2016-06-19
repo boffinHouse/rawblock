@@ -2201,7 +2201,7 @@ if (!window.rb) {
     rb.getComponent = function (element, componentName, initialOpts) {
         var component = element && element[componentExpando];
 
-        if (!component) {
+        if (!component && element) {
 
             if (!rb.components[componentName]) {
                 componentName = (element.getAttribute('data-module') || '').split('/');
@@ -2213,7 +2213,7 @@ if (!window.rb) {
                 component = life.create(element, rb.components[componentName], initialOpts);
             }
         }
-        return component;
+        return component || null;
     };
 
     life.getComponent = rb.getComponent;
@@ -2409,7 +2409,12 @@ if (!window.rb) {
              * Shortcut to [`rb.getComponent`]{@link rb.getComponent}
              * @function
              */
-            component: rb.getComponent,
+            component: function(element, name, initialOpts){
+                if(typeof element == 'string'){
+                    element = this.query(element);
+                }
+                return rb.getComponent(element, name, initialOpts);
+            },
 
             /**
              * returns the id of an element, if no id exist generates one for the element
