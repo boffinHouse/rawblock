@@ -1652,9 +1652,9 @@ if (!window.rb) {
         }
     };
     var mainInit = function(){
-        mainInit = false;
 
         window.removeEventListener('click', mainInit, true);
+        mainInit = false;
 
         extendOptions(rb.cssConfig);
 
