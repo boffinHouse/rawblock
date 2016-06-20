@@ -53,6 +53,12 @@ a:focus {
     outline-offset: 5px;
 }
 
+a:link,
+button,
+input[type="submit"] {
+    touch-action: manipulation;
+}
+
 //
 //	Embedded content
 // ---------------------
