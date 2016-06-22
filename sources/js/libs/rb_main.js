@@ -501,9 +501,14 @@ if (!window.rb) {
     /* End: parseValue */
 
     /* Begin: idleCallback */
-    rb.rIC = function(fn){
-        return (window.requestIdleCallback || setTimeout)(fn);
-    };
+    rb.rIC = window.requestIdleCallback ?
+        function(fn){
+            return requestIdleCallback(fn);
+        } :
+        function(fn){
+            return setTimeout(fn);
+        }
+    ;
     /* End: idleCallback */
 
     /* Begin: rAF helpers */
@@ -1001,7 +1006,7 @@ if (!window.rb) {
                 }
                 parent = parent.parentNode;
             }
-            parent = rb.getScrollingElement();
+            parent = document.scrollingElement;
             scrollableElements.push([parent, parent.scrollTop, parent.scrollLeft]);
         };
 
@@ -2403,8 +2408,8 @@ if (!window.rb) {
              * @example
              *
              * class MyComponent extends rb.Component {
-			 *      constructor(element){
-			 *          super(element);
+			 *      constructor(element, initialDefaults){
+			 *          super(element, initialDefaults);
 			 *          this.child = this.query('.{name}__close-button');
 			 *
 			 *          rb.rAFs(this, 'setLayout');

@@ -68,7 +68,7 @@
                 };
 
                 element[scrollPositionProp] = positionObj;
-                rb.events.add(element, 'rb_layoutchange', checkScrollPosition, {scroll: true});
+                rb.events.add(element, 'rb_layoutchange', checkScrollPosition);
             }
 
             positionObj.cbs.add(fn);
@@ -84,7 +84,7 @@
 
             if(!positionObj.cbs.has()){
                 element[scrollPositionProp] = null;
-                rb.events.remove(element, 'rb_layoutchange', checkScrollPosition, {scroll: true});
+                rb.events.remove(element, 'rb_layoutchange', checkScrollPosition);
             }
         }
     };

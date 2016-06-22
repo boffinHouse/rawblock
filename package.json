@@ -32,19 +32,20 @@
     "animation-frame": "~0.2.5",
     "array.from": "~1.0.0",
     "array.prototype.find": "~2.0.0",
+    "array.prototype.findindex": "^2.0.0",
     "bezier-easing": "~1.1.1",
     "dom4": "~1.8.2",
     "es6-promise": "~3.1.2",
     "function-bind": "~1.1.0",
     "is-nan": "~1.2.1",
     "lazysizes": "~2.0.0",
+    "normalize.css": "~4.0.0",
     "object-assign": "~4.0.1",
     "string.prototype.endswith": "~0.2.0",
     "string.prototype.includes": "~1.0.0",
     "string.prototype.repeat": "~0.2.0",
     "string.prototype.startswith": "~0.2.0",
-    "whatwg-fetch": "~0.11.0",
-    "normalize.css": "~4.0.0"
+    "whatwg-fetch": "~0.11.0"
   },
   "devDependencies": {
     "@micahgodbolt/grunt-phantomcss": "https://github.com/micahgodbolt/grunt-phantomcss.git#1.0.0",

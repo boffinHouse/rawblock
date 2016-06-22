@@ -98,6 +98,7 @@
 
     /**
      * @memberof rb
+     * @deprecated do it manually.
      * @param element {Element}
      * @param [pseudo='::before'] {String}
      * @returns {boolean}

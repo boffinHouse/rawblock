@@ -202,7 +202,7 @@
                     } else {
                         curScrollingEventElement = window;
                         this.$scrollEventElem = $(curScrollingEventElement);
-                        this.scrollingElement = rb.getScrollingElement();
+                        this.scrollingElement = document.scrollingElement;
                     }
                 }
 

@@ -62,8 +62,8 @@
              *
              * <script>
              * rb.components._childfx.extend('childfxExtension', {
-			 *      init: function(element){
-			 *          this._super(element);
+			 *      init: function(element, initialDefaults){
+			 *          this._super(element, initialDefaults);
 			 *          this.pos();
 			 *      },
 			 *      pos: function(){

@@ -33,8 +33,8 @@ A simple backbone to start playing around would look like this:
 	'use strict';
 
 	rb.live.register('my-component', class MyComponent extends rb.Component {
-		constructor(element){
-			super(element);
+		constructor(element, initialDefaults){
+			super(element, initialDefaults);
 
 			this.log(this.element);
 		}

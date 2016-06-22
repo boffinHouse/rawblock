@@ -202,8 +202,8 @@
             animateError: true,
         },
 
-        init: function(element){
-            this._super(element);
+        init: function(element, initialDefaults){
+            this._super(element, initialDefaults);
 
             this.$element = $(element);
 

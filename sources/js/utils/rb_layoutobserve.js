@@ -10,31 +10,27 @@
     var rb = window.rb;
     var $ = rb.$;
     var elementIndex = 0;
+    var resumeElementIndex = 0;
     var isInstalled = false;
     var observeClass = 'js-rb-layout-observe';
     var layoutObserveProp = rb.Symbol('layoutObserve');
     var observedElements = document.getElementsByClassName(observeClass);
+    var rbRic = rb.rIC;
 
     var timedOutCheck = function(){
-        setTimeout(checkElements);
+        rbRic(resumeCheckElements);
     };
 
-    var rIC = window.requestIdleCallback || function(){rb.rAFQueue(timedOutCheck, true);};
+    var rIC = function(){rb.rAFQueue(timedOutCheck, true);};
 
-    var checkElements = function (e){
-        var element, start, observer, scrollContainer;
-        var length = observedElements.length;
-        var isScroll = false;
-
-        var event = [{target: null, type: 'rb_layoutchange', originalEvent: e}];
-
-        if(e && e.type == 'scroll'){
-            isScroll = true;
-            scrollContainer = (e.target.nodeType == 1) ?
-                e.target :
-                null
-            ;
+    var resumeCheckElements = function(){
+        if(resumeElementIndex == elementIndex){
+            checkElements();
         }
+    };
+    var checkElements = function (e){
+        var element, start, observer, event;
+        var length = observedElements.length;
 
         for(; elementIndex < length; elementIndex++){
             element = observedElements[elementIndex];
@@ -49,22 +45,16 @@
                     continue;
                 }
 
-                if(isScroll && scrollContainer && scrollContainer.contains(element)){
-                    continue;
-                }
+                event = [{target: element, type: 'rb_layoutchange', originalEvent: e}];
 
-                event[0].target = element;
-
-                observer.fullCbs.fireWith(element, event);
-
-                if(!isScroll){
-                    observer.cbs.fireWith(element, event);
-                }
+                observer.cbs.fireWith(element, event);
 
                 if(!start){
                     start = Date.now();
-                } else if(Date.now() - start > 4){
-                    rIC(checkElements);
+                } else if(Date.now() - start > 3){
+                    elementIndex++;
+                    resumeElementIndex = elementIndex;
+                    rIC();
                     return;
                 }
             }
@@ -99,7 +89,6 @@
         });
     };
 
-
     rb.events.special.rb_layoutchange = {
         add: function (elem, fn, opts) {
             var observer = elem[layoutObserveProp];
@@ -107,7 +96,6 @@
             if(!observer){
                 observer = {
                     cbs: $.Callbacks(),
-                    fullCbs: $.Callbacks(),
                 };
 
                 elem[layoutObserveProp] = observer;
@@ -119,16 +107,16 @@
                 addEvents();
             }
 
-            observer[opts && opts.scroll ? 'fullCbs' : 'cbs'].add(fn);
+            observer.cbs.add(fn);
         },
         remove: function (elem, fn, opts) {
             var observer = elem[layoutObserveProp];
 
             if(!observer){return;}
 
-            observer[opts && opts.scroll ? 'fullCbs' : 'cbs'].remove(fn);
+            observer.cbs.remove(fn);
 
-            if(!observer.cbs.has() && !observer.fullCbs.has()){
+            if(!observer.cbs.has()){
                 delete elem[layoutObserveProp];
                 rb.rAFQueue(function(){
                     elem.classList.remove(observeClass);
