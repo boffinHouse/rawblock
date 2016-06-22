@@ -390,6 +390,31 @@
         }
     });
 
+    ['scrollTop', 'scrollLeft'].forEach(function(name){
+        fn[name] = function(value){
+            var elem;
+            var ret = this;
+            if(value == null){
+                ret = 0;
+                elem = this[0];
+
+                if(elem){
+                    ret = (elem == window ?
+                        document.scrollingElement :
+                        elem)[name];
+                }
+            } else {
+                this.elements.forEach(function(elem){
+                    if(elem == window){
+                        elem = document.scrollingElement;
+                    }
+                    elem[name] = value;
+                });
+            }
+            return ret;
+        };
+    });
+
     [['find', 'querySelectorAll', true], ['children', 'children']].forEach(function (action, test) {
         var isMatched = !!action[2];
         var isMethod = !!action[2];

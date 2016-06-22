@@ -35,9 +35,12 @@
              * @property {String}  dragEasing='0.1, 0.25, 0.1, 1.03' Easing value for the slide animation after drag.
              * @property {Number}  duration=600 Average duration for the slide animation.
              * @property {Boolean} mouseDrag=true Whether scroller should be draggable via mouse.
+             * @property {Boolean} wheel=true Whether scroller should be draggable via wheel/trackpad scroll.
              * @property {String|false} dragExclude=false Whether drag/swipe should be excluded on certain element selectors.
              * @property {Boolean} mandatorySnap=false Whether each page generates a mandatory snap point.
              * @property {String}  paginationItemTpl The markup for the pagination buttons.
+             * @property {String|false|undefined}  excludeCell=false Simple selector to exclude cells from scroller cell.
+             * @property {Boolean}  excludeHiddenCells=true Excludes cells that are set to `display: none`.
              * @property {Boolean} switchedOff=false Whether the scroller should be turned off.
              * @property {Boolean} useTransform=true Whether the scroller should use CSS transform3d or left property.
              * @property {Boolean} usePx=false Whether the scroller should use CSS px units instead of % units. Set this to `true` if items are not using % as width unit.
@@ -54,6 +57,7 @@
                 duration: 600,
                 paginationItemTpl: '<span class="{name}{e}pagination{-}btn"></span>',
                 excludeCell: false,
+                excludeHiddenCells: true,
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
@@ -245,6 +249,7 @@
                         }
                         break;
                     case 'excludeCell':
+                    case 'excludeHiddenCells':
                         this.updateCells();
                         break;
                 }
@@ -940,6 +945,13 @@
                 }
 
                 this.$cells = this.$scroller.children(cellSelector);
+
+                if(this.options.excludeHiddenCells){
+                    this.$cells = this.$cells.filter(function(){
+                        return rb.getStyles(this).display != 'none';
+                    });
+                }
+
                 this.calculateLayout();
                 rb.rAFQueue(function () {
                     that.$scroller.prepend(that.helperElem);

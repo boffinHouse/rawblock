@@ -192,18 +192,29 @@ if (!window.rb) {
     /* End: rbSlideUp / rbSlideDown */
 
     /* Begin: getScrollingElement */
+
+    //Todo: move into polyfills
+    if(!('scrollingElement' in document)){
+        Object.defineProperty(document, 'scrollingElement', {
+            get: ((document.compatMode == 'BackCompat' || 'WebkitAppearance' in rb.root.style) ?
+                function(){
+                    return  document.body || rb.root;
+                } :
+                function(){
+                    return rb.root;
+                }),
+            enumerable: true,
+            configurable: true,
+        });
+    }
+
     /**
      * @memberof rb
+     * @deprecated use `document.scrollingElement` instead
      * @returns {Element} The DOM element that scrolls the viewport (either html or body)
      */
     rb.getScrollingElement = function () {
-        var scrollingElement = document.scrollingElement;
-
-        if (!scrollingElement && (document.compatMode == 'BackCompat' || 'WebkitAppearance' in rb.root.style)) {
-            scrollingElement = document.body;
-        }
-
-        return scrollingElement || rb.root;
+        return document.scrollingElement;
     };
 
 	/**
@@ -786,6 +797,7 @@ if (!window.rb) {
                 if(!proxy){
                     proxy = function(e){
                         e.delegatedTarget = e.target.closest(selector);
+                        e.delegateTarget = e.delegatedTarget;
                         if(!e.delegatedTarget){return;}
                         return handler.apply(this, arguments);
                     };
@@ -801,6 +813,7 @@ if (!window.rb) {
                     proxy = function(e){
                         if(e.target.matches(selector)){
                             e.delegatedTarget = e.target;
+                            e.delegateTarget = e.delegatedTarget;
                             return handler.apply(this, arguments);
                         }
                     };
