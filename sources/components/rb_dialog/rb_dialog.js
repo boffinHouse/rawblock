@@ -248,7 +248,7 @@
 
                 if(this.options.setDisplay){
                     clearTimeout(this._displayTimer);
-                    this._displayTimer = setTimeout(this._setDisplay, 2000);
+                    this._displayTimer = setTimeout(this._setDisplay, 5000);
                 }
                 this._trigger(options);
             },
