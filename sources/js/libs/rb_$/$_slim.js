@@ -201,6 +201,18 @@
             }
             return ret;
         },
+        camelCase: (function () {
+            var reg = /-([\da-z])/gi;
+            var camelCase = function (all, found) {
+                return found.toUpperCase();
+            };
+
+            var retCamel = function (str) {
+                return str.replace(reg, camelCase);
+            };
+
+            return retCamel;
+        })(),
     });
 
     Object.assign(fn, {

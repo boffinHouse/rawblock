@@ -413,29 +413,6 @@ if (!window.rb) {
     };
     /* End: getCSSNumbers */
 
-    /* Begin: camelCase */
-
-    rb.camelCase = (function () {
-        var reg = /-([\da-z])/gi;
-        var camelCase = function (all, found) {
-            return found.toUpperCase();
-        };
-
-        /**
-         * camel cases a String
-         * @alias rb#camelCase
-         * @param str {String} String to camelcase
-         * @returns {String} the camel cased string
-         */
-        var retCamel = function (str) {
-            return str.replace(reg, camelCase);
-        };
-
-        return retCamel;
-    })();
-
-    /* End: camelCase */
-
     /* Begin: memoize */
 
 	/**
@@ -2786,7 +2763,7 @@ if (!window.rb) {
                 for (i = 0; i < len; i++) {
                     name = attributes[i].nodeName;
                     if (name != optionsAttr && name.startsWith('data-') && !name.endsWith('-options')) {
-                        options[rb.camelCase(name.replace(regData, ''))] = rb.parseValue(attributes[i].nodeValue);
+                        options[$.camelCase(name.replace(regData, ''))] = rb.parseValue(attributes[i].nodeValue);
                     }
                 }
 
