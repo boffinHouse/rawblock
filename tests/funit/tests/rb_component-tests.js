@@ -317,7 +317,7 @@
         var ext2Instance;
 
         var done = assert.async();
-        var content = '<div class="manual-focus" tabindex="-1" style="height: 50px;"></div><div class="js-autofocus" tabindex="-1" style="height: 50px;"></div>';
+        var content = '<div class="manual-focus" tabindex="-1" style="height: 50px;"></div><div class="js-rb-autofocus" tabindex="-1" style="height: 50px;"></div>';
         var ext2elem = rb.$(document.createElement('div')).html(content).attr({'tabindex': 0});
         var curActive = document.createElement('input');
         var outsideActice = document.createElement('input');
@@ -336,7 +336,7 @@
                 ext2Instance.setComponentFocus();
 
                 return QUnit.afterAF(20).then(function () {
-                    assert.equal(document.activeElement, ext2elem.find('.js-autofocus').get(0));
+                    assert.equal(document.activeElement, ext2elem.find('.js-rb-autofocus').get(0));
                 });
             })
             .then(function () {

@@ -52,9 +52,11 @@
      */
     rb.jsonParse = function (str) {
         var ret;
-        try {
-            ret = JSON.parse(str);
-        } catch (e) { }
+        if(str){
+            try {
+                ret = JSON.parse(str);
+            } catch (e) { }
+        }
         return ret;
     };
 

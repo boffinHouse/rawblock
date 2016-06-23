@@ -41,7 +41,7 @@
              * @property {Number}  defaults.duration=400 Duration of the animation.
              * @property {Boolean|Number}  defaults.adjustScroll=false Sets the adjustScroll option on the panel components.
              * @property {Boolean|Number}  defaults.scrollIntoView=false Sets the scrollIntoView option on the panel components.
-             * @property {Boolean}  defaults.setFocus=true Whether component should try to focus a `js-autofocus` element inside of an opening panel.
+             * @property {Boolean}  defaults.setFocus=true Whether component should try to focus a `js-rb-autofocus` element inside of an opening panel.
              * @property {Boolean}  defaults.preventDefault=false Whether default click action on "{name}-btn" should be prevented.
              * @property {String}  defaults.itemWrapper='' Set itemWrapper option of the panel instance.
              * @property {Boolean}  defaults.switchedOff=false Turns off panelgroup.

@@ -2101,6 +2101,7 @@ if (!window.rb) {
 (function (window, document, live, undefined) {
     'use strict';
 
+    var focusClass, focusSel;
     var rb = window.rb;
     var $ = rb.$;
     var componentExpando = live.componentExpando;
@@ -2157,6 +2158,12 @@ if (!window.rb) {
             return str.replace(regHTMLSel, replacer);
         };
     })(), true);
+    var generateFocusClasses = function(){
+        focusClass = ['js', 'rb', 'autofocus'].join(rb.nameSeparator);
+        focusSel = '.' + focusClass;
+    };
+
+    rb.ready.then(generateFocusClasses);
 
     rb.parseEventString = rb.memoize(function(evtStr){
 
@@ -2498,17 +2505,17 @@ if (!window.rb) {
                         focusElement = rb.elementFromStr(element, this.element)[0];
                     }
                 } else {
-                    focusElement = this.element.querySelector('.js-autofocus');
+                    focusElement = this.query(focusSel);
                 }
 
-                if (!focusElement && (element === true || this.element.classList.contains('js-autofocus'))) {
+                if (!focusElement && (element === true || this.element.classList.contains(focusClass))) {
                     focusElement = this.element;
                 }
                 return focusElement;
             },
 
             /**
-             * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with the class `js-autofocus` inside of the component element is focused.
+             * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with the class `js-rb-autofocus` inside of the component element is focused.
              * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
              * @param [delay] {Number} The delay that should be used to focus an element.
              */
@@ -2825,6 +2832,8 @@ if (!window.rb) {
 
         return Class;
     };
+
+    generateFocusClasses();
 
 })(window, document, rb.live);
 

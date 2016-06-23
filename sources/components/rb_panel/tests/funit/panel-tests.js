@@ -23,7 +23,7 @@
         }
         rb.$('#qunit-fixture').html('<button type="button" aria-controls="panel-id-id-1" class="rb-button js-rb-click" data-module="panelbutton">Toggle</button>' +
             '<div id="panel-id-id-1" class="rb-panel js-panel" data-module="panel">' +
-            '<input class="js-autofocus" />' +
+            '<input class="js-rb-autofocus" />' +
             '<button type="button" class="panel-close">sdsd</button>' +
             '</div>')
         ;
@@ -91,7 +91,7 @@
                 return QUnit.afterAF(50);
             })
             .then(function () {
-                assert.equal(document.activeElement, panel.querySelector('.js-autofocus'));
+                assert.equal(document.activeElement, panel.querySelector('.js-rb-autofocus'));
             })
             .then(function () {
                 syn.click(button);
