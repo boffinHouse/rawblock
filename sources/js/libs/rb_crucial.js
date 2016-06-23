@@ -13,7 +13,7 @@
     var regEscapedQuote = /\\"/g;
 
     var removeLeadingQuotes = function (str) {
-        return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
+        return str && str.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
     };
 
     /* Begin: ID/Symbol */
