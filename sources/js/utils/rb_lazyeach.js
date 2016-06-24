@@ -15,7 +15,7 @@
         var length = list.length;
 
         if(!max){
-            max = 5;
+            max = 4;
         }
 
         if(!index){

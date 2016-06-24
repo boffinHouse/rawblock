@@ -6,7 +6,7 @@
         if (obj.module != 'rb_dialog') {
             return;
         }
-        rb.$('#qunit-fixture').html('<div class="rb-dialog js-rb-life" data-module="dialog">' +
+        rb.$('#qunit-fixture').html('<div class="rb-dialog js-rb-live" data-module="dialog">' +
             '<div class="dialog-inner"><p>Content</p>' +
             '</div>' +
             '<button type="button" class="dialog-close">Close Dialog</button>' +

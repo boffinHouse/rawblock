@@ -6,6 +6,7 @@ require('es6-promise');
 
 require('array.from').shim();
 require('array.prototype.find').shim();
+require('array.prototype.findindex');
 
 require('string.prototype.endswith');
 require('string.prototype.includes');

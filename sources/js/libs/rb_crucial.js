@@ -13,7 +13,7 @@
     var regEscapedQuote = /\\"/g;
 
     var removeLeadingQuotes = function (str) {
-        return (str || '').replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
+        return str && str.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
     };
 
     /* Begin: ID/Symbol */
@@ -52,9 +52,11 @@
      */
     rb.jsonParse = function (str) {
         var ret;
-        try {
-            ret = JSON.parse(str);
-        } catch (e) { }
+        if(str){
+            try {
+                ret = JSON.parse(str);
+            } catch (e) { }
+        }
         return ret;
     };
 
@@ -98,6 +100,7 @@
 
     /**
      * @memberof rb
+     * @deprecated do it manually.
      * @param element {Element}
      * @param [pseudo='::before'] {String}
      * @returns {boolean}

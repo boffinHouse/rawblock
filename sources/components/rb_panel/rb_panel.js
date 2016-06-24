@@ -57,7 +57,7 @@
              * @property {Boolean} isOpen
              *
              * @example
-             * <button aria-controls="panel-1" data-module="button" type="button" class="js-click">button</button>
+             * <button aria-controls="panel-1" data-module="button" type="button" class="js-rb-click">button</button>
              * <div id="panel-1" data-module="panel">
              *    {{panelContent}}
              * </div>
@@ -512,7 +512,7 @@
              * @param element {Element}
              *
              * @example
-             * <button data-target="next(.rb-panel)" data-module="panelbutton" type="button" class="js-click">button</button>
+             * <button data-target="next(.rb-panel)" data-module="panelbutton" type="button" class="js-rb-click">button</button>
              * <div class="rb-panel" data-module="panel">
              *    {{panelContent}}
              * </div>

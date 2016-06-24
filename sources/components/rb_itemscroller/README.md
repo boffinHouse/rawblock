@@ -18,7 +18,7 @@ To apply the itemscroller component:
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+<div class="rb-itemscroller js-rb-live" data-module="itemscroller">
     <div class="itemscroller-viewport">
         <div class="itemscroller-content u-column-group">
             <div class="itemscroller-cell u-size-50">...</div>
@@ -26,7 +26,7 @@ To apply the itemscroller component:
     </div>
 </div>
 ```
-                  
+
 {{> docs_js_life }}
 
 <hr>
@@ -43,18 +43,18 @@ elements to navigate, like previous/next buttons or paginations.
 | `.itemscroller-btn-next`| Button to navigate to next item or right. |
 | `.itemscroller-navigation` | List of pagination buttons to navigate to selected item |
 
-                 
+
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
     {{#mergeJSON rb_itemscroller.default 'pagination: true'}}
         {{> rb_itemscroller }}
     {{/mergeJSON}}
 </div>
-                   
+
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+<div class="rb-itemscroller js-rb-live" data-module="itemscroller">
     <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">prev</button>
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">
@@ -81,7 +81,7 @@ elements to navigate, like previous/next buttons or paginations.
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+<div class="rb-itemscroller js-rb-live" data-module="itemscroller">
     <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">prev</button>
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">
@@ -109,7 +109,7 @@ elements to navigate, like previous/next buttons or paginations.
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+<div class="rb-itemscroller js-rb-live" data-module="itemscroller">
     <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">prev</button>
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">
@@ -136,7 +136,7 @@ elements to navigate, like previous/next buttons or paginations.
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-itemscroller js-rb-life" data-module="itemscroller">
+<div class="rb-itemscroller js-rb-live" data-module="itemscroller">
     <button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">prev</button>
     <button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">next</button>
     <div class="itemscroller-viewport">

@@ -50,7 +50,7 @@
              * @param element
              *
              * @example
-             * <header class="rb-header js-rb-life" data-module="sticky">
+             * <header class="rb-header js-rb-live" data-module="sticky">
              *     <div class="header-fx">
              *          <img class="logo" />
              *          <nav><!-- ... --></nav>
@@ -202,7 +202,7 @@
                     } else {
                         curScrollingEventElement = window;
                         this.$scrollEventElem = $(curScrollingEventElement);
-                        this.scrollingElement = rb.getScrollingElement();
+                        this.scrollingElement = document.scrollingElement;
                     }
                 }
 
@@ -430,7 +430,7 @@
 
                     this.$clone
                         .css({visibility: 'hidden'})
-                        .removeClass('js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'life')
+                        .removeClass('js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'live')
                         .addClass('js' + rb.nameSeparator + 'sticky' + rb.nameSeparator + 'clone')
                         .attr({
                             'data-module': '',
@@ -439,7 +439,7 @@
                     ;
                 }
 
-                this.$clone.css({height: this.elemHeight + 'px',});
+                this.$clone.css({height: this.elemHeight + 'px'});
                 this.$element.after(this.clone);
             },
             detachClone: function () {

@@ -26,7 +26,7 @@
              * @fires dateinput#changed
              * @param {Element} element
              * @example
-             * <div class="rb-dateinput js-rb-life" data-module="dateinput">
+             * <div class="rb-dateinput js-rb-live" data-module="dateinput">
              *     <div></div>
              * </div>
              * @example

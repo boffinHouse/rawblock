@@ -1,6 +1,6 @@
 {
   "btn": {
-    "type": "js-click",
+    "type": "js-rb-click",
     "title": "Top",
     "link": false
   },

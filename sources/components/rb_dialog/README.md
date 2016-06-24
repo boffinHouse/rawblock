@@ -6,13 +6,13 @@ The component consists of a dialog element, close button and action button.
 
 - To create an dialog add the `rb-dialog` class and attribute `data-module="dialog"` to a container element
 - Add class `dialog-close` to a button inside `rb-dialog` to create a close button.
-- Add attributes `data-module="button"`, `data-target="yourtarget"` and class `js-click` to create an open button.
+- Add attributes `data-module="button"`, `data-target="yourtarget"` and class `js-rb-click` to create an open button.
 
 
 <h3 class="docs-example-title">Demo</h3>
 
 <div class="docs-example">
-    <button class="rb-button js-click" type="button" data-module="button"  data-target="$(.rb-dialog)">open dialog</button>
+    <button class="rb-button js-rb-click" type="button" data-module="button"  data-target="$(.rb-dialog)">open dialog</button>
     {{#with rb_dialog.default }}
         {{> rb_dialog }}
     {{/with}}
@@ -23,10 +23,10 @@ The component consists of a dialog element, close button and action button.
 
 ```html
 <!-- Open Button -->
-<button class="js-click" type="button" data-module="button" data-target="$(.rb-dialog)"></button>
+<button class="js-rb-click" type="button" data-module="button" data-target="$(.rb-dialog)"></button>
 
 <!-- Modal Dialog -->
-<div class="rb-dialog js-rb-life" data-module="dialog">
+<div class="rb-dialog js-rb-live" data-module="dialog">
     <div class="dialog-content">
         ...
     </div>

@@ -43,8 +43,86 @@
     var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
     var regWhite = /\s+/g;
     var fn = Dom.prototype;
+    var class2type = {};
+    var toString = class2type.toString;
+    var hasOwn = class2type.hasOwnProperty;
+    var fnToString = hasOwn.toString;
+    var getProto = Object.getPrototypeOf;
+    var ObjectFunctionString = fnToString.call( Object );
 
     Object.assign(Dom, {
+        isPlainObject: function( obj ) {
+            var proto, Ctor;
+
+            if ( !obj || toString.call( obj ) !== '[object Object]' ) {
+                return false;
+            }
+
+            proto = getProto( obj );
+
+            if ( !proto ) {
+                return true;
+            }
+
+            Ctor = hasOwn.call( proto, 'constructor' ) && proto.constructor;
+            return typeof Ctor === 'function' && fnToString.call( Ctor ) === ObjectFunctionString;
+        },
+        extend: function() {
+            var options, name, src, copy, copyIsArray, clone;
+            var target = arguments[ 0 ] || {};
+            var i = 1;
+            var length = arguments.length;
+            var deep = false;
+
+            if ( typeof target === 'boolean' ) {
+                deep = target;
+                target = arguments[ i ] || {};
+                i++;
+            }
+
+            if ( typeof target !== 'object' && typeof target != 'function' ) {
+                target = {};
+            }
+
+            if (i === length) {
+                target = this;
+                i--;
+            }
+
+            for ( ; i < length; i++ ) {
+
+                if ( (options = arguments[i]) != null ) {
+
+                    for (name in options) {
+                        src = target[name];
+                        copy = options[name];
+
+                        if (target === copy) {
+                            continue;
+                        }
+
+                        if ( deep && copy && (Dom.isPlainObject(copy) ||
+                            ( copyIsArray = Array.isArray(copy) ) ) ) {
+
+                            if ( copyIsArray ) {
+                                copyIsArray = false;
+                                clone = src && Array.isArray( src ) ? src : [];
+
+                            } else {
+                                clone = src && Dom.isPlainObject( src ) ? src : {};
+                            }
+
+                            target[name] = Dom.extend( deep, clone, copy );
+
+                        } else if (copy !== undefined) {
+                            target[name] = copy;
+                        }
+                    }
+                }
+            }
+
+            return target;
+        },
         event: {
             special: specialEvents,
         },
@@ -123,6 +201,18 @@
             }
             return ret;
         },
+        camelCase: (function () {
+            var reg = /-([\da-z])/gi;
+            var camelCase = function (all, found) {
+                return found.toUpperCase();
+            };
+
+            var retCamel = function (str) {
+                return str.replace(reg, camelCase);
+            };
+
+            return retCamel;
+        })(),
     });
 
     Object.assign(fn, {
@@ -366,6 +456,31 @@
         last: function(){
             return Dom(this.elements[this.elements.length - 1]);
         }
+    });
+
+    ['scrollTop', 'scrollLeft'].forEach(function(name){
+        fn[name] = function(value){
+            var elem;
+            var ret = this;
+            if(value == null){
+                ret = 0;
+                elem = this[0];
+
+                if(elem){
+                    ret = (elem == window ?
+                        document.scrollingElement :
+                        elem)[name];
+                }
+            } else {
+                this.elements.forEach(function(elem){
+                    if(elem == window){
+                        elem = document.scrollingElement;
+                    }
+                    elem[name] = value;
+                });
+            }
+            return ret;
+        };
     });
 
     [['find', 'querySelectorAll', true], ['children', 'children']].forEach(function (action, test) {

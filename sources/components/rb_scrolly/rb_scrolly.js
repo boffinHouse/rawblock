@@ -77,7 +77,7 @@
 			 *     }
              * </style>
              *
-             * <div class="rb-logos js-rb-life" data-module="scrolly">
+             * <div class="rb-logos js-rb-live" data-module="scrolly">
              *     <img class="logo" src="..." />
              * </div>
              *
@@ -108,7 +108,7 @@
 			 *     }
              * </style>
              *
-             * <div class="rb-logos js-rb-life" data-module="scrolly">
+             * <div class="rb-logos js-rb-live" data-module="scrolly">
              *     <img class="logo" src="..." />
              * </div>
              *

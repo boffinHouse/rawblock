@@ -85,7 +85,7 @@
 			inherit2: 'ext2'
 		};
 
-		rb.life.register(tmpName, Ext2);
+		rb.live.register(tmpName, Ext2);
 
 		modules.ext2 = {
 			name: tmpName,
@@ -130,7 +130,7 @@
 			}
 		}
 
-		rb.life.register(tmpName, Ext3);
+		rb.live.register(tmpName, Ext3);
 
 		modules.ext3 = {
 			name: tmpName,

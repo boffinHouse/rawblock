@@ -93,12 +93,12 @@
              * @param element
              *
              * @example
-             * <div class="rb-range js-rb-life" data-module="range" data-values="[0, 100]"></div>
+             * <div class="rb-range js-rb-live" data-module="range" data-values="[0, 100]"></div>
              *
              * <!-- combined with visible input -->
              * <label for="range-1">range</label>
              * <input value="10" min="1" max="10" type="number" id="range-1" />
-             * <div class="rb-range js-rb-life" data-module="range" data-inputs="range-1"></div>
+             * <div class="rb-range js-rb-live" data-module="range" data-inputs="range-1"></div>
              *
              * @example
              *

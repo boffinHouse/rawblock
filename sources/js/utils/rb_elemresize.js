@@ -163,6 +163,7 @@
     /**
      * A jQuery plugin that invokes a callback as soon as the dimension of an element changes
      * @function external:"jQuery.fn".elementResize
+     * @deprecated use rb_resize instead
      * @param action {String} "add" or "remove". Whether the function should be added or removed
      * @param fn {Function} The resize listener function that should be added or removed.
      * @param [options] {Object}
@@ -189,6 +190,8 @@
             }
         };
     });
+
+    rb.logWarn('deprecated: use rb_resize instead.');
 
     return $.fn.elementResize;
 }));

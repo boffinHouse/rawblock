@@ -10,18 +10,18 @@ anchor element `<a>` add the id to href attribute `href="#your-unique-id"`.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-    {{#mergeJSON rb_popover 'btn: {type: "rb-button js-click", title:"Default top"}'}}
+    {{#mergeJSON rb_popover 'btn: {type: "rb-button js-rb-click", title:"Default top"}'}}
         {{> rb_popover }}
     {{/mergeJSON}}
 </div>
-                   
+
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
 <!-- Panelbutton -->
-<button class="YourButtonClass js-click" type="button" aria-controls="your-popover-id" data-module="panelbutton">Panel Button</button>
+<button class="YourButtonClass js-rb-click" type="button" aria-controls="your-popover-id" data-module="panelbutton">Panel Button</button>
 
-<a class="YourButtonClass js-click" href="#your-popover-id" data-module="panelbutton">Panel Anchor button</a>
+<a class="YourButtonClass js-rb-click" href="#your-popover-id" data-module="panelbutton">Panel Anchor button</a>
 
 <!-- Panel -->
 <div id="your-popover-id" class="rb-popover" data-module="popover">

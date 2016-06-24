@@ -30,7 +30,7 @@
              * @fires dateinput#changed
              * @param {Element} element
              * @example
-             * <div class="rb-datepicker js-rb-life" data-module="datepicker">
+             * <div class="rb-datepicker js-rb-live" data-module="datepicker">
              *
              * </div>
              * @example

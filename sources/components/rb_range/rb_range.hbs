@@ -2,12 +2,12 @@
 component: rb_range
 ---
 
-<div class="rb-range js-rb-life" data-module="range"></div>
+<div class="rb-range js-rb-live" data-module="range"></div>
 
-<button type="button" class="js-rb-life" data-module="button" data-target="next()" data-type="stepUp">stepUp</button>
+<button type="button" class="js-rb-live" data-module="button" data-target="next()" data-type="stepUp">stepUp</button>
 
 
-<div class="rb-range js-rb-life" data-module="range">
+<div class="rb-range js-rb-live" data-module="range">
 	{{#each inputs}}
 		<input type="number" value="{{this.value}}" min="{{min}}" max="{{max}}" />
 	{{/each}}
@@ -21,7 +21,7 @@ component: rb_range
 		<!--<label for="bar">Label for Bar</label>-->
 		<input type="number" value="6" min="0" id="foo" title="Test title" />
 	</div>
-	<div class="rb-range u-size-60 js-rb-life is-range-horizontal" data-module="range" data-inputs="foo bar"></div>
+	<div class="rb-range u-size-60 js-rb-live is-range-horizontal" data-module="range" data-inputs="foo bar"></div>
 	<div class="u-size-20">
 		<!--<label for="bar">Test label</label>-->
 		<input type="number" value="30" max="70" id="bar" />
@@ -32,7 +32,7 @@ component: rb_range
 
 <hr />
 
-<div class="rb-range js-rb-life is-vertical" data-module="range" data-labels='["Test label 1", "Test label 2"]'
+<div class="rb-range js-rb-live is-vertical" data-module="range" data-labels='["Test label 1", "Test label 2"]'
      data-values="[10, 90]">
 </div>
 

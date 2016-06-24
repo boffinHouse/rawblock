@@ -50,7 +50,7 @@
              * @fires dialog#changed Fires after a dialog's `isOpen` state changed;
              *
              * @example
-             * <button aria-controls="dialog-1" data-module="button" type="button" class="js-click">button</button>
+             * <button aria-controls="dialog-1" data-module="button" type="button" class="js-rb-click">button</button>
              * <div id="dialog-1" class="rb-dialog" data-module="dialog">
              *     <div class="dialog-content">
              *      {{dialogContent}}
@@ -248,7 +248,7 @@
 
                 if(this.options.setDisplay){
                     clearTimeout(this._displayTimer);
-                    this._displayTimer = setTimeout(this._setDisplay, 2000);
+                    this._displayTimer = setTimeout(this._setDisplay, 5000);
                 }
                 this._trigger(options);
             },

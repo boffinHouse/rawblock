@@ -50,14 +50,14 @@
              * @constructs
              * @classdesc Creates a popover that is positioned/anchored to another element.
              *
-             * A11y-Notes: If the popover has structured content use the class `js-autofocus` inside of/at the popover. If it contains simple text use a aria-live="polite" or an appropriate role.
+             * A11y-Notes: If the popover has structured content use the class `js-rb-autofocus` inside of/at the popover. If it contains simple text use a aria-live="polite" or an appropriate role.
              *
              * @extends rb.components.panel
              *
              * @param element
              *
              * @example
-             * <button aria-controls="popover-1" data-module="panelbutton" type="button" class="js-click">button</button>
+             * <button aria-controls="popover-1" data-module="panelbutton" type="button" class="js-rb-click">button</button>
              * <div id="popover-1" data-module="popover">
              *    {{popoverContent}}
              * </div>

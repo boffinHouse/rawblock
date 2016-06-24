@@ -11,7 +11,7 @@ require('./libs/rb_main');
 
 /* configuration */
 rb.isDebug = 1;
-rb.life.autoStart = false;
+rb.live.autoStart = false;
 
 //if webpack is used:
 __webpack_public_path__ = ASSETBASEPATH + 'js/';
@@ -22,7 +22,7 @@ require('../../taskrunner/grunt/webpack/lazyglobloader!./lazyglob.paths');
 
 
 /* init after all modules are loaded or imports are configured. */
-rb.life.init();
+rb.live.init();
 
 
 

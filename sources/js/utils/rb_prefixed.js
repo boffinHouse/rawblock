@@ -12,6 +12,7 @@
     }
     var style = document.createElement('b').style;
     var rb = window.rb;
+    var $ = rb.$;
     var prefixes = ['Webkit', 'webkit', 'Moz', 'moz', 'Ms', 'ms'];
 
     rb.prefixed = function(name, obj){
@@ -19,14 +20,14 @@
         var i, partName, testName;
         var ret = '';
 
-        name = rb.camelCase(name);
+        name = $.camelCase(name);
 
         if(name in obj){
             ret = name;
         }
 
         if(!ret){
-            partName = rb.camelCase('-' + name);
+            partName = $.camelCase('-' + name);
             for(i = 0; i < prefixes.length && !ret; i++){
                 testName = prefixes[i] + partName;
                 if(testName in obj){
