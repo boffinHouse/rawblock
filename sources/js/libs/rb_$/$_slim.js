@@ -33,7 +33,7 @@
             } else if (elements.nodeName || !('length' in elements) || elements == window) {
                 elements = [elements];
             } else {
-                elements = Array.from(elements);
+                elements = Array.from(elements.elements || elements);
             }
         }
 
@@ -280,70 +280,120 @@
                 return elem.matches(sel);
             });
         },
-        html: function (html) {
-            var elem, isString;
+        html: function (htmlstringOrDom) {
+            var elem;
+
             if (!arguments.length) {
                 elem = this.elements[0];
                 return elem && elem.innerHTML || '';
             }
-            isString = typeof html != 'object';
+
             this.elements.forEach(function (elem) {
-                if (isString) {
-                    elem.innerHTML = html;
-                } else {
-                    elem.innerHTML = '';
-                    elem.appendChild(html);
-                }
+                elem.innerHTML = '';
             });
+
+            this.append(htmlstringOrDom);
+
             return this;
         },
-        before: function (html) {
-            var isString = typeof html != 'object';
-            this.elements.forEach(function (elem) {
+        before: function (htmlstringOrDom) {
+            var isHTMLString = typeof htmlstringOrDom != 'object';
+            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
+            var target = !isHTMLString ? this.first() : this;
+            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
+
+            if(docFrag) {
+                domElements.each(function(i, elem){
+                    docFrag.appendChild(elem);
+                });
+            }
+
+            target.elements.forEach(function (elem) {
                 var parentElement;
-                if (isString) {
-                    elem.insertAdjacentHTML('beforebegin', html);
+                if (isHTMLString) {
+                    elem.insertAdjacentHTML('beforebegin', htmlstringOrDom);
                 } else {
                     parentElement = elem.parentNode;
                     if (parentElement) {
-                        parentElement.insertBefore(html, elem);
+                        parentElement.insertBefore(docFrag || domElements.get(0), elem);
                     }
                 }
             });
             return this;
         },
-        prepend: function (html) {
-            var isString = typeof html != 'object';
-            this.elements.forEach(function (elem) {
-                if (isString) {
-                    elem.insertAdjacentHTML('afterbegin', html);
+        prepend: function (htmlstringOrDom) {
+            var isHTMLString = typeof htmlstringOrDom != 'object';
+            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
+            var target = !isHTMLString ? this.first() : this;
+            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
+
+            if(docFrag) {
+                domElements.each(function(i, elem){
+                    docFrag.appendChild(elem);
+                });
+            }
+
+            target.elements.forEach(function (elem) {
+                if (isHTMLString) {
+                    elem.insertAdjacentHTML('afterbegin', htmlstringOrDom);
                 } else {
-                    elem.insertBefore(html, elem.firstChild);
+                    elem.insertBefore(docFrag || domElements.get(0), elem.firstChild);
                 }
             });
             return this;
         },
-        append: function (html) {
-            var isString = typeof html != 'object';
-            this.elements.forEach(function (elem) {
-                if (isString) {
-                    elem.insertAdjacentHTML('beforeend', html);
-                } else {
-                    elem.insertBefore(html, null);
-                }
-            });
+        prependTo: function(target){
+            var $target = Dom(target);
+            $target.prepend.call($target, this);
             return this;
         },
-        after: function (html) {
-            var isString = typeof html != 'object';
-            this.elements.forEach(function (elem) {
+        append: function (htmlstringOrDom) {
+            var isHTMLString = typeof htmlstringOrDom != 'object';
+            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
+            var target = !isHTMLString ? this.last() : this;
+            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
+
+            if(docFrag) {
+                domElements.each(function(i, elem){
+                    docFrag.appendChild(elem);
+                });
+            }
+
+            target.elements.forEach(function (elem) {
+                if (isHTMLString) {
+                    elem.insertAdjacentHTML('beforeend', htmlstringOrDom);
+                } else {
+                    elem.insertBefore(docFrag || domElements.get(0), null);
+                }
+            });
+
+            return this;
+        },
+        appendTo: function(target){
+            var $target = Dom(target);
+            $target.append.call($target, this);
+            return this;
+        },
+        after: function (htmlstringOrDom) {
+            var isHTMLString = typeof htmlstringOrDom != 'object';
+            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
+            var target = !isHTMLString ? this.last() : this;
+            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
+
+            if(docFrag) {
+                domElements.each(function(i, elem){
+                    docFrag.appendChild(elem);
+                });
+            }
+
+            target.elements.forEach(function (elem) {
                 var parentElement;
-                if (isString) {
-                    elem.insertAdjacentHTML('afterend', html);
+                if (isHTMLString) {
+                    elem.insertAdjacentHTML('afterend', htmlstringOrDom);
                 } else {
                     parentElement = elem.parentNode;
                     if (parentElement) {
-                        parentElement.insertBefore(html, elem.nextElementSibling);
+                        parentElement.insertBefore(docFrag || domElements.get(0), elem.nextElementSibling);
                     }
                 }
             });
@@ -399,6 +449,12 @@
                 this.elements.push(elem);
             }
             return this;
+        },
+        first: function(){
+            return Dom(this.elements[0]);
+        },
+        last: function(){
+            return Dom(this.elements[this.elements.length - 1]);
         }
     });
 
