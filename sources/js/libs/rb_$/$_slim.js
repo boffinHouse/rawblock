@@ -298,15 +298,7 @@
         },
         before: function (htmlstringOrDom) {
             var isHTMLString = typeof htmlstringOrDom != 'object';
-            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
             var target = !isHTMLString ? this.first() : this;
-            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
-
-            if(docFrag) {
-                domElements.each(function(i, elem){
-                    docFrag.appendChild(elem);
-                });
-            }
 
             target.elements.forEach(function (elem) {
                 var parentElement;
@@ -315,7 +307,7 @@
                 } else {
                     parentElement = elem.parentNode;
                     if (parentElement) {
-                        parentElement.insertBefore(docFrag || domElements.get(0), elem);
+                        parentElement.insertBefore(getNodesAsOne(htmlstringOrDom), elem);
                     }
                 }
             });
@@ -323,21 +315,13 @@
         },
         prepend: function (htmlstringOrDom) {
             var isHTMLString = typeof htmlstringOrDom != 'object';
-            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
             var target = !isHTMLString ? this.first() : this;
-            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
-
-            if(docFrag) {
-                domElements.each(function(i, elem){
-                    docFrag.appendChild(elem);
-                });
-            }
 
             target.elements.forEach(function (elem) {
                 if (isHTMLString) {
                     elem.insertAdjacentHTML('afterbegin', htmlstringOrDom);
                 } else {
-                    elem.insertBefore(docFrag || domElements.get(0), elem.firstChild);
+                    elem.insertBefore(getNodesAsOne(htmlstringOrDom), elem.firstChild);
                 }
             });
             return this;
@@ -349,21 +333,14 @@
         },
         append: function (htmlstringOrDom) {
             var isHTMLString = typeof htmlstringOrDom != 'object';
-            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
             var target = !isHTMLString ? this.last() : this;
-            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
 
-            if(docFrag) {
-                domElements.each(function(i, elem){
-                    docFrag.appendChild(elem);
-                });
-            }
 
             target.elements.forEach(function (elem) {
                 if (isHTMLString) {
                     elem.insertAdjacentHTML('beforeend', htmlstringOrDom);
                 } else {
-                    elem.insertBefore(docFrag || domElements.get(0), null);
+                    elem.insertBefore(getNodesAsOne(htmlstringOrDom), null);
                 }
             });
 
@@ -376,15 +353,7 @@
         },
         after: function (htmlstringOrDom) {
             var isHTMLString = typeof htmlstringOrDom != 'object';
-            var domElements = !isHTMLString ? Dom(htmlstringOrDom) : null;
             var target = !isHTMLString ? this.last() : this;
-            var docFrag = domElements && domElements.elements.length > 1 ? document.createDocumentFragment() : null;
-
-            if(docFrag) {
-                domElements.each(function(i, elem){
-                    docFrag.appendChild(elem);
-                });
-            }
 
             target.elements.forEach(function (elem) {
                 var parentElement;
@@ -393,7 +362,7 @@
                 } else {
                     parentElement = elem.parentNode;
                     if (parentElement) {
-                        parentElement.insertBefore(docFrag || domElements.get(0), elem.nextElementSibling);
+                        parentElement.insertBefore(getNodesAsOne(htmlstringOrDom), elem.nextElementSibling);
                     }
                 }
             });
@@ -457,6 +426,27 @@
             return Dom(this.elements[this.elements.length - 1]);
         }
     });
+
+    function getNodesAsOne(nodes){
+        var node = nodes;
+
+        if(!nodes.nodeType){
+            if(nodes instanceof Dom){
+                nodes = nodes.get();
+            }
+
+            if(nodes.length == 1){
+                node = nodes[0];
+            } else {
+                node = document.createDocumentFragment();
+                Array.from(nodes).forEach(function(elem){
+                    node.appendChild(elem);
+                });
+            }
+        }
+
+        return node;
+    }
 
     ['scrollTop', 'scrollLeft'].forEach(function(name){
         fn[name] = function(value){
