@@ -8,6 +8,7 @@
     'use strict';
     /* jshint eqnull: true */
     var dataSymbol;
+    var regFocusable = /^(?:a|area|input|select|textarea|button)$/i;
     var specialEvents = {};
     var Dom = function (elements, context) {
 
@@ -213,6 +214,22 @@
 
             return retCamel;
         })(),
+        propHooks: {},
+        prop: function(element, name, value){
+            var hook = Dom.propHooks[name];
+
+            if(value === undefined){
+                return hook.get ?
+                    hook.get(element) :
+                    element[name];
+            }
+
+            if(hook.set){
+                hook.set(element, value);
+            } else {
+                element[name] = value;
+            }
+        },
     });
 
     Object.assign(fn, {
@@ -245,12 +262,12 @@
             var elem;
             if (typeof props == 'string') {
                 elem = this.elements[0];
-                return elem && elem[props];
+                return elem && Dom.prop(elem, props);
             }
             this.elements.forEach(function (elem) {
                 var prop;
                 for (prop in props) {
-                    elem[prop] = props[prop];
+                    Dom.prop(elem, prop, props[prop]);
                 }
             });
             return this;
@@ -654,6 +671,21 @@
                 }
             };
         });
+    }
+
+    if(document.createElement('a').tabIndex !== 0 || document.createElement('i') != -1){
+        Dom.propHooks.tabIndex = {
+            get: function(element){
+                var tabIndex = element.getAttribute('tabindex');
+
+                return tabIndex ?
+                    parseInt(tabIndex, 10) :
+                    (regFocusable.test(element.nodeName) ?
+                        0 :
+                        -1)
+                ;
+            },
+        };
     }
 
     (function(){
