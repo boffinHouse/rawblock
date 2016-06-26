@@ -62,6 +62,27 @@
         ;
     });
 
+    QUnit.test('rb-panelgroup double change', function (assert) {
+        var panelComponent;
+        var done = assert.async();
+        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup');
+
+        panelComponent = $panelGroup.rbComponent();
+
+        panelComponent.selectIndex(1);
+
+        panelComponent.selectIndex(0);
+
+        QUnit.afterAF(90)
+            .then(function () {
+                assert.deepEqual(panelComponent.selectedIndexes, [0]);
+                assert.ok($panelGroup.find('.panelgroup-panel').get(0).classList.contains('is-open'));
+                assert.notOk($panelGroup.find('.panelgroup-panel').get(1).classList.contains('is-open'));
+            })
+            .then(done)
+        ;
+    });
+
     QUnit.test('rb-panelgroup changed index1', function (assert) {
         var panelComponent;
         var done = assert.async();

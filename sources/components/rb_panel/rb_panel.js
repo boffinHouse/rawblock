@@ -319,6 +319,7 @@
                 return delay || mainOpts.focusDelay || 0;
             },
             _opened: function (options) {
+                if(!this.isOpen){return;}
                 var delay = this._getFocusDelay(options);
 
                 this.element.classList.add(rb.statePrefix + 'open');
@@ -392,6 +393,7 @@
                 return true;
             },
             _closed: function (options) {
+                if(this.isOpen){return;}
                 this.element.classList.remove(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'true');
 
