@@ -178,6 +178,7 @@
 
         },
         _onOptionChange: function(){
+            var managerOptions = this.options;
             do {
                 this.startFetch();
             } while(this.waitingPromises.length && this.requestingPromises.length < managerOptions.maxRequests);
@@ -190,11 +191,7 @@
             this._onOptionChange();
         },
         setOptions: function(options){
-            // no deep assign
-            if(options.fetchOpts){
-                options.fetchOpts = Object.assign(this.options.fetchOpts, options.fetchOpts);
-            }
-            Object.assign(this.options, options);
+            $.extend(true, this.options, options);
             this._onOptionChange();
         },
         abort: function(id){
