@@ -122,6 +122,8 @@
 
                 this.selectedIndexes = [];
                 this.selectedItems = [];
+                this.closingItems = [];
+                this.openingItems = [];
 
                 rb.rAFs(this, 'setSelectedState', 'setSwitchedOffClass');
 
@@ -163,7 +165,7 @@
 
                 panelWrapper.style.height = 'auto';
 
-                this.selectedItems.forEach(function (panel) {
+                this.closingItems.forEach(function (panel) {
                     panel.style.display = 'none';
                     curIndex = panels.indexOf(panel);
                     closingPanels.push(panel);
@@ -176,7 +178,7 @@
 
                 end = panelWrapper.offsetHeight;
 
-                this.selectedItems.forEach(function (panel) {
+                this.closingItems.forEach(function (panel) {
                     panel.style.display = '';
                 });
 
@@ -343,21 +345,29 @@
             panelChangeCB: function (panelComponent, action) {
                 var options = this.options;
 
-                switch (action) {
-                    case 'beforeopen':
-                        if (!options.multiple && this.selectedItems.length) {
-                            this._closedByOpen = true;
-                            this.closeAll(panelComponent);
-                            this._closedByOpen = false;
-                        }
-                        break;
-                    case 'afteropen':
-                    case 'afterclose':
-                        this._triggerOnce();
-                        break;
+                if(action.startsWith('before')){
+
+                    if (action == 'beforeopen' && !options.multiple && this.selectedItems.length) {
+                        this._closedByOpen = true;
+                        this.closeAll(panelComponent);
+                        this._closedByOpen = false;
+                    }
+
+                    this[action == 'beforeopen' ? 'openingItems' : 'closingItems'].push(panelComponent.element);
+
+                    this._updatePanelInformation();
+                } else if(action.startsWith('after')){
+
+                    if(this.openingItems.length){
+                        this.openingItems.length = 0;
+                    }
+                    if(this.closingItems.length){
+                        this.closingItems.length = 0;
+                    }
+
+                    this._triggerOnce();
                 }
 
-                this._updatePanelInformation();
             },
             /**
              * Selects next panel.
