@@ -18,10 +18,6 @@ component: rb_accordion
             <button type="button" class="accordion-btn" {{#if open}}aria-expanded="true"{{/if}}>{{ title }}</button>
             <div class="accordion-panel {{#if open}}is-open{{/if}}" {{#if id}}id="{{ id }}"{{/if}}>
                 <div class="accordion-content">
-	                <input />
-                    <div class="js-rb-autofocus">
-                    </div>
-                    <input />
                     {{#each content}}
                         {{{ this }}}
                     {{/each}}
