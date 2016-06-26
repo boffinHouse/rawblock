@@ -1036,7 +1036,7 @@ if (!window.rb) {
                     document.addEventListener('focus', setAbort, true);
                 }
                 attempts++;
-                waitForFocus(99);
+                waitForFocus(150);
             }
         };
 
