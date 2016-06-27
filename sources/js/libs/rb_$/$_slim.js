@@ -219,12 +219,12 @@
             var hook = Dom.propHooks[name];
 
             if(value === undefined){
-                return hook.get ?
+                return hook && hook.get ?
                     hook.get(element) :
                     element[name];
             }
 
-            if(hook.set){
+            if(hook && hook.set){
                 hook.set(element, value);
             } else {
                 element[name] = value;
