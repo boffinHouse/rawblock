@@ -323,9 +323,9 @@
                     } else {
                         that.selectNext();
                     }
-                    setTimeout(unblock, 66);
+                    setTimeout(unblock, 144);
 
-                }, {delay: 44});
+                }, {delay: 66});
 
                 this.viewport.addEventListener('wheel', function(e){
                     if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
