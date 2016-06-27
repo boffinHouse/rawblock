@@ -480,7 +480,7 @@ if (!window.rb) {
     /* Begin: idleCallback */
     rb.rIC = window.requestIdleCallback ?
         function(fn){
-            return requestIdleCallback(fn);
+            return requestIdleCallback(fn, {timeout: 99});
         } :
         function(fn){
             return setTimeout(fn);
@@ -1074,8 +1074,9 @@ if (!window.rb) {
             if(parent){
                 newFocusParents = [];
 
-                while (parent && (parent = parent.parentNode) && parent.classList && !parent.classList.contains(isClass)) {
+                while (parent && parent.classList && !parent.classList.contains(isClass)) {
                     newFocusParents.push(parent);
+                    parent = parent.parentNode;
                 }
 
                 if ((oldFocusParents = parent.querySelectorAll && parent.querySelectorAll(isClassSelector))) {
@@ -1085,6 +1086,20 @@ if (!window.rb) {
                 }
                 for (i = 0, len = newFocusParents.length; i < len; i++) {
                     newFocusParents[i].classList.add(isClass);
+                }
+
+                if((oldFocusParents && oldFocusParents.length) || newFocusParents.length){
+                    rb.rIC(function(){
+                        if(oldFocusParents){
+                            for (i = 0, len = oldFocusParents.length; i < len; i++) {
+                                rb.events.dispatch(oldFocusParents[i], 'rb_focusleave', {bubbles: false, cancelable: false});
+                            }
+                        }
+
+                        for (i = 0, len = newFocusParents.length; i < len; i++) {
+                            rb.events.dispatch(newFocusParents[i], 'rb_focusenter', {bubbles: false, cancelable: false});
+                        }
+                    });
                 }
             }
 

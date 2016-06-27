@@ -80,5 +80,6 @@
         };
     });
 
+    rb.logWarn('deprecated');
     return rb.events;
 }));
