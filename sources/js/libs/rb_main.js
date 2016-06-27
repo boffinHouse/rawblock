@@ -1021,8 +1021,9 @@ if (!window.rb) {
                 rb.$doc.trigger('rbscriptfocus');
                 calcScrollableElements();
 
-                if (element.tabIndex < 0 && !element.getAttribute('tabindex')) {
+                if ($.prop(element, 'tabIndex') < 0 && !element.getAttribute('tabindex')) {
                     element.setAttribute('tabindex', '-1');
+                    element.classList.add('js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'scriptfocus');
                 }
                 try {
                     element.focus();
@@ -1031,17 +1032,17 @@ if (!window.rb) {
                 rb.isScriptFocus = false;
                 cleanup();
             } else {
-                if(attempts == 1){
+                if(attempts == 2){
                     document.addEventListener('focus', setAbort, true);
                 }
                 attempts++;
-                waitForFocus(99);
+                waitForFocus(150);
             }
         };
 
         var waitForFocus = function (delay) {
             if (element !== document.activeElement) {
-                focusTimer = setTimeout(doFocus, delay || 4);
+                focusTimer = setTimeout(doFocus, delay || 40);
             }
         };
 

@@ -53,6 +53,10 @@ a:focus {
     outline-offset: 5px;
 }
 
+.js-rb-scriptfocus {
+    outline: none;
+}
+
 a:link,
 button,
 input[type="submit"] {
