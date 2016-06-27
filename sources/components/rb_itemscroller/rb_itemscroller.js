@@ -211,7 +211,7 @@
                     var index = this.$paginationBtns.index(e.delegatedTarget || e.currentTarget);
                     this.selectedIndex = index;
                 },
-                'rb_resize:width()': 'reflow',
+                'rb_resize:width()': 'calculateLayout',
             },
 
             setOption: function (name, value) {
@@ -345,8 +345,7 @@
                 });
             },
             setSwitchedOffClass: function(){
-                this.element.classList
-                    [this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
+                this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
             },
             _switchOn: function () {
                 this.updateCells();
@@ -388,7 +387,6 @@
                 }, true);
             },
             _setupEvents: function () {
-                this.element.addEventListener('load', this.throttledCalculateLayout, true);
                 this._setupFocusScroll();
                 this.addWheel();
             },
