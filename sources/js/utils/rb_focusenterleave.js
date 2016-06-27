@@ -80,6 +80,6 @@
         };
     });
 
-    rb.logWarn('deprecated');
+    //rb.logWarn('deprecated');
     return rb.events;
 }));

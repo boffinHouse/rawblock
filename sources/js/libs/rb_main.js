@@ -1088,19 +1088,19 @@ if (!window.rb) {
                     newFocusParents[i].classList.add(isClass);
                 }
 
-                if((oldFocusParents && oldFocusParents.length) || newFocusParents.length){
-                    rb.rIC(function(){
-                        if(oldFocusParents){
-                            for (i = 0, len = oldFocusParents.length; i < len; i++) {
-                                rb.events.dispatch(oldFocusParents[i], 'rb_focusleave', {bubbles: false, cancelable: false});
-                            }
-                        }
-
-                        for (i = 0, len = newFocusParents.length; i < len; i++) {
-                            rb.events.dispatch(newFocusParents[i], 'rb_focusenter', {bubbles: false, cancelable: false});
-                        }
-                    });
-                }
+                //if((oldFocusParents && oldFocusParents.length) || newFocusParents.length){
+                //    rb.rIC(function(){
+                //        if(oldFocusParents){
+                //            for (i = 0, len = oldFocusParents.length; i < len; i++) {
+                //                rb.events.dispatch(oldFocusParents[i], 'rb_focusleave', {bubbles: false, cancelable: false});
+                //            }
+                //        }
+                //
+                //        for (i = 0, len = newFocusParents.length; i < len; i++) {
+                //            rb.events.dispatch(newFocusParents[i], 'rb_focusenter', {bubbles: false, cancelable: false});
+                //        }
+                //    });
+                //}
             }
 
             running = false;
