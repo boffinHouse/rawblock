@@ -673,7 +673,7 @@
         });
     }
 
-    if(document.createElement('a').tabIndex !== 0 || document.createElement('i') != -1){
+    if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tabIndex != -1){
         Dom.propHooks.tabIndex = {
             get: function(element){
                 var tabIndex = element.getAttribute('tabindex');
