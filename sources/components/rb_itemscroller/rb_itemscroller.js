@@ -168,10 +168,13 @@
 
                 this.setPos = rb.rAF(this._setPos, {that: this, throttle: true});
 
-                rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff', 'setSwitchedOffClass');
+                rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff', 'setSwitchedOffClass', '_updateControls');
 
                 this._slideProgress = this._slideProgress.bind(this);
                 this._slideComplete = this._slideComplete.bind(this);
+                this._dragStart = this._dragStart.bind(this);
+                this._dragEnd = this._dragEnd.bind(this);
+                this._dragMove = this._dragMove.bind(this);
 
                 this._generateHelper();
                 this._setupEvents();
@@ -766,9 +769,11 @@
                 var isEnd, isStart;
                 var curPage = this.pageData[this._selectedIndex + this.baseIndex];
 
-                if (!this.isCarousel) {
+                if (!this.isCarousel || this.isCarouselChanged) {
                     isEnd = this.isEndReached(pos);
                     isStart = this.isStartReached(pos);
+
+                    this.isCarouselChanged = false;
 
                     this.$queryAll('.{htmlName}{e}btn{-}next')
                         .prop({disabled: isEnd})
@@ -799,44 +804,44 @@
                     .addClass(rb.statePrefix + 'selected')
                 ;
             },
+            _dragStart: function(){
+                this.isAnimated = false;
+                $(this.scroller).stop();
+            },
+            _dragMove: function(draggy){
+                if (draggy.relPos.x) {
+                    this._setRelPos(draggy.relPos.x * -1);
+                }
+            },
+            _dragEnd: function(draggy){
+                if (!draggy.movedPos.x) {
+                    this.selectNearest();
+                    return;
+                }
+                var dir = draggy.lastPos.x - draggy.velPos.x;
+
+                if (draggy.horizontalVel < 9) {
+
+                    dir = 0;
+                    if (draggy.horizontalVel < 9 && draggy.horizontalVel < 9) {
+                        draggy.allowClick();
+                    }
+                }
+
+                this._snapTo(dir, draggy.horizontalVel, draggy.movedPos.x);
+            },
             _setupTouch: function () {
                 if (!$.fn.draggy) {
                     return;
                 }
-                var that = this;
-                var $scrollerElem = $(this.scroller);
 
                 $(this.viewport).draggy({
                     vertical: false,
-
-                    start: function () {
-                        that.isAnimated = false;
-                        $scrollerElem.stop();
-                    },
-                    end: function (draggy) {
-                        if (!draggy.movedPos.x) {
-                            that.selectNearest();
-                            return;
-                        }
-                        var dir = draggy.lastPos.x - draggy.velPos.x;
-
-                        if (draggy.horizontalVel < 9) {
-
-                            dir = 0;
-                            if (draggy.horizontalVel < 9 && draggy.horizontalVel < 9) {
-                                draggy.allowClick();
-                            }
-                        }
-
-                        that._snapTo(dir, draggy.horizontalVel, draggy.movedPos.x);
-                    },
-                    move: function (draggy) {
-                        if (draggy.relPos.x) {
-                            that._setRelPos(draggy.relPos.x * -1);
-                        }
-                    },
                     useMouse: this.options.mouseDrag,
                     exclude: this.options.dragExclude,
+                    start: this._dragStart,
+                    end: this._dragEnd,
+                    move: this._dragMove,
                 });
             },
             _setRelPos: function (relPos) {
@@ -994,6 +999,10 @@
 
                 this.maxWrapRight = (lastWidth - this.viewportWidth) * -1;
 
+                if(this.maxWrapRight > 0){
+                    this.maxWrapRight = 0;
+                }
+
             },
             _writeLayout: function () {
                 var wasPos = this._pos;
@@ -1145,11 +1154,15 @@
             _createCarouselPages: function () {
                 var i, len, pageData, curWidth, pageCorrect, negativeIndex, lastPos;
                 var viewport = this.viewportWidth;
+
+                var wasCarousel = this.isCarousel;
                 this.posPages = {left: [], right: []};
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
 
                 this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2.1) > this.viewportWidth;
+
+                this.isCarouselChanged = wasCarousel != this.isCarousel;
 
                 if (!this.isCarousel) {
                     return;
