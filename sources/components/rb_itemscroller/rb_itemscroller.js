@@ -315,7 +315,7 @@
                 var wheelEnd = rb.debounce(function(){
                     var nearestIndex = that.getNearest();
                     var diff = that._pos - startValue;
-                    var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 350);
+                    var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 300);
 
                     _isWheelStarted = false;
 
@@ -1015,6 +1015,7 @@
 
                 if (wasPos == this._pos) {
                     this._setPos(wasPos);
+                    this._updateControls(this._pos);
                 }
             },
             _calculatePages: function () {
