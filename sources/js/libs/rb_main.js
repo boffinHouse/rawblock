@@ -932,7 +932,7 @@ if (!window.rb) {
 
         document.addEventListener('click', function (e) {
 
-            if (e.defaultPrevented || regInputs.test(e.target.nodeName || '') || e.target.matches(abortSels)) {
+            if (e.defaultPrevented || e.button == 2 || regInputs.test(e.target.nodeName || '') || e.target.matches(abortSels)) {
                 return;
             }
             var event, selection;
@@ -951,7 +951,9 @@ if (!window.rb) {
                         shiftKey: e.shiftKey,
                         altKey: e.altKey,
                         ctrlKey: e.ctrlKey,
-                        metaKey: e.metaKey
+                        metaKey: e.metaKey,
+                        button: e.button,
+                        which: e.which,
                     });
                     link.dispatchEvent(event);
                 } else if (link.click) {
