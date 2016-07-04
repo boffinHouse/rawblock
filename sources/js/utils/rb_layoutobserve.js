@@ -122,8 +122,10 @@
                     elem.classList.remove(observeClass);
                 }, true);
             }
-        }
+        },
     };
+
+    rb.events.special.rb_layoutobserve = rb.events.special.rb_layoutchange;
 
     return rb.events.special.rb_layoutchange;
 }));

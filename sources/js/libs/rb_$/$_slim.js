@@ -739,7 +739,14 @@
                     }
 
                     if(elem){
-                        if(elem.nodeType){
+                        if(elem.nodeType == 9){
+                            doc = elem.documentElement;
+                            ret = Math.max(
+                                elem.body[ 'scroll' + names[1] ], doc[ 'scroll' + names[1] ],
+                                elem.body[ 'offset' + names[1] ], doc[ 'offset' + names[1] ],
+                                doc[ 'client' + names[1] ]
+                            );
+                        } else if(elem.nodeType){
                             styles = rb.getStyles(elem);
                             ret = Dom.css(elem, cssName, true, styles);
                             isBorderBox = styles.boxSizing == 'border-box' && boxSizingReliable();
@@ -788,20 +795,10 @@
                                         ret += rb.getCSSNumbers(elem, ['margin' + extras[0], 'margin' + extras[1]], true);
                                     }
                             }
-                        } else if(elem.nodeType == 9){
-                            doc = elem.documentElement;
-
-                            // Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height],
-                            // whichever is greatest
-                            ret = Math.max(
-                                elem.body[ "scroll" + name ], doc[ "scroll" + name ],
-                                elem.body[ "offset" + name ], doc[ "offset" + name ],
-                                doc[ "client" + name ]
-                            );
                         } else if('innerWidth' in elem){
                             ret = (modifier == 'outer') ?
                                 elem[ 'inner' + names[1] ] :
-                                elem.document.documentElement[ "client" + names[1] ]
+                                elem.document.documentElement[ 'client' + names[1] ]
                             ;
                         }
                     }
