@@ -1,6 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
         require('../../js/utils/rb_draggy');
+        require('../../js/utils/rb_momentumwheel');
         require('../../js/utils/rb_resize');
         require('../../js/utils/rb_prefixed');
         require('../../js/utils/rb_debounce');
@@ -309,10 +310,12 @@
                 var that = this;
                 var options = this.options;
                 var block = false;
+                var momentumBlocked = false;
+
                 var unblock = function(){
                     block = false;
                 };
-                var wheelEnd = rb.debounce(function(){
+                var wheelEnd = function(){
                     var nearestIndex = that.getNearest();
                     var diff = that._pos - startValue;
                     var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 300);
@@ -327,11 +330,14 @@
                         that.selectNext();
                     }
                     setTimeout(unblock, 144);
+                };
 
-                }, {delay: 66});
+                var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
 
                 this.viewport.addEventListener('wheel', function(e){
-                    if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+                    if(!momentumBlocked && !block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+
+                        console.log('wheeeel');
 
                         if(!_isWheelStarted){
                             _isWheelStarted = true;
@@ -341,11 +347,35 @@
 
                         that._setRelPos(e.deltaX * -1);
 
-                        wheelEnd();
+                        wheelEndDebounced();
 
                         e.preventDefault();
                     }
                 });
+
+                document.addEventListener('momentumwheelstarted', ()=>{
+                    if(_isWheelStarted){
+                        console.log('momentumwheelstarted');
+
+                        momentumBlocked = true;
+
+                        // dir, veloX, length
+                        this._snapTo(1, 10, 10);
+
+                        // wheelEnd();
+                    }
+                });
+
+                document.addEventListener('momentumwheelended', function(){
+                    console.log('momentumwheelended');
+                    momentumBlocked = false;
+                });
+
+                document.addEventListener('momentumwheelinterrupted', function(){
+                    console.log('momentumwheelinterrupted');
+                    momentumBlocked = false;
+                });
+
             },
             setSwitchedOffClass: function(){
                 this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
@@ -720,7 +750,7 @@
                                     rbItemscrollerPos: setPos
                                 },
                                 {
-                                    easing: 'linear',
+                                    easing: 'ease-out',
                                     start: this._pos,
                                     progress: this._slideProgress,
                                     duration: duration,
