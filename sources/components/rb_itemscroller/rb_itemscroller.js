@@ -378,7 +378,7 @@
                     var totalLengthMovedByWheel = data.deltaTotal;
 
                     //tune down velocity for snap from wheel
-                    velocity = velocity * 0.15;
+                    velocity = velocity * 0.25;
 
                     // dir, veloX, length
                     that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);

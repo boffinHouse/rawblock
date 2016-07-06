@@ -9,10 +9,10 @@
     var rb = window.rb;
     var $ = rb.$;
 
-    const WHEELEVENTS_TO_MERGE = 2; // 2
-    const WHEELEVENTS_TO_ANALAZE = 3;
+    var WHEELEVENTS_TO_MERGE = 2; // 2
+    var WHEELEVENTS_TO_ANALAZE = 3;
 
-    // const ABSDELTA_DECREASE_THRESHOLD = 3;
+    // var ABSDELTA_DECREASE_THRESHOLD = 3;
 
     var defaults = {
         isDebug: true
@@ -48,13 +48,15 @@
 
     Object.assign(WheelAnalyzer.prototype, {
 
-        _feedWheel: function(wheelEvents){
+        _feedWheel: function _feedWheel(wheelEvents) {
             var that = this;
 
-            if(!wheelEvents){ return; }
+            if (!wheelEvents) {
+                return;
+            }
 
-            if(Array.isArray(wheelEvents)){
-                wheelEvents.forEach(function(wheelEvent){
+            if (Array.isArray(wheelEvents)) {
+                wheelEvents.forEach(function (wheelEvent) {
                     that._addWheelEvent(wheelEvent);
                 });
             } else {
@@ -62,30 +64,30 @@
             }
         },
 
-        _addWheelEvent: function(e){
+        _addWheelEvent: function _addWheelEvent(e) {
             var that = this;
 
-            if(!this.isScrolling){
+            if (!this.isScrolling) {
                 this._beginScroll(e);
             }
 
             clearTimeout(this.scrollEndedTimeout);
 
-            this.scrollEndedTimeout = setTimeout(function(){
+            this.scrollEndedTimeout = setTimeout(function () {
                 that._endScroll(e);
             }, 50);
 
-            var currentDelta =  Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+            var currentDelta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
             var currentAbsDelta = Math.abs(currentDelta);
 
-            if(e.deltaMode !== 0){
-                if(this.options.isDebug) {
+            if (e.deltaMode !== 0) {
+                if (this.options.isDebug) {
                     console.warn('deltaMode is not 0');
                 }
                 return;
             }
 
-            if(currentAbsDelta > this.lastAbsDelta) {
+            if (currentAbsDelta > this.lastAbsDelta) {
                 this._endScroll(e);
                 this._beginScroll(e);
             }
@@ -94,46 +96,52 @@
             this.lastAbsDelta = currentAbsDelta;
 
             this.scrollPointsToMerge.push({
-                currentDelta,
-                currentAbsDelta,
+                currentDelta: currentDelta,
+                currentAbsDelta: currentAbsDelta,
                 timestamp: e.timeStamp || Date.now()
             });
 
-            if(this.scrollPointsToMerge.length === WHEELEVENTS_TO_MERGE){
+            if (this.scrollPointsToMerge.length === WHEELEVENTS_TO_MERGE) {
                 this.scrollPoints.push({
-                    currentDelta: Math.round(this.scrollPointsToMerge.reduce((a,b) => a + b.currentDelta, 0) / WHEELEVENTS_TO_MERGE),
-                    currentAbsDelta: Math.round(this.scrollPointsToMerge.reduce((a,b) => a + b.currentAbsDelta, 0) / WHEELEVENTS_TO_MERGE),
-                    timestamp: Math.round(this.scrollPointsToMerge.reduce((a,b) => a + b.timestamp, 0) / WHEELEVENTS_TO_MERGE),
+                    currentDelta: Math.round(this.scrollPointsToMerge.reduce(function (a, b) {
+                        return a + b.currentDelta;
+                    }, 0) / WHEELEVENTS_TO_MERGE),
+                    currentAbsDelta: Math.round(this.scrollPointsToMerge.reduce(function (a, b) {
+                        return a + b.currentAbsDelta;
+                    }, 0) / WHEELEVENTS_TO_MERGE),
+                    timestamp: Math.round(this.scrollPointsToMerge.reduce(function (a, b) {
+                        return a + b.timestamp;
+                    }, 0) / WHEELEVENTS_TO_MERGE)
                 });
 
                 // reset merge array
                 this.scrollPointsToMerge.length = 0;
 
-                if(this.scrollPoints.length > WHEELEVENTS_TO_ANALAZE) {
+                if (this.scrollPoints.length > WHEELEVENTS_TO_ANALAZE) {
                     this.updateVelocity();
 
                     // check if momentum can be recognized
-                    if(!this.isMomentum && this._checkForMomentum()) {
+                    if (!this.isMomentum && this._checkForMomentum()) {
                         this.onMomentumRecognized.fireWith(this, this.getCurrentState());
-                    } else if(this.isMomentum) {
+                    } else if (this.isMomentum) {
                         this._checkForEnding();
                     }
                 }
             }
         },
 
-        getCurrentState: function(){
+        getCurrentState: function getCurrentState() {
             return {
                 willEndSoon: this.willEndSoon,
                 isScrolling: this.isScrolling,
                 isMomentum: this.isMomentum,
                 isInterrupted: this.isInterrupted,
                 deltaVelocity: this.deltaVelocity,
-                deltaTotal: this.deltaTotal,
+                deltaTotal: this.deltaTotal
             };
         },
 
-        _beginScroll: function(){
+        _beginScroll: function _beginScroll() {
             this.willEndSoon = false;
             this.isScrolling = true;
             this.isMomentum = false;
@@ -146,8 +154,8 @@
             this.scrollPointsToMerge.length = 0;
         },
 
-        _endScroll: function(e){
-            if(this.isMomentum){
+        _endScroll: function _endScroll(e) {
+            if (this.isMomentum) {
                 this.isMomentum = false;
                 this._momentumEnded(e);
             }
@@ -155,8 +163,8 @@
             this.isScrolling = false;
         },
 
-        _momentumEnded: function(){
-            if(!this.willEndSoon){
+        _momentumEnded: function _momentumEnded() {
+            if (!this.willEndSoon) {
                 this.isInterrupted = true;
                 this.onMomentumInterrupted.fireWith(this, this.getCurrentState());
             } else {
@@ -164,61 +172,72 @@
             }
         },
 
-        updateVelocity: function(){
-            let scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
+        updateVelocity: function updateVelocity() {
+            var scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
 
-            let totalDelta = scrollPointsToAnalize.reduce((a,b) => a + b.currentDelta, 0);
-            let timePassedInInterval = Math.abs(scrollPointsToAnalize[scrollPointsToAnalize.length - 1].timestamp - scrollPointsToAnalize[0].timestamp);
-            let currentVelocity = totalDelta / (timePassedInInterval || 1) * 1000;
+            var totalDelta = scrollPointsToAnalize.reduce(function (a, b) {
+                return a + b.currentDelta;
+            }, 0);
 
-            this.deltaVelocity = this.deltaVelocity ? (currentVelocity * 0.8 + this.deltaVelocity * 0.2) : currentVelocity;
+            var timePassedInInterval = Math.abs(scrollPointsToAnalize[scrollPointsToAnalize.length - 1].timestamp - scrollPointsToAnalize[0].timestamp);
+            var currentVelocity = totalDelta / (timePassedInInterval || 1) * 1000;
+
+            this.deltaVelocity = this.deltaVelocity ? currentVelocity * 0.8 + this.deltaVelocity * 0.2 : currentVelocity;
         },
 
-        _checkForMomentum: function(){
-            if(this.isMomentum){
+        _checkForMomentum: function _checkForMomentum() {
+            if (this.isMomentum) {
                 return this.isMomentum;
             }
 
             // get the latest WHEELEVENTS_TO_ANALAZE
-            let scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
-            let scrollPointsToAnalizeAbsDeltas = scrollPointsToAnalize.map((scrollPoint)=>scrollPoint.currentAbsDelta);
+            var scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
+            var scrollPointsToAnalizeAbsDeltas = scrollPointsToAnalize.map(function (scrollPoint) {
+                return scrollPoint.currentAbsDelta;
+            });
 
-            if(scrollPointsToAnalize.length < WHEELEVENTS_TO_ANALAZE){
+            if (scrollPointsToAnalize.length < WHEELEVENTS_TO_ANALAZE) {
                 return console.error('not enough points.');
             }
 
             // check if delta is all decreasing
-            let absDeltasMin = Math.min.apply(null, scrollPointsToAnalizeAbsDeltas);
-            let absDeltasMax = Math.max.apply(null, scrollPointsToAnalizeAbsDeltas);
-            let isOverallDecreasing = absDeltasMin < absDeltasMax && absDeltasMin === scrollPointsToAnalizeAbsDeltas[scrollPointsToAnalizeAbsDeltas.length - 1];
+            var absDeltasMin = Math.min.apply(null, scrollPointsToAnalizeAbsDeltas);
+            var absDeltasMax = Math.max.apply(null, scrollPointsToAnalizeAbsDeltas);
+            var isOverallDecreasing = absDeltasMin < absDeltasMax && absDeltasMin === scrollPointsToAnalizeAbsDeltas[scrollPointsToAnalizeAbsDeltas.length - 1];
 
             this.overallDecreasing.push(isOverallDecreasing);
 
-            if(this._checkDecreases(this.overallDecreasing)){
+            if (this._checkDecreases(this.overallDecreasing)) {
                 this.isMomentum = true;
             }
 
             return this.isMomentum;
         },
 
-        _checkForEnding: function(){
-            let scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
-            let scrollPointsToAnalizeAbsDeltas = scrollPointsToAnalize.map((scrollPoint)=>scrollPoint.currentAbsDelta);
-            let absDeltaAvrg = scrollPointsToAnalizeAbsDeltas.reduce((a,b) => a+b) / scrollPointsToAnalizeAbsDeltas.length;
+        _checkForEnding: function _checkForEnding() {
+            var scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
+            var scrollPointsToAnalizeAbsDeltas = scrollPointsToAnalize.map(function (scrollPoint) {
+                return scrollPoint.currentAbsDelta;
+            });
+            var absDeltaAvrg = scrollPointsToAnalizeAbsDeltas.reduce(function (a, b) {
+                return a + b;
+            }) / scrollPointsToAnalizeAbsDeltas.length;
 
-            if(absDeltaAvrg < 1.3){
+            if (absDeltaAvrg < 1.3) {
                 this.willEndSoon = true;
             }
 
             return this.willEndSoon;
         },
 
-        _checkDecreases: function(decreaseBooleans){
-            let decreaseBooleansToCheck = decreaseBooleans.slice(-3);
-            if(decreaseBooleansToCheck.length < 3){
+        _checkDecreases: function _checkDecreases(decreaseBooleans) {
+            var decreaseBooleansToCheck = decreaseBooleans.slice(-3);
+            if (decreaseBooleansToCheck.length < 3) {
                 return false;
             }
-            return decreaseBooleansToCheck.reduce((a,b) => a && b);
+            return decreaseBooleansToCheck.reduce(function (a, b) {
+                return a && b;
+            });
         }
     });
 
