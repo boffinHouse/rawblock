@@ -764,7 +764,7 @@
                                     rbItemscrollerPos: setPos
                                 },
                                 {
-                                    easing: 'ease-out',
+                                    easing: 'linear',
                                     start: this._pos,
                                     progress: this._slideProgress,
                                     duration: duration,
