@@ -118,7 +118,7 @@
             this._velocityTimer = setInterval(this.velocitySnapShot, this._velDelay);
             this.velocitySnapShot();
 
-            options.start(this);
+            options.start(this, evt);
         },
         move: function (pos, evt) {
             var options = this.options;
@@ -148,7 +148,7 @@
             this.relPos.x = this.lastPos.x - this.curPos.x;
             this.relPos.y = this.lastPos.y - this.curPos.y;
 
-            options.move(this);
+            options.move(this, evt);
         },
         end: function (pos, evt) {
             var options = this.options;
@@ -164,7 +164,7 @@
             this.movedPos.x = this.startPos.x - this.curPos.x;
             this.movedPos.y = this.startPos.y - this.curPos.y;
 
-            options.end(this);
+            options.end(this, evt);
 
             if((Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
                 if(options.stopPropagation){
