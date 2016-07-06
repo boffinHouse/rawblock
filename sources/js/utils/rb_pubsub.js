@@ -59,6 +59,8 @@
             }
 
             publish(topic, data, memoize);
+
+            return this;
         };
 
         options = Object.assign({
@@ -83,11 +85,14 @@
                 if(getStored && topic in stored){
                     handler.call(stored[topic], stored[topic]);
                 }
+
+                return this;
             },
             unsubscribe: function(topic, handler){
                 if(stores[topic]){
                     stores[topic].remove(handler);
                 }
+                return this;
             },
         });
 

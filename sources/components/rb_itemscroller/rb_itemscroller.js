@@ -66,7 +66,7 @@
                 endOrder: 99,
                 usePx: false,
                 wheel: true,
-                wheelVelocityMultiplier: 0.25,
+                wheelVelocityMultiplier: 0.2,
             },
             /**
              * @constructs
@@ -367,23 +367,24 @@
                 });
 
                 //unblock direct user interaction, when momentum ended or is interrupted
-                wheelAnalyzer.onMomentumEnded.add(unblockMomentum);
-                wheelAnalyzer.onMomentumInterrupted.add(unblockMomentum);
+                wheelAnalyzer
+                    .subscribe('ended', unblockMomentum)
+                    .subscribe('interrupted', unblockMomentum)
+                    .subscribe('recognized', function(data){
+                        momentumBlocked = true;
+                        _isWheelStarted = false;
 
-                wheelAnalyzer.onMomentumRecognized.add(function(data){
-                    momentumBlocked = true;
-                    _isWheelStarted = false;
+                        // from px/s -> px/300ms
+                        var velocity = data.deltaVelocity / 1000 * 300 * -1;
+                        var totalLengthMovedByWheel = data.deltaTotal;
 
-                    // from px/s -> px/300ms
-                    var velocity = data.deltaVelocity / 1000 * 300 * -1;
-                    var totalLengthMovedByWheel = data.deltaTotal;
+                        //tune down velocity for snap from wheel
+                        velocity = velocity * that.options.wheelVelocityMultiplier;
 
-                    //tune down velocity for snap from wheel
-                    velocity = velocity * that.options.wheelVelocityMultiplier;
-
-                    // dir, veloX, length
-                    that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
-                });
+                        // dir, veloX, length
+                        that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
+                    })
+                ;
             },
             setSwitchedOffClass: function(){
                 this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
