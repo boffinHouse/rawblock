@@ -1,5 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
+        require('./rb_pubsub');
+        require('./rb_debounce');
         module.exports = factory();
     } else {
         factory();
@@ -27,7 +29,6 @@
         this.isMomentum = false;
         this.isInterrupted = false;
         this.willEndSoon = false;
-        this.scrollEndedTimeout = null;
 
         this.lastAbsDelta = Infinity;
         this.deltaVelocity = 0; // px per second
@@ -36,19 +37,17 @@
         this.scrollPointsToMerge = [];
         this.overallDecreasing = [];
 
-        this.feedWheel = this._feedWheel.bind(this);
+        this._debouncedEndScroll = rb.debounce(this._endScroll, {delay: 50});
 
         // callback api
-        this.onMomentumRecognized = $.Callbacks();
-        this.onMomentumInterrupted = $.Callbacks();
-        this.onMomentumEnded = $.Callbacks();
+        rb.createPubSub(this);
 
         this.options = Object.assign(defaults, options);
     };
 
     Object.assign(WheelAnalyzer.prototype, {
 
-        _feedWheel: function(wheelEvents) {
+        feedWheel: function(wheelEvents) {
             var that = this;
 
             if (!wheelEvents) {
@@ -65,24 +64,18 @@
         },
 
         _addWheelEvent: function(e) {
-            var that = this;
-
             if (!this.isScrolling) {
                 this._beginScroll(e);
             }
 
-            clearTimeout(this.scrollEndedTimeout);
-
-            this.scrollEndedTimeout = setTimeout(function () {
-                that._endScroll(e);
-            }, 50);
+            this._debouncedEndScroll(e);
 
             var currentDelta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
             var currentAbsDelta = Math.abs(currentDelta);
 
             if (e.deltaMode !== 0) {
                 if (this.options.isDebug) {
-                    console.warn('deltaMode is not 0');
+                    rb.logWarn('deltaMode is not 0');
                 }
                 return;
             }
@@ -122,7 +115,8 @@
 
                     // check if momentum can be recognized
                     if (!this.isMomentum && this._checkForMomentum()) {
-                        this.onMomentumRecognized.fireWith(this, this.getCurrentState());
+                        this.publish('recognized', this.getCurrentState());
+                        //this.onMomentumRecognized.fireWith(this, this.getCurrentState());
                     } else if (this.isMomentum) {
                         this._checkForEnding();
                     }
@@ -166,20 +160,20 @@
         _momentumEnded: function() {
             if (!this.willEndSoon) {
                 this.isInterrupted = true;
-                this.onMomentumInterrupted.fireWith(this, this.getCurrentState());
+                this.publish('interrupted', this.getCurrentState());
             } else {
-                this.onMomentumEnded.fireWith(this, this.getCurrentState());
+                this.publish('ended', this.getCurrentState());
             }
         },
 
         updateVelocity: function() {
-            var scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
+            var scrollPointsToAnalyze = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
 
-            var totalDelta = scrollPointsToAnalize.reduce(function (a, b) {
+            var totalDelta = scrollPointsToAnalyze.reduce(function (a, b) {
                 return a + b.currentDelta;
             }, 0);
 
-            var timePassedInInterval = Math.abs(scrollPointsToAnalize[scrollPointsToAnalize.length - 1].timestamp - scrollPointsToAnalize[0].timestamp);
+            var timePassedInInterval = Math.abs(scrollPointsToAnalyze[scrollPointsToAnalyze.length - 1].timestamp - scrollPointsToAnalyze[0].timestamp);
             var currentVelocity = totalDelta / (timePassedInInterval || 1) * 1000;
 
             this.deltaVelocity = this.deltaVelocity ? currentVelocity * 0.8 + this.deltaVelocity * 0.2 : currentVelocity;
@@ -197,7 +191,7 @@
             });
 
             if (scrollPointsToAnalize.length < WHEELEVENTS_TO_ANALAZE) {
-                return console.error('not enough points.');
+                return rb.logError('not enough points.');
             }
 
             // check if delta is all decreasing
