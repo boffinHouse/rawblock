@@ -1,7 +1,7 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
         require('../../js/utils/rb_draggy');
-        require('../../js/utils/rb_momentumwheel');
+        require('../../js/utils/rb_wheelanalyzer');
         require('../../js/utils/rb_resize');
         require('../../js/utils/rb_prefixed');
         require('../../js/utils/rb_debounce');
@@ -310,11 +310,16 @@
                 var that = this;
                 var options = this.options;
                 var block = false;
+
+                var wheelAnalyzer = rb.WheelAnalyzer();
                 var momentumBlocked = false;
+
+                console.log(wheelAnalyzer);
 
                 var unblock = function(){
                     block = false;
                 };
+
                 var wheelEnd = function(){
                     var nearestIndex = that.getNearest();
                     var diff = that._pos - startValue;
@@ -335,9 +340,12 @@
                 var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
 
                 this.viewport.addEventListener('wheel', function(e){
-                    if(!momentumBlocked && !block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+                    console.log('wheel...');
+                    wheelAnalyzer.feedWheel(e);
 
-                        console.log('wheeeel');
+                    if(!wheelAnalyzer.isMomentum && !block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+
+                        console.log('react to native wheel…');
 
                         if(!_isWheelStarted){
                             _isWheelStarted = true;
@@ -353,28 +361,28 @@
                     }
                 });
 
-                document.addEventListener('momentumwheelstarted', ()=>{
+                wheelAnalyzer.onMomentumRecognized.add(()=>{
                     if(_isWheelStarted){
                         console.log('momentumwheelstarted');
 
                         momentumBlocked = true;
 
                         // dir, veloX, length
-                        this._snapTo(1, 10, 10);
+                        // this._snapTo(1, 10, 10);
 
                         // wheelEnd();
                     }
                 });
 
-                document.addEventListener('momentumwheelended', function(){
-                    console.log('momentumwheelended');
-                    momentumBlocked = false;
-                });
+                // document.addEventListener('momentumwheelended', function(){
+                //     console.log('momentumwheelended');
+                //     momentumBlocked = false;
+                // });
 
-                document.addEventListener('momentumwheelinterrupted', function(){
-                    console.log('momentumwheelinterrupted');
-                    momentumBlocked = false;
-                });
+                // document.addEventListener('momentumwheelinterrupted', function(){
+                //     console.log('momentumwheelinterrupted');
+                //     momentumBlocked = false;
+                // });
 
             },
             setSwitchedOffClass: function(){
