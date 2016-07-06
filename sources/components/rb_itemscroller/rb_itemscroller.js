@@ -903,7 +903,7 @@
                     overflow_max = this.viewportWidth / 1.5;
 
                     if(overflow){
-                        newPos = this._pos + (relPos * (1 - (overflow/overflow_max)));
+                        newPos = this._pos + (relPos * (1 - (overflow/overflow_max + 0.05)));
                     }
                 }
 
