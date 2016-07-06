@@ -358,7 +358,7 @@
                                 $(that.scroller).stop();
                             }
 
-                            that._setRelPos(e.deltaX * -1);
+                            that._setRelPos(e.deltaX * -1, true);
                             wheelEndDebounced();
                         }
 
@@ -900,7 +900,7 @@
                     minOverflow = Math.abs(Math.min(0, newPos - this.minScroll));
                     maxOverflow = Math.abs(Math.max(0, newPos - this.maxScroll));
                     overflow = minOverflow > maxOverflow ? minOverflow : maxOverflow;
-                    overflow_max = this.viewportWidth / 2;
+                    overflow_max = this.viewportWidth / 1.5;
 
                     if(overflow){
                         newPos = this._pos + (relPos * (1 - (overflow/overflow_max)));
