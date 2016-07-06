@@ -314,18 +314,19 @@
                 var wheelAnalyzer = rb.WheelAnalyzer();
                 var momentumBlocked = false;
 
-                console.log(wheelAnalyzer);
-
                 var unblock = function(){
                     block = false;
                 };
 
+                var unblockMomentum = function(){
+                    momentumBlocked = false;
+                };
+
                 var wheelEnd = function(){
+                    // prevent normal wheelEnd, when momentum is handled
                     if(momentumBlocked){
-                        console.log('wont end normally... momentum animation');
                         return;
                     }
-                    console.warn('wheelEnd!!!!!!!');
 
                     var nearestIndex = that.getNearest();
                     var diff = that._pos - startValue;
@@ -347,7 +348,6 @@
 
                 this.viewport.addEventListener('wheel', function(e){
                     if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
-
                         wheelAnalyzer.feedWheel(e);
 
                         if(!momentumBlocked){
@@ -365,40 +365,24 @@
                     }
                 });
 
-                wheelAnalyzer.onMomentumRecognized.add(function(data){
-                    console.log('onMomentumRecognized', this, data);
+                //unblock direct user interaction, when momentum ended or is interrupted
+                wheelAnalyzer.onMomentumEnded.add(unblockMomentum);
+                wheelAnalyzer.onMomentumInterrupted.add(unblockMomentum);
 
+                wheelAnalyzer.onMomentumRecognized.add(function(data){
                     momentumBlocked = true;
+                    _isWheelStarted = false;
 
                     // from px/s -> px/300ms
-                    var velocity = data.deltaVelocity / 1000 * 300;
+                    var velocity = data.deltaVelocity / 1000 * 300 * -1;
                     var totalLengthMovedByWheel = data.deltaTotal;
 
+                    //tune down velocity for snap from wheel
+                    velocity = velocity * 0.15;
+
                     // dir, veloX, length
-                    that._snapTo(velocity * -1, Math.abs(velocity * 0.4), totalLengthMovedByWheel);
+                    that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
                 });
-
-                wheelAnalyzer.onMomentumEnded.add(function(data){
-                    console.log('onMomentumEnded', data);
-                    momentumBlocked = false;
-                });
-
-                wheelAnalyzer.onMomentumInterrupted.add(function(data){
-                    console.log('onMomentumInterrupted', data);
-                    $(that.scroller).stop();
-                    momentumBlocked = false;
-                });
-
-                // document.addEventListener('momentumwheelended', function(){
-                //     console.log('momentumwheelended');
-                //     momentumBlocked = false;
-                // });
-
-                // document.addEventListener('momentumwheelinterrupted', function(){
-                //     console.log('momentumwheelinterrupted');
-                //     momentumBlocked = false;
-                // });
-
             },
             setSwitchedOffClass: function(){
                 this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
@@ -498,19 +482,16 @@
                 this.scroller.addEventListener('focus', scrollIntoView, evtOpts);
                 this.viewport.addEventListener('scroll', scrollIntoView);
             },
+
             /**
              * [_snapTo description]
              * @param  {[type]} dir      [description]
              * @param  {[type]} velocity px in last 300ms
-             * @param  {[type]} length   throttledCalculateLayout
-             * @return {[type]}          [description]
+             * @param  {[type]} length   length moved during last recognition
              */
             _snapTo: function (dir, velocity, length) {
                 var pageIndex;
                 var fullVel = velocity + Math.abs(dir);
-
-                console.log('_snapTo', dir, velocity, length);
-                console.log('this.options.mandatorySnap', this.options.mandatorySnap);
 
                 length = Math.abs(length);
 

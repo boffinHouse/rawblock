@@ -1,7 +1,5 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
-        // require('./rb_fetch');
-        // require('./rb$_param');
         module.exports = factory();
     } else {
         factory();
@@ -13,21 +11,8 @@
 
     const WHEELEVENTS_TO_MERGE = 2; // 2
     const WHEELEVENTS_TO_ANALAZE = 3;
-    const ABSDELTA_DECREASE_THRESHOLD = 3;
 
-    // const TIME_CONSTANT = 325;
-
-    // var wheelMomentumAnalizer = WheelMomentumAnalizer();
-    // wheelMomentumAnalizer.feedWheel(e); //org. wheel event
-
-    // wheelMomentumAnalizer.isMomentum;
-    // wheelMomentumAnalizer.wasIterrupted;
-
-    // const WHEELEVENTS_TO_MERGE = 2;
-    // const WHEELEVENTS_TO_ANALAZE = 3;
     // const ABSDELTA_DECREASE_THRESHOLD = 3;
-
-    // this.onslide = $.Callbacks();
 
     var defaults = {
         isDebug: true
