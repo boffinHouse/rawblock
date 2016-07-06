@@ -173,7 +173,7 @@
                 fireWith: function (that, args) {
                     var i, len;
                     for (i = 0, len = list.length; i < len; i++) {
-                        list[i].apply(that, args);
+                        list[i].apply(that, [].concat(args));
                     }
                 },
                 has: function () {

@@ -14,6 +14,7 @@
     const WHEELEVENTS_TO_MERGE = 2; // 2
     const WHEELEVENTS_TO_ANALAZE = 3;
     const ABSDELTA_DECREASE_THRESHOLD = 3;
+
     // const TIME_CONSTANT = 325;
 
     // var wheelMomentumAnalizer = WheelMomentumAnalizer();
@@ -32,7 +33,6 @@
         isDebug: true
     };
 
-
     var WheelAnalyzer = function(options){
         if (!(this instanceof WheelAnalyzer)) {
             return new WheelAnalyzer(options);
@@ -45,6 +45,8 @@
         this.scrollEndedTimeout = null;
 
         this.lastAbsDelta = Infinity;
+        this.deltaVelocity = 0; // px per second
+        this.deltaTotal = 0; // moved during this scroll interaction
         this.scrollPoints = [];
         this.scrollPointsToMerge = [];
         this.overallDecreasing = [];
@@ -103,32 +105,46 @@
                 this._beginScroll(e);
             }
 
+            this.deltaTotal = this.deltaTotal + currentDelta;
             this.lastAbsDelta = currentAbsDelta;
 
             this.scrollPointsToMerge.push({
                 currentDelta,
                 currentAbsDelta,
-                // timestamp: Date.now()
+                timestamp: e.timeStamp || Date.now()
             });
 
             if(this.scrollPointsToMerge.length === WHEELEVENTS_TO_MERGE){
                 this.scrollPoints.push({
                     currentDelta: Math.round(this.scrollPointsToMerge.reduce((a,b) => a + b.currentDelta, 0) / WHEELEVENTS_TO_MERGE),
                     currentAbsDelta: Math.round(this.scrollPointsToMerge.reduce((a,b) => a + b.currentAbsDelta, 0) / WHEELEVENTS_TO_MERGE),
-                    // timestamp: Math.round(this.scrollPointsToMerge.reduce((a,b) => a + b.timestamp, 0) / WHEELEVENTS_TO_MERGE),
+                    timestamp: Math.round(this.scrollPointsToMerge.reduce((a,b) => a + b.timestamp, 0) / WHEELEVENTS_TO_MERGE),
                 });
 
                 // reset merge array
                 this.scrollPointsToMerge.length = 0;
 
                 if(this.scrollPoints.length > WHEELEVENTS_TO_ANALAZE) {
+                    this.updateVelocity();
+
                     // check if momentum can be recognized
                     if(!this.isMomentum && this._checkForMomentum()) {
-                        this.onMomentumRecognized.fire();
+                        this.onMomentumRecognized.fireWith(this, this.getCurrentState());
                     } else if(this.isMomentum) {
                         this._checkForEnding();
                     }
                 }
+            }
+        },
+
+        getCurrentState: function(){
+            return {
+                willEndSoon: this.willEndSoon,
+                isScrolling: this.isScrolling,
+                isMomentum: this.isMomentum,
+                isInterrupted: this.isInterrupted,
+                deltaVelocity: this.deltaVelocity,
+                deltaTotal: this.deltaTotal,
             }
         },
 
@@ -138,6 +154,8 @@
             this.isMomentum = false;
             this.isInterrupted = false;
             this.lastAbsDelta = Infinity;
+            this.deltaVelocity = 0;
+            this.deltaTotal = 0;
             this.scrollPoints = [];
             this.overallDecreasing.length = 0;
             this.scrollPointsToMerge.length = 0;
@@ -155,10 +173,20 @@
         _momentumEnded: function(){
             if(!this.willEndSoon){
                 this.isInterrupted = true;
-                this.onMomentumInterrupted.fire();
+                this.onMomentumInterrupted.fireWith(this, this.getCurrentState());
             } else {
-                this.onMomentumEnded.fire();
+                this.onMomentumEnded.fireWith(this, this.getCurrentState());
             }
+        },
+
+        updateVelocity: function(){
+            let scrollPointsToAnalize = this.scrollPoints.slice(WHEELEVENTS_TO_ANALAZE * -1);
+
+            let totalDelta = scrollPointsToAnalize.reduce((a,b) => a + b.currentDelta, 0);
+            let timePassedInInterval = Math.abs(scrollPointsToAnalize[scrollPointsToAnalize.length - 1].timestamp - scrollPointsToAnalize[0].timestamp);
+            let currentVelocity = totalDelta / (timePassedInInterval || 1) * 1000;
+
+            this.deltaVelocity = this.deltaVelocity ? (currentVelocity * 0.8 + this.deltaVelocity * 0.2) : currentVelocity;
         },
 
         _checkForMomentum: function(){

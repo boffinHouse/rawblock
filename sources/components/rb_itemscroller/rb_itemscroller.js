@@ -321,6 +321,12 @@
                 };
 
                 var wheelEnd = function(){
+                    if(momentumBlocked){
+                        console.log('wont end normally... momentum animation');
+                        return;
+                    }
+                    console.warn('wheelEnd!!!!!!!');
+
                     var nearestIndex = that.getNearest();
                     var diff = that._pos - startValue;
                     var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 300);
@@ -340,38 +346,47 @@
                 var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
 
                 this.viewport.addEventListener('wheel', function(e){
-                    console.log('wheel...');
-                    wheelAnalyzer.feedWheel(e);
+                    if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
 
-                    if(!wheelAnalyzer.isMomentum && !block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+                        wheelAnalyzer.feedWheel(e);
 
-                        console.log('react to native wheel…');
+                        if(!momentumBlocked){
+                            if(!_isWheelStarted){
+                                _isWheelStarted = true;
+                                startValue = that._pos;
+                                $(that.scroller).stop();
+                            }
 
-                        if(!_isWheelStarted){
-                            _isWheelStarted = true;
-                            startValue = that._pos;
-                            $(that.scroller).stop();
+                            that._setRelPos(e.deltaX * -1);
+                            wheelEndDebounced();
                         }
-
-                        that._setRelPos(e.deltaX * -1);
-
-                        wheelEndDebounced();
 
                         e.preventDefault();
                     }
                 });
 
-                wheelAnalyzer.onMomentumRecognized.add(()=>{
-                    if(_isWheelStarted){
-                        console.log('momentumwheelstarted');
+                wheelAnalyzer.onMomentumRecognized.add(function(data){
+                    console.log('onMomentumRecognized', this, data);
 
-                        momentumBlocked = true;
+                    momentumBlocked = true;
 
-                        // dir, veloX, length
-                        // this._snapTo(1, 10, 10);
+                    // from px/s -> px/300ms
+                    var velocity = data.deltaVelocity / 1000 * 300;
+                    var totalLengthMovedByWheel = data.deltaTotal;
 
-                        // wheelEnd();
-                    }
+                    // dir, veloX, length
+                    that._snapTo(velocity * -1, Math.abs(velocity * 0.4), totalLengthMovedByWheel);
+                });
+
+                wheelAnalyzer.onMomentumEnded.add(function(data){
+                    console.log('onMomentumEnded', data);
+                    momentumBlocked = false;
+                });
+
+                wheelAnalyzer.onMomentumInterrupted.add(function(data){
+                    console.log('onMomentumInterrupted', data);
+                    $(that.scroller).stop();
+                    momentumBlocked = false;
                 });
 
                 // document.addEventListener('momentumwheelended', function(){
@@ -483,15 +498,25 @@
                 this.scroller.addEventListener('focus', scrollIntoView, evtOpts);
                 this.viewport.addEventListener('scroll', scrollIntoView);
             },
+            /**
+             * [_snapTo description]
+             * @param  {[type]} dir      [description]
+             * @param  {[type]} velocity px in last 300ms
+             * @param  {[type]} length   throttledCalculateLayout
+             * @return {[type]}          [description]
+             */
             _snapTo: function (dir, velocity, length) {
                 var pageIndex;
                 var fullVel = velocity + Math.abs(dir);
+
+                console.log('_snapTo', dir, velocity, length);
+                console.log('this.options.mandatorySnap', this.options.mandatorySnap);
 
                 length = Math.abs(length);
 
                 this.easing = this._dragEasing;
 
-                if (dir && (fullVel > 33 || (fullVel > 9 && length > 99) || (fullVel > 3 && length > 200))) {
+                if (dir && (fullVel > 33 || (fullVel > 9 && length > 99) || (fullVel > 3 && length > 200)) ) {
 
                     if (velocity > 240 && !this.options.mandatorySnap && length > 99) {
                         velocity = (velocity - 230) / 250 * this.velUnit;
