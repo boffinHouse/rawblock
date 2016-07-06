@@ -47,7 +47,7 @@
 
     Object.assign(WheelAnalyzer.prototype, {
 
-        _feedWheel: function(wheelEvents) {
+        feedWheel: function(wheelEvents) {
             var that = this;
 
             if (!wheelEvents) {
