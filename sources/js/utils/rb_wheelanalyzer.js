@@ -145,7 +145,7 @@
                 isInterrupted: this.isInterrupted,
                 deltaVelocity: this.deltaVelocity,
                 deltaTotal: this.deltaTotal,
-            }
+            };
         },
 
         _beginScroll: function(){
