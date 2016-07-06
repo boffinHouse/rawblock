@@ -855,7 +855,7 @@
             },
             _dragMove: function(draggy){
                 if (draggy.relPos.x) {
-                    this._setRelPos(draggy.relPos.x * -1);
+                    this._setRelPos(draggy.relPos.x * -1, true);
                 }
             },
             _dragEnd: function(draggy){
@@ -889,8 +889,24 @@
                     move: this._dragMove,
                 });
             },
-            _setRelPos: function (relPos) {
-                this.setPos(this._pos + relPos);
+            _setRelPos: function (relPos, keepInBounds) {
+                var newPos, minOverflow, maxOverflow, overflow, overflow_max;
+
+                newPos = this._pos + relPos;
+
+                // reduce relative change, if the new pos is out of min/maxScroll
+                if(keepInBounds && !this.isCarousel){
+                    minOverflow = Math.abs(Math.min(0, newPos - this.minScroll));
+                    maxOverflow = Math.abs(Math.max(0, newPos - this.maxScroll));
+                    overflow = minOverflow > maxOverflow ? minOverflow : maxOverflow;
+                    overflow_max = this.viewportWidth / 2;
+
+                    if(overflow){
+                        newPos = this._pos + (relPos * (1 - (overflow/overflow_max)));
+                    }
+                }
+
+                this.setPos(newPos);
             },
             _setOrder: function(elem, order){
                 elem.style[orderProp] = order;
