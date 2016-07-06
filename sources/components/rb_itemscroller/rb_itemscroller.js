@@ -66,6 +66,7 @@
                 endOrder: 99,
                 usePx: false,
                 wheel: true,
+                wheelVelocityMultiplier: 0.25,
             },
             /**
              * @constructs
@@ -378,7 +379,7 @@
                     var totalLengthMovedByWheel = data.deltaTotal;
 
                     //tune down velocity for snap from wheel
-                    velocity = velocity * 0.25;
+                    velocity = velocity * that.options.wheelVelocityMultiplier;
 
                     // dir, veloX, length
                     that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
