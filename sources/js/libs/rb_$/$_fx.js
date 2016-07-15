@@ -58,6 +58,10 @@
                 for (prop in props) {
                     value = (props[prop].end - props[prop].start) * eased + props[prop].start;
 
+                    if (options.step) {
+                        options.step.call(element, value);
+                    }
+
                     if (prop in steps) {
                         props[prop].pos = eased;
                         props[prop].now = value;
@@ -73,7 +77,7 @@
                 }
 
                 if (options.progress) {
-                    options.progress(tweenObj, pos);
+                    options.progress.call(element, tweenObj, pos);
                 }
             }
 
