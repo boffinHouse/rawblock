@@ -1494,12 +1494,14 @@ if (!window.rb) {
     var unregisteredFoundHook = {};
 
     var extendStatics = function (Class, proto, SuperClasss, prop) {
+        var dashed = '_' + prop;
+        var value = $.extend(true, {}, SuperClasss[dashed] || SuperClasss[prop], proto[prop], Class[prop]);
 
-        Object.defineProperty(Class, prop, {
+        Object.defineProperty(Class, dashed, {
             configurable: true,
             enumerable: true,
             writable: true,
-            value: $.extend(true, {}, SuperClasss[prop], proto[prop], Class[prop])
+            value: value,
         });
 
         if (proto[prop]) {
@@ -2140,7 +2142,7 @@ if (!window.rb) {
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
     var _setupEventsByEvtObj = function (that) {
         var eventsObjs, evt;
-        var evts = that.constructor.events;
+        var evts = that.constructor._events;
 
         for (evt in evts) {
             eventsObjs = rb.parseEventString(evt);
@@ -2320,6 +2322,7 @@ if (!window.rb) {
                 this.options = {};
 
                 this._initialDefaults = initialDefaults;
+                this._stickyOpts = {};
                 element[componentExpando] = this;
 
                 this.origName = origName;
@@ -2667,7 +2670,7 @@ if (!window.rb) {
              * @param initialOpts
              */
             parseOptions: function (opts) {
-                var options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions());
+                var options = $.extend(true, opts || {}, this.constructor._defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions(), this._stickyOpts);
                 this.setOptions(options);
             },
 
@@ -2675,7 +2678,7 @@ if (!window.rb) {
              * Sets mutltiple options at once.
              * @param opts
              */
-            setOptions: function (opts) {
+            setOptions: function (opts, isSticky) {
                 var oldValue, newValue;
 
                 if(opts !== this.options){
@@ -2685,7 +2688,7 @@ if (!window.rb) {
                         if (newValue !== oldValue &&
                             (!oldValue || typeof newValue != 'object' || typeof oldValue != 'object' ||
                             JSON.stringify(newValue) != JSON.stringify(oldValue))) {
-                            this.setOption(prop, newValue);
+                            this.setOption(prop, newValue, isSticky);
                         }
                     }
                 }
@@ -2707,21 +2710,26 @@ if (!window.rb) {
 			 *      }
 			 * }
              */
-            setOption: function (name, value) {
+            setOption: function (name, value, isSticky) {
                 this.options[name] = value;
+
+                if(isSticky){
+                    this._stickyOpts[name] = value;
+                }
+
                 if (name == 'debug') {
                     this.isDebug = value;
                 } else if ((name == 'name' || name == 'jsName') && this.name && this.jsName && this.logWarn) {
                     this.logWarn('don\'t change name after init.');
                 }
             },
-            setChildOption: function ($childs, name, value) {
+            setChildOption: function ($childs, name, value, isSticky) {
                 var run = function (elem) {
                     var component = this && this[componentExpando] ||
                         elem[componentExpando] ||
                             elem;
                     if (component && component.setOption) {
-                        component.setOption(name, value);
+                        component.setOption(name, value, isSticky);
                     }
                 };
 
@@ -2840,16 +2848,18 @@ if (!window.rb) {
     };
 
     rb.Component.mixin = function (Class, prop) {
-        if (prop.defaults) {
-            Class.defaults = Object.assign(Class.defaults || {}, prop.defaults);
-        }
+        Class._defaults = $.extend(true, Class._defaults || {}, Class.defaults || {}, prop._defaults || prop.defaults);
+
         if (prop.statics) {
             Object.assign(Class, prop.statics);
         }
+
+        Class._events = $.extend(true, Class._events || {}, prop._events || prop.events);
+
         if (prop.events) {
-            Class.events = Object.assign(Class.events || {}, prop.events);
             prop.events = null;
         }
+
         rb.Class.mixin(Class.prototype, prop);
 
         return Class;
@@ -2999,7 +3009,12 @@ if (!window.rb) {
 
                 switch (name) {
                     case 'target':
-                        dom = rb.elementFromStr(value, this.element)[0];
+
+                        dom = (typeof value == 'string') ?
+                            rb.elementFromStr(value, this.element)[0] :
+                            value
+                        ;
+
                         if (dom) {
                             this.setTarget(dom);
                         }
@@ -3040,7 +3055,6 @@ if (!window.rb) {
                 this.element.removeAttribute('data-target');
                 this.$element.attr({'aria-controls': id});
                 this.targetAttr = id;
-                this.options.target = id;
             },
 
             /**

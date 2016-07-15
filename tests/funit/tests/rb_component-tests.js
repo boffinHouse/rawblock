@@ -182,15 +182,15 @@
         assert.equal(typeof modules.ext2.module.ext1, 'undefined');
         assert.equal(typeof modules.ext3.module.ext3, 'function');
 
-        assert.equal(modules.ext3.module.events.inherit, 'ext1');
-        assert.equal(modules.ext3.module.events.override, 'ext3');
-        assert.equal(modules.ext3.module.events.initial, 'ext3');
-        assert.equal(modules.ext3.module.events.newone, 'ext3');
+        assert.equal(modules.ext3.module._events.inherit, 'ext1');
+        assert.equal(modules.ext3.module._events.override, 'ext3');
+        assert.equal(modules.ext3.module._events.initial, 'ext3');
+        assert.equal(modules.ext3.module._events.newone, 'ext3');
 
-        assert.equal(modules.ext2.module.events.inherit, 'ext1');
-        assert.equal(modules.ext2.module.events.override, 'ext1');
+        assert.equal(modules.ext2.module._events.inherit, 'ext1');
+        assert.equal(modules.ext2.module._events.override, 'ext1');
 
-        assert.equal(modules.ext1.module.events.initial, 'ext1');
+        assert.equal(modules.ext1.module._events.initial, 'ext1');
 
         assert.equal(ext3.options.initial, 'ext3');
         assert.equal(ext3.options.inherit, 'ext1');
