@@ -124,8 +124,8 @@
                     return pos != null && pos > -1 && pos < Number.MAX_VALUE;
                 },
             },
-            setOption: function (name, value) {
-                this._super(name, value);
+            setOption: function (name, value, isSticky) {
+                this._super(name, value, isSticky);
 
                 if (name == 'switchedOff' || name == 'resetSwitchedOff' && this.options.switchedOff && this.options.resetSwitchedOff) {
                     this._unfix();

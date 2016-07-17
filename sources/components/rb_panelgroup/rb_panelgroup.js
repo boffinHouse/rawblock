@@ -130,7 +130,8 @@
                 this._onOutSideInteraction = this._onOutSideInteraction.bind(this);
 
                 this.setOption('easing', this.options.easing);
-
+            },
+            afterCreate: function(){
                 if (!this.options.switchedOff) {
                     this.setOption('switchedOff', false);
                 } else {
@@ -454,12 +455,12 @@
                     this.selectIndex(this.options.selectedIndex, {animationPrevented: true, setFocus: false});
                 }
             },
-            setOption: function (name, value) {
+            setOption: function (name, value, isSticky) {
                 var that;
                 if (name == 'multiple' && value && !this.options.toggle) {
-                    this.setOption('toggle', true);
+                    this.setOption('toggle', true, isSticky);
                 } else if (name == 'toggle' && value != this.options.toggle) {
-                    this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open');
+                    this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open', isSticky);
                 } else if (name == 'easing' && value && typeof value == 'string') {
                     rb.addEasing(value);
                 } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView') {
@@ -473,20 +474,20 @@
                         this._switchOn();
                     }
                 } else if (name == 'preventDefault') {
-                    this.setChildOption(this.$groupButtons, name, value);
-                    this.setChildOption(this.$buttons, name, value);
+                    this.setChildOption(this.$groupButtons, name, value, isSticky);
+                    this.setChildOption(this.$buttons, name, value, isSticky);
                 } else if(name == 'itemWrapper'){
                     value = this.interpolateName(value);
-                    this.setChildOption(this.$panels, name, value);
+                    this.setChildOption(this.$panels, name, value, isSticky);
                 }
 
-                this._super(name, value);
+                this._super(name, value, isSticky);
 
                 if ((name == 'toggle' || name == 'multiple') && this.options.multiple && !this.options.toggle) {
                     that = this;
                     setTimeout(function(){
                         if (that.options.multiple && !that.options.toggle) {
-                            that.setOption('toggle', true);
+                            that.setOption('toggle', true, isSticky);
                         }
                     });
                 }

@@ -72,9 +72,9 @@
                     this.setOption('positioned', true);
                 }
             },
-            setOption: function (name, value) {
+            setOption: function (name, value, isSticky) {
                 var options = this.options;
-                this._super(name, value);
+                this._super(name, value, isSticky);
 
                 if (name == 'positioned') {
                     if (value) {

@@ -138,8 +138,8 @@
                 this._generateMarkup();
 
             },
-            setOption: function (name, value) {
-                this._super(name, value);
+            setOption: function (name, value, isSticky) {
+                this._super(name, value, isSticky);
 
                 if (name == 'max' || name == 'min' || name == 'step') {
                     this._updateOptions();

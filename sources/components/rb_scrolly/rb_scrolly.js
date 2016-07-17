@@ -157,8 +157,8 @@
                     this.throtteldCheckPosition = this.checkPosition;
                 }
             },
-            setOption: function (name, value) {
-                this._super(name, value);
+            setOption: function (name, value, isSticky) {
+                this._super(name, value, isSticky);
                 if (name == 'switchedOff' || name == 'restSwitchedOff' && this.options.switchedOff && this.options.restSwitchedOff) {
                     this.changeState(false);
                     this.updateChilds(true);

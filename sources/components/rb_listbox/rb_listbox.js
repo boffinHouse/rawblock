@@ -59,9 +59,9 @@
                 this.setFocusElement();
                 this._getElements();
             },
-            setOption: function (name, value) {
+            setOption: function (name, value, isSticky) {
 
-                this._super(name, value);
+                this._super(name, value, isSticky);
 
                 switch (name) {
                     case 'focusElement':

@@ -1355,25 +1355,39 @@ if (!window.rb) {
                 targetStr = targetStr.replace(num[0], '');
                 num = num[1];
             }
-            if ((match = targetStr.match(regTarget))) {
 
-                if (match[1] == '$' || match[1] == 'sel') {
-                    target = Array.from(document.querySelectorAll(match[2]));
-                } else if ($.fn[match[1]]) {
-                    if (!match[2]) {
-                        match[2] = null;
+            switch (targetStr){
+                case 'window':
+                    target = [window];
+                    break;
+                case 'document':
+                    target = [document];
+                    break;
+                case 'scrollingElement':
+                    target = [rb.getPageScrollingElement()];
+                    break;
+                default:
+                    if ((match = targetStr.match(regTarget))) {
+
+                        if (match[1] == '$' || match[1] == 'sel') {
+                            target = Array.from(document.querySelectorAll(match[2]));
+                        } else if ($.fn[match[1]]) {
+                            if (!match[2]) {
+                                match[2] = null;
+                            }
+                            target = $(element)[match[1]](match[2]).get();
+                        }
+                    } else {
+                        targetStr = targetStr.split(regSplit);
+                        target = [];
+                        for (i = 0, len = targetStr.length; i < len; i++) {
+                            temp = targetStr[i] && document.getElementById(targetStr[i]);
+                            if (temp) {
+                                target.push(temp);
+                            }
+                        }
                     }
-                    target = $(element)[match[1]](match[2]).get();
-                }
-            } else {
-                targetStr = targetStr.split(regSplit);
-                target = [];
-                for (i = 0, len = targetStr.length; i < len; i++) {
-                    temp = targetStr[i] && document.getElementById(targetStr[i]);
-                    if (temp) {
-                        target.push(temp);
-                    }
-                }
+                    break;
             }
 
             if (num && target) {
@@ -1909,15 +1923,13 @@ if (!window.rb) {
 
         if (!element[expando] && instance && (instance.attached || instance.detached)) {
 
-            if ((instance.attached || instance.detached)) {
-                if (live._attached.indexOf(element) == -1) {
-                    live._attached.push(element);
-                }
-                if (instance.attached) {
-                    liveBatch.add(function () {
-                        instance.attached();
-                    });
-                }
+            if (live._attached.indexOf(element) == -1) {
+                live._attached.push(element);
+            }
+            if (instance.attached) {
+                liveBatch.add(function () {
+                    instance.attached();
+                });
             }
 
             liveBatch.timedRun();
@@ -1937,7 +1949,7 @@ if (!window.rb) {
         var failed = function (element, id) {
             live._failed[id] = true;
             removeElements.push(element);
-            rb.log('failed', id, element);
+            rb.logError('failed', id, element);
         };
 
         var findElements = rb.throttle(function () {
@@ -2141,7 +2153,8 @@ if (!window.rb) {
     var regElementSeparator = /\{e}/g;
     var regEvtOpts = /^(.+?)(\((.*)\))?$/;
     var _setupEventsByEvtObj = function (that) {
-        var eventsObjs, evt;
+        var eventsObjs, evt, oldCallbacks;
+        var delegateEvents = [];
         var evts = that.constructor._events;
 
         for (evt in evts) {
@@ -2169,9 +2182,44 @@ if (!window.rb) {
                         opts[prop] = that.interpolateName(eventObj.opts[prop]);
                     }
 
-                    rb.events.add(that.element, eventName, handler, opts);
+                    if(!opts['@']){
+                        rb.events.add(that.element, eventName, handler, opts);
+                    } else {
+                        delegateEvents.push([null, eventName, handler, opts]);
+                    }
                 });
             })(eventsObjs, evts[evt]);
+        }
+
+        if(delegateEvents.length){
+            oldCallbacks = {
+                attached: that.attached,
+                detached: that.attached,
+            };
+
+            [['attached', 'add'], ['detached', 'remove']].forEach(function(descriptor){
+                that[descriptor[0]] = function(){
+                    var i, len, opts;
+
+                    for(i = 0, len = delegateEvents.length; i < len; i++){
+                        opts = delegateEvents[i][3];
+
+                        if(!delegateEvents[i][0]){
+                            delegateEvents[i][0] = that.getElementsByString(opts['@'])[0];
+                        }
+
+                        if(delegateEvents[i][0]){
+                            rb.events[descriptor[1]](delegateEvents[i][0], delegateEvents[i][1], delegateEvents[i][2], opts);
+                        } else {
+                            rb.logWarn('element not found', opts['@'], that);
+                        }
+                    }
+
+                    if(oldCallbacks[descriptor[0]]){
+                        return oldCallbacks[descriptor[0]].apply(this, arguments);
+                    }
+                };
+            });
         }
     };
     var replaceHTMLSel = rb.memoize((function(){
@@ -2443,7 +2491,8 @@ if (!window.rb) {
              */
             component: function(element, name, initialOpts){
                 if(typeof element == 'string'){
-                    element = this.query(element);
+                    element = this.interpolateName(element);
+                    element = rb.getElementsByString(element, this.element)[0] || this.query(element);
                 }
                 return rb.getComponent(element, name, initialOpts);
             },
@@ -2697,6 +2746,7 @@ if (!window.rb) {
             /**
              * Sets an option. The function should be extended to react to dynamic option changes after instantiation.
              * @param name {String} Name of the option.
+             * @param isSticky=false {boolean} Whether the option can't be overwritten with CSS option.
              * @param value {*} Value of the option.
              *
              * @example
@@ -2821,7 +2871,7 @@ if (!window.rb) {
             },
 
             _super: function () {
-                this.log('no _super');
+                this.logWarn('no _super');
             },
             /**
              * Passes args to `console.log` if isDebug option is `true.
@@ -2914,10 +2964,9 @@ if (!window.rb) {
 
                 this._isFakeBtn = !this.element.matches('input, button');
                 this._resetPreventClick = this._resetPreventClick.bind(this);
-                this._switchOff = rb.rAF(this._switchOff, {throttle: true});
-                this._switchOn = rb.rAF(this._switchOn, {throttle: true});
 
-                this._setTarget = rb.rAF(this._setTarget, {throttle: true});
+                rb.rAFs(this, {throttle: true}, '_switchOff', '_switchOn', '_setTarget');
+
                 this.setOption('args', this.options.args);
 
                 if (!this.options.switchedOff) {

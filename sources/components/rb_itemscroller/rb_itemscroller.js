@@ -219,8 +219,8 @@
                 'rb_resize:width()': 'calculateLayout',
             },
 
-            setOption: function (name, value) {
-                this._super(name, value);
+            setOption: function (name, value, isSticky) {
+                this._super(name, value, isSticky);
                 switch (name) {
                     case 'centerMode':
                     case 'scrollStep':
