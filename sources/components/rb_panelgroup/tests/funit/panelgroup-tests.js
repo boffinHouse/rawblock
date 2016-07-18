@@ -3,9 +3,9 @@
     QUnit.module('panelgroup');
 
 
-    rb.components.panelgroup._defaults.selectedIndex = 0;
-    rb.components.panelgroup._defaults.multiple = false;
-    rb.components.panelgroup._defaults.toggle = false;
+    rb.components.panelgroup.defaults.selectedIndex = 0;
+    rb.components.panelgroup.defaults.multiple = false;
+    rb.components.panelgroup.defaults.toggle = false;
 
     QUnit.testStart(function (obj) {
         if (obj.module != 'panelgroup') {

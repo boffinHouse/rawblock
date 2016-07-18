@@ -1509,10 +1509,9 @@ if (!window.rb) {
     var unregisteredFoundHook = {};
 
     var extendStatics = function (Class, proto, SuperClasss, prop) {
-        var dashed = '_' + prop;
-        var value = $.extend(true, {}, SuperClasss[dashed] || SuperClasss[prop], proto[prop], Class[prop]);
+        var value = $.extend(true, {}, SuperClasss[prop], proto[prop], Class[prop]);
 
-        Object.defineProperty(Class, dashed, {
+        Object.defineProperty(Class, prop, {
             configurable: true,
             enumerable: true,
             writable: true,
@@ -2152,7 +2151,7 @@ if (!window.rb) {
     var _setupEventsByEvtObj = function (that) {
         var eventsObjs, evt, oldCallbacks;
         var delegateEvents = [];
-        var evts = that.constructor._events;
+        var evts = that.constructor.events;
 
         for (evt in evts) {
             eventsObjs = rb.parseEventString(evt);
@@ -2826,7 +2825,7 @@ if (!window.rb) {
              * @param initialOpts
              */
             parseOptions: function (opts) {
-                var options = $.extend(true, opts || {}, this.constructor._defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions(), this._stickyOpts);
+                var options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions(), this._stickyOpts);
                 this.setOptions(options);
             },
 
@@ -3005,13 +3004,13 @@ if (!window.rb) {
     };
 
     rb.Component.mixin = function (Class, prop) {
-        Class._defaults = $.extend(true, Class._defaults || {}, Class.defaults || {}, prop._defaults || prop.defaults);
+        Class.defaults = $.extend(true, Class.defaults || {}, prop.defaults);
 
         if (prop.statics) {
             Object.assign(Class, prop.statics);
         }
 
-        Class._events = $.extend(true, Class._events || {}, prop._events || prop.events);
+        Class.events = $.extend(true, Class.events || {}, prop.events);
 
         if (prop.events) {
             prop.events = null;
