@@ -2274,17 +2274,17 @@ if (!window.rb) {
     // }, true);
 
     rb.parseEventString = rb.memoize(function(eventStr){
-        var data, opts, char;
-        var mode = 1;
+        var i, len, data, opts, char;
         var events = [];
-        var i = 0;
-        var len  = eventStr.length;
+
+        var mode = 1;
+
         var optsName = '';
         var optsValue = '';
         var openingCount = 0;
         var selector = '';
 
-        for(; i < len; i++){
+        for(i = 0, len = eventStr.length; i < len; i++){
             char = eventStr[i];
 
             if(!data){
