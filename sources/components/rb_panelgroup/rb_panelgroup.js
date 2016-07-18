@@ -130,8 +130,7 @@
                 this._onOutSideInteraction = this._onOutSideInteraction.bind(this);
 
                 this.setOption('easing', this.options.easing);
-            },
-            afterCreated: function(){
+
                 if (!this.options.switchedOff) {
                     this.setOption('switchedOff', false);
                 } else {

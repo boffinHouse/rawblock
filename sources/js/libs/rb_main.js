@@ -1912,10 +1912,6 @@ if (!window.rb) {
         if (!(instance = element[componentExpando])) {
             instance = new liveClass(element, initialOpts);
             element[componentExpando] = instance;
-
-            if(instance.afterCreated){
-                instance.afterCreated();
-            }
         }
 
         rb.rAFQueue(function () {
