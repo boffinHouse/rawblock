@@ -65,8 +65,7 @@
         assert.deepEqual(rb.parseEventString('click:foo, scroll:@(window):bar(a,b) .selector'), [{event: 'click', opts: {closest: '.selector', foo: ' '}}, {event: 'scroll', opts: {closest: '.selector', '@': 'window', bar: 'a,b'}}]);
         assert.deepEqual(rb.parseEventString('{jsName}changed:@(closest(.{name}-wrapper)):closest(.foo)'), [{event: '{jsName}changed', opts: {'@': 'closest(.{name}-wrapper)', closest: '.foo'}}]);
         assert.deepEqual(rb.parseEventString('click:closest(:nth-child(odd))'), [{event: 'click', opts: {closest: ':nth-child(odd)'}}]);
-
-        rb.parseEventString(':event(special:Event(:, ))', [{event: 'special:Event(:, )', opts: {event: 'special:Event(:, )'}}]);
+        assert.deepEqual(rb.parseEventString(':event(special:Event(:, ))'), [{event: 'special:Event(:, )', opts: {event: 'special:Event(:, )'}}]);
     });
 
     QUnit.test("rb.throttle", function( assert ){
