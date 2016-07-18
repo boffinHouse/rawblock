@@ -56,6 +56,17 @@
         assert.equal(tmp[0], document.querySelector('.children-2'));
     });
 
+    QUnit.test("rb.parseEventString", function( assert ){
+        assert.deepEqual(rb.parseEventString('click'), [{event: 'click', opts: {}}]);
+        assert.deepEqual(rb.parseEventString('click .selector'), [{event: 'click', opts: {closest: '.selector'}}]);
+        assert.deepEqual(rb.parseEventString('click:foo .selector'), [{event: 'click', opts: {closest: '.selector', foo: ' '}}]);
+        assert.deepEqual(rb.parseEventString('click:foo :nth-child(odd)'), [{event: 'click', opts: {closest: ':nth-child(odd)', foo: ' '}}]);
+        assert.deepEqual(rb.parseEventString('click:closest(:disabled)'), [{event: 'click', opts: {closest: ':disabled'}}]);
+        assert.deepEqual(rb.parseEventString('click:foo, scroll:@(window):bar(a,b) .selector'), [{event: 'click', opts: {closest: '.selector', foo: ' '}}, {event: 'scroll', opts: {closest: '.selector', '@': 'window', bar: 'a,b'}}]);
+        assert.deepEqual(rb.parseEventString('{jsName}changed:@(closest(.{name}-wrapper)):closest(.foo)'), [{event: '{jsName}changed', opts: {'@': 'closest(.{name}-wrapper)', closest: '.foo'}}]);
+        assert.deepEqual(rb.parseEventString('click:closest(:nth-child(odd))'), [{event: 'click', opts: {closest: ':nth-child(odd)'}}]);
+    });
+
     QUnit.test("rb.throttle", function( assert ){
         var done = assert.async();
         var i = 0;

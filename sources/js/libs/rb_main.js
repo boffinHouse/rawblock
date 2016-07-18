@@ -886,6 +886,7 @@ if (!window.rb) {
             if(this.special[type]){
                 this.special[type][action[0]](element, handler, opts);
             } else {
+                //todo: add passive support
                 element[action[1]](type, handler, !!(opts && opts.capture));
             }
         };
@@ -2142,16 +2143,16 @@ if (!window.rb) {
     var $ = rb.$;
     var componentExpando = live.componentExpando;
     var regData = /^data-/;
-    var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
-    var regComma = /\s*,\s*(?=[^\)]*(?:\(|$))/g;
-    var regColon = /\s*:\s*(?=[^\)]*(?:\(|$))/g;
+    // var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
+    // var regComma = /\s*,\s*(?=[^\)]*(?:\(|$))/g;
+    // var regColon = /\s*:\s*(?=[^\)]*(?:\(|$))/g;
+    // var regEvtOpts = /^(.+?)(\((.*)\))?$/;
     var regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}|,|'|"|:))/g;
     var regName = /\{name}/g;
     var regJsName = /\{jsName}/g;
     var regHtmlName = /\{htmlName}/g;
     var regnameSeparator = /\{-}/g;
     var regElementSeparator = /\{e}/g;
-    var regEvtOpts = /^(.+?)(\((.*)\))?$/;
     var _setupEventsByEvtObj = function (that) {
         var eventsObjs, evt, oldCallbacks;
         var delegateEvents = [];
@@ -2205,13 +2206,17 @@ if (!window.rb) {
                         opts = delegateEvents[i][3];
 
                         if(!delegateEvents[i][0]){
-                            delegateEvents[i][0] = that.getElementsByString(opts['@'])[0];
+                            delegateEvents[i][0] = that.getElementsByString(opts['@'])[0] || delegateEvents[i][0];
                         }
 
                         if(delegateEvents[i][0]){
                             rb.events[descriptor[1]](delegateEvents[i][0], delegateEvents[i][1], delegateEvents[i][2], opts);
                         } else {
                             rb.logWarn('element not found', opts['@'], that);
+                        }
+
+                        if(descriptor[0] == 'remove'){
+                            delegateEvents[i][0] = null;
                         }
                     }
 
@@ -2237,35 +2242,131 @@ if (!window.rb) {
 
     rb.ready.then(generateFocusClasses);
 
-    rb.parseEventString = rb.memoize(function(evtStr){
+    // rb.parseEventString = rb.memoize(function(evtStr){
+    //
+    //     var evtNames = evtStr.split(regComma);
+    //     var selector = evtNames[evtNames.length - 1].split(regWhite);
+    //
+    //     evtNames[evtNames.length - 1] = selector.shift();
+    //
+    //     selector = selector.join(' ');
+    //
+    //     return evtNames.map(function(evtName){
+    //         var optMatch, i;
+    //         var strOpts = evtName.split(regColon);
+    //         var data = {
+    //             event: strOpts.shift(),
+    //             opts: {}
+    //         };
+    //
+    //         for (i = 0; i < strOpts.length; i++) {
+    //             if ((optMatch = strOpts[i].match(regEvtOpts))) {
+    //                 data.opts[optMatch[1]] = optMatch[3] || ' ';
+    //             }
+    //         }
+    //
+    //         if (selector && !data.opts.closest) {
+    //             data.opts.closest = selector;
+    //         }
+    //         return data;
+    //     });
+    //
+    // }, true);
 
-        var evtNames = evtStr.split(regComma);
-        var selector = evtNames[evtNames.length - 1].split(regWhite);
+    rb.parseEventString = rb.memoize(function(eventStr){
+        var data, opts, char;
+        var mode = 1;
+        var events = [];
+        var i = 0;
+        var len  = eventStr.length;
+        var optsName = '';
+        var optsValue = '';
+        var openingCount = 0;
+        var selector = '';
 
-        evtNames[evtNames.length - 1] = selector.shift();
+        for(; i < len; i++){
+            char = eventStr[i];
 
-        selector = selector.join(' ');
+            if(!data){
+                data = {
+                    event: '',
+                    opts: {},
+                };
+                opts = data.opts;
+            }
 
-        return evtNames.map(function(evtName){
-            var optMatch, i;
-            var strOpts = evtName.split(regColon);
-            var data = {
-                event: strOpts.shift(),
-                opts: {}
-            };
+            if(mode != 3 && mode != 4 && char == ','){
+                events.push(data);
+                if(mode == 2){
+                    opts[optsName] = optsValue  || ' ';
+                    optsName = '';
+                    optsValue = '';
+                }
+                data = null;
+                mode = 1;
+                continue;
+            }
 
-            for (i = 0; i < strOpts.length; i++) {
-                if ((optMatch = strOpts[i].match(regEvtOpts))) {
-                    data.opts[optMatch[1]] = optMatch[3] || ' ';
+            if(mode == 1){
+                if(char == ':'){
+                    mode = 2;
+                } else if(data.event && char == ' '){
+                    mode = 4;
+                } else if(char != ' ') {
+                    data.event += char;
+                }
+            } else if(mode == 2){
+                if(char == '('){
+                    mode = 3;
+                    openingCount++;
+                } else if(char == ':'){
+                    if(optsName){
+                        opts[optsName] = ' ';
+                        optsName = '';
+                    }
+                } else if(char == ' '){
+                    mode = 4;
+                } else {
+                    optsName += char;
+                }
+            } else if(mode == 3){
+                if(char == '('){
+                    openingCount++;
+                } else  if(char == ')'){
+                    openingCount--;
+
+                    if(!openingCount){
+                        opts[optsName] = optsValue || ' ';
+                        optsName = '';
+                        optsValue = '';
+                        mode = 2;
+                        continue;
+                    }
+                }
+
+                optsValue += char;
+            } else if(mode == 4){
+                selector += char;
+            }
+        }
+
+        if(data){
+            events.push(data);
+
+            if(optsName){
+                opts[optsName] = optsValue || ' ';
+            }
+
+            if(selector){
+                for(i = 0, len = events.length; i < len; i++){
+                    if(!events[i].opts.closest){
+                        events[i].opts.closest = selector;
+                    }
                 }
             }
+        }
 
-            if (selector && !data.opts.closest) {
-                data.opts.closest = selector;
-            }
-            return data;
-        });
-
+        return events;
     }, true);
 
     /**
