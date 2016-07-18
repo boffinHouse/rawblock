@@ -1913,8 +1913,8 @@ if (!window.rb) {
             instance = new liveClass(element, initialOpts);
             element[componentExpando] = instance;
 
-            if(instance.afterCreate){
-                instance.afterCreate();
+            if(instance.afterCreated){
+                instance.afterCreated();
             }
         }
 

@@ -131,7 +131,7 @@
 
                 this.setOption('easing', this.options.easing);
             },
-            afterCreate: function(){
+            afterCreated: function(){
                 if (!this.options.switchedOff) {
                     this.setOption('switchedOff', false);
                 } else {
