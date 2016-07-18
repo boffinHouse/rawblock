@@ -2302,6 +2302,11 @@ if (!window.rb) {
                     optsName = '';
                     optsValue = '';
                 }
+
+                if(!data.event && opts.event){
+                    data.event = opts.event;
+                }
+
                 data = null;
                 mode = 1;
                 continue;
@@ -2310,6 +2315,7 @@ if (!window.rb) {
             if(mode == 1){
                 if(char == ':'){
                     mode = 2;
+
                 } else if(data.event && char == ' '){
                     mode = 4;
                 } else if(char != ' ') {
@@ -2355,6 +2361,10 @@ if (!window.rb) {
 
             if(optsName){
                 opts[optsName] = optsValue || ' ';
+            }
+
+            if(!data.event && opts.event){
+                data.event = opts.event;
             }
 
             if(selector){
