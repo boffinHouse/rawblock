@@ -66,7 +66,7 @@
 		var promise = new Promise(function(resolve){
 			deferred.resolve = resolve;
 		});
-		var element = this[0];
+		var element = this.get(0);
 
 		if(element){
 			queueToEnd = function(){
