@@ -107,7 +107,7 @@ if (!window.rb) {
      * A jQuery/rb.$ plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
      * Also does not animate padding, margin, borders (use child elements)
      * @function external:"jQuery.fn".rbSlideUp
-     * @param options {object} All jQuery animate options
+     * @param [options] {object} All jQuery animate options
      * @returns {jQueryfiedDOMList}
      */
     $.fn.rbSlideUp = function (options) {
@@ -2556,6 +2556,7 @@ if (!window.rb) {
             defaults: {
                 focusDelay: 0,
                 debug: null,
+                autofocusSel: '',
             },
 
             /**
@@ -2685,7 +2686,9 @@ if (!window.rb) {
                         focusElement = rb.elementFromStr(element, this.element)[0];
                     }
                 } else {
-                    focusElement = this.query(focusSel);
+                    focusElement = this.options.autofocusSel &&
+                        this.query(this.options.autofocusSel) ||
+                        this.query(focusSel);
                 }
 
                 if (!focusElement && (element === true || this.element.classList.contains(focusClass))) {
