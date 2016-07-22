@@ -11,10 +11,11 @@ tests
 jsdoc-md
 grunt
 taskrunner
-sources/components/**/tests/visual/visual-tests/results
+sources/components/**/tests
 
 .sass-cache
 .css
+.scaffold
 
 .DS_Store
 .idea

@@ -1572,7 +1572,7 @@ if (!window.rb) {
             var main = function () {
                 var len, instance, element;
                 var start = Date.now();
-                for (len = live._attached.length; i < len && Date.now() - start < 6; i++) {
+                for (len = live._attached.length; i < len && Date.now() - start < 4; i++) {
                     element = live._attached[i];
 
                     if (element && (instance = element[componentExpando]) && !docElem.contains(element)) {
