@@ -101,7 +101,7 @@
 			 *                  //complicated values like transform/backgroundColor...
 			 *                  rotate: (
 			 *                      start: "rotate(0deg)",
-			 *                      end: "rotate(10deg)",
+			 *                      value: "rotate(10deg)",
 			 *                  )
 			 *              ));
 			 *          }

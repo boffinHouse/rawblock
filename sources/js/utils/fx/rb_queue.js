@@ -108,7 +108,7 @@
 			var elem = this;
 			var start = Date.now();
 			var startRaf = function(){
-				rb.rAFQueue(check);
+				rb.rAFQueue(check, false, true);
 			};
 			var check = function(){
 				if(Date.now() - start >= duration){
@@ -117,13 +117,13 @@
 					}
 					$.dequeue(elem, queue);
 				} else {
-					rb.rAFQueue(check);
+					rb.rAFQueue(check, false, true);
 				}
 			};
 			if(duration > 66){
 				setTimeout(startRaf, duration - 66);
 			} else {
-				rb.rAFQueue(check);
+				rb.rAFQueue(check, false, true);
 			}
 			duration -= 5;
 		});
