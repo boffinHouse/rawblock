@@ -4,6 +4,7 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
 
 (function (window) {
     'use strict';
+    var rbLiveClass;
     var rb = window.rb;
     var lazySizesConfig = window.lazySizesConfig || {};
 
@@ -15,8 +16,10 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
     }
 
     function configureMediaQueries(){
+        var cssConfig = rb.cssConfig;
         document.removeEventListener('lazyunveilread', configureMediaQueries);
-        Object.assign(lazySizesConfig.customMedia, rb.cssConfig.mqs);
+        Object.assign(lazySizesConfig.customMedia, cssConfig.mqs);
+        rbLiveClass = ['js', 'rb', 'live'].join(cssConfig.nameSeparator || rb.nameSeparator || '-');
     }
 
     document.addEventListener('lazyunveilread', configureMediaQueries);
@@ -30,7 +33,7 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
                 rb.getComponent(container, module);
             } else {
                 window.lazySizes.rAF(function(){
-                    container.classList.add('js-rb-live');
+                    container.classList.add(rbLiveClass);
                 });
             }
         }
