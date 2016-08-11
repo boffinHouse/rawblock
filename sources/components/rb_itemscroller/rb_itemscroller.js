@@ -487,9 +487,9 @@
 
             /**
              * [_snapTo description]
-             * @param  {[type]} dir      [description]
-             * @param  {[type]} velocity px in last 300ms
-             * @param  {[type]} length   length moved during last recognition
+             * @param  {number} dir      direction
+             * @param  {number} velocity px in last 300ms
+             * @param  {number} length   length moved during last recognition
              */
             _snapTo: function (dir, velocity, length) {
                 var pageIndex;

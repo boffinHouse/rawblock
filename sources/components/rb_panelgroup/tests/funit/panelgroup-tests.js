@@ -44,6 +44,34 @@
 
     });
 
+    QUnit.test('rb-panelgroup openAll/closeAll/openAll', function (assert) {
+        var done = assert.async();
+        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-multiple': 'true'});
+        var panelComponent = $panelGroup.rbComponent();
+
+        panelComponent.openAll();
+
+        QUnit.afterAF()
+            .then(function () {
+                assert.deepEqual(panelComponent.selectedIndexes, [0, 1]);
+                assert.ok($panelGroup.find('.panelgroup-panel').get(0).classList.contains('is-open'));
+                assert.ok($panelGroup.find('.panelgroup-panel').get(1).classList.contains('is-open'));
+            })
+            .then(function () {
+                panelComponent.closeAll();
+                assert.deepEqual(panelComponent.selectedIndexes, []);
+                panelComponent.closeAll();
+                return QUnit.afterAF();
+            })
+            .then(function () {
+                assert.notOk($panelGroup.find('.panelgroup-panel').get(0).classList.contains('is-open'));
+                assert.notOk($panelGroup.find('.panelgroup-panel').get(1).classList.contains('is-open'));
+            })
+            .then(done)
+        ;
+
+    });
+
     QUnit.test('rb-panelgroup is-open', function (assert) {
         var panelComponent;
         var done = assert.async();
