@@ -235,16 +235,23 @@
             _addRemoveFocusOut: function () {
                 var shouldInstall = this.options.closeOnFocusout && this.selectedItems.length;
 
-                if (shouldInstall && !this._hasFocusOutListener) {
+                document.removeEventListener('focus', this._onOutSideInteraction, true);
+                document.removeEventListener('mousedown', this._onOutSideInteraction, true);
+                document.removeEventListener('touchstart', this._onOutSideInteraction, {passive: true});
+
+                if (shouldInstall) {
                     document.addEventListener('focus', this._onOutSideInteraction, true);
                     document.addEventListener('mousedown', this._onOutSideInteraction, true);
-                } else if (!shouldInstall && this._hasFocusOutListener) {
-                    document.removeEventListener('focus', this._onOutSideInteraction, true);
-                    document.removeEventListener('mousedown', this._onOutSideInteraction, true);
+                    document.addEventListener('touchstart', this._onOutSideInteraction, {passive: true});
                 }
             },
             _onOutSideInteraction: function (e) {
-                if ((e.type != 'focus' || e.target.tabIndex != -1) && !rb.contains(this.element, e.target) && document.body.contains(e.target)) {
+                var target = e.type == 'touchstart' ?
+                    (e.changedTouches || e.touches || [e])[0].target :
+                    e.target
+                ;
+
+                if (target && (e.type != 'focus' || target.tabIndex != -1) && !rb.contains(this.element, target) && document.body.contains(target)) {
                     this.closeAll();
                 }
             },
