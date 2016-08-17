@@ -1531,9 +1531,7 @@ if (!window.rb) {
     var initClickCreate = function () {
         initClickCreate = $.noop;
         rb.click.add('module', function (elem) {
-            if(!rb.getComponent(elem)){
-                rb.log('js-rb-click component not found', elem);
-            }
+            rb.getComponent(elem);
             rb.rAFQueue(function () {
                 elem.classList.remove(rb.click.clickClass);
                 if(!elem.classList.contains(attachedClass)){
@@ -2398,6 +2396,10 @@ if (!window.rb) {
                 component = live.create(element, rb.components[componentName], initialOpts);
             }
         }
+
+        if(!component){
+            rb.logWarn('component not found', element, componentName);
+        }
         return component || null;
     };
 
@@ -2427,7 +2429,7 @@ if (!window.rb) {
 			 *          this.changeClass = rb.rAF(this.changeClass);
 			 *      },
 			 *      events: {
-			 *          'click .change-btn': 'changeClass',
+			 *          'click:closest(.change-btn)': 'changeClass',
 			 *      },
 			 *      changeClass: function(){
 			 *          this.$element.toggleClass(this.options.className);
@@ -2585,8 +2587,9 @@ if (!window.rb) {
 			 *              'click .{name}__close-button': 'close',
 			 *              'focus:capture():matches(input, select)': '_onFocus',
 			 *              'mouseenter:capture():matches(.teaser)': '_delegatedMouseenter',
-			 *              'click:closest(.ok-btn)': '_ok',
 			 *              'keypress:keycodes(13 32):matches(.ok-btn)': '_ok',
+			 *              'click:closest(.ok-btn)': '_ok',
+			 *              'submit:@(closest(form))': '_submit',
 			 *          }
 			 *      }
 			 * }

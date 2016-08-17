@@ -1,3 +1,8 @@
+<style scope>
+.rb-header {
+    z-index: 99;
+}
+</style>
 #Sticky
 <p class="docs-intro">Creates a sticky element, that can be stuck to the top or the bottom of the viewport. Optionally can animate child elements after it has become stuck according to the scroll position.</p>
 
@@ -87,7 +92,7 @@ Or if you want to offset the element 150px from the top. Create a class, in this
 
 ##Constraining in an area
 
-<div class="is-sticky-container">
+<div class="is-sticky-parent">
     <header  class="rb-header js-rb-live" data-module="sticky">
         <div class="docs-item" style="height: 40px;">
             Sticky to the top.
@@ -106,7 +111,7 @@ Or if you want to offset the element 150px from the top. Create a class, in this
 </footer>
 
 
-<div class="is-sticky-container">
+<div class="is-sticky-parent">
     <header  class="rb-sticky js-rb-live" data-module="sticky">
         <div class="docs-item" style="height: 40px;">
             Sticky to the top.

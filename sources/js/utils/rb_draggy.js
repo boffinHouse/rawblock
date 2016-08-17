@@ -1,6 +1,5 @@
 (function () {
     'use strict';
-    //Todo: add passive eventlistener + touch-action: pan-x/y
     var rb = window.rb;
     var $ = rb.$;
 
@@ -11,21 +10,50 @@
         submit: 1,
     };
     var regInputs = /^(?:input|textarea)$/i;
+    var usePassiveListener = rb.cssSupports('(touch-action: pan-y)') && rb.cssSupports('(touch-action: none)') && (function(){
+        var supportsPassiveOption = false;
+        try {
+            var opts = Object.defineProperty({}, 'passive', {
+                get: function() {
+                    supportsPassiveOption = true;
+                }
+            });
+            window.addEventListener('test' + rb.getID(), null, opts);
+        } catch (e) {}
+        return supportsPassiveOption;
+    })();
+    var usePointer = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
+    var useTouchAction = usePassiveListener || usePointer;
+    var touchOpts = usePassiveListener ? {passive: true} : false;
 
     function Draggy(element, options) {
 
         this.element = element;
         this.options = Object.assign({}, Draggy._defaults, options);
+        this.destroyed = false;
 
         this._velDelay = 333;
 
         this.velocitySnapShot = this.velocitySnapShot.bind(this);
 
+        rb.rAFs(this, {throttle: true}, 'setTouchAction');
+
         this.reset();
 
         this.setupEvents();
-        this.setupMouse();
-        this.setupTouch();
+        this.setTouchAction();
+
+        if(this.options.useMouse){
+            this.setupMouse();
+        }
+
+        if(this.options.useTouch){
+            if(usePointer){
+                this.setupPointer();
+            } else {
+                this.setupTouch();
+            }
+        }
     }
 
     Draggy._defaults = {
@@ -43,6 +71,22 @@
     };
 
     Object.assign(Draggy.prototype, {
+        setTouchAction: function(){
+            if(!useTouchAction){return;}
+            var style = '';
+
+            if(!this.destroyed){
+                if(!this.options.horizontal){
+                    style = 'pan-x';
+                } else if(!this.options.vertical){
+                    style = 'pan-y';
+                } else {
+                    style = 'none';
+                }
+            }
+
+            this.element.style.touchAction = style;
+        },
         hasRelevantChange: function () {
             var horizontalDif, verticalDif;
             var options = this.options;
@@ -136,7 +180,7 @@
                 return;
             }
 
-            if (options.preventMove && this.relevantChange != 'undecided') {
+            if (options.preventMove && this.relevantChange != 'undecided' && !usePassiveListener) {
                 evt.preventDefault();
             }
             if(options.stopPropagation){
@@ -159,8 +203,17 @@
             this.allowClick = function () {
                 preventClick = false;
             };
-            this._destroyTouch();
-            this._destroyMouse();
+
+            if(this._destroyTouch){
+                this._destroyTouch();
+            } else if(this._destroyPointer){
+                this._destroyPointer();
+            }
+
+            if(this._destroyMouse){
+                this._destroyMouse();
+            }
+
             this.movedPos.x = this.startPos.x - this.curPos.x;
             this.movedPos.y = this.startPos.y - this.curPos.y;
 
@@ -183,7 +236,8 @@
             this._preventClickTimer = setTimeout(function () {
                 that.isClickPrevented = false;
             }, 333);
-            if (evt && evt.preventDefault) {
+
+            if (evt && evt.preventDefault && (!usePassiveListener || (evt.type != 'touchend' && evt.type != 'pointerup'))) {
                 evt.preventDefault();
             }
         },
@@ -231,7 +285,9 @@
                     return;
                 }
 
-                e.preventDefault();
+                if(e.target.nodeName != 'SELECT'){
+                    e.preventDefault();
+                }
                 that.allowTouch = false;
                 that.isType = 'mouse';
 
@@ -244,47 +300,141 @@
             this.element.addEventListener('mousedown', this._onmousedown);
         },
         setupTouch: function () {
+            var identifier;
             var that = this;
+            var getTouch = function(touches){
+                var i, len, touch;
+
+                for(i = 0, len = touches.length; i < len; i++){
+                    if(touches[i].identifier == identifier){
+                        touch = touches[i];
+                        break;
+                    }
+                }
+
+                return touch;
+            };
 
             var move = function (e) {
-                that.move((e.changedTouches || e.touches)[0], e);
+                var touch = getTouch(e.changedTouches || e.touches);
+                if(touch){
+                    that.move(touch, e);
+                }
             };
 
             var end = function (e) {
-                that.allowMouse = true;
-                that._destroyTouch();
-                that.end((e.changedTouches || e.touches)[0], e);
+                var touch = getTouch(e.changedTouches || e.touches);
+
+                if(touch) {
+                    that.allowMouse = true;
+                    that._destroyTouch();
+                    that.end(touch, e);
+                    identifier = undefined;
+                }
             };
 
             this._destroyTouch = function () {
-                that.element.removeEventListener('touchmove', move);
-                that.element.removeEventListener('touchend', end);
+                that.element.removeEventListener('touchmove', move, touchOpts);
+                that.element.removeEventListener('touchend', end, touchOpts);
+                that.element.removeEventListener('touchcancel', end, touchOpts);
             };
 
-            this._ontouchstart = function (e) {
+            this._ontouchstart = this._ontouchstart || function (e) {
                 if (e.touches.length != 1) {
                     return;
                 }
+
                 that._destroyTouch();
                 if (e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0] || !that.allowedDragTarget(e.target)) {
                     return;
                 }
+
+                identifier = e.touches[0].identifier;
+
                 that.allowMouse = false;
                 that.isType = 'touch';
 
-                that.element.addEventListener('touchmove', move);
-                that.element.addEventListener('touchend', end);
+                that.element.addEventListener('touchmove', move, touchOpts);
+                that.element.addEventListener('touchend', end, touchOpts);
+                that.element.addEventListener('touchcancel', end, touchOpts);
 
                 that.start(e.touches[0], e);
             };
 
-            this.element.addEventListener('touchstart', this._ontouchstart);
+            this.element.addEventListener('touchstart', this._ontouchstart, touchOpts);
+        },
+        setupPointer: function(){
+            var identifier;
+            var that = this;
+
+            var move = function (e) {
+                if(e.pointerId == identifier){
+                    that.move(e, e);
+                }
+            };
+
+            var end = function (e) {
+
+                if(e.pointerId == identifier) {
+                    that.allowMouse = true;
+                    that._destroyPointer();
+                    that.end(e, e);
+                }
+            };
+
+            this._destroyPointer = function () {
+                identifier = undefined;
+                document.removeEventListener('pointermove', move, touchOpts);
+                document.removeEventListener('pointerup', end, touchOpts);
+                document.removeEventListener('pointercancel', end, touchOpts);
+            };
+
+            this._pointerdown = this._pointerdown || function (e) {
+                    if (identifier) {
+                        return;
+                    }
+
+                    that._destroyPointer();
+                    if (e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !that.allowedDragTarget(e.target)) {
+                        return;
+                    }
+
+                    identifier = e.pointerId;
+
+                    that.allowMouse = false;
+                    that.isType = 'pointer';
+
+
+                    document.addEventListener('pointermove', move, touchOpts);
+                    document.addEventListener('pointerup', end, touchOpts);
+                    document.addEventListener('pointercancel', end, touchOpts);
+
+                    that.start(e, e);
+                };
+
+            this.element.addEventListener('pointerdown', this._pointerdown, touchOpts);
         },
         destroy: function () {
             clearInterval(this._velocityTimer);
-            this.element.removeEventListener('touchstart', this._ontouchstart);
-            this.element.removeEventListener('mousedown', this._onmousedown);
+            this.destroyed = true;
+
+            if(this._ontouchstart){
+                this.element.removeEventListener('touchstart', this._ontouchstart, touchOpts);
+            }
+            if(this._pointerdown){
+                this.element.removeEventListener('pointerdown', this._pointerdown, touchOpts);
+            }
+
+            if(this._onmousedown){
+                this.element.removeEventListener('mousedown', this._onmousedown);
+            }
+
             this.element.removeEventListener('click', this._onclick, true);
+            this.setTouchAction();
+
+            if(this.element._rbDraggy == this){
+                delete this.element._rbDraggy;
+            }
         },
     });
 

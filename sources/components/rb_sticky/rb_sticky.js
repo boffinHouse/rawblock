@@ -20,7 +20,7 @@
         {
             /**
              * @prop {{}} defaults
-             * @prop {String|Boolean} container=".is-sticky-parent" The container element, that is used to calculate the bounds in wich the element should be sticky to the viewport. If `false` its always sticky. Possible values: `false`, `"parent"`(direct parent element), `"positionedParent"`, `".closest-selector"`.
+             * @prop {String|Boolean} container=".is{-}{name}{-}parent" The container element, that is used to calculate the bounds in wich the element should be sticky to the viewport. If `false` its always sticky. Possible values: `false`, `"parent"`(direct parent element), `"positionedParent"`, `".closest-selector"`.
              * @prop {Boolean|Number} topOffset=false If a number it sets sticky offset to the number.
              * @prop {Boolean|Number} bottomOffset=false If a number it sets sticky offset to the number.
              * @prop {Number} progress=0 Defines the distance in pixel a child animation should be added after an animation should be added.
@@ -32,7 +32,7 @@
              * @prop {String} scrollContainer=''
              */
             defaults: {
-                container: '.is-sticky-parent', // false || 'parent' || 'positionedParent' || '.selector'
+                container: '.is{-}{name}{-}parent', // false || 'parent' || 'positionedParent' || '.selector'
                 switchedOff: false,
                 topOffset: false,
                 bottomOffset: false,
@@ -172,7 +172,7 @@
                 }
 
                 if (options.container) {
-                    this.container = this.element[options.container] || this.element[isContainerAncestor[options.container]] || this.$element.closest(options.container).get(0);
+                    this.container = this.element[options.container] || this.element[isContainerAncestor[options.container]] || this.element.closest(this.interpolateName(options.container));
                     if (this.container == document.body || this.container == docElem) {
                         this.container = null;
                     } else if (this.container) {
