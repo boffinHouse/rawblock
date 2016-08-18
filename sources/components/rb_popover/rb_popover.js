@@ -10,6 +10,7 @@
     'use strict';
     /* jshint eqnull: true */
     var rb = window.rb;
+    var $ = rb.$;
 
     var Position = rb.Position;
 
@@ -167,6 +168,12 @@
                 this.lastOpeningOptions = options;
 
                 if (this.options.positioned) {
+                    if($.css(this.element, 'display') == 'none'){
+                        this.element.style.display = typeof this.options.setDisplay == 'string' ?
+                            this.options.setDisplay :
+                            'block'
+                        ;
+                    }
                     this.connect(isOpening, options);
                     if (isOpening && this.options.updateOnResize) {
                         this.setupPopoverResize();

@@ -41,6 +41,7 @@
              * @property {Number}  defaults.duration=400 Duration of the animation.
              * @property {Boolean|Number}  defaults.adjustScroll=false Sets the adjustScroll option on the panel components.
              * @property {Boolean|Number}  defaults.scrollIntoView=false Sets the scrollIntoView option on the panel components.
+             * @property {Boolean|String}  defaults.setDisplay=false Sets the setDisplay option on the panel components.
              * @property {Boolean}  defaults.setFocus=true Whether component should try to focus a `js-rb-autofocus` element inside of an opening panel.
              * @property {Boolean}  defaults.preventDefault=false Whether default click action on "{name}-btn" should be prevented.
              * @property {String}  defaults.itemWrapper='' Set itemWrapper option of the panel instance.
@@ -74,6 +75,7 @@
                 panelWrapperSel: 'find(.{name}{e}panel{-}wrapper):0',
                 btnWrapperSel: 'find(.{name}{e}btn{-}wrapper):0',
                 itemWrapper: '',
+                setDisplay: false,
             },
             statics: {},
             /**
@@ -234,15 +236,16 @@
             },
             _addRemoveFocusOut: function () {
                 var shouldInstall = this.options.closeOnFocusout && this.selectedItems.length;
+                var touchEvts = {passive: true, capture: true};
 
                 document.removeEventListener('focus', this._onOutSideInteraction, true);
-                document.removeEventListener('mousedown', this._onOutSideInteraction, true);
-                document.removeEventListener('touchstart', this._onOutSideInteraction, {passive: true});
+                document.removeEventListener('mousedown', this._onOutSideInteraction, touchEvts);
+                document.removeEventListener('touchstart', this._onOutSideInteraction, touchEvts);
 
                 if (shouldInstall) {
                     document.addEventListener('focus', this._onOutSideInteraction, true);
-                    document.addEventListener('mousedown', this._onOutSideInteraction, true);
-                    document.addEventListener('touchstart', this._onOutSideInteraction, {passive: true});
+                    document.addEventListener('mousedown', this._onOutSideInteraction, touchEvts);
+                    document.addEventListener('touchstart', this._onOutSideInteraction, touchEvts);
                 }
             },
             _onOutSideInteraction: function (e) {
@@ -278,6 +281,7 @@
                         closeOnEsc: options.closeOnEsc,
                         adjustScroll: options.adjustScroll,
                         scrollIntoView: options.scrollIntoView,
+                        setDisplay: options.setDisplay,
                     });
 
                     panel.group = that.element;
@@ -471,7 +475,7 @@
                     this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open', isSticky);
                 } else if (name == 'easing' && value && typeof value == 'string') {
                     rb.addEasing(value);
-                } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView') {
+                } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView' || name == 'setDisplay') {
                     this.setChildOption(this.$panels, name, value);
                 } else if (name == 'closeOnFocusout') {
                     this._addRemoveFocusOut();

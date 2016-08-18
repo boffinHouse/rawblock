@@ -1223,7 +1223,15 @@
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
 
-                this.isCarousel = supportSomeOrder && this.options.carousel && (this.cellData[this.cellData.length - 1].l / 2.1) > this.viewportWidth;
+                this.isCarousel = false;
+
+                if(supportSomeOrder && this.options.carousel && this.pageData.length > 1 && (this.cellData[this.cellData.length - 1].l / 1.99) >= this.viewportWidth){
+                    this.isCarousel = (this.cellData[this.cellData.length - 1].l / 2.3) > this.viewportWidth;
+
+                    if(!this.isCarousel && this.cellData[0].w > this.viewportWidth - 1 && this.cellData[1].w > this.viewportWidth - 1){
+                        this.isCarousel = true;
+                    }
+                }
 
                 this.isCarouselChanged = wasCarousel != this.isCarousel;
 

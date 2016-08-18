@@ -28,7 +28,8 @@
              * @prop {Boolean} defaults.closeOnEsc=false Whether panel should be closed on esc key.
              * @prop {Boolean|Number} defaults.adjustScroll=false If a panel closes and the activeElement is below the panel, the scroll position might be adjusted to hold the activeElement in view. The adjustScroll option can be combined with the 'slide' animation in a accordion component. So that closing a large panel doesn't move the opening panel out of view. Possible values: `true`, `false`, any Number but not 0.
              * @prop {Boolean|Number} defaults.scrollIntoView=false If a panel opens tries to scroll it into view.
-             * @prop {String} defaults.itemWrapper='' Wheter the closest itemWrapper should get the class `is-selected-within'.
+             * @prop {String} defaults.itemWrapper='' Whether the closest itemWrapper should get the class `is-selected-within'.
+             * @prop {Boolean|String} defaults.setDisplay=false Changes panel to display none if closed.
              */
             defaults: {
                 animation: '', // || 'slide'
@@ -43,6 +44,7 @@
                 scrollIntoView: false,
                 adjustScroll: false,
                 itemWrapper: '',
+                setDisplay: false,
             },
             /**
              * @constructs
@@ -80,6 +82,7 @@
                 this._onOutSideAction = this._onOutSideAction.bind(this);
 
                 rb.rAFs(this, {throttle: true}, '_opened', '_closed', '_switchOn', '_switchOff');
+                rb.rAFs(this, {throttle: true, that: this}, '_setDisplay');
 
                 this.setOption('easing', this.options.easing);
 
@@ -139,6 +142,14 @@
                 this.element.setAttribute('aria-hidden', '' + (!this.isOpen));
 
                 this.$element.attr({'role': this._role || 'group', tabindex: '-1'});
+            },
+            _setDisplay: function(){
+                if(!this.isOpen){
+                    this.element.style.display = 'none';
+                } else if(this.element.style.display == 'none'){
+                    this.element.style.display = typeof this.options.setDisplay ? this.options.setDisplay : '';
+                }
+                this._displayTimer = null;
             },
             _shouldTeardown: function(){
                 if ((!this.isOpen && (!this.options.closeOnOutsideClick && this.options.closeOnFocusout)) || !rb.root.contains(this.element)) {
@@ -296,6 +307,9 @@
                 }
 
                 clearTimeout(this._closeTimer);
+                if(this._displayTimer){
+                    clearTimeout(this._displayTimer);
+                }
 
                 options.animationData = this._handleAnimation(changeEvent);
 
@@ -324,6 +338,10 @@
 
                 this.element.classList.add(rb.statePrefix + 'open');
                 this.element.setAttribute('aria-hidden', 'false');
+
+                if(this.options.setDisplay){
+                    this._setDisplay();
+                }
 
                 if(this.options.itemWrapper){
                     $(this.element.closest(this.interpolateName(this.options.itemWrapper)))
@@ -413,6 +431,13 @@
 
                 if ((!options || options.setFocus !== false) && (this.options.setFocus || (options && options.setFocus))) {
                     this.restoreFocus(true);
+                }
+
+                if(this._displayTimer){
+                    clearTimeout();
+                }
+                if(this.options.setDisplay){
+                    this._displayTimer = setTimeout(this._setDisplay, 5000);
                 }
             },
             _scroll: function(relPos, animationData){

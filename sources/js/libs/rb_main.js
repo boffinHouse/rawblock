@@ -2199,11 +2199,21 @@ if (!window.rb) {
                         opts = delegateEvents[i][3];
 
                         if(!delegateEvents[i][0]){
-                            delegateEvents[i][0] = that.getElementsByString(opts['@'])[0] || delegateEvents[i][0];
+                            delegateEvents[i][0] = that.getElementsByString(opts['@']) || delegateEvents[i][0];
+
+                            if(delegateEvents[i][0] && delegateEvents[i][0].length < 2){
+                                delegateEvents[i][0] = delegateEvents[i][0][0];
+                            }
                         }
 
                         if(delegateEvents[i][0]){
-                            rb.events[descriptor[1]](delegateEvents[i][0], delegateEvents[i][1], delegateEvents[i][2], opts);
+                            if(Array.isArray(delegateEvents[i][0])){
+                                delegateEvents[i][0].forEach(function(elem) {
+                                    rb.events[descriptor[1]](elem, delegateEvents[i][1], delegateEvents[i][2], opts);
+                                });
+                            } else {
+                                rb.events[descriptor[1]](delegateEvents[i][0], delegateEvents[i][1], delegateEvents[i][2], opts);
+                            }
                         } else {
                             rb.logWarn('element not found', opts['@'], that);
                         }
@@ -2234,37 +2244,6 @@ if (!window.rb) {
     };
 
     rb.ready.then(generateFocusClasses);
-
-    // rb.parseEventString = rb.memoize(function(evtStr){
-    //
-    //     var evtNames = evtStr.split(regComma);
-    //     var selector = evtNames[evtNames.length - 1].split(regWhite);
-    //
-    //     evtNames[evtNames.length - 1] = selector.shift();
-    //
-    //     selector = selector.join(' ');
-    //
-    //     return evtNames.map(function(evtName){
-    //         var optMatch, i;
-    //         var strOpts = evtName.split(regColon);
-    //         var data = {
-    //             event: strOpts.shift(),
-    //             opts: {}
-    //         };
-    //
-    //         for (i = 0; i < strOpts.length; i++) {
-    //             if ((optMatch = strOpts[i].match(regEvtOpts))) {
-    //                 data.opts[optMatch[1]] = optMatch[3] || ' ';
-    //             }
-    //         }
-    //
-    //         if (selector && !data.opts.closest) {
-    //             data.opts.closest = selector;
-    //         }
-    //         return data;
-    //     });
-    //
-    // }, true);
 
     rb.parseEventString = rb.memoize(function(eventStr){
         var i, len, data, opts, char;

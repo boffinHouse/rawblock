@@ -218,6 +218,7 @@
         connect: function (target, immediate) {
             var pos, targetBox, elementBox;
             var options = this.options;
+
             this.pos.top = $.css(this.element, 'top', 1, this.elemCstyle);
             this.pos.left = $.css(this.element, 'left', 1, this.elemCstyle);
             this.flipped.x = false;
