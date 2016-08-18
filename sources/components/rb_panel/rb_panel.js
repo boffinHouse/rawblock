@@ -30,6 +30,7 @@
              * @prop {Boolean|Number} defaults.scrollIntoView=false If a panel opens tries to scroll it into view.
              * @prop {String} defaults.itemWrapper='' Whether the closest itemWrapper should get the class `is-selected-within'.
              * @prop {Boolean|String} defaults.setDisplay=false Changes panel to display none if closed.
+             * @prop {Number} defaults.displayTimer=5000 Sets time in ms for display setter.
              */
             defaults: {
                 animation: '', // || 'slide'
@@ -45,6 +46,7 @@
                 adjustScroll: false,
                 itemWrapper: '',
                 setDisplay: false,
+                displayTimer: 5000,
             },
             /**
              * @constructs
@@ -437,7 +439,7 @@
                     clearTimeout();
                 }
                 if(this.options.setDisplay){
-                    this._displayTimer = setTimeout(this._setDisplay, 5000);
+                    this._displayTimer = setTimeout(this._setDisplay, this.options.displayTimer || 5000);
                 }
             },
             _scroll: function(relPos, animationData){
