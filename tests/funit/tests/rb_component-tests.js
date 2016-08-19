@@ -291,9 +291,10 @@
 
         var tmpId;
         var id = 'jo';
-        var ext2elem = rb.$(document.createElement('div')).html('<div class="has-no-id"><div id="' + id + '" class="has-id"></div></div>');
+        var ext2elem = rb.$(document.createElement('div')).html('<div class="has-no-id-async"></div><div class="has-no-id"><div id="' + id + '" class="has-id"></div></div>');
         var hasIdElem = ext2elem.find('.has-id').get(0);
         var hasNoIdElem = ext2elem.find('.has-no-id').get(0);
+        var hasNoIdElemAsync = ext2elem.find('.has-no-id-async').get(0);
         rb.$('#qunit-fixture').append(ext2elem.get(0));
 
         ext2Instance = ext2elem.rbComponent(modules.ext2.name);
@@ -302,14 +303,20 @@
         tmpId = ext2Instance.getId(hasIdElem);
         assert.equal(tmpId, id);
 
-        tmpId = ext2Instance.getId(hasNoIdElem);
+        tmpId = ext2Instance.getId(hasNoIdElem, false);
         assert.equal(tmpId, hasNoIdElem.id);
 
-        tmpId = ext2Instance.getId();
+        tmpId = ext2Instance.getId(false);
         assert.equal(tmpId, ext2Instance.element.id);
 
         assert.ok(hasNoIdElem.id);
         assert.ok(ext2Instance.element.id);
+
+        tmpId = ext2Instance.getId(hasNoIdElemAsync);
+        assert.notOk(hasNoIdElemAsync.id);
+        rb.rAFQueue(function(){
+            assert.equal(tmpId, hasNoIdElemAsync.id);
+        });
 
     });
 

@@ -2588,18 +2588,35 @@ if (!window.rb) {
 
             /**
              * returns the id of an element, if no id exist generates one for the element
-             * @param [element] {Element} element, if no element is given. the component element is used.
+             * @param {Element} [element], if no element is given. the component element is used.
+             * @param {Boolean} [async=true], sets the id async in a rAF
              * @returns {String} id
              */
-            getId: function (element) {
+            getId: function (element, async) {
                 var id;
+
+                if(typeof element == 'boolean'){
+                    async = element;
+                    element = null;
+                }
+
                 if (!element) {
                     element = this.element;
                 }
 
+                if(async == null){
+                    async = true;
+                }
+
                 if (!(id = element.id)) {
                     id = 'js-' + rb.getID();
-                    element.id = id;
+                    if(async){
+                        rb.rAFQueue(function(){
+                            element.id = id;
+                        }, true);
+                    } else {
+                        element.id = id;
+                    }
                 }
 
                 return id;

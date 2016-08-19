@@ -29,6 +29,7 @@
              * @prop {Boolean} updateOnResize=true Wether panel position should be updated on resize.
              * @prop {Boolean} closeOnOutsideClick=true Closes panel on outside click.
              * @prop {Boolean} closeOnEsc=true Closes panel on ESC keydown.
+             * @prop {Boolean|String} setDisplay=true Changes panel option setDisplay to true.
              */
             defaults: {
                 positioned: true,
@@ -39,6 +40,7 @@
                 updateOnResize: true,
                 closeOnOutsideClick: true,
                 closeOnEsc: true,
+                setDisplay: true,
             },
             statics: {
                 mainbutton: {
