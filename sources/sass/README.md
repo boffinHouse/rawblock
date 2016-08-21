@@ -255,7 +255,7 @@ This can be expressed with the following code:
 
 However sometimes you might want to opt-in to the `js-` prefix selector technique, because this technique also signalizes other developers, that this class name has a dependency to JS and any change to it also need a JS change.
 
-In this case you should also use the JS prefixed class name in your styles. As explained above you only need the prefix to signalize a JS dependency, but you don't need to separate the technologies.
+In this case you should also use the JS prefixed class name in your styles. As explained above you only need the prefix to signalize a JS dependency, but you don't need to separate the technologies to be extendable.
 
 ```html
 <style type="scss">
