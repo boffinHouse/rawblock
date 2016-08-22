@@ -15,19 +15,21 @@
 
     var FetchManager = function(managerId, options){
 
-        if(typeof managerId != 'string'){
+        if (!(this instanceof FetchManager)) {
+            return new FetchManager(managerId, options);
+        }
+
+        if(typeof managerId == 'object'){
             options = managerId;
             managerId = null;
         }
 
         if(FetchManager.managers[managerId]){
-            rb.logInfo(managerId + ' already exists. Extending options');
-            FetchManager.managers[managerId].setOptions(options);
+            if(options){
+                FetchManager.managers[managerId].setOptions(options);
+            }
+            rb.logWarn(managerId + 'already exists. extending options', FetchManager.managers[managerId]);
             return FetchManager.managers[managerId];
-        }
-
-        if (!(this instanceof FetchManager)) {
-            return new FetchManager(managerId, options);
         }
 
         if(managerId){

@@ -20,7 +20,7 @@ $panelJSCFG: (
 @import "../../sass/helpers/utils/rb_arrow_icon";
 
 //----------------------------------------------------------
-
+body { --foo-bar: rb-stringify((test: 1)); }
 
 .rb-panel {
     @include rb-js-export($panelJSCFG);

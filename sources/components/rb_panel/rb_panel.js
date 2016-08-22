@@ -20,7 +20,7 @@
              * @property {String} defaults.animation='' Predefined animation: 'slide'. These should be combined with CSS transitions or animations.
              * @property {String} defaults.easing='' CSS Easing function for the animation.
              * @property {Number} defaults.duration=400 Duration of the animation.
-             * @property {Boolean} defaults.setFocus=true Whether the component should set the focus on open.
+             * @property {Boolean|String} defaults.setFocus=true Whether the component should set the focus on open. true: sets only focus if js-rb-autofocus is found. 'force': sets focus to panel, if no 'js-rb-autofocus' was found.
              * @property {Boolean} defaults.closeOnFocusout=false Similar to closeOnOutsideClick, but better from behavior. Caution behavior can be sometimes unpredictable, if multiple buttons do control the panel.
              * @property {Boolean} defaults.closeOnOutsideClick=false Whether the component should be closed, if clicked outside the component.
              * @prop {Boolean} defaults.switchedOff=false Turns off panel.
@@ -291,6 +291,7 @@
                 if (this.isOpen) {
                     return false;
                 }
+                var setFocus;
                 var mainOpts = this.options;
                 var changeEvent = this._trigger(this._beforeEvtName, options);
 
@@ -301,6 +302,11 @@
                 if (changeEvent.defaultPrevented) {
                     return false;
                 }
+
+                setFocus = 'setFocus' in options ?
+                    options.setFocus :
+                    mainOpts.setFocus
+                ;
 
                 this.isOpen = true;
 
@@ -315,8 +321,8 @@
 
                 options.animationData = this._handleAnimation(changeEvent);
 
-                if (options.setFocus !== false && (mainOpts.setFocus || options.setFocus) && !options.focusElement) {
-                    options.focusElement = this.getFocusElement();
+                if (setFocus && !options.focusElement) {
+                    options.focusElement = this.getFocusElement(setFocus == 'force');
                 }
 
                 if(options.focusElement && regInputs.test(options.focusElement.nodeName)){
