@@ -226,6 +226,11 @@ if (!window.rb) {
 
     rb.getScrollingEventObject = function(element){
         var scrollObj;
+
+        if(!element){
+            element = rb.getPageScrollingElement();
+        }
+
         if(element.matches && element.ownerDocument && element.matches('html, body')){
             scrollObj = element.ownerDocument.defaultView;
         } else if('addEventListener' in element){
@@ -1366,6 +1371,9 @@ if (!window.rb) {
                     break;
                 case 'scrollingElement':
                     target = [rb.getPageScrollingElement()];
+                    break;
+                case 'scrollingEventObject':
+                    target = [rb.getScrollingEventObject()];
                     break;
                 default:
                     if ((match = targetStr.match(regTarget))) {
@@ -3088,16 +3096,15 @@ if (!window.rb) {
                     if (this.options.switchedOff) {
                         return;
                     }
+                    var target;
+                    var component = this.panelComponent ||
+                        (target = this.getTarget()) && this.component(target);
 
-                    if (e.keyCode == 40 && this.element.getAttribute('aria-haspopup') == 'true') {
-                        if (!this.panelComponent) {
-                            return;
-                        }
-
-                        if (!this.panelComponent.isOpen) {
+                    if (component && e.keyCode == 40 && this.element.getAttribute('aria-haspopup') == 'true') {
+                        if (!('isOpen' in component) || !component.isOpen) {
                             this._onClick(e);
                         } else {
-                            this.panelComponent.setComponentFocus();
+                            component.setComponentFocus();
                         }
                         e.preventDefault();
                     } else {
@@ -3147,7 +3154,7 @@ if (!window.rb) {
                 }
 
                 if (this.options.type in component) {
-                    args = this.options.args;
+                    args = this.args;
 
                     this._simpleFocus();
 
@@ -3182,7 +3189,7 @@ if (!window.rb) {
                         } else if (!Array.isArray(value)) {
                             value = [value];
                         }
-                        this.options.args = value;
+                        this.args = value;
                         break;
                     case 'switchedOff':
                         if (value) {

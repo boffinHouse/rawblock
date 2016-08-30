@@ -78,7 +78,11 @@
             intersectValue[margin][intersect].cbs.add(fn);
 
             if(intersectValue[margin][intersect].value){
-                fn.call(element, {target: element, type: 'rb_intersect', inViewport: true, originalEvent: $.Event('initial')});
+                setTimeout(function(){
+                    if(intersectValue[margin][intersect].value){
+                        fn.call(element, {target: element, type: 'rb_intersect', inViewport: true, originalEvent: $.Event('initial')});
+                    }
+                });
             }
         },
         remove: function (element, fn, opts) {
