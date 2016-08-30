@@ -97,7 +97,7 @@
             margin = opts && opts.margin && parseInt(opts.margin, 10) || 0;
             intersect = opts && opts.intersect && parseFloat(opts.intersect) || 0;
 
-            if(!intersectValue[margin] || !intersect[margin][intersect]){return;}
+            if(!intersectValue[margin] || !intersectValue[margin][intersect]){return;}
 
             intersectValue[margin][intersect].cbs.remove(fn);
 
