@@ -777,16 +777,30 @@ if (!window.rb) {
                 this.proxy(proxy, type, key, proxy);
             }
         },
+        _runDelegate: function(event, target, handler, context, args){
+            if(!target){return;}
+
+            var ret;
+            var oldDelegatedTarget = event.delegatedTarget;
+            var oldDelegateTarget = event.delegateTarget;
+
+            event.delegatedTarget = target;
+            event.delegateTarget = target;
+
+            ret = handler.apply(this, arguments);
+
+            event.delegatedTarget = oldDelegatedTarget;
+            event.delegateTarget = oldDelegateTarget;
+
+            return ret;
+        },
         proxies: {
             closest: function(handler, selector){
                 var proxy = rb.events.proxy(handler, 'closest', selector);
 
                 if(!proxy){
                     proxy = function(e){
-                        e.delegatedTarget = e.target.closest(selector);
-                        e.delegateTarget = e.delegatedTarget;
-                        if(!e.delegatedTarget){return;}
-                        return handler.apply(this, arguments);
+                        return rb.events._runDelegate(e, e.target.closest(selector), handler, this, arguments);
                     };
                     rb.events.proxy(handler, 'closest', selector, proxy);
                 }
@@ -798,11 +812,7 @@ if (!window.rb) {
 
                 if(!proxy){
                     proxy = function(e){
-                        if(e.target.matches(selector)){
-                            e.delegatedTarget = e.target;
-                            e.delegateTarget = e.delegatedTarget;
-                            return handler.apply(this, arguments);
-                        }
+                        return rb.events._runDelegate(e, e.target.matches(selector) ? e.target : null, handler, this, arguments);
                     };
                     rb.events.proxy(handler, 'matches', selector, proxy);
                 }
@@ -1763,12 +1773,13 @@ if (!window.rb) {
      * @memberof rb
      * @param {String} name The name of your component.
      * @param Class {Class} The Component class for your component.
+     * @return Class {Class}
      *
      * @example
      * class MyButton {
 	 *      constructor(element){
 	 *
-	 *
+	 *      }
 	 * }
      *
      * //<button class="js-rb-live" data-module="my-button"></button>
@@ -1776,7 +1787,7 @@ if (!window.rb) {
      *
      * @example
      * class Time {
-	 *      constructor(element){
+	 *      constructor(element, _initialDefaultOpts){
 	 *          this.element = element;
 	 *      }
 	 *
@@ -1839,6 +1850,8 @@ if (!window.rb) {
                 live.searchModules();
             }
         }
+
+        return Class;
     };
 
     /**
@@ -2408,13 +2421,13 @@ if (!window.rb) {
 			 *      defaults: {
 			 *          className: 'toggle-class',
 			 *      },
+			 *      events: {
+			 *          'click:closest(.change-btn)': 'changeClass',
+			 *      },
 			 *      init: function(element, initialDefaults){
 			 *          this._super(element, initialDefaults);
 			 *
-			 *          this.changeClass = rb.rAF(this.changeClass);
-			 *      },
-			 *      events: {
-			 *          'click:closest(.change-btn)': 'changeClass',
+			 *          rb.rAFs(this, 'changeClass');
 			 *      },
 			 *      changeClass: function(){
 			 *          this.$element.toggleClass(this.options.className);
@@ -2428,18 +2441,18 @@ if (!window.rb) {
 			 *      static get defaults(){
 			 *          return {
 			 *              className: 'toggle-class',
-			 *          }
-			 *      }
-			 *
-			 *      constructor(element, initialDefaults){
-			 *          super(element, initialDefaults);
-			 *          this.changeClass = rb.rAF(this.changeClass);
+			 *          };
 			 *      }
 			 *
 			 *      static get events(){
 			 *          return {
 			 *              'click .change-btn': 'changeClass',
-			 *          }
+			 *          };
+			 *      }
+			 *
+			 *      constructor(element, initialDefaults){
+			 *          super(element, initialDefaults);
+			 *          rb.rAFs(this, 'changeClass');
 			 *      }
 			 *
 			 *      changeClass(){
@@ -2615,7 +2628,7 @@ if (!window.rb) {
                 }
 
                 if (!(id = element.id)) {
-                    id = 'js-' + rb.getID();
+                    id = 'js' + rb.nameSeparator + rb.getID();
                     if(async){
                         rb.rAFQueue(function(){
                             element.id = id;
