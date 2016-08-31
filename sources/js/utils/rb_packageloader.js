@@ -124,11 +124,11 @@
     rb.loadScript = function (src) {
         promises[src] = new Promise(function (resolve) {
             var script = document.createElement('script');
-            script.onload = resolve;
-            script.onerror = function () {
-                rb.log('package error. Configure rb.packageConfig? src: ' + src);
+            script.addEventListener('load', resolve);
+            script.addEventListener('error', function () {
+                rb.logWarn('package error. Configure rb.packageConfig? src: ' + src);
                 resolve();
-            };
+            });
             script.src = src;
             script.async = false;
             (rb.rAFQueue || requestAnimationFrame)(function () {

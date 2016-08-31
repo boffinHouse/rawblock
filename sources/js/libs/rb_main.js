@@ -1262,8 +1262,10 @@ if (!window.rb) {
                     return obj.__isDebug;
                 },
                 set: function (value) {
-                    obj.__isDebug = value;
-                    setValue();
+                    if(obj.__isDebug !== value){
+                        obj.__isDebug = value;
+                        setValue();
+                    }
                 }
             });
         };
@@ -2005,7 +2007,7 @@ if (!window.rb) {
 
             removeInitClass();
             liveBatch.run();
-        }, {delay: 50});
+        }, {delay: 50, read: true});
 
         return findElements;
     })();
@@ -2072,7 +2074,7 @@ if (!window.rb) {
 
             for (descProp in origDescriptor) {
                 // Check if we're overwriting an existing function...
-                if (superDescriptor && typeof origDescriptor[descProp] == "function" && typeof superDescriptor[descProp] == "function") {
+                if (superDescriptor && typeof origDescriptor[descProp] == 'function' && typeof superDescriptor[descProp] == 'function') {
 
                     //...and using super keyword
                     if (fnTest.test(origDescriptor[descProp])) {
@@ -2144,10 +2146,6 @@ if (!window.rb) {
     var $ = rb.$;
     var componentExpando = live.componentExpando;
     var regData = /^data-/;
-    // var regWhite = /\s+(?=[^\)]*(?:\(|$))/g;
-    // var regComma = /\s*,\s*(?=[^\)]*(?:\(|$))/g;
-    // var regColon = /\s*:\s*(?=[^\)]*(?:\(|$))/g;
-    // var regEvtOpts = /^(.+?)(\((.*)\))?$/;
     var regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}|,|'|"|:))/g;
     var regName = /\{name}/g;
     var regJsName = /\{jsName}/g;

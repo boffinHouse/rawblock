@@ -7,14 +7,13 @@
 }(function () {
     'use strict';
     /* jshint eqnull: true */
+    var observeClass, observedElements;
     var rb = window.rb;
     var $ = rb.$;
     var elementIndex = 0;
     var resumeElementIndex = 0;
     var isInstalled = false;
-    var observeClass = 'js-rb-layout-observe';
     var layoutObserveProp = rb.Symbol('layoutObserve');
-    var observedElements = document.getElementsByClassName(observeClass);
     var rbRic = rb.rIC;
 
     var timedOutCheck = function(){
@@ -71,6 +70,10 @@
     var addEvents = function(){
         if(isInstalled){return;}
         isInstalled = true;
+
+        observeClass = ['js', 'rb', 'layoutobserve'].join(rb.nameSeparator);
+        observedElements = document.getElementsByClassName(observeClass);
+
         window.addEventListener('scroll', throtteledCheckElements, true);
         rb.resize.on(throtteledCheckElements);
 

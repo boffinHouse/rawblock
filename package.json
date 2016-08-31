@@ -1,7 +1,7 @@
 {
   "name": "rawblock",
   "description": "The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces. ",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/boffinhouse/rawblock.git"
@@ -30,6 +30,7 @@
   ],
   "dependencies": {
     "animation-frame": "~0.2.5",
+    "array-includes": "^3.0.2",
     "array.from": "~1.0.0",
     "array.prototype.find": "~2.0.0",
     "array.prototype.findindex": "^2.0.0",

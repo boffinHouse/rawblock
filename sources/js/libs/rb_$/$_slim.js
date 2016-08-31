@@ -579,9 +579,22 @@
                         return this.matches(needle);
                     };
                 } else if (type == 'object') {
-                    fn = function () {
-                        return this == needle;
-                    };
+                    if(typeof needle.length == 'number' && !needle.nodeType){
+                        if(!Array.isArray(needle)){
+                            needle = needle instanceof Dom ?
+                                needle.get() :
+                                Array.from(needle)
+                            ;
+                        }
+
+                        fn = function () {
+                            return needle.includes(this);
+                        };
+                    } else {
+                        fn = function () {
+                            return this == needle;
+                        };
+                    }
                 }
             }
 
