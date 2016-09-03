@@ -19,6 +19,8 @@
       "url": "http://github.com/afarkas"
     }
   ],
+  "main": "sources/js/libs/rb_main",
+  "style": "sources/sass/helpers/index.scss",
   "engines": {
     "node": ">=4.2"
   },
