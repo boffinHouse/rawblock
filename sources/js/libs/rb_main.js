@@ -656,25 +656,14 @@ if (!window.rb) {
     /* End: rbComponent */
 
     /* Begin: addEasing */
-    var isExtended, BezierEasing;
-    var copyEasing = function (easing, name) {
-        var easObj = BezierEasing.css[easing];
-        $.easing[easing] = easObj.get;
-
-        if (name && !$.easing[easing]) {
-            $.easing[name] = $.easing[easing];
-        }
+    var BezierEasing;
+    var easingMap = {
+        ease: '0.25, 0.1, 0.25, 1',
+        linear: '0, 0, 1, 1',
+        'ease-in': '0.42, 0, 1, 1',
+        'ease-out': '0.00, 0.0, 0.58, 1',
+        'ease-in-out': '0.42, 0, 0.58, 1',
     };
-    var extendEasing = function () {
-        var easing;
-        if (!isExtended && BezierEasing) {
-            isExtended = true;
-            for (easing in BezierEasing.css) {
-                copyEasing(easing);
-            }
-        }
-    };
-
     /**
      * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object. requires npm module: "bezier-easing".
      * @memberof rb
@@ -688,27 +677,31 @@ if (!window.rb) {
             return;
         }
 
+        if(easingMap[easing]){
+            name = easing;
+            easing = easingMap[easing];
+        }
+
         BezierEasing = BezierEasing || rb.BezierEasing || window.BezierEasing;
 
-        if (BezierEasing && !$.easing[easing] && !BezierEasing.css[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4) {
-            extendEasing();
+        if (BezierEasing && !$.easing[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4) {
             bezierArgs = bezierArgs.map(function (str) {
                 return parseFloat(str);
             });
-            BezierEasing.css[easing] = BezierEasing.apply(this, bezierArgs);
-            copyEasing(easing, name);
-        }
-        if (!$.easing[easing]) {
-            if (window.BezierEasing && BezierEasing.css[easing]) {
-                copyEasing(easing, name);
-            } else {
-                $.easing[easing] = $.easing.ease || $.easing.swing;
+
+            $.easing[easing] = BezierEasing.apply(this, bezierArgs);
+
+            if(typeof $.easing[easing] == 'object' && typeof $.easing[easing].get == 'function'){
+                $.easing[easing] = $.easing[easing].get;
+            }
+
+            if(name && !$.easing[name]){
+                $.easing[name] = $.easing[easing];
             }
         }
-        return $.easing[easing];
+
+        return $.easing[easing] || $.easing.swing || $.easing.linear;
     };
-    extendEasing();
-    setTimeout(extendEasing);
     /* End: addEasing */
 
     /* Begin: cssSupports */
@@ -2495,7 +2488,7 @@ if (!window.rb) {
                  * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.
                  * @type {Function|{}}
                  */
-                this.templates = rb.templates[this.name] || rb.templates[origName] || {};
+                this.templates = rb.templates[this.jsName] || rb.templates[origName] || {};
 
                 _setupEventsByEvtObj(this);
             },
@@ -2510,6 +2503,7 @@ if (!window.rb) {
              * @prop {Boolean} defaults.debug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
              * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
              * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
+             * @prop {String} defaults.autofocusSel='' Overrides the js-rb-autofocus selector for the component.
              * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
              *
              * @example

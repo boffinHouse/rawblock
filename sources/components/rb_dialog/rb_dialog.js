@@ -27,6 +27,7 @@
              * @property {String} defaults.backdropClass=''
              * @property {Boolean} defaults.setDisplay=true
              * @property {String|Boolean} defaults.scrollPadding='paddingRight' Whether to set a paddingRight/paddingLeft value to the body.
+             * @property {Boolean|String} defaults.setFocus='force' Whether the component should set the focus on open. true: sets only focus if js-rb-autofocus is found. 'force': sets focus to dialog, if no 'js-rb-autofocus' was found.
              */
             defaults: {
                 open: false,
@@ -38,6 +39,7 @@
                 setDisplay: true,
                 scrollPadding: 'paddingRight',
                 trapKeyboard: true,
+                setFocus: 'force',
             },
             /**
              * @constructs
@@ -192,6 +194,8 @@
             open: function (options) {
                 var scrollbarWidth;
 
+                var mainOpts = this.options;
+
                 if (this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
                     return false;
                 }
@@ -205,8 +209,8 @@
                     options = {};
                 }
 
-                if(!options.focusElement){
-                    options.focusElement = this.getFocusElement(true);
+                if(typeof options.focusElement != 'object' && (options.focusElement || mainOpts.setFocus)){
+                    options.focusElement = this.getFocusElement(options.focusElement || mainOpts.setFocus == 'force');
                 }
 
                 if(options.contentUrl){

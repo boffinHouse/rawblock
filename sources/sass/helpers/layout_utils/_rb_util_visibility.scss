@@ -2,12 +2,9 @@
 //
 // @param {String} $breakpoint-name - Breakpoint name added to end of class (with the exception of all) which responds to assigned screen size.
 @mixin rb-util-visibility-hide($breakpoint-name) {
-	$type: null;
+	$type: '';
 
-    @if $breakpoint-name == 'all' {
-        $type: '';
-
-    } @else {
+    @if $breakpoint-name != 'all' {
         $type: $rb-name-separator + $breakpoint-name;
     }
 
@@ -24,10 +21,9 @@
 
 
 @mixin rb-util-visibility-show($breakpoint-name) {
-    @if $breakpoint-name == 'all' {
-        $type: '';
+    $type: '';
 
-    } @else {
+    @if $breakpoint-name != 'all' {
         $type: $rb-name-separator + $breakpoint-name;
     }
 
