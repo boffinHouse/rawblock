@@ -7,8 +7,7 @@
 }(function () {
     'use strict';
     /* jshint eqnull: true */
-    var dataSymbol;
-    var regFocusable = /^(?:a|area|input|select|textarea|button)$/i;
+    var dataSymbol, regFocusable;
     var specialEvents = {};
     var Dom = function (elements, context) {
 
@@ -679,6 +678,7 @@
     }
 
     if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tabIndex != -1){
+        regFocusable = /^(?:a|area|input|select|textarea|button)$/i;
         Dom.propHooks.tabIndex = {
             get: function(element){
                 var tabIndex = element.getAttribute('tabindex');

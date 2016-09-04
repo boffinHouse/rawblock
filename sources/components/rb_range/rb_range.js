@@ -1,5 +1,6 @@
 (function (factory) {
     if (typeof module === 'object' && module.exports) {
+        require('../../js/utils/rb_draggy');
         module.exports = factory();
     } else {
         factory();
