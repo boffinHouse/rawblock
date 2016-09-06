@@ -238,7 +238,7 @@ function questionPreset(){
         },
     ];
 
-    inquirer.prompt( questions, function( answers ) {
+    inquirer.prompt( questions).then(function( answers ) {
         handlePreset(answers);
     });
 }
@@ -257,7 +257,7 @@ function checkoutScaffold(choices){
                 return true;
             }
         }
-    ], function( answers ) {
+    ]).then(function( answers ) {
         copyFiles(answers.fileGroups);
     });
 }
