@@ -13,14 +13,14 @@
     var scrollbarDiv = document.createElement('div');
     var setStyle = rb.rAF(function(){
         var size = scrollbarWidth || 0;
-        var className = 'scrollbarwidth' + rb.nameSeparator + parseInt(size, 10);
+        var className = rb.statePrefix + 'scrollbarwidth' + rb.nameSeparator + parseInt(size, 10);
 
         rb.root.style.setProperty('--rb-scrollbar-width', size + 'px', '');
 
-        rb.$root.rbChangeState(className, true);
+        rb.root.classList.add(className);
 
         if(lastClass){
-            rb.$root.rbChangeState(lastClass, false);
+            rb.root.classList.remove(lastClass);
         }
 
         lastClass = className;
