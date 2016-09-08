@@ -13,7 +13,7 @@
     var scrollbarDiv = document.createElement('div');
     var setStyle = rb.rAF(function(){
         var size = scrollbarWidth || 0;
-        var className = 'scrollbarwidth{-}' + parseInt(size, 10);
+        var className = 'scrollbarwidth' + rb.nameSeparator + parseInt(size, 10);
 
         rb.root.style.setProperty('--rb-scrollbar-width', size, '');
 
@@ -24,6 +24,10 @@
         }
 
         lastClass = className;
+
+        if(!rb.ready.isDone){
+            rb.ready.then(setStyle);
+        }
     }, {throttle: true});
 
     var sizeChange = function(){
@@ -84,8 +88,6 @@
     });
 
     rb.rAFQueue(add);
-
-    setStyle();
 
     Object.defineProperty(rb, 'scrollbarWidth', {
         get: getWidth,

@@ -77,10 +77,22 @@ if (!window.rb) {
      * @returns promise {Deferred}
      */
     rb.deferred = function(){
-        var tmp = {};
+        var tmp = {
+            isResolved: false,
+            isRejected: false,
+            isDone: false,
+        };
         var promise = new Promise(function(resolve, reject){
-            tmp.resolve = resolve;
-            tmp.reject = reject;
+            tmp.resolve = function(data){
+                promise.isResolved = true;
+                promise.isDone = true;
+                return resolve(data);
+            };
+            tmp.reject = function(data){
+                promise.isRejected = true;
+                promise.isDone = true;
+                return reject(data);
+            };
         });
 
         Object.assign(promise, tmp);
