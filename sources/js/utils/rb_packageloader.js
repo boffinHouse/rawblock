@@ -5,7 +5,6 @@
     }
     var rb = window.rb;
     var regPath = /^[\.\/]|:\//;
-    var regJS = /\.js/;
 
     var rejectedPromise = new Promise(function (resolve, reject) {
         setTimeout(reject);
@@ -18,7 +17,7 @@
     var packageConfig = {
         basePath: '',
         modulePath: '',
-        onlyKnown: false,
+        onlyKnown: true,
     };
 
     var createPath = function (moduleId, index, packageIds) {
@@ -29,9 +28,6 @@
                 moduleId = moduleId;
             }
             moduleId = packageConfig[key] + moduleId;
-        }
-        if (!regJS.test(moduleId)) {
-            moduleId += '.js';
         }
         return moduleId;
     };
@@ -85,7 +81,7 @@
     };
 
     /**
-     * Registers a package name with one or multiple sources. If a package is loaded all sources are loaded async but executed in order. The sources will be prefixed with `rb.packageConfig..basePath` and suffixed with `.js` (if last is missing).
+     * Registers a package name with one or multiple sources. If a package is loaded all sources are loaded async but executed in order. The sources will be prefixed with `rb.packageConfig..basePath`.
      * Different packages can have overlapping sources/dependencies. If an array of packageName is passed these are treated as aliases.
      *
      * @memberof rb
