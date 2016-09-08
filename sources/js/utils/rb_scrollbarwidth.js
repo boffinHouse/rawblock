@@ -15,7 +15,7 @@
         var size = scrollbarWidth || 0;
         var className = 'scrollbarwidth' + rb.nameSeparator + parseInt(size, 10);
 
-        rb.root.style.setProperty('--rb-scrollbar-width', size, '');
+        rb.root.style.setProperty('--rb-scrollbar-width', size + 'px', '');
 
         rb.$root.rbChangeState(className, true);
 
