@@ -65,7 +65,7 @@
     var throtteledCheckElements = rb.throttle((function(e){
         elementIndex = 0;
         checkElements(e);
-    }), {read: true, delay: 250});
+    }), {read: true, delay: 450});
 
     var addEvents = function(){
         if(isInstalled){return;}
