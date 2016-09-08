@@ -13,7 +13,7 @@
     var scrollbarDiv = document.createElement('div');
     var setStyle = rb.rAF(function(){
         var size = scrollbarWidth || 0;
-        var className = rb.statePrefix + 'scrollbarwidth' + rb.nameSeparator + parseInt(size, 10);
+        var className = rb.statePrefix + 'scrollbarwidth' + rb.nameSeparator + Math.round(size);
 
         rb.root.style.setProperty('--rb-scrollbar-width', size + 'px', '');
 
