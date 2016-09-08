@@ -13,21 +13,31 @@
     var resizeProp = rb.Symbol('resize');
 
     function checkDimension(e){
-        var width, height, event, widthChanged, heightChanged;
+        var width, height, outerWidth, outerHeight, event, widthChanged, heightChanged;
         var element = e.target;
         var resizeObj = element[resizeProp];
 
         if(resizeObj){
             width = element.clientWidth;
             height = element.clientHeight;
-            widthChanged = width != resizeObj.width;
-            heightChanged = height != resizeObj.height;
+
+            outerWidth = element.offsetWidth;
+            outerHeight = element.offsetHeight ;
+
+            widthChanged = width != resizeObj.width ||
+                outerWidth != resizeObj.offsetWidth ;
+
+            heightChanged = height != resizeObj.height ||
+                outerHeight != resizeObj.offsetHeight;
 
             if(widthChanged || heightChanged){
                 resizeObj.width = width;
                 resizeObj.height = height;
 
-                event = [{target: e.target, originalEvent: e, width: width, height: height, type: 'rb_resize'}];
+                resizeObj.offsetWidth = outerWidth;
+                resizeObj.offsetHeight = outerHeight;
+
+                event = [{target: e.target, originalEvent: e, width: width, height: height, type: 'rb_resize', offsetWidth: outerWidth, offsetHeight: outerHeight}];
 
                 if(heightChanged){
                     resizeObj.heightCbs.fireWith(element,  event);
@@ -48,6 +58,8 @@
                 resizeObj = {
                     width: element.clientWidth,
                     height: element.clientHeight,
+                    offsetWidth: element.offsetWidth,
+                    offsetHeight: element.offsetHeight,
                     cbs: $.Callbacks(),
                     widthCbs: $.Callbacks(),
                     heightCbs: $.Callbacks(),
