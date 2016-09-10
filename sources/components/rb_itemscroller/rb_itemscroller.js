@@ -5,6 +5,7 @@
         require('../../js/utils/rb_resize');
         require('../../js/utils/rb_prefixed');
         require('../../js/utils/rb_debounce');
+        require('../../js/utils/rb_springanimation');
         module.exports = factory();
     } else {
         factory();
@@ -356,6 +357,7 @@
                                 _isWheelStarted = true;
                                 startValue = that._pos;
                                 $(that.scroller).stop();
+                                that._stopSpringSnap();
                             }
 
                             that._setRelPos(e.deltaX * -1, true);
@@ -375,14 +377,17 @@
                         _isWheelStarted = false;
 
                         // from px/s -> px/300ms
-                        var velocity = data.deltaVelocity / 1000 * 300 * -1;
-                        var totalLengthMovedByWheel = data.deltaTotal;
+                        // var totalLengthMovedByWheel = data.deltaTotal;
+                        //
+                        var velocity = data.deltaVelocity * -1;
 
                         //tune down velocity for snap from wheel
-                        velocity = velocity * that.options.wheelVelocityMultiplier;
+                        // velocity = velocity * that.options.wheelVelocityMultiplier;
 
                         // dir, veloX, length
-                        that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
+                        // that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
+
+                        that._snapToWithSpring(velocity);
                     })
                 ;
             },
@@ -515,14 +520,15 @@
                     this.selectNearest();
                 }
             },
-            getNearest: function () {
+
+            getNearest: function (offset) {
                 var prop, curDiff;
                 var smallestDif = Number.MAX_VALUE;
                 var index = 0;
                 var nowIndex = this.selectedIndex;
                 var pos = {
-                    prev: this.getPrev() + this.baseIndex,
-                    next: this.getNext() + this.baseIndex,
+                    prev: this.getPrev(offset) + this.baseIndex,
+                    next: this.getNext(offset) + this.baseIndex,
                 };
 
                 if (pos.next - pos.prev > 1) {
@@ -853,6 +859,7 @@
             _dragStart: function(){
                 this.isAnimated = false;
                 $(this.scroller).stop();
+                this._stopSpringSnap();
             },
             _dragMove: function(draggy){
                 if (draggy.relPos.x) {
@@ -874,7 +881,48 @@
                     }
                 }
 
-                this._snapTo(dir, draggy.horizontalVel, draggy.movedPos.x);
+                this._snapToWithSpring(this._velocity);
+            },
+            _stopSpringSnap: function(){
+                if(this.springAnimation){
+                    this.springAnimation.stop();
+                    this.springAnimation = null;
+
+                    // update the index, when animation is interruped
+                    // TODO: no visual effect! need current index for mandatorySnap
+                    this.selectNearest(true);
+                }
+            },
+            _snapToWithSpring: function(velocity){
+                var that = this;
+
+                var currentIndex = this._selectedIndex;
+                var offsetToVelocityTargetPos = velocity * 0.5;
+                var nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
+
+                if(this.options.mandatorySnap){
+                    nearestTargetIndex = Math.max(currentIndex-1, Math.min(currentIndex+1, nearestTargetIndex));
+                }
+
+                var targetPos = this._getPosition(nearestTargetIndex);
+
+                this._stopSpringSnap();
+
+                this.springAnimation = rb.SpringAnimation({
+                    from: {
+                        value: this._pos,
+                        velocity: velocity
+                    },
+                    target: targetPos,
+                    progress: function(progress){
+                        that._setPos(progress.currentValue);
+                    },
+                    complete: function(){
+                        that.selectIndex(nearestTargetIndex, true);
+                    }
+                });
+
+                that._updateControls(targetPos);
             },
             _setupTouch: function () {
                 if (!$.fn.draggy) {
@@ -953,8 +1001,11 @@
                     this._setOrder(curCell.elem, order);
                 }
             },
+
             _setPos: function (pos) {
                 var shouldWrapLeft, shouldWrapRight, unWrapLeft, unWrapRight, unitPos;
+
+                this._updateVelocity(this._pos, pos);
 
                 if (this.isCarousel) {
                     if (pos >= this.maxWrapLeft || pos <= this.minWrapRight) {
@@ -999,7 +1050,37 @@
                 } else {
                     this.scroller.style.left = unitPos;
                 }
+
                 this.onslide.fireWith(this);
+            },
+
+            /**
+             * updates the internal scroll velocity in px/second
+             * @param  {Number} previousPos
+             * @param  {Number} newPos
+             * @param  {boolean} hard       disables filter / mixing
+             */
+            _updateVelocity: function(previousPos, newPos, hard){
+                var that = this;
+
+                clearTimeout(this._resetVelocityTimeout);
+
+                if(!this._latestVelocityUpdate){
+                    this._latestVelocityUpdate = Date.now();
+                    this._velocity = 0;
+                    return;
+                }
+
+                //
+                const currentVelocity = (newPos - previousPos) / (Date.now() - this._latestVelocityUpdate + 1) * 1000;
+
+                this._velocity = !hard ? this._velocity * 0.2 + currentVelocity * 0.8 : currentVelocity;
+                this._latestVelocityUpdate = Date.now();
+
+                this._resetVelocityTimeout = setTimeout(function(){
+                    that._velocity = 0;
+                    that._latestVelocityUpdate = null;
+                }, 100);
             },
             updateCells: function () {
                 var that = this;
