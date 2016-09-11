@@ -46,7 +46,7 @@
 
     QUnit.test('rb-panelgroup openAll/closeAll/openAll', function (assert) {
         var done = assert.async();
-        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-multiple': 'true'});
+        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-panelgroup-multiple': 'true'});
         var panelComponent = $panelGroup.rbComponent();
 
         panelComponent.openAll();
@@ -114,7 +114,7 @@
     QUnit.test('rb-panelgroup changed index1', function (assert) {
         var panelComponent;
         var done = assert.async();
-        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-selected-index': '1'});
+        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-panelgroup-selected-index': '1'});
 
         panelComponent = $panelGroup.rbComponent();
 
@@ -131,7 +131,7 @@
     QUnit.test('rb-panelgroup changed index2', function (assert) {
         var panelComponent;
         var done = assert.async();
-        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-selected-index': '-1'});
+        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-panelgroup-selected-index': '-1'});
 
         panelComponent = $panelGroup.rbComponent();
 
@@ -182,7 +182,7 @@
 
     QUnit.test('rb-panelgroup multiple', function (assert) {
         var done = assert.async();
-        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-multiple': 'true', 'data-toggle': 'true'});
+        var $panelGroup = rb.$('#qunit-fixture .rb-panelgroup').attr({'data-panelgroup-multiple': 'true', 'data-panelgroup-toggle': 'true'});
         var panelComponent = $panelGroup.rbComponent();
 
         QUnit.afterAF()

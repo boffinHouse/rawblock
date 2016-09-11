@@ -2,6 +2,10 @@
 
 This changelog only includes breaking change information.
 
+#0.7.0
+    * Use `rb.parseDataAttrs(element)` instead of `component.parseHTMLOptions(element)` (`parseHTMLOptions` is only for the markup options for the component element itself).
+    * Use `data-itemscroller-center-mode="true"` instead of `data-center-mode="true"`. Alternatively use `data-itemscroller-options='{"centerMode": true}'`
+
 #0.4.2
     * rename js-autofocus to js-rb-autofocus
 

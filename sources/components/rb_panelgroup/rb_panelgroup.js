@@ -92,7 +92,7 @@
              * @prop {Element[]} selectedItems The dom element(s) of the open panel(s)
              *
              * @example
-             * <div class="rb-tabs js-rb-click" data-module="panelgroup" data-toggle="false">
+             * <div class="rb-tabs js-rb-click" data-module="panelgroup" data-panelgroup-toggle="false">
              *      <button type="button" class="panelgroup-ctrl-btn" data-type="prev">&lt;</button>
              *      <button type="button" class="panelgroup-ctrl-btn" data-type="next">&gt;</button>
              *
@@ -293,18 +293,18 @@
                 panels = this.$panels;
 
                 this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper)).each(function (index) {
-                    var btn = live.create(this, components.panelbutton, {
+                    live.create(this, components.panelbutton, {
                         type: (options.toggle) ? 'toggle' : 'open',
                         preventDefault: options.preventDefault,
+                        target: panels.get(index),
                     });
-                    btn.setTarget(panels.get(index));
                 });
 
                 this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function (index) {
-                    var btn = live.create(this, components.panelgroupbutton, {
-                        preventDefault: options.preventDefault
+                    live.create(this, components.panelgroupbutton, {
+                        preventDefault: options.preventDefault,
+                        target: panels.get(index),
                     });
-                    btn.setTarget(that.element);
                 });
             },
             /**

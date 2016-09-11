@@ -211,27 +211,39 @@
         var callCount;
         var array = [1, 2];
         var obj = {foo: 'bar'};
-        var ext1 = rb.$(document.createElement('div'))
-            .attr({
-                'data-number': 1.2,
-                'data-array': JSON.stringify(array),
-                'data-obj': JSON.stringify(obj),
-                'data-string': 'baz',
-                'data-true': 'true',
-                'data-false': 'false',
-                'data-null': 'null',
-                'data-number-zero': '0',
-                'data-camel-case-foo': 'baz',
-            })
-            .rbComponent(modules.ext1.name)
-            ;
+        var ext1Opts = {
+            'number': 1.2,
+            'array': JSON.stringify(array),
+            'obj': JSON.stringify(obj),
+            'string': 'baz',
+            'true': 'true',
+            'false': 'false',
+            'null': 'null',
+            'number-zero': '0',
+            'camel-case-foo': 'baz',
+        };
+        var ext2Opts = {
+            'axis': 'horizontal',
+        };
+        var ext1 = rb.$(document.createElement('div'));
+
         var ext2 = rb.$(document.createElement('div'))
             .attr({
                 class: 'css-options',
-                'data-axis': 'horizontal',
             })
-            ;
-        rb.$('#qunit-fixture').append(ext2.get(0))
+        ;
+
+        Object.keys(ext1Opts).forEach(function(key){
+            ext1.get(0).setAttribute('data-'+ modules.ext1.name + '-' + key, ext1Opts[key]);
+        });
+
+        ext1 = ext1.rbComponent(modules.ext1.name);
+
+        Object.keys(ext2Opts).forEach(function(key){
+            ext2.get(0).setAttribute('data-'+ modules.ext2.name + '-' + key, ext2Opts[key]);
+        });
+
+        rb.$('#qunit-fixture').append(ext2.get(0));
 
         ext2 = ext2.rbComponent(modules.ext2.name);
 

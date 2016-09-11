@@ -593,13 +593,11 @@
                 this._super();
                 if (!this.panelComponent) {
                     this.associatePanel();
-                    this._isTargeting = true;
-                    this._setTarget();
                 } else {
                     this.updatePanelButtonState();
                 }
             },
-            setTarget: function () {
+            _setTarget: function () {
                 var ret = this._super.apply(this, arguments);
                 this.associatePanel();
                 return ret;
