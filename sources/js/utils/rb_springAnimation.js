@@ -59,6 +59,8 @@
         this.lastUpdate = Date.now();
         this.ended = false;
 
+
+
         // initial calls
         this.update();
     };

@@ -44,9 +44,10 @@ elements to navigate, like previous/next buttons or paginations.
 | `.itemscroller-navigation` | List of pagination buttons to navigate to selected item |
 
 
-<h3 class="docs-example-title">Demo</h3>
+<h3 class="docs-example-title">Demo with Mandatory Snap</h3>
+
 <div class="docs-example">
-    {{#mergeJSON rb_itemscroller.default 'pagination: true'}}
+    {{#mergeJSON rb_itemscroller.default 'pagination: true, attrs: {"data-mandatory-snap":true, "data-mandatory-snap-wheel":true}' }}
         {{> rb_itemscroller }}
     {{/mergeJSON}}
 </div>

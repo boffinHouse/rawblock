@@ -63,6 +63,7 @@
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
+                mandatorySnapWheel: false,
                 startOrder: -1,
                 endOrder: 99,
                 usePx: false,
@@ -358,8 +359,7 @@
                             if(!_isWheelStarted){
                                 _isWheelStarted = true;
                                 startValue = that._pos;
-                                $(that.scroller).stop();
-                                that._stopSpringSnap();
+                                that._userInteractionStarted();
                             }
 
                             that._setRelPos(e.deltaX * -1, true);
@@ -378,18 +378,8 @@
                         momentumBlocked = true;
                         _isWheelStarted = false;
 
-                        // from px/s -> px/300ms
-                        // var totalLengthMovedByWheel = data.deltaTotal;
-                        //
-                        var velocity = data.deltaVelocity * -1;
-
-                        //tune down velocity for snap from wheel
-                        // velocity = velocity * that.options.wheelVelocityMultiplier;
-
-                        // dir, veloX, length
-                        // that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
-
-                        that._snapToWithSpring(velocity);
+                        // reverse direction of velocity (in px/s)
+                        that._snapWithSpring(data.deltaVelocity * -1, options.mandatorySnap && options.mandatorySnapWheel);
                     })
                 ;
             },
@@ -860,8 +850,7 @@
             },
             _dragStart: function(){
                 this.isAnimated = false;
-                $(this.scroller).stop();
-                this._stopSpringSnap();
+                this._userInteractionStarted();
             },
             _dragMove: function(draggy){
                 if (draggy.relPos.x) {
@@ -883,23 +872,24 @@
                     }
                 }
 
-                this._snapToWithSpring(this._velocity);
+                this._snapWithSpring(this._velocity, this.options.mandatorySnap);
+            },
+            _userInteractionStarted: function(){
+                this._startedInteractionAtIndex = this.getNearest();
+                this._stopSpringSnap();
+                $(this.scroller).stop();
             },
             _stopSpringSnap: function(){
                 if(this.springAnimation){
                     this.springAnimation.stop();
                     this.springAnimation = null;
-
-                    // update the index, when animation is interruped
-                    // TODO: no visual effect! need current index for mandatorySnap
-                    this.selectNearest(true);
                 }
             },
-            _snapToWithSpring: function(velocity){
+            _snapWithSpring: function(velocity, mandatorySnap){
                 var that = this;
 
-                var currentIndex = this._selectedIndex;
-                var offsetToVelocityTargetPos = velocity * 0.6;
+                var startIndex = this._startedInteractionAtIndex;
+                var offsetToVelocityTargetPos = velocity * 0.5;
 
                 // boost small velocities to make, to make it easier to jump with slower movements
                 if(Math.abs(velocity) < this.viewportWidth){
@@ -908,8 +898,8 @@
 
                 var nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
 
-                if(this.options.mandatorySnap){
-                    nearestTargetIndex = Math.max(currentIndex-1, Math.min(currentIndex+1, nearestTargetIndex));
+                if(mandatorySnap){
+                    nearestTargetIndex = Math.max(startIndex-1, Math.min(startIndex+1, nearestTargetIndex));
                 }
 
                 var targetPos = this._getPosition(nearestTargetIndex);
