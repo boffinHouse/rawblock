@@ -47,7 +47,7 @@ elements to navigate, like previous/next buttons or paginations.
 <h3 class="docs-example-title">Demo with Mandatory Snap</h3>
 
 <div class="docs-example">
-    {{#mergeJSON rb_itemscroller.default 'pagination: true, attrs: {"data-mandatory-snap":true, "data-mandatory-snap-wheel":true}' }}
+    {{#mergeJSON rb_itemscroller.default 'pagination: true, attrs: {"data-itemscroller-mandatory-snap":true, "data-itemscroller-mandatory-snap-wheel":true}' }}
         {{> rb_itemscroller }}
     {{/mergeJSON}}
 </div>
