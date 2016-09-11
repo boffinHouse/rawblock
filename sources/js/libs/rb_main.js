@@ -1426,6 +1426,39 @@ if (!window.rb) {
 
     rb.elementFromStr = rb.getElementsByString;
 
+    /**
+     * Parses data-* attributes and returns an object.
+     *
+     * @memberof rb
+     * @param {Element} element
+     * @param {Object} [attrsObject]
+     * @param {String} [prefix]
+     * @param {String} [exclude]
+     * @return {Object}
+     */
+    rb.parseDataAttrs = function(element, attrsObject, prefix, exclude){
+        var i, name;
+        var attributes = element.attributes;
+        var len = attributes.length;
+
+        if(!attrsObject){
+            attrsObject = {};
+        }
+
+        prefix = prefix ? prefix + '-' : '';
+
+        prefix = 'data-' + prefix;
+
+        for (i = 0; i < len; i++) {
+            name = attributes[i].nodeName;
+            if (name != exclude && name.startsWith(prefix)) {
+                attrsObject[$.camelCase(name.replace(prefix, ''))] = rb.parseValue(attributes[i].nodeValue);
+            }
+        }
+
+        return attrsObject;
+    };
+
     var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
     /**
@@ -2163,7 +2196,6 @@ if (!window.rb) {
     var rb = window.rb;
     var $ = rb.$;
     var componentExpando = live.componentExpando;
-    var regData = /^data-/;
     var regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}|,|'|"|:))/g;
     var regName = /\{name}/g;
     var regJsName = /\{jsName}/g;
@@ -2520,8 +2552,8 @@ if (!window.rb) {
              *
              * @example
              * <!-- overriding defaults with markup -->
-             * <div data-module="foo" data-options='{"fooBar": false, "baz": true}'></div>
-             * <div data-module="foo" data-foo-bar="false" data-baz="true"></div>
+             * <div data-module="mymodule" data-mymodule-options='{"fooBar": false, "baz": true}'></div>
+             * <div data-module="mymodule" data-mymodule-foo-bar="false" data-mymodule-baz="true"></div>
              *
              * @example
              *
@@ -2969,25 +3001,19 @@ if (!window.rb) {
             },
             /*
              * parses the HTML options (data-*) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.
-             * @param [element] {Element}
              * @returns {{}}
              */
-            parseHTMLOptions: function (element) {
-                element = (element || this.element);
-                var i, name;
-                var attributes = element.attributes;
-                var optionsAttr = 'data-' + this.origName + '-options';
-                var options = rb.jsonParse(element.getAttribute(optionsAttr)) || {};
-                var len = attributes.length;
-
-                for (i = 0; i < len; i++) {
-                    name = attributes[i].nodeName;
-                    if (name != optionsAttr && name.startsWith('data-') && !name.endsWith('-options')) {
-                        options[$.camelCase(name.replace(regData, ''))] = rb.parseValue(attributes[i].nodeValue);
-                    }
+            parseHTMLOptions: function (_element) {
+                if(_element){
+                    rb.logError('use `rb.parseDataAttrs` instead of parseHTMLOptions.');
+                    return {};
                 }
 
-                return options;
+                var element = this.element;
+                var mainOptions = 'data-' + this.origName + '-options';
+                var options = rb.jsonParse(element.getAttribute(mainOptions)) || {};
+
+                return rb.parseDataAttrs(element, options, this.origName, mainOptions);
             },
 
             /*
@@ -3085,7 +3111,7 @@ if (!window.rb) {
              *  data-module="button"
              *  class="js-rb-click"
              *  aria-controls="panel-1"
-             *  data-type="open">
+             *  data-button-type="open">
              *      click me
              * </button>
              * <div id="panel-1" data-module="panel"></div>
@@ -3098,7 +3124,7 @@ if (!window.rb) {
                 this._isFakeBtn = !this.element.matches('input, button');
                 this._resetPreventClick = this._resetPreventClick.bind(this);
 
-                rb.rAFs(this, {throttle: true}, '_switchOff', '_switchOn', '_setTarget');
+                rb.rAFs(this, {throttle: true}, '_switchOff', '_switchOn', '_setAriaControls');
 
                 this.setOption('args', this.options.args);
 
@@ -3185,20 +3211,11 @@ if (!window.rb) {
             },
 
             setOption: function (name, value) {
-                var dom;
                 this._super(name, value);
 
                 switch (name) {
                     case 'target':
-
-                        dom = (typeof value == 'string') ?
-                            rb.elementFromStr(value, this.element)[0] :
-                            value
-                        ;
-
-                        if (dom) {
-                            this.setTarget(dom);
-                        }
+                        this._setTarget(value);
                         break;
                     case 'args':
                         if (value == null) {
@@ -3230,22 +3247,33 @@ if (!window.rb) {
                     this.element.setAttribute('tabindex', '0');
                 }
             },
-            _setTarget: function () {
-                var id = this.getId(this.target);
-                this._isTargeting = false;
-                this.element.removeAttribute('data-target');
-                this.$element.attr({'aria-controls': id});
-                this.targetAttr = id;
+            _setAriaControls: function () {
+                if(this.target){
+                    this.$element.attr({'aria-controls': this.getId(this.target)});
+                }
             },
 
             /**
              * Changes/sets the target element.
-             * @param {Element} element
+             * @param {Element|String} [element]
              */
-            setTarget: function (element) {
-                this.target = element;
-                this._isTargeting = true;
-                this._setTarget();
+            _setTarget: function (element) {
+                if(!element){
+                    element = this.options.target;
+                }
+
+                if(!element &&  !this.options.target){
+                    element = this.element.getAttribute('aria-controls');
+                }
+
+                this.target = (typeof element == 'string') ?
+                    this.getElementsByString(element)[0] :
+                    element
+                ;
+
+                this.targetAttr = element;
+
+                this._setAriaControls();
             },
 
             /**
@@ -3253,13 +3281,10 @@ if (!window.rb) {
              * @returns {Element}
              */
             getTarget: function () {
-                var target = this._isTargeting ?
-                    this.targetAttr :
-                this.element.getAttribute('data-target') || this.$element.attr('aria-controls') || this.options.target;
+                var target = this.options.target || this.element.getAttribute('aria-controls');
 
-                if (!this.target || (target != this.targetAttr)) {
-                    this.targetAttr = target;
-                    this.target = rb.elementFromStr(target, this.element)[0];
+                if (!this.target || (target != this.targetAttr && target)) {
+                    this._setTarget();
                 }
 
                 return this.target;

@@ -179,7 +179,7 @@
 
 				rb.$('#qunit-fixture').append(implicitDestroyed);
 				rb.$('#qunit-fixture').append(explicitDestroyed);
-				return QUnit.afterAF(9);
+				return QUnit.afterAF(30);
 			})
 			.then(function(){
 				assert.equal(Dummy.prototype.init.callCount, 2);

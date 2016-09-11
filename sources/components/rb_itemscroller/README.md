@@ -74,7 +74,7 @@ elements to navigate, like previous/next buttons or paginations.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-	{{#mergeJSON rb_itemscroller.default 'pagination: true, attrs: {"data-center-mode":true}'}}
+	{{#mergeJSON rb_itemscroller.default 'pagination: true, attrs: {"data-itemscroller-center-mode":true}'}}
 		{{> rb_itemscroller }}
 	{{/mergeJSON}}
 </div>
@@ -102,7 +102,7 @@ elements to navigate, like previous/next buttons or paginations.
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-    {{#mergeJSON rb_itemscroller.default 'attrs: {"data-carousel":true}'}}
+    {{#mergeJSON rb_itemscroller.default 'attrs: {"data-itemscroller-carousel":true}'}}
         {{> rb_itemscroller }}
     {{/mergeJSON}}
 </div>

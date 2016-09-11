@@ -67,7 +67,7 @@ To allow multiple panels to be open at the same time, add attribute `data-multip
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-	{{#mergeJSON rb_accordion.default 'attrs: {"data-multiple": true}'}}
+	{{#mergeJSON rb_accordion.default 'attrs: {"data-accordion-options": {"multiple": true}'}}
 		{{> rb_accordion }}
 	{{/mergeJSON}}
 </div>
@@ -76,7 +76,12 @@ To allow multiple panels to be open at the same time, add attribute `data-multip
 <h3 class="docs-example-title">Markup</h3>
 
 ```html
-<div class="rb-accordion" data-module="accordion" data-multiple="true">
+<div class="rb-accordion" data-module="accordion" data-accordion-multiple="true">
+    ...
+</div>
+
+<!-- or -->
+<div class="rb-accordion" data-module="accordion" data-accordion-options='{"multiple": true}'>
     ...
 </div>
 ```

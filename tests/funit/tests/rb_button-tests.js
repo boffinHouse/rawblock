@@ -52,7 +52,7 @@
     QUnit.test("rb.$", function (assert) {
         var $button, $panel1, $panel2;
         var done = assert.async();
-        var content = '<button id="test-button" data-module="button" data-target="next()" class="js-rb-click"></button><div id="test-panel1" data-module="' + module.name + '"></div><div id="test-panel2" data-module="' + module.name + '"></div>';
+        var content = '<button id="test-button" data-module="button" data-button-target="next()" class="js-rb-click"></button><div id="test-panel1" data-module="' + module.name + '"></div><div id="test-panel2" data-module="' + module.name + '"></div>';
 
         rb.$('#qunit-fixture').html(content);
 
@@ -71,7 +71,7 @@
 
             assert.notOk($panel2.get(0).classList.contains('panel-open'));
 
-            $button.attr({'data-target': 'test-panel2'});
+            $button.rbComponent().setOption('target', 'test-panel2');
             $button.get(0).click();
 
             assert.ok($panel1.get(0).classList.contains('panel-open'));
@@ -79,7 +79,7 @@
             assert.equal($panel2.rbComponent().activeButtonComponent, $button.rbComponent());
             assert.equal($button.rbComponent().target, $panel2.get(0));
 
-            $button.rbComponent().setTarget($panel1.get(0));
+            $button.rbComponent().setOption('target', $panel1.get(0));
             $button.rbComponent().setOption('type', 'special');
             $button.get(0).click();
 
