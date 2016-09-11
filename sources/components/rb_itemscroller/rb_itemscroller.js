@@ -1071,8 +1071,8 @@
                     return;
                 }
 
-                //
-                const currentVelocity = (newPos - previousPos) / (Date.now() - this._latestVelocityUpdate + 1) * 1000;
+                // calc the new velocity (add +1 for edge cases)
+                var currentVelocity = (newPos - previousPos) / (Date.now() - this._latestVelocityUpdate + 1) * 1000;
 
                 this._velocity = !hard ? this._velocity * 0.2 + currentVelocity * 0.8 : currentVelocity;
                 this._latestVelocityUpdate = Date.now();
