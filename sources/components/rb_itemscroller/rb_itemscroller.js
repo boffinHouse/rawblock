@@ -68,6 +68,8 @@
                 usePx: false,
                 wheel: true,
                 wheelVelocityMultiplier: 0.2,
+                snapSpringStiffness: 60,
+                snapSpringDamping: 10,
             },
             /**
              * @constructs
@@ -897,7 +899,13 @@
                 var that = this;
 
                 var currentIndex = this._selectedIndex;
-                var offsetToVelocityTargetPos = velocity * 0.5;
+                var offsetToVelocityTargetPos = velocity * 0.6;
+
+                // boost small velocities to make, to make it easier to jump with slower movements
+                if(Math.abs(velocity) < this.viewportWidth){
+                    offsetToVelocityTargetPos = offsetToVelocityTargetPos * 1.5;
+                }
+
                 var nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
 
                 if(this.options.mandatorySnap){
@@ -914,6 +922,8 @@
                         velocity: velocity
                     },
                     target: targetPos,
+                    stiffness: this.options.snapSpringStiffness,
+                    damping: this.options.snapSpringDamping,
                     progress: function(progress){
                         that._setPos(progress.currentValue);
                     },

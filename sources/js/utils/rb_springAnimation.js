@@ -6,19 +6,25 @@
     }
 }(function () {
     'use strict';
+
+    // aliases
     var rb = window.rb;
     var $ = rb.$;
-
     var rAF = window.requestAnimationFrame;
     var cAF = window.cancelAnimationFrame;
 
-
+    // default options
     var defaults = {
+        // spring and obj mass
         stiffness: 30,
         damping: 5,
         mass: 1,
-        from: null,
+
+        // start and end values
+        from: null, // [number, object] { value, velocity }
         target: null,
+
+        // callbacks
         progress: $.noop,
         complete: $.noop,
         stop: $.noop
@@ -29,18 +35,13 @@
             return new SpringAnimation(options);
         }
 
-        var o;
-
-        this.options = Object.assign(defaults, options);
-
-        o = this.options;
+        var o = this.options = Object.assign(defaults, options);
 
         /* spring stiffness, in kg/s^2 */
-        this.springStiffness = -200; //k
-        this.springLength = 0;
+        this.springStiffness = o.stiffness * -1; //k
 
         /* damping in kg/s */
-        this.damping = -90;
+        this.damping = o.damping * -1;
 
         this._update = this._update.bind(this);
 
@@ -51,7 +52,7 @@
 
         this.currentValue = o.from.value || o.from || 0;
         this.currentVelocity = o.from.velocity || 0;
-        this.currentMass = 1 || o.mass || defaults.mass;
+        this.currentMass = o.mass || 1;
 
         this.targetValue = o.target || 0;
 
@@ -68,8 +69,8 @@
         },
         _update: function(){
             var now = Date.now();
-            var timeElaspedMs = (now - this.lastUpdate + 1);
-            var timeElaspedSec = timeElaspedMs / 1000; // in sec
+            var timeElasped = (now - this.lastUpdate + 1);
+            var rate = (1/1000) * timeElasped;
 
             // calc spring and damper forces
             var displacement = this.currentValue - this.targetValue;
@@ -77,23 +78,17 @@
             var forceDamper = this.damping * ( this.currentVelocity ); // / 1000
 
             // calc acceleration
-            var acceleration = ( forceSpring + forceDamper ) / this.currentMass * (1/timeElaspedMs);
+            var acceleration = ( forceSpring + forceDamper ) / this.currentMass;
 
             // apply acceleration for passed time an update values
             // velocity in change per second
-            this.currentVelocity = this.currentVelocity + (acceleration * timeElaspedSec);
-            this.currentValue = this.currentValue + (this.currentVelocity * timeElaspedSec);
+            this.currentVelocity = this.currentVelocity + (acceleration * rate);
+            this.currentValue = this.currentValue + (this.currentVelocity * rate);
             this.lastUpdate = now;
-
-            // console.log('springUpdate');
-            // console.log({ timeElaspedMs, displacement });
-            // console.log('value   ', this.currentValue);
-            // console.log('velocity', this.currentVelocity);
 
             this.options.progress(this.getProgressState());
 
             if(Math.abs(displacement) <= 0.5 && Math.abs(this.currentVelocity) <= 0.5){
-                console.log('COMPLETE', this);
                 this.options.complete(this.getProgressState());
             } else {
                 this.update();
