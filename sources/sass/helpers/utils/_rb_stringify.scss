@@ -80,7 +80,7 @@ $rb-included-global-custom-vars: ();
 
     @if $stopInheritance and not map_has_key($rb-included-global-custom-vars, $prop) {
         $rb-included-global-custom-vars: map-merge($rb-included-global-custom-vars, (#{$prop}: true)) !global;
-        @at-root {
+        @at-root(without:all) {
             * {#{$prop}: initial;}
         }
     }
@@ -99,7 +99,7 @@ $rb-included-global-watch-css-selectors: ();
     }
 
     @if length($watch-list) > 0 {
-        @at-root {
+        @at-root(without:all) {
             #{join($watch-list, ",")} {
                 @include rb-custom-var(--rb-watch-css, true);
             }
@@ -128,7 +128,7 @@ $rb-included-global-watch-css-selectors: ();
     }
 
     @if length($inheritance-list) > 0 {
-        @at-root {
+        @at-root(without:all) {
             * {
                 @each $prop in $inheritance-list {
                     $rb-included-global-custom-vars: map-merge($rb-included-global-custom-vars, (#{$prop}: true)) !global;
