@@ -902,7 +902,7 @@
                     nearestTargetIndex = Math.max(startIndex-1, Math.min(startIndex+1, nearestTargetIndex));
                 }
 
-                var targetPos = this._getPosition(nearestTargetIndex);
+                var targetPos = this._getPosition(nearestTargetIndex + this.baseIndex);
 
                 this._stopSpringSnap();
 
@@ -918,7 +918,8 @@
                         that._setPos(progress.currentValue);
                     },
                     complete: function(){
-                        that.selectIndex(nearestTargetIndex, true);
+                        // that.selectIndex(nearestTargetIndex, true);
+                        that.selectNearest(true);
                     }
                 });
 
