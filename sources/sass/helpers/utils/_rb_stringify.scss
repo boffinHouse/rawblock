@@ -73,6 +73,48 @@
     }
 }
 
+$rb-included-global-custom-vars: ();
+
+@mixin rb-custom-var($prop, $value, $stopInheritance: true){
+    #{$prop}: $value;
+
+    @if $stopInheritance and not map_has_key($rb-included-global-custom-vars, $prop) {
+        $rb-included-global-custom-vars: map-merge($rb-included-global-custom-vars, (#{$prop}: true)) !global;
+        @at-root {
+            * {#{$prop}: initial;}
+        }
+    }
+}
+
+@mixin rb-js-export-next($data, $prefix: 'rb-cfg') {
+    $end-value: "";
+    $need-inheritance-stop: false;
+    $inheritance-map: ();
+    $string: rb-stringify($data);
+    $prefix: '--' + $prefix + '-';
+
+    @each $prop, $value in $data {
+        $end-value: $prefix + $prop;
+        @include rb-custom-var($end-value, rb-stringify($value), false);
+
+        @if not map_has_key($rb-included-global-custom-vars, $end-value) {
+            $need-inheritance-stop: true;
+            $inheritance-map: map-merge($inheritance-map, (#{$end-value}: true));
+        }
+    }
+
+    @if $need-inheritance-stop {
+        @at-root {
+            * {
+                @each $prop, $value in $inheritance-map {
+                    $rb-included-global-custom-vars: map-merge($rb-included-global-custom-vars, (#{$prop}: true)) !global;
+                    #{$prop}: initial;
+                }
+            }
+        }
+    }
+}
+
 /* old/deprecated API: */
 @function rbToJSON($data) {
     @return rb-stringify($data);
