@@ -147,6 +147,7 @@
 
                 this.usesTransform = this.options.useTransform && !!transformProp;
                 this._pos = 0;
+                this._velocity = 0;
 
                 this._selectedIndex = this.options.selectedIndex;
 
@@ -482,37 +483,6 @@
                 this.viewport.addEventListener('scroll', scrollIntoView);
             },
 
-            /**
-             * [_snapTo description]
-             * @param  {number} dir      direction
-             * @param  {number} velocity px in last 300ms
-             * @param  {number} length   length moved during last recognition
-             */
-            _snapTo: function (dir, velocity, length) {
-                var pageIndex;
-                var fullVel = velocity + Math.abs(dir);
-
-                length = Math.abs(length);
-
-                this.easing = this._dragEasing;
-
-                if (dir && (fullVel > 33 || (fullVel > 9 && length > 99) || (fullVel > 3 && length > 200)) ) {
-
-                    if (velocity > 240 && !this.options.mandatorySnap && length > 99) {
-                        velocity = (velocity - 230) / 250 * this.velUnit;
-                        if (dir < 0) {
-                            velocity *= -1;
-                        }
-                    } else {
-                        velocity = 0;
-                    }
-                    pageIndex = this[dir < 0 ? 'getNext' : 'getPrev'](velocity);
-                    this.selectIndex(pageIndex);
-                } else {
-                    this.selectNearest();
-                }
-            },
-
             getNearest: function (offset) {
                 var prop, curDiff;
                 var smallestDif = Number.MAX_VALUE;
@@ -544,6 +514,7 @@
                 var halfWidth = (this.viewportWidth / 2);
                 var curData = this.pageData[index];
                 var position = curData.l;
+
                 if (this.options.centerMode) {
                     position = halfWidth + (position * -1) - ((curData.r - position) / 2);
                 } else {
@@ -706,18 +677,31 @@
                     this.selectedIndex = index;
                 }
             },
+
             /**
              * Selects a page index
              * @param index {Number} The page index, that should selected
-             * @param [noAnimate] {Boolean|Undefined} If set to true, the page index will be changed without any animations
+             * @param [animationOpts|noAnimate] {Object|Boolean|Undefined} If set to true, the page index will be changed without any animations
              * @returns {*|number}
              */
-            selectIndex: function (index, noAnimate) {
+            selectIndex: function (index, animationOpts) {
                 var trigger, duration, setPos, curIndex;
+                var that = this;
+                var noAnimate = false;
                 var countIndex = index + this.baseIndex;
+
+                // no breaking api change for now...
+                if(animationOpts === true){
+                    noAnimate = true;
+                    animationOpts = null;
+                } else {
+                    animationOpts = Object.assign({ type: 'easing' }, animationOpts || {});
+                }
+
                 if (!arguments.length || countIndex < 0 || countIndex >= this.pageData.length || !this.$cells.length) {
                     return this._selectedIndex;
                 }
+
                 if (this.options.switchedOff) {
                     return;
                 }
@@ -735,57 +719,135 @@
                     setPos = Math.max(Math.min(setPos, this.maxScroll), this.minScroll);
                 }
 
-                if (setPos != this._pos) {
-                    if (curIndex != index) {
-                        if (this._trigger(this._beforeEvtName, {nextIndex: index}).defaultPrevented) {
-                            return this._selectedIndex;
-                        }
-                        trigger = true;
-                        this._selectedIndex = index;
-                    }
-
-                    this._animStart = false;
-                    this._animEnd = setPos;
-                    this.scroller.rbItemscrollerPos = this._pos;
-                    this.$scroller.stop();
-
-                    duration = this.duration * ((setPos < this._pos) ? this._pos - setPos : setPos - this._pos) / this.viewportWidth;
-                    duration = Math.max(Math.min(duration, this.maxDuration), this.minDuration);
-
-                    if (noAnimate) {
-                        this.setPos(setPos);
-                        this.isAnimated = false;
-                    } else {
-                        this.isAnimated = true;
-                        this._animStart = this._pos;
-                        this.$scroller
-                            .animate(
-                                {
-                                    rbItemscrollerPos: setPos
-                                },
-                                {
-                                    easing: 'linear',
-                                    start: this._pos,
-                                    progress: this._slideProgress,
-                                    duration: duration,
-                                    complete: this._slideComplete,
-                                }
-                            );
-                    }
-
+                // return when already in same position
+                if(setPos === this._pos){
                     this._updateControls(setPos);
+                    this._selectedIndex = index;
+                    return this._selectedIndex;
+                }
 
-                    if (trigger) {
-                        this._trigger({prevIndex: curIndex});
-                        if (noAnimate) {
-                            this._slideComplete();
-                        }
+                if (curIndex != index) {
+                    if (this._trigger(this._beforeEvtName, {nextIndex: index}).defaultPrevented) {
+                        return this._selectedIndex;
+                    }
+                    trigger = true;
+                    this._selectedIndex = index;
+                }
+
+                if (noAnimate === true) {
+                    this.stopScrollerAnimation();
+                    this.setPos(setPos);
+                } else if(animationOpts.type === 'spring') {
+                    this.startSpringAnimation({
+                        from: {
+                            value: that._pos,
+                            velocity: animationOpts.velocity || that._velocity
+                        },
+                        to: setPos
+                    });
+                } else {
+                    // defaults to animation with easing
+                    duration = this.duration * ((setPos < this._pos) ? this._pos - setPos : setPos - this._pos) / this.viewportWidth;
+                    this.startEasedAnimation({
+                        from: this._pos,
+                        to: setPos,
+                        duration: Math.max(Math.min(duration, this.maxDuration), this.minDuration)
+                    });
+                }
+
+                this._updateControls(setPos);
+
+                if (trigger) {
+                    this._trigger({prevIndex: curIndex});
+                    if (noAnimate) {
+                        this._slideComplete();
                     }
                 }
 
                 this._selectedIndex = index;
                 return this._selectedIndex;
             },
+
+            stopScrollerAnimation: function(){
+                this.isAnimated = false;
+                this._animStart = false;
+                this._animEnd = false;
+                this.$scroller.stop();
+                this._stopSpringSnap();
+            },
+
+            startSpringAnimation: function(opts){
+                var that = this;
+                opts = opts || {};
+                this.stopScrollerAnimation();
+
+                this.springAnimation = rb.SpringAnimation({
+                    from: opts.from || this._pos,
+                    target: opts.to || 0,
+                    stiffness: opts.stiffness || this.options.snapSpringStiffness,
+                    damping: opts.damping || this.options.snapSpringDamping,
+                    progress: function(progress){
+                        that._setPos(progress.currentValue);
+                    },
+                    complete: function(){
+                        that._setPos(opts.to || 0);
+                        that._slideComplete();
+                    }
+                });
+            },
+
+            startEasedAnimation: function(opts){
+                opts = opts || {};
+                this.stopScrollerAnimation();
+
+                this.isAnimated = true;
+                this._animStart = opts.from || this._pos;
+                this._animEnd = opts.to || 0;
+                this.scroller.rbItemscrollerPos = this._animStart;
+
+                this.$scroller
+                    .animate(
+                        {
+                            rbItemscrollerPos: this._animEnd
+                        },
+                        {
+                            easing: 'linear',
+                            start: this._pos,
+                            progress: this._slideProgress,
+                            duration: opts.duration || this.options.duration,
+                            complete: this._slideComplete,
+                        }
+                    )
+                ;
+            },
+
+            _stopSpringSnap: function(){
+                if(this.springAnimation){
+                    this.springAnimation.stop();
+                    this.springAnimation = null;
+                }
+            },
+
+            _snapWithSpring: function(velocity, mandatorySnap){
+                var startIndex = this._startedInteractionAtIndex;
+                var offsetToVelocityTargetPos = velocity * 0.5;
+
+                // boost small velocities to make, to make it easier to jump with slower movements
+                if(Math.abs(velocity) < this.viewportWidth){
+                    offsetToVelocityTargetPos = offsetToVelocityTargetPos * 1.3;
+                }
+
+                var nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
+
+                if(mandatorySnap){
+                    nearestTargetIndex = Math.max(startIndex-1, Math.min(startIndex+1, nearestTargetIndex));
+                }
+
+                this.selectIndex(nearestTargetIndex, {
+                    type: 'spring'
+                });
+            },
+
             /**
              * Returns whether scroller has reached the start point
              * @param [position] {Number} If no pos is given the current position is used
@@ -876,54 +938,7 @@
             },
             _userInteractionStarted: function(){
                 this._startedInteractionAtIndex = this.getNearest();
-                this._stopSpringSnap();
-                $(this.scroller).stop();
-            },
-            _stopSpringSnap: function(){
-                if(this.springAnimation){
-                    this.springAnimation.stop();
-                    this.springAnimation = null;
-                }
-            },
-            _snapWithSpring: function(velocity, mandatorySnap){
-                var that = this;
-
-                var startIndex = this._startedInteractionAtIndex;
-                var offsetToVelocityTargetPos = velocity * 0.5;
-
-                // boost small velocities to make, to make it easier to jump with slower movements
-                if(Math.abs(velocity) < this.viewportWidth){
-                    offsetToVelocityTargetPos = offsetToVelocityTargetPos * 1.5;
-                }
-
-                var nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
-
-                if(mandatorySnap){
-                    nearestTargetIndex = Math.max(startIndex-1, Math.min(startIndex+1, nearestTargetIndex));
-                }
-
-                var targetPos = this._getPosition(nearestTargetIndex + this.baseIndex);
-
-                this._stopSpringSnap();
-
-                this.springAnimation = rb.SpringAnimation({
-                    from: {
-                        value: this._pos,
-                        velocity: velocity
-                    },
-                    target: targetPos,
-                    stiffness: this.options.snapSpringStiffness,
-                    damping: this.options.snapSpringDamping,
-                    progress: function(progress){
-                        that._setPos(progress.currentValue);
-                    },
-                    complete: function(){
-                        // that.selectIndex(nearestTargetIndex, true);
-                        that.selectNearest(true);
-                    }
-                });
-
-                that._updateControls(targetPos);
+                this.stopScrollerAnimation();
             },
             _setupTouch: function () {
                 if (!$.fn.draggy) {

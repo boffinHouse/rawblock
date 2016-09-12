@@ -50,7 +50,7 @@
             return;
         }
 
-        this.currentValue = o.from.value || o.from || 0;
+        this.currentValue = o.from.value || parseInt(o.from) || 0;
         this.currentVelocity = o.from.velocity || 0;
         this.currentMass = o.mass || 1;
 
@@ -58,8 +58,6 @@
 
         this.lastUpdate = Date.now();
         this.ended = false;
-
-
 
         // initial calls
         this.update();
