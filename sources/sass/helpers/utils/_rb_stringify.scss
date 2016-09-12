@@ -86,10 +86,33 @@ $rb-included-global-custom-vars: ();
     }
 }
 
-@mixin rb-js-export-next($data, $prefix: 'rb-cfg') {
+$rb-included-global-watch-css-selectors: ();
+
+@mixin rb-add-watch-css {
+    $watch-list: ();
+
+    @each $selector in & {
+        @if not map_has_key($rb-included-global-watch-css-selectors, "#{$selector}") {
+            $rb-included-global-watch-css-selectors: map-merge($rb-included-global-watch-css-selectors, ("#{$selector}": true)) !global;
+            $watch-list: append($watch-list, $selector);
+            @debug $selector;
+            @debug $rb-included-global-watch-css-selectors;
+        }
+    }
+
+    @if length($watch-list) > 0 {
+        @at-root {
+            #{join($watch-list, ",")} {
+                @include rb-custom-var(--rb-watch-css, true);
+            }
+        }
+    }
+}
+
+@mixin rb-js-export-next($data, $prefix: 'rb-cfg', $add-watch-css: true) {
     $end-value: "";
     $need-inheritance-stop: false;
-    $inheritance-map: ();
+    $inheritance-list: ();
     $string: rb-stringify($data);
     $prefix: '--' + $prefix + '-';
 
@@ -98,15 +121,18 @@ $rb-included-global-custom-vars: ();
         @include rb-custom-var($end-value, rb-stringify($value), false);
 
         @if not map_has_key($rb-included-global-custom-vars, $end-value) {
-            $need-inheritance-stop: true;
-            $inheritance-map: map-merge($inheritance-map, (#{$end-value}: true));
+            $inheritance-list: append($inheritance-list, $end-value);
         }
     }
 
-    @if $need-inheritance-stop {
+    @if $add-watch-css {
+        @include rb-add-watch-css();
+    }
+
+    @if length($inheritance-list) > 0 {
         @at-root {
             * {
-                @each $prop, $value in $inheritance-map {
+                @each $prop in $inheritance-list {
                     $rb-included-global-custom-vars: map-merge($rb-included-global-custom-vars, (#{$prop}: true)) !global;
                     #{$prop}: initial;
                 }
