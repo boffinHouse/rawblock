@@ -95,8 +95,6 @@ $rb-included-global-watch-css-selectors: ();
         @if not map_has_key($rb-included-global-watch-css-selectors, "#{$selector}") {
             $rb-included-global-watch-css-selectors: map-merge($rb-included-global-watch-css-selectors, ("#{$selector}": true)) !global;
             $watch-list: append($watch-list, $selector);
-            @debug $selector;
-            @debug $rb-included-global-watch-css-selectors;
         }
     }
 
