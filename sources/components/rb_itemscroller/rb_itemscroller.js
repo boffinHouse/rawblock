@@ -34,7 +34,6 @@
              * @property {Number} selectedIndex=0 Initially selected index.
              * @property {Number|String} scrollStep='auto' How many cells to scroll. Either number of cells or 'view' (i.e. viewport component). 'auto' means 1 for centerMode and 'view' otherwise.
              * @property {String}  easing='ease-in-out' Easing value for the slide animation.
-             * @property {String}  dragEasing='0.1, 0.25, 0.1, 1.03' Easing value for the slide animation after drag.
              * @property {Number}  duration=600 Average duration for the slide animation.
              * @property {Boolean} mouseDrag=true Whether scroller should be draggable via mouse.
              * @property {Boolean} wheel=true Whether scroller should be draggable via wheel/trackpad scroll.
@@ -55,7 +54,6 @@
                 mouseDrag: true,
                 dragExclude: false,
                 easing: 'ease-in-out',//0.045, 0.235, 0.025, 1.025
-                dragEasing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
                 duration: 600,
                 paginationItemTpl: '<span class="{name}{e}pagination{-}btn"></span>',
                 excludeCell: false,
@@ -165,7 +163,6 @@
                 this.onslide = $.Callbacks();
 
                 this.setOption('easing', this.options.easing);
-                this.setOption('dragEasing', this.options.dragEasing);
                 this.setOption('duration', this.options.duration);
 
                 this.calculateLayout = this.calculateLayout.bind(this);
