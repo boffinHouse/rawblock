@@ -829,12 +829,23 @@
             },
 
             _snapWithSpring: function(velocity, mandatorySnap){
+                var veloReductionRate = 0.4;
+                var veloOverflow = Math.abs(velocity) - this.viewportWidth;
+
                 var startIndex = this._startedInteractionAtIndex;
                 var offsetToVelocityTargetPos = velocity * 0.5;
 
                 // boost small velocities to make, to make it easier to jump with slower movements
+                // TODO: use page data here, to prevent overjumping of pages
                 if(Math.abs(velocity) < this.viewportWidth){
-                    offsetToVelocityTargetPos = offsetToVelocityTargetPos * 1.3;
+                    offsetToVelocityTargetPos = offsetToVelocityTargetPos * 1.4;
+                }
+
+                // reduce large velocities
+                if(Math.abs(velocity) > this.viewportWidth * 1.25){
+                    veloReductionRate *= veloOverflow;
+                    veloReductionRate *= offsetToVelocityTargetPos < 0 ? 1 : -1;
+                    offsetToVelocityTargetPos += veloReductionRate;
                 }
 
                 var nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
