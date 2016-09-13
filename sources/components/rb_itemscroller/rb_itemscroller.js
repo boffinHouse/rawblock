@@ -352,7 +352,7 @@
 
                 var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
 
-                this.viewport.addEventListener('wheel', function(e){
+                var wheelHandler = function(e){
                     if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
                         wheelAnalyzer.feedWheel(e);
 
@@ -369,7 +369,22 @@
 
                         e.preventDefault();
                     }
-                });
+                };
+
+                var uninstallWheelHandler = function(){
+                    that.viewport.addEventListener('wheel', wheelHandler);
+                };
+
+                var installWheelHandler = rb.debounce(function(){
+                    if(that.viewport.matches(':hover')){
+                        that.viewport.addEventListener('wheel', wheelHandler);
+                    }
+                }, {delay: 66});
+
+                that.viewport.addEventListener('mouseleave', uninstallWheelHandler);
+                that.viewport.addEventListener('mouseenter', installWheelHandler);
+
+                installWheelHandler();
 
                 //unblock direct user interaction, when momentum ended or is interrupted
                 wheelAnalyzer
