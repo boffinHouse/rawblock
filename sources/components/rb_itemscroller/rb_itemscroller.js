@@ -69,8 +69,8 @@
                 usePx: false,
                 wheel: true,
                 wheelVelocityMultiplier: 0.2,
-                snapSpringStiffness: 60,
-                snapSpringDamping: 10,
+                snapSpringStiffness: 59,
+                snapSpringDamping: 11,
             },
             /**
              * @constructs
@@ -829,20 +829,22 @@
             },
 
             _snapWithSpring: function(velocity, mandatorySnap){
+                // TODO: check where to use pageWidth or viewportWidth or a mix ((pageWidth + viewportWidth) / 2);
                 var veloReductionRate = 0.4;
                 var veloOverflow = Math.abs(velocity) - this.viewportWidth;
 
                 var startIndex = this._startedInteractionAtIndex;
                 var offsetToVelocityTargetPos = velocity * 0.5;
 
+                var pageWidth = this.pageData[startIndex].r - this.pageData[startIndex].l;
+                var absVelocity = Math.abs(velocity);
                 // boost small velocities to make, to make it easier to jump with slower movements
-                // TODO: use page data here, to prevent overjumping of pages
-                if(Math.abs(velocity) < this.viewportWidth){
-                    offsetToVelocityTargetPos = offsetToVelocityTargetPos * 1.4;
+                if(absVelocity < pageWidth * 1.2){
+                    offsetToVelocityTargetPos *= absVelocity < pageWidth ? 1.8 : 1.4;
                 }
 
                 // reduce large velocities
-                if(Math.abs(velocity) > this.viewportWidth * 1.25){
+                if(absVelocity > pageWidth * 1.3){
                     veloReductionRate *= veloOverflow;
                     veloReductionRate *= offsetToVelocityTargetPos < 0 ? 1 : -1;
                     offsetToVelocityTargetPos += veloReductionRate;
