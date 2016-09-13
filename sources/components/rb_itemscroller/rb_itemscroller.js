@@ -243,9 +243,6 @@
                         this._easing = rb.addEasing(value);
                         this.easing = this._easing;
                         break;
-                    case 'dragEasing':
-                        this._dragEasing = rb.addEasing(value);
-                        break;
                     case 'duration':
                         this.duration = value;
                         this.maxDuration = value * 1.2;
