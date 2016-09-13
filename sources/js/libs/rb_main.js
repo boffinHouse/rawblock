@@ -72,6 +72,36 @@ if (!window.rb) {
 
     /* End: global vars end */
 
+    /* Begin: ID/Symbol */
+    /**
+     * Returns a Symbol or unique String
+     * @memberof rb
+     * @param {String} description ID or description of the symbol
+     * @type {Function}
+     * @returns {String|Symbol}
+     */
+    rb.Symbol = window.Symbol;
+    var id = Math.round(Date.now() * Math.random());
+
+    /**
+     * Returns a unique id based on Math.random and Date.now().
+     * @memberof rb
+     * @returns {string}
+     */
+    rb.getID = function () {
+        id += Math.round(Math.random() * 1000);
+        return id.toString(36);
+    };
+
+    if (!rb.Symbol) {
+        rb.Symbol = function (name) {
+            name = name || '_';
+            return name + rb.getID();
+        };
+    }
+
+    /* End: ID/Symbol */
+
 	/**
      * Creates a promise with a resolve and a reject method.
      * @returns promise {Deferred}
@@ -1612,7 +1642,7 @@ if (!window.rb) {
                 elem = elements[i];
                 component = elem && elem[componentExpando];
 
-                if (component && component.parseOptions && component._pseudoStr != rb.getPseudo(elem)) {
+                if (component && component.hasCssCfgChanged && component.hasCssCfgChanged()) {
                     component.parseOptions();
                 }
             }
@@ -1852,6 +1882,8 @@ if (!window.rb) {
         if (proto instanceof rb.Component) {
             extendStatics(Class, proto, superClass, 'defaults');
             extendStatics(Class, proto, superClass, 'events');
+
+            proto._CssCfgExpando = rb.Symbol('_CssCfgExpando');
 
             if (!proto.hasOwnProperty('name')) {
                 proto.name = name;
@@ -3021,8 +3053,11 @@ if (!window.rb) {
              * @returns {{}}
              */
             parseCSSOptions: function() {
-                this._pseudoStr = rb.getPseudo(this.element);
-                return rb.parsePseudo(this._pseudoStr) || false;
+                return rb.parsePseudo(this.element, this._CssCfgExpando) || false;
+            },
+
+            hasCssCfgChanged: function(){
+                return rb.hasPseudoChanged(this.element, this._CssCfgExpando);
             },
 
             destroy: function () {

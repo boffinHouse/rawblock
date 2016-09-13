@@ -99,7 +99,7 @@ $rb-included-global-watch-css-selectors: ();
     }
 
     @if length($watch-list) > 0 {
-        @at-root(without:all) {
+        @at-root(without:media) {
             #{join($watch-list, ",")} {
                 @include rb-custom-var(--rb-watch-css, true);
             }
