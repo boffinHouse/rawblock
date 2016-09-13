@@ -17,28 +17,25 @@
         handler: function(e){
             var wheelData = this[rbWheelProp];
 
-            if(wheelData && wheelData.intent){
+            if(wheelData && wheelData.cbs){
                 wheelData.cbs.fireWith(this, [e]);
             }
         },
         enterHandler: function(e){
             var wheelData = this[rbWheelProp];
 
-            this.removeEventListener('mousemove', special.rb_wheelintent.moveHandler);
-
             if(!wheelData){
                 this.removeEventListener('mouseenter', special.rb_wheelintent.enterHandler);
                 return;
             }
 
+            this.addEventListener('mousemove', special.rb_wheelintent.moveHandler);
             wheelData._page = [e.pageX, e.pageY];
-            wheelData.intent = false;
+            this.removeEventListener('wheel', special.rb_wheelintent.handler);
         },
         leaveHandler: function(){
-            var wheelData = this[rbWheelProp];
-
             this.removeEventListener('mousemove', special.rb_wheelintent.moveHandler);
-            wheelData.intent = false;
+            this.removeEventListener('wheel', special.rb_wheelintent.handler);
         },
         moveHandler: function(e){
             var wheelData = this[rbWheelProp];
@@ -49,7 +46,8 @@
             }
 
             if(Math.max(Math.abs(wheelData._page[0] - e.pageX), Math.abs(wheelData._page[1] - e.pageY)) > 5){
-                wheelData.intent = true;
+                this.removeEventListener('wheel', special.rb_wheelintent.handler);
+                this.addEventListener('wheel', special.rb_wheelintent.handler);
                 this.removeEventListener('mousemove', special.rb_wheelintent.moveHandler);
             }
         },
@@ -65,7 +63,6 @@
 
                 elem[rbWheelProp] = wheelData;
 
-                elem.addEventListener('wheel', special.rb_wheelintent.handler);
                 elem.addEventListener('mouseenter', special.rb_wheelintent.enterHandler);
                 elem.addEventListener('mouseleave', special.rb_wheelintent.leaveHandler);
             }
