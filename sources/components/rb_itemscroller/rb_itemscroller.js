@@ -146,8 +146,6 @@
 
                 this._selectedIndex = this.options.selectedIndex;
 
-                this.options.paginationItemTpl = this.interpolateName(this.options.paginationItemTpl);
-
                 this.scroller = this.query('.{name}{e}content');
                 this.$scroller = $(this.scroller);
                 this.viewport = this.query('.{name}{e}viewport');
@@ -221,6 +219,7 @@
 
             setOption: function (name, value, isSticky) {
                 this._super(name, value, isSticky);
+
                 switch (name) {
                     case 'centerMode':
                     case 'scrollStep':
@@ -300,6 +299,10 @@
                 });
 
                 this.helperElem.style.display = 'none';
+
+                // reset pagination
+                this.$pagination.html('');
+                this.$paginationBtns = $([]);
 
                 this.setSwitchedOffClass();
             },
@@ -393,6 +396,7 @@
                 this.updateCells();
                 this._setupTouch();
                 this._mainSetup();
+                this._createPagination();
                 this.setSwitchedOffClass();
             },
             _generateHelper: function(){
@@ -1284,9 +1288,9 @@
                 this.baseIndex = this.posPages.left.length;
             },
             _createPagination: function () {
-
                 var paginationItems, i;
                 var baseLength = this.pageLength;
+                var paginationItemTpl = this.interpolateName(this.options.paginationItemTpl);
 
                 this.element.setAttribute('data-page-length', baseLength);
                 this.$pageLength.html(baseLength);
@@ -1295,7 +1299,7 @@
                     paginationItems = [];
 
                     for (i = 0; i < baseLength; i++) {
-                        paginationItems.push(this.options.paginationItemTpl.replace(regIndex, '' + (i + 1)));
+                        paginationItems.push(paginationItemTpl.replace(regIndex, '' + (i + 1)));
                     }
                     this.$pagination.html(paginationItems.join(''));
                     this.$paginationBtns = this.$pagination
