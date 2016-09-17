@@ -108,35 +108,35 @@
              * @example
              * //combines a select element with an itemscroller
              * $('.rb-itemscroller select.itemscroller-select').each(function(){
-			 *     var $itemScroller = $(this).closest('.rb-itemscroller');
-			 *     var $itemSelect = $(this);
-			 *     var itemscroller = $itemScroller.rbComponent();
-			 *
-			 *     var buildOptions = function(){
-			 *          var i, option;
-			 *          $itemSelect.html('');
-			 *
-			 *          for(i = 0; i < itemscroller.pageLength; i++){
-			 *              option = document.createElement('option');
-			 *              option.value = i;
-			 *              option.text = i;
-			 *              option.selected = i == itemscroller.selectedIndex;
-			 *              $itemSelect.append(option);
-			 *          }
-			 *      };
-			 *
-			 *      $itemScroller.on('itemscrollerpagelengthchanged', buildOptions);
-			 *
-			 *      $itemScroller.on('itemscrollerchanged', function(){
-			 *          $itemSelect.prop({selectedIndex: itemscroller.selectedIndex});
-			 *      });
-			 *
-			 *      $itemSelect.on('change', function(){
-			 *          itemscroller.selectedIndex = this.selectedIndex;
-			 *      });
-			 *
-			 *      buildOptions();
-			 * });
+             *     var $itemScroller = $(this).closest('.rb-itemscroller');
+             *     var $itemSelect = $(this);
+             *     var itemscroller = $itemScroller.rbComponent();
+             *
+             *     var buildOptions = function(){
+             *          var i, option;
+             *          $itemSelect.html('');
+             *
+             *          for(i = 0; i < itemscroller.pageLength; i++){
+             *              option = document.createElement('option');
+             *              option.value = i;
+             *              option.text = i;
+             *              option.selected = i == itemscroller.selectedIndex;
+             *              $itemSelect.append(option);
+             *          }
+             *      };
+             *
+             *      $itemScroller.on('itemscrollerpagelengthchanged', buildOptions);
+             *
+             *      $itemScroller.on('itemscrollerchanged', function(){
+             *          $itemSelect.prop({selectedIndex: itemscroller.selectedIndex});
+             *      });
+             *
+             *      $itemSelect.on('change', function(){
+             *          itemscroller.selectedIndex = this.selectedIndex;
+             *      });
+             *
+             *      buildOptions();
+             * });
              */
             init: function (element, initialDefaults) {
                 this._super(element, initialDefaults);
