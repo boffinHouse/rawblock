@@ -86,6 +86,24 @@ $rb-included-global-custom-vars: ();
     }
 }
 
+@function rb-join($list, $glue: "", $is-nested: false) {
+    $result: null;
+
+    @for $i from 1 through length($list) {
+        $e: nth($list, $i);
+
+        @if type-of($e) == list {
+            $result: $result#{rb-join($e, $glue, true)};
+        }
+
+        @else {
+            $result: if($i != length($list) or $is-nested, $result#{$e}#{$glue}, $result#{$e});
+        }
+    }
+
+    @return $result;
+}
+
 $rb-included-global-watch-css-selectors: ();
 
 @mixin rb-add-watch-css {
@@ -94,13 +112,13 @@ $rb-included-global-watch-css-selectors: ();
     @each $selector in & {
         @if not map_has_key($rb-included-global-watch-css-selectors, "#{$selector}") {
             $rb-included-global-watch-css-selectors: map-merge($rb-included-global-watch-css-selectors, ("#{$selector}": true)) !global;
-            $watch-list: append($watch-list, $selector);
+            $watch-list: append($watch-list, "#{$selector}");
         }
     }
 
     @if length($watch-list) > 0 {
-        @at-root(without:media) {
-            #{join($watch-list, ",")} {
+        @at-root(without:all) {
+            #{rb-join($watch-list, ",")} {
                 @include rb-custom-var(--rb-watch-css, true);
             }
         }
@@ -139,7 +157,7 @@ $rb-included-global-watch-css-selectors: ();
     }
 }
 
-/* old/deprecated API: */
+// old/deprecated API:
 @function rbToJSON($data) {
     @return rb-stringify($data);
 }
