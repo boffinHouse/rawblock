@@ -10,7 +10,7 @@
     'use strict';
     var rb = window.rb;
     var $ = rb.$;
-    var param = rb.param;
+    var param = $.param;
     var fetch = rb.fetch;
 
     var FetchManager = function(managerId, options){
