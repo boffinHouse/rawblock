@@ -1,0 +1,42 @@
+ // Convert
+//
+// Inspired  http://www.sassmeister.com/gist/7f22e44ace49b5124eec
+// Inspired  https://www.smashingmagazine.com/2016/05/fluid-typography/
+//
+// @param {String} $properties - properties who must adjust to viewport like padding, font-size etc
+// @param {Number} $min-value - The minimal value the propertie must adjust to.
+// @param {Number} $max-value - The maximal value the propertie must adjust to
+// @param {Number} $min-screensize - The minimal screen size;
+// @param {Number} $max-screensize -  The maximal screen size;
+// @param {Number} $viewportunit \ default: 100vw \-  The full viewport width (vw) or full viewport height (vh)
+//
+// @require
+// rb-rem-calc, rb-strip-unit
+//
+// @example
+//
+// @include fluid-type(font-size, 16px, 28px, 400px, 1200px);
+//
+
+@function rb-strip($number) {
+    $number: str_slice($number, 0, str-length($number) - 3);
+
+    @return $number;
+}
+
+@mixin rb-fluid-type-range($properties, $min-value, $max-value, $min-screensize, $max-screensize, $viewportunit: 100vw) {
+    $value-range: rb-rem-calc($max-value - $min-value);
+    $screen-range: rb-rem-calc($max-screensize - $min-screensize);
+    $min-value: rb-rem-calc($min-value);
+    $min-screensize: rb-rem-calc($min-screensize);
+
+    @each $property in $properties {
+        #{$property}: $min-value;
+    }
+
+    @each $property in $properties {
+        #{$property}: calc(#{$min-value} + #{rb-strip($value-range)} * (#{$viewportunit} - #{$min-screensize}) / #{rb-strip( $screen-range)});
+    }
+}
+
+
