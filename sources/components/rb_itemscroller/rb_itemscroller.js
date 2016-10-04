@@ -322,6 +322,7 @@
                     momentumBlocked = false;
                 };
 
+                //todo: do we still need whellEnd?
                 var wheelEnd = function(){
                     // prevent normal wheelEnd, when momentum is handled
                     if(momentumBlocked){
@@ -347,6 +348,7 @@
                 var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
 
                 var wheelHandler = function(e){
+
                     if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
                         wheelAnalyzer.feedWheel(e);
 
@@ -366,7 +368,7 @@
                 };
 
                 var uninstallWheelHandler = function(){
-                    that.viewport.addEventListener('wheel', wheelHandler);
+                    that.viewport.removeEventListener('wheel', wheelHandler);
                 };
 
                 var installWheelHandler = rb.debounce(function(){
@@ -847,9 +849,10 @@
 
                 var pageWidth = this.pageData[startIndex].r - this.pageData[startIndex].l;
                 var absVelocity = Math.abs(velocity);
+
                 // boost small velocities to make, to make it easier to jump with slower movements
                 if(absVelocity < pageWidth * 1.2){
-                    offsetToVelocityTargetPos *= absVelocity < pageWidth ? 1.8 : 1.4;
+                    offsetToVelocityTargetPos *= absVelocity < pageWidth ? 2 : 1.5;
                 }
 
                 // reduce large velocities
@@ -950,7 +953,6 @@
 
                 if (draggy.horizontalVel < 9) {
 
-                    dir = 0;
                     if (draggy.horizontalVel < 9 && draggy.horizontalVel < 9) {
                         draggy.allowClick();
                     }
