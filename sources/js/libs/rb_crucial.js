@@ -71,7 +71,7 @@
     /**
      * @memberof rb
      * @param element {Element}
-     * @param privateExpando {Symbole|String}
+     * @param privateExpando {Symbol|String}
      * @returns {boolean}
      */
     rb.hasPseudoChanged = function(element, privateExpando){
