@@ -9,8 +9,10 @@
         button: 1,
         submit: 1,
     };
+
     var regInputs = /^(?:input|textarea)$/i;
-    var usePassiveListener = rb.cssSupports('(touch-action: pan-y)') && rb.cssSupports('(touch-action: none)') && (function(){
+    var usePointer = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
+    var usePassiveListener = !usePointer && rb.cssSupports('(touch-action: pan-y)') && rb.cssSupports('(touch-action: none)') && (function(){
         var supportsPassiveOption = false;
         try {
             var opts = Object.defineProperty({}, 'passive', {
@@ -22,7 +24,6 @@
         } catch (e) {}
         return supportsPassiveOption;
     })();
-    var usePointer = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
     var useTouchAction = usePassiveListener || usePointer;
     var touchOpts = usePassiveListener ? {passive: true} : false;
 
@@ -243,13 +244,22 @@
         },
         setupEvents: function () {
             var that = this;
+
             this._onclick = function (e) {
                 if (that.isClickPrevented) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                 }
             };
+
+            this._onSelectStart = function (e) {
+                if (that.allowedDragTarget(e.target)) {
+                    e.preventDefault();
+                }
+            };
+
             this.element.addEventListener('click', this._onclick, true);
+            this.element.addEventListener('selectstart', this._onSelectStart, true);
         },
         allowedDragTarget: function(target){
             return (btnsMap[target.type] || !regInputs.test(target.nodeName || '') && (!this.options.exclude || !target.closest(this.options.exclude)));
@@ -404,6 +414,9 @@
                     that.allowMouse = false;
                     that.isType = 'pointer';
 
+                    if(e.target.nodeName != 'SELECT'){
+                        e.preventDefault();
+                    }
 
                     document.addEventListener('pointermove', move, touchOpts);
                     document.addEventListener('pointerup', end, touchOpts);
@@ -430,6 +443,7 @@
             }
 
             this.element.removeEventListener('click', this._onclick, true);
+            this.element.removeEventListener('selectstart', this._onSelectStart, true);
             this.setTouchAction();
 
             if(this.element._rbDraggy == this){

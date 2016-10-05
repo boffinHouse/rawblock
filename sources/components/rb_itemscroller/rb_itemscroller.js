@@ -907,6 +907,7 @@
                     }
                 }
 
+                this._pos = newPos;
                 this.setPos(newPos);
             },
             _setOrder: function(elem, order){
