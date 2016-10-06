@@ -394,9 +394,9 @@
 
             this._destroyPointer = function () {
                 identifier = undefined;
-                document.removeEventListener('pointermove', move, touchOpts);
-                document.removeEventListener('pointerup', end, touchOpts);
-                document.removeEventListener('pointercancel', end, touchOpts);
+                document.removeEventListener('pointermove', move);
+                document.removeEventListener('pointerup', end);
+                document.removeEventListener('pointercancel', end);
             };
 
             this._pointerdown = this._pointerdown || function (e) {
@@ -418,14 +418,14 @@
                         e.preventDefault();
                     }
 
-                    document.addEventListener('pointermove', move, touchOpts);
-                    document.addEventListener('pointerup', end, touchOpts);
-                    document.addEventListener('pointercancel', end, touchOpts);
+                    document.addEventListener('pointermove', move);
+                    document.addEventListener('pointerup', end);
+                    document.addEventListener('pointercancel', end);
 
                     that.start(e, e);
                 };
 
-            this.element.addEventListener('pointerdown', this._pointerdown, touchOpts);
+            this.element.addEventListener('pointerdown', this._pointerdown);
         },
         destroy: function () {
             clearInterval(this._velocityTimer);
@@ -435,7 +435,7 @@
                 this.element.removeEventListener('touchstart', this._ontouchstart, touchOpts);
             }
             if(this._pointerdown){
-                this.element.removeEventListener('pointerdown', this._pointerdown, touchOpts);
+                this.element.removeEventListener('pointerdown', this._pointerdown);
             }
 
             if(this._onmousedown){
