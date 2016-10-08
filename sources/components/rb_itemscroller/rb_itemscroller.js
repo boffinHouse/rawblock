@@ -848,7 +848,8 @@
                 var dirNum = velocity > 0 ? -1 : 1;
                 var absVelocity = Math.abs(velocity);
                 var startIndex = this._startedInteractionAtIndex;
-                var pageWidth = this.pageData[startIndex].r - this.pageData[startIndex].l;
+                var curPageDate = this.pageData[startIndex];
+                var pageWidth = curPageDate ? curPageDate.r - curPageDate.l : this.viewportWidth;
                 var veloOverflow = absVelocity - ((this.viewportWidth + pageWidth) / 2);
                 var minNext = (1300 + pageWidth) / 5;
                 var maxNext = (8000 + pageWidth) / 5;
