@@ -309,14 +309,9 @@
                 var _isWheelStarted = false;
                 var that = this;
                 var options = this.options;
-                var block = false;
 
                 var wheelAnalyzer = rb.WheelAnalyzer();
                 var momentumBlocked = false;
-
-                var unblock = function(){
-                    block = false;
-                };
 
                 var unblockMomentum = function(){
                     momentumBlocked = false;
@@ -342,14 +337,13 @@
                     } else {
                         that.selectNext();
                     }
-                    setTimeout(unblock, 144);
                 };
 
                 var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
 
                 var wheelHandler = function(e){
 
-                    if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) >= Math.abs(e.deltaY)){
+                    if(!e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) >= Math.abs(e.deltaY)){
                         wheelAnalyzer.feedWheel(e);
 
                         if(!momentumBlocked){
@@ -372,7 +366,7 @@
                 };
 
                 var installWheelHandler = rb.debounce(function(){
-                    if(that.viewport.matches(':hover')){
+                    if(!options.switchedOff && options.wheel && that.viewport.matches(':hover')){
                         that.viewport.addEventListener('wheel', wheelHandler);
                     }
                 }, {delay: 66});
