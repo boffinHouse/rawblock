@@ -1,7 +1,7 @@
 {
   "name": "rawblock",
   "description": "The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces. ",
-  "version": "0.7.0",
+  "version": "0.7.3-pre",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/boffinhouse/rawblock.git"
@@ -46,8 +46,7 @@
     "string.prototype.endswith": "~0.2.0",
     "string.prototype.includes": "~1.0.0",
     "string.prototype.repeat": "~0.2.0",
-    "string.prototype.startswith": "~0.2.0",
-    "whatwg-fetch": "~1.0.0"
+    "string.prototype.startswith": "~0.2.0"
   },
   "devDependencies": {
     "@micahgodbolt/grunt-phantomcss": "https://github.com/micahgodbolt/grunt-phantomcss.git#1.0.0",

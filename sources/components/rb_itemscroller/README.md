@@ -162,7 +162,7 @@ elements to navigate, like previous/next buttons or paginations.
             {{/mergeJSON}}
         </div>
         <div class="u-size-100">
-            {{#mergeJSON rb_itemscroller.default 'attrs: {"data-pagination-for":"itemscroller-pagination"}'}}
+            {{#mergeJSON rb_itemscroller.default 'attrs: {"data-itemscroller-pagination-for":"itemscroller-pagination"}'}}
                 {{> rb_itemscroller }}
             {{/mergeJSON}}
         </div>

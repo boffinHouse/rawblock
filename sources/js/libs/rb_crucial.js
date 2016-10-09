@@ -3,8 +3,7 @@
     if (!window.rb) {
         window.rb = {};
     }
-
-    var pseudoExpando, getPseudoToParse;
+    var getPseudoToParse;
 
     var rb = window.rb;
 
@@ -15,34 +14,6 @@
     var removeLeadingQuotes = function (str) {
         return str && str.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
     };
-
-    /* Begin: ID/Symbol */
-    /**
-     * Returns a Symbol or unique String
-     * @memberof rb
-     * @param {String} description ID or description of the symbol
-     * @type {Function}
-     * @returns {String|Symbol}
-     */
-    rb.Symbol = window.Symbol;
-    var id = Math.round(Date.now() * Math.random());
-
-    /**
-     * Returns a unique id based on Math.random and Date.now().
-     * @memberof rb
-     * @returns {string}
-     */
-    rb.getID = function () {
-        id += Math.round(Math.random() * 1000);
-        return id.toString(36);
-    };
-
-    if (!rb.Symbol) {
-        rb.Symbol = function (name) {
-            name = name || '_';
-            return name + rb.getID();
-        };
-    }
 
     /**
      * Parses a string using JSON.parse without throwing an error.
@@ -64,19 +35,19 @@
      * Parses the CSS content value of a pseudo element using JSON.parse.
      * @memberof rb
      * @param element {Element} The element to parse.
-     * @param [pseudo='::before'] {String}
+     * @param privateExpando {Symbol|String}
      * @returns {Object|undefined}
      */
-    rb.parsePseudo = function (element, pseudo) {
+    rb.parsePseudo = function (element, privateExpando) {
         var ret;
         var isString = typeof element == 'string';
         var value = isString ?
                 element :
-                getPseudoToParse(element, pseudo)
+                getPseudoToParse(element)
             ;
 
-        if(element && !isString){
-            element[pseudoExpando] = value;
+        if(element && !isString && privateExpando){
+            element[privateExpando] = value;
         }
 
         ret = rb.jsonParse(removeLeadingQuotes(value));
@@ -86,11 +57,10 @@
 	/**
      *
      * @param element
-     * @param pseudo
      * @returns {*}
      */
-    rb.getPseudo = function(element, pseudo){
-        var value = rb.getStyles(element, pseudo || '::before').content;
+    rb.getPseudo = function(element){
+        var value = rb.getStyles(element, '::before').content;
         if(!value && element){
             value = rb.getStyles(element).content;
         }
@@ -100,14 +70,13 @@
 
     /**
      * @memberof rb
-     * @deprecated do it manually.
      * @param element {Element}
-     * @param [pseudo='::before'] {String}
+     * @param privateExpando {Symbol|String}
      * @returns {boolean}
      */
-    rb.hasPseudoChanged = function(element, pseudo){
-        var value = element[pseudoExpando];
-        return getPseudoToParse(element, pseudo) != value;
+    rb.hasPseudoChanged = function(element, privateExpando){
+        var value = element[privateExpando];
+        return getPseudoToParse(element) != value;
     };
 
     /**
@@ -209,8 +178,6 @@
     });
 
     getPseudoToParse = rb.getPseudo;
-
-    pseudoExpando = rb.Symbol('_rbPseudoExpando');
 
     if (typeof module === 'object' && module.exports) {
         module.exports = rb;

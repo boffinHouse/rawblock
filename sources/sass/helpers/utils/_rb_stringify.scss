@@ -73,7 +73,91 @@
     }
 }
 
-/* old/deprecated API: */
+$rb-included-global-custom-vars: ();
+
+@mixin rb-custom-var($prop, $value, $stopInheritance: true){
+    #{$prop}: $value;
+
+    @if $stopInheritance and not map_has_key($rb-included-global-custom-vars, $prop) {
+        $rb-included-global-custom-vars: map-merge($rb-included-global-custom-vars, (#{$prop}: true)) !global;
+        @at-root(without:all) {
+            * {#{$prop}: initial;}
+        }
+    }
+}
+
+@function rb-join($list, $glue: "", $is-nested: false) {
+    $result: null;
+
+    @for $i from 1 through length($list) {
+        $e: nth($list, $i);
+
+        @if type-of($e) == list {
+            $result: $result#{rb-join($e, $glue, true)};
+        }
+
+        @else {
+            $result: if($i != length($list) or $is-nested, $result#{$e}#{$glue}, $result#{$e});
+        }
+    }
+
+    @return $result;
+}
+
+$rb-included-global-watch-css-selectors: ();
+
+@mixin rb-add-watch-css {
+    $watch-list: ();
+
+    @each $selector in & {
+        @if not map_has_key($rb-included-global-watch-css-selectors, "#{$selector}") {
+            $rb-included-global-watch-css-selectors: map-merge($rb-included-global-watch-css-selectors, ("#{$selector}": true)) !global;
+            $watch-list: append($watch-list, "#{$selector}");
+        }
+    }
+
+    @if length($watch-list) > 0 {
+        @at-root(without:all) {
+            #{rb-join($watch-list, ",")} {
+                @include rb-custom-var(--rb-watch-css, true);
+            }
+        }
+    }
+}
+
+@mixin rb-js-export-next($data, $prefix: 'rb-cfg', $add-watch-css: true) {
+    $end-value: "";
+    $need-inheritance-stop: false;
+    $inheritance-list: ();
+    $string: rb-stringify($data);
+    $prefix: '--' + $prefix + '-';
+
+    @each $prop, $value in $data {
+        $end-value: $prefix + $prop;
+        @include rb-custom-var($end-value, rb-stringify($value), false);
+
+        @if not map_has_key($rb-included-global-custom-vars, $end-value) {
+            $inheritance-list: append($inheritance-list, $end-value);
+        }
+    }
+
+    @if $add-watch-css {
+        @include rb-add-watch-css();
+    }
+
+    @if length($inheritance-list) > 0 {
+        @at-root(without:all) {
+            * {
+                @each $prop in $inheritance-list {
+                    $rb-included-global-custom-vars: map-merge($rb-included-global-custom-vars, (#{$prop}: true)) !global;
+                    #{$prop}: initial;
+                }
+            }
+        }
+    }
+}
+
+// old/deprecated API:
 @function rbToJSON($data) {
     @return rb-stringify($data);
 }

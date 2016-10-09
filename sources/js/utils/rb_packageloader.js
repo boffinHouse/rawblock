@@ -1,18 +1,27 @@
-(function (window, document) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        require('./rb_loadscript');
+        module.exports = factory();
+    } else {
+        factory();
+    }
+}(function () {
     'use strict';
+
     if (!window.rb) {
         window.rb = {};
     }
     var rb = window.rb;
-    var regPath = /^[\.\/]|:\//;
+    var regPath = /^[.\/]|:\//;
 
     var rejectedPromise = new Promise(function (resolve, reject) {
         setTimeout(reject);
     }).catch(function () {
     });
 
+    var promises = rb.loadScript.rb_promises;
+
     var _packages = {};
-    var promises = {};
 
     var packageConfig = {
         basePath: '',
@@ -75,8 +84,11 @@
             .filter(function (path) {
                 return !promises[path];
             })
-            .forEach(rb.loadScript)
+            .forEach(function (src) {
+                rb.loadScript(src);
+            })
         ;
+
         return promises[packagePaths[packagePaths.length - 1]];
     };
 
@@ -110,31 +122,8 @@
         }
     };
 
-    /**
-     * Loads a script and returns a promise.
-     * @memberof rb
-     *
-     * @param src
-     * @returns {Promise}
-     */
-    rb.loadScript = function (src) {
-        promises[src] = new Promise(function (resolve) {
-            var script = document.createElement('script');
-            script.addEventListener('load', resolve);
-            script.addEventListener('error', function () {
-                rb.logWarn('package error. Configure rb.packageConfig? src: ' + src);
-                resolve();
-            });
-            script.src = src;
-            script.async = false;
-            (rb.rAFQueue || requestAnimationFrame)(function () {
-                (document.body || document.documentElement).appendChild(script);
-                script = null;
-            });
-        });
-        return promises[src];
-    };
-
     addHook();
 
-})(window, document);
+    return rb.loadPackage;
+
+}));

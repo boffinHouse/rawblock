@@ -1,0 +1,51 @@
+
+////
+/// @group functions
+////
+
+$rb-base-fontsize: 100% !default;
+
+/// Calculate pixel values to matching viewport unit values.
+///
+/// @param {Number} $value - Value to convert
+/// @param {Number} $viewport-size - Viewport value to use calculate units with.
+/// @param {String} $unit | default: vw | Set unit vw, vh, vmin, vmax
+@function rb-convert-px-to-viewportunit($value,  $viewport-size: null, $unit: vw)  {
+
+    @if($value == 'auto') {
+        @return $value;
+    }
+
+    @if (unitless($value)) {
+        $value: $value * 1px;
+    }
+
+    @if($viewport-size) {
+        $value: ($value / $viewport-size * 100) + $unit;
+    } @else {
+        @error "No viewport-size is found. Please add a base value like 1440px or 960px."
+    }
+
+
+    @if ($value == ('0' + $unit)) {
+        $value: 0;  // Turn 0vm/0vh into 0
+    }
+
+    @return $value;
+}
+
+/// Convert one or more pixel values to viewport units.
+///
+/// @param {Number} $value - Value(s) to convert
+/// @param {Number} $viewport-size - Viewport value to use calculate units with.
+/// @param {String} $unit | default: vw | Set unit vw, vh, vmin, vmax
+@function rb-fluid-calc($values, $viewport-size: null, $unit: vw) {
+    $value-length: length($values);
+    $unit-values: ();
+
+    @for $i from 1 through $value-length {
+        $unit-values: append($unit-values, rb-convert-px-to-viewportunit(nth($values, $i), $viewport-size, $unit))
+    }
+
+    @return $unit-values;
+}

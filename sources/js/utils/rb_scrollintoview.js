@@ -8,7 +8,7 @@
     'use strict';
 
     var regHash = /^#/;
-    var $ = rb.$ || window.jQuery;
+    var $ = window.rb.$ || window.jQuery;
     /**
      * A jQuery/rb.$ plugin to scroll an element into the viewort
      * @function external:"jQuery.fn".scrollIntoView

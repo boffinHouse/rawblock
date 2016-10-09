@@ -9,6 +9,7 @@
 
     var rb = window.rb;
     var $ = rb.$;
+    var pseudoExpando = rb.Symbol('childfxPseudo');
 
     var _ChildFX = rb.Component.extend('_childfx',
         /** @lends rb.components._childfx.prototype */
@@ -110,7 +111,7 @@
 
                     var options = {
                         start: {},
-                        end: Object.assign({}, rb.parsePseudo(elem), rb.parseDataAttrs(elem)),
+                        end: Object.assign({}, rb.parsePseudo(elem, pseudoExpando), rb.parseDataAttrs(elem)),
                         from: 0,
                         to: 1,
                     };
@@ -132,7 +133,7 @@
 
                 if (this.childs && this.childs.length && !this.options.switchedOff) {
                     this.childs.forEach(function (elem) {
-                        if (!ret && rb.hasPseudoChanged(elem)) {
+                        if (!ret && rb.hasPseudoChanged(elem, pseudoExpando)) {
                             ret = true;
                         }
                     });
