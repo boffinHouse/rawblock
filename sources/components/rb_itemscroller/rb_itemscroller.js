@@ -67,8 +67,8 @@
                 usePx: false,
                 wheel: true,
                 wheelVelocityMultiplier: 0.2,
-                snapSpringStiffness: 59,
-                snapSpringDamping: 11,
+                snapSpringStiffness: 58,
+                snapSpringDamping: 12,
             },
             /**
              * @constructs
@@ -309,14 +309,9 @@
                 var _isWheelStarted = false;
                 var that = this;
                 var options = this.options;
-                var block = false;
 
                 var wheelAnalyzer = rb.WheelAnalyzer();
                 var momentumBlocked = false;
-
-                var unblock = function(){
-                    block = false;
-                };
 
                 var unblockMomentum = function(){
                     momentumBlocked = false;
@@ -342,14 +337,13 @@
                     } else {
                         that.selectNext();
                     }
-                    setTimeout(unblock, 144);
                 };
 
                 var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
 
                 var wheelHandler = function(e){
 
-                    if(!block && !e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+                    if(!e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) >= Math.abs(e.deltaY)){
                         wheelAnalyzer.feedWheel(e);
 
                         if(!momentumBlocked){
@@ -372,7 +366,7 @@
                 };
 
                 var installWheelHandler = rb.debounce(function(){
-                    if(that.viewport.matches(':hover')){
+                    if(!options.switchedOff && options.wheel && that.viewport.matches(':hover')){
                         that.viewport.addEventListener('wheel', wheelHandler);
                     }
                 }, {delay: 66});
@@ -841,28 +835,54 @@
 
             _snapWithSpring: function(velocity, mandatorySnap){
                 // TODO: check where to use pageWidth or viewportWidth or a mix ((pageWidth + viewportWidth) / 2);
+                var nearestTargetIndex, isOver, isSame;
+                var isReduced = false;
+                var isBoosted = false;
                 var veloReductionRate = 0.4;
-                var veloOverflow = Math.abs(velocity) - this.viewportWidth;
-
+                var dirNum = velocity > 0 ? -1 : 1;
+                var absVelocity = Math.abs(velocity);
                 var startIndex = this._startedInteractionAtIndex;
+                var curPageDate = this.pageData[startIndex];
+                var pageWidth = curPageDate ? curPageDate.r - curPageDate.l : this.viewportWidth;
+                var veloOverflow = absVelocity - ((this.viewportWidth + pageWidth) / 2);
+                var minNext = (1300 + pageWidth) / 5;
+                var maxNext = (8000 + pageWidth) / 5;
                 var offsetToVelocityTargetPos = velocity * 0.5;
 
-                var pageWidth = this.pageData[startIndex].r - this.pageData[startIndex].l;
-                var absVelocity = Math.abs(velocity);
 
                 // boost small velocities to make, to make it easier to jump with slower movements
-                if(absVelocity < pageWidth * 1.2){
+                if(absVelocity < pageWidth * 1.1){
                     offsetToVelocityTargetPos *= absVelocity < pageWidth ? 2 : 1.5;
-                }
-
+                    isBoosted = true;
+                } else
                 // reduce large velocities
-                if(absVelocity > pageWidth * 1.3){
+                if(absVelocity > pageWidth * 1.5){
                     veloReductionRate *= veloOverflow;
                     veloReductionRate *= offsetToVelocityTargetPos < 0 ? 1 : -1;
                     offsetToVelocityTargetPos += veloReductionRate;
+                    isReduced = true;
                 }
 
-                var nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
+                nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
+
+                isSame = nearestTargetIndex == startIndex;
+                isOver = nearestTargetIndex != startIndex + dirNum && nearestTargetIndex != startIndex;
+
+                if(
+                    //if it is is under corrected
+                    (isReduced && isSame) ||
+                    // if it is over corrected
+                    (isBoosted && isOver) ||
+                    // some hardcoded values
+                    (minNext < absVelocity && isSame) ||
+                    (isOver && maxNext > absVelocity)
+                ){
+                    nearestTargetIndex = startIndex + dirNum;
+
+                    if(!this.isCarousel){
+                        nearestTargetIndex = Math.min(Math.max(nearestTargetIndex, 0), this.pageLength - 1);
+                    }
+                }
 
                 if(mandatorySnap){
                     nearestTargetIndex = Math.max(startIndex-1, Math.min(startIndex+1, nearestTargetIndex));
