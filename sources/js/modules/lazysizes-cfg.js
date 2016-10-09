@@ -26,8 +26,8 @@ require('lazysizes/plugins/optimumx/ls.optimumx');
     document.addEventListener('lazyunveilread', configureMediaQueries);
 
     document.addEventListener('lazyunveilread', function(e){
-        const container = e.target;
-        const module = container.getAttribute('data-module');
+        var container = e.target;
+        var module = container.getAttribute('data-module');
 
         if(module) {
             if(rb.getComponent){

@@ -11,12 +11,15 @@
 
     /**
      *
-     * @param fn
+     * @memberof rb
+     *
+     * @param fn {Function}
      * @param opts
      * @param opts.delay
      * @param opts.that
      * @param opts.write
      * @returns {Function}
+     *
      */
     rb.debounce = function(fn, opts){
         var args, that, timestamp, timeout, isWriteCalled, isReadCalled, frames;
