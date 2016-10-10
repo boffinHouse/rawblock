@@ -6,10 +6,10 @@ component: rb_accordion
     {{#if buttons }}
         <div class="accordion-controls">
             {{#if buttons.prev}}
-                <button type="button" class="accordion-ctrl-btn" data-type="prev">{{ buttons.prev }}</button>
+                <button type="button" class="accordion-ctrl-btn" data-panelgroupbutton-type="prev">{{ buttons.prev }}</button>
             {{/if}}
             {{#if buttons.next}}
-                <button type="button" class="accordion-ctrl-btn" data-type="next">{{ buttons.next }}</button>
+                <button type="button" class="accordion-ctrl-btn" data-panelgroupbutton-type="next">{{ buttons.next }}</button>
             {{/if}}
         </div>
     {{/if}}

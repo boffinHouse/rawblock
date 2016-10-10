@@ -599,7 +599,9 @@
             },
             _setTarget: function () {
                 var ret = this._super.apply(this, arguments);
-                this.associatePanel();
+                if(this.target){
+                    this.associatePanel();
+                }
                 return ret;
             },
             associatePanel: function () {

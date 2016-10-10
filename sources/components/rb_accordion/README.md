@@ -50,8 +50,8 @@ Panels can also be open/closed with control buttons `accordion-ctrl-btn`. The di
 ```html
 <div class="rb-accordion" data-module="accordion">
     <div class="accordion-controls">
-        <button type="button" class="accordion-ctrl-btn" data-type="prev">prev</button>
-        <button type="button" class="accordion-ctrl-btn" data-type="next">next</button>
+        <button type="button" class="accordion-ctrl-btn" data-panelgroupbutton-type="prev">prev</button>
+        <button type="button" class="accordion-ctrl-btn" data-panelgroupbutton-type="next">next</button>
     </div>
     <div class="accordion-item">...</div>
     <div class="accordion-item">...</div>

@@ -25,19 +25,13 @@
 
         lastClass = className;
 
-        if(!rb.ready.isDone){
-            rb.ready.then(setStyle);
-        }
+        scrollbarDiv.remove();
     }, {throttle: true});
 
     var read = function(){
         if(scrollbarWidth == null){
             scrollbarWidth = scrollbarDiv.offsetWidth - scrollbarDiv.clientWidth;
-            setStyle();
-
-            rb.rAFQueue(function(){
-                scrollbarDiv.remove();
-            });
+            rb.ready.then(setStyle);
         }
     };
 

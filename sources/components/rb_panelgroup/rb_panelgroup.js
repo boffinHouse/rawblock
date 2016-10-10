@@ -288,22 +288,24 @@
                     panel.groupComponent = that;
                 });
 
-                components.panel.prototype.name = 'panel';
-
                 panels = this.$panels;
 
                 this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper)).each(function (index) {
-                    live.create(this, components.panelbutton, {
+                    var btn = live.create(this, components.panelbutton, {
                         type: (options.toggle) ? 'toggle' : 'open',
                         preventDefault: options.preventDefault,
-                        target: panels.get(index),
                     });
+                    var panel = panels.get(index);
+
+                    if(panel){
+                        btn._setTarget(panels.get(index));
+                    }
                 });
 
                 this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function (index) {
                     live.create(this, components.panelgroupbutton, {
                         preventDefault: options.preventDefault,
-                        target: panels.get(index),
+                        target: that.element,
                     });
                 });
             },
