@@ -5,7 +5,6 @@
         require('../../js/utils/rb_resize');
         require('../../js/utils/rb_prefixed');
         require('../../js/utils/rb_debounce');
-        require('../../js/utils/rb_springanimation');
         module.exports = factory();
     } else {
         factory();
@@ -34,6 +33,7 @@
              * @property {Number} selectedIndex=0 Initially selected index.
              * @property {Number|String} scrollStep='auto' How many cells to scroll. Either number of cells or 'view' (i.e. viewport component). 'auto' means 1 for centerMode and 'view' otherwise.
              * @property {String}  easing='ease-in-out' Easing value for the slide animation.
+             * @property {String}  dragEasing='0.1, 0.25, 0.1, 1.03' Easing value for the slide animation after drag.
              * @property {Number}  duration=600 Average duration for the slide animation.
              * @property {Boolean} mouseDrag=true Whether scroller should be draggable via mouse.
              * @property {Boolean} wheel=true Whether scroller should be draggable via wheel/trackpad scroll.
@@ -54,6 +54,7 @@
                 mouseDrag: true,
                 dragExclude: false,
                 easing: 'ease-in-out',//0.045, 0.235, 0.025, 1.025
+                dragEasing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
                 duration: 600,
                 paginationItemTpl: '<span class="{name}{e}pagination{-}btn"></span>',
                 excludeCell: false,
@@ -61,14 +62,11 @@
                 useTransform: true,
                 carousel: false,
                 mandatorySnap: false,
-                mandatorySnapWheel: false,
                 startOrder: -1,
                 endOrder: 99,
                 usePx: false,
                 wheel: true,
                 wheelVelocityMultiplier: 0.2,
-                snapSpringStiffness: 58,
-                snapSpringDamping: 12,
             },
             /**
              * @constructs
@@ -110,42 +108,41 @@
              * @example
              * //combines a select element with an itemscroller
              * $('.rb-itemscroller select.itemscroller-select').each(function(){
-             *     var $itemScroller = $(this).closest('.rb-itemscroller');
-             *     var $itemSelect = $(this);
-             *     var itemscroller = $itemScroller.rbComponent();
-             *
-             *     var buildOptions = function(){
-             *          var i, option;
-             *          $itemSelect.html('');
-             *
-             *          for(i = 0; i < itemscroller.pageLength; i++){
-             *              option = document.createElement('option');
-             *              option.value = i;
-             *              option.text = i;
-             *              option.selected = i == itemscroller.selectedIndex;
-             *              $itemSelect.append(option);
-             *          }
-             *      };
-             *
-             *      $itemScroller.on('itemscrollerpagelengthchanged', buildOptions);
-             *
-             *      $itemScroller.on('itemscrollerchanged', function(){
-             *          $itemSelect.prop({selectedIndex: itemscroller.selectedIndex});
-             *      });
-             *
-             *      $itemSelect.on('change', function(){
-             *          itemscroller.selectedIndex = this.selectedIndex;
-             *      });
-             *
-             *      buildOptions();
-             * });
+			 *     var $itemScroller = $(this).closest('.rb-itemscroller');
+			 *     var $itemSelect = $(this);
+			 *     var itemscroller = $itemScroller.rbComponent();
+			 *
+			 *     var buildOptions = function(){
+			 *          var i, option;
+			 *          $itemSelect.html('');
+			 *
+			 *          for(i = 0; i < itemscroller.pageLength; i++){
+			 *              option = document.createElement('option');
+			 *              option.value = i;
+			 *              option.text = i;
+			 *              option.selected = i == itemscroller.selectedIndex;
+			 *              $itemSelect.append(option);
+			 *          }
+			 *      };
+			 *
+			 *      $itemScroller.on('itemscrollerpagelengthchanged', buildOptions);
+			 *
+			 *      $itemScroller.on('itemscrollerchanged', function(){
+			 *          $itemSelect.prop({selectedIndex: itemscroller.selectedIndex});
+			 *      });
+			 *
+			 *      $itemSelect.on('change', function(){
+			 *          itemscroller.selectedIndex = this.selectedIndex;
+			 *      });
+			 *
+			 *      buildOptions();
+			 * });
              */
             init: function (element, initialDefaults) {
                 this._super(element, initialDefaults);
 
                 this.usesTransform = this.options.useTransform && !!transformProp;
                 this._pos = 0;
-                this._velocity = 0;
 
                 this._selectedIndex = this.options.selectedIndex;
 
@@ -161,6 +158,7 @@
                 this.onslide = $.Callbacks();
 
                 this.setOption('easing', this.options.easing);
+                this.setOption('dragEasing', this.options.dragEasing);
                 this.setOption('duration', this.options.duration);
 
                 this.calculateLayout = this.calculateLayout.bind(this);
@@ -238,6 +236,9 @@
                     case 'easing':
                         this._easing = rb.addEasing(value);
                         this.easing = this._easing;
+                        break;
+                    case 'dragEasing':
+                        this._dragEasing = rb.addEasing(value);
                         break;
                     case 'duration':
                         this.duration = value;
@@ -320,7 +321,6 @@
                     momentumBlocked = false;
                 };
 
-                //todo: do we still need whellEnd?
                 var wheelEnd = function(){
                     // prevent normal wheelEnd, when momentum is handled
                     if(momentumBlocked){
@@ -353,7 +353,7 @@
                             if(!_isWheelStarted){
                                 _isWheelStarted = true;
                                 startValue = that._pos;
-                                that._userInteractionStarted();
+                                $(that.scroller).stop();
                             }
 
                             that._setRelPos(e.deltaX * -1, true);
@@ -387,8 +387,15 @@
                         momentumBlocked = true;
                         _isWheelStarted = false;
 
-                        // reverse direction of velocity (in px/s)
-                        that._snapWithSpring(data.deltaVelocity * -1, options.mandatorySnap && options.mandatorySnapWheel);
+                        // from px/s -> px/300ms
+                        var velocity = data.deltaVelocity / 1000 * 300 * -1;
+                        var totalLengthMovedByWheel = data.deltaTotal;
+
+                        //tune down velocity for snap from wheel
+                        velocity = velocity * that.options.wheelVelocityMultiplier;
+
+                        // dir, veloX, length
+                        that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
                     })
                 ;
             },
@@ -492,14 +499,44 @@
                 this.viewport.addEventListener('scroll', scrollIntoView);
             },
 
-            getNearest: function (offset) {
+            /**
+             * [_snapTo description]
+             * @param  {number} dir      direction
+             * @param  {number} velocity px in last 300ms
+             * @param  {number} length   length moved during last recognition
+             */
+            _snapTo: function (dir, velocity, length) {
+                var pageIndex;
+                var fullVel = velocity + Math.abs(dir);
+
+                length = Math.abs(length);
+
+                this.easing = this._dragEasing;
+
+                if (dir && (fullVel > 33 || (fullVel > 9 && length > 99) || (fullVel > 3 && length > 200)) ) {
+
+                    if (velocity > 240 && !this.options.mandatorySnap && length > 99) {
+                        velocity = (velocity - 230) / 250 * this.velUnit;
+                        if (dir < 0) {
+                            velocity *= -1;
+                        }
+                    } else {
+                        velocity = 0;
+                    }
+                    pageIndex = this[dir < 0 ? 'getNext' : 'getPrev'](velocity);
+                    this.selectIndex(pageIndex);
+                } else {
+                    this.selectNearest();
+                }
+            },
+            getNearest: function () {
                 var prop, curDiff;
                 var smallestDif = Number.MAX_VALUE;
                 var index = 0;
                 var nowIndex = this.selectedIndex;
                 var pos = {
-                    prev: this.getPrev(offset) + this.baseIndex,
-                    next: this.getNext(offset) + this.baseIndex,
+                    prev: this.getPrev() + this.baseIndex,
+                    next: this.getNext() + this.baseIndex,
                 };
 
                 if (pos.next - pos.prev > 1) {
@@ -686,31 +723,18 @@
                     this.selectedIndex = index;
                 }
             },
-
             /**
              * Selects a page index
              * @param index {Number} The page index, that should selected
-             * @param [animationOpts|noAnimate] {Object|Boolean|Undefined} If set to true, the page index will be changed without any animations
+             * @param [noAnimate] {Boolean|Undefined} If set to true, the page index will be changed without any animations
              * @returns {*|number}
              */
-            selectIndex: function (index, animationOpts) {
+            selectIndex: function (index, noAnimate) {
                 var trigger, duration, setPos, curIndex;
-                var that = this;
-                var noAnimate = false;
                 var countIndex = index + this.baseIndex;
-
-                // no breaking api change for now...
-                if(animationOpts === true){
-                    noAnimate = true;
-                    animationOpts = null;
-                } else {
-                    animationOpts = Object.assign({ type: 'easing' }, animationOpts || {});
-                }
-
                 if (!arguments.length || countIndex < 0 || countIndex >= this.pageData.length || !this.$cells.length) {
                     return this._selectedIndex;
                 }
-
                 if (this.options.switchedOff) {
                     return;
                 }
@@ -728,175 +752,57 @@
                     setPos = Math.max(Math.min(setPos, this.maxScroll), this.minScroll);
                 }
 
-                // return when already in same position
-                if(setPos === this._pos){
-                    this._updateControls(setPos);
-                    this._selectedIndex = index;
-                    return this._selectedIndex;
-                }
-
-                if (curIndex != index) {
-                    if (this._trigger(this._beforeEvtName, {nextIndex: index}).defaultPrevented) {
-                        return this._selectedIndex;
+                if (setPos != this._pos) {
+                    if (curIndex != index) {
+                        if (this._trigger(this._beforeEvtName, {nextIndex: index}).defaultPrevented) {
+                            return this._selectedIndex;
+                        }
+                        trigger = true;
+                        this._selectedIndex = index;
                     }
-                    trigger = true;
-                    this._selectedIndex = index;
-                }
 
-                if (noAnimate === true) {
-                    this.stopScrollerAnimation();
-                    this.setPos(setPos);
-                } else if(animationOpts.type === 'spring') {
-                    this.startSpringAnimation({
-                        from: {
-                            value: that._pos,
-                            velocity: animationOpts.velocity || that._velocity
-                        },
-                        to: setPos
-                    });
-                } else {
-                    // defaults to animation with easing
+                    this._animStart = false;
+                    this._animEnd = setPos;
+                    this.scroller.rbItemscrollerPos = this._pos;
+                    this.$scroller.stop();
+
                     duration = this.duration * ((setPos < this._pos) ? this._pos - setPos : setPos - this._pos) / this.viewportWidth;
-                    this.startEasedAnimation({
-                        from: this._pos,
-                        to: setPos,
-                        duration: Math.max(Math.min(duration, this.maxDuration), this.minDuration)
-                    });
-                }
+                    duration = Math.max(Math.min(duration, this.maxDuration), this.minDuration);
 
-                this._updateControls(setPos);
-
-                if (trigger) {
-                    this._trigger({prevIndex: curIndex});
                     if (noAnimate) {
-                        this._slideComplete();
+                        this.setPos(setPos);
+                        this.isAnimated = false;
+                    } else {
+                        this.isAnimated = true;
+                        this._animStart = this._pos;
+                        this.$scroller
+                            .animate(
+                                {
+                                    rbItemscrollerPos: setPos
+                                },
+                                {
+                                    easing: 'linear',
+                                    start: this._pos,
+                                    progress: this._slideProgress,
+                                    duration: duration,
+                                    complete: this._slideComplete,
+                                }
+                            );
+                    }
+
+                    this._updateControls(setPos);
+
+                    if (trigger) {
+                        this._trigger({prevIndex: curIndex});
+                        if (noAnimate) {
+                            this._slideComplete();
+                        }
                     }
                 }
 
                 this._selectedIndex = index;
                 return this._selectedIndex;
             },
-
-            stopScrollerAnimation: function(){
-                this.isAnimated = false;
-                this._animStart = false;
-                this._animEnd = false;
-                this.$scroller.stop();
-                this._stopSpringSnap();
-            },
-
-            startSpringAnimation: function(opts){
-                var that = this;
-                opts = opts || {};
-                this.stopScrollerAnimation();
-
-                this.springAnimation = rb.SpringAnimation({
-                    from: opts.from || this._pos,
-                    target: opts.to || 0,
-                    stiffness: opts.stiffness || this.options.snapSpringStiffness,
-                    damping: opts.damping || this.options.snapSpringDamping,
-                    progress: function(progress){
-                        that._setPos(progress.currentValue);
-                    },
-                    complete: function(){
-                        that._setPos(opts.to || 0);
-                        that._slideComplete();
-                    }
-                });
-            },
-
-            startEasedAnimation: function(opts){
-                opts = opts || {};
-                this.stopScrollerAnimation();
-
-                this.isAnimated = true;
-                this._animStart = opts.from || this._pos;
-                this._animEnd = opts.to || 0;
-                this.scroller.rbItemscrollerPos = this._animStart;
-
-                this.$scroller
-                    .animate(
-                        {
-                            rbItemscrollerPos: this._animEnd
-                        },
-                        {
-                            easing: 'linear',
-                            start: this._pos,
-                            progress: this._slideProgress,
-                            duration: opts.duration || this.options.duration,
-                            complete: this._slideComplete,
-                        }
-                    )
-                ;
-            },
-
-            _stopSpringSnap: function(){
-                if(this.springAnimation){
-                    this.springAnimation.stop();
-                    this.springAnimation = null;
-                }
-            },
-
-            _snapWithSpring: function(velocity, mandatorySnap){
-                // TODO: check where to use pageWidth or viewportWidth or a mix ((pageWidth + viewportWidth) / 2);
-                var nearestTargetIndex, isOver, isSame;
-                var isReduced = false;
-                var isBoosted = false;
-                var veloReductionRate = 0.4;
-                var dirNum = velocity > 0 ? -1 : 1;
-                var absVelocity = Math.abs(velocity);
-                var startIndex = this._startedInteractionAtIndex;
-                var curPageDate = this.pageData[startIndex];
-                var pageWidth = curPageDate ? curPageDate.r - curPageDate.l : this.viewportWidth;
-                var veloOverflow = absVelocity - ((this.viewportWidth + pageWidth) / 2);
-                var minNext = (1300 + pageWidth) / 5;
-                var maxNext = (8000 + pageWidth) / 5;
-                var offsetToVelocityTargetPos = velocity * 0.5;
-
-
-                // boost small velocities to make, to make it easier to jump with slower movements
-                if(absVelocity < pageWidth * 1.1){
-                    offsetToVelocityTargetPos *= absVelocity < pageWidth ? 2 : 1.5;
-                    isBoosted = true;
-                } else
-                // reduce large velocities
-                if(absVelocity > pageWidth * 1.5){
-                    veloReductionRate *= veloOverflow;
-                    veloReductionRate *= offsetToVelocityTargetPos < 0 ? 1 : -1;
-                    offsetToVelocityTargetPos += veloReductionRate;
-                    isReduced = true;
-                }
-
-                nearestTargetIndex = this.getNearest(offsetToVelocityTargetPos);
-
-                isSame = nearestTargetIndex == startIndex;
-                isOver = nearestTargetIndex != startIndex + dirNum && nearestTargetIndex != startIndex;
-
-                if(
-                    //if it is is under corrected
-                    (isReduced && isSame) ||
-                    // if it is over corrected
-                    (isBoosted && isOver) ||
-                    // some hardcoded values
-                    (minNext < absVelocity && isSame) ||
-                    (isOver && maxNext > absVelocity)
-                ){
-                    nearestTargetIndex = startIndex + dirNum;
-
-                    if(!this.isCarousel){
-                        nearestTargetIndex = Math.min(Math.max(nearestTargetIndex, 0), this.pageLength - 1);
-                    }
-                }
-
-                if(mandatorySnap){
-                    nearestTargetIndex = Math.max(startIndex-1, Math.min(startIndex+1, nearestTargetIndex));
-                }
-
-                this.selectIndex(nearestTargetIndex, {
-                    type: 'spring'
-                });
-            },
-
             /**
              * Returns whether scroller has reached the start point
              * @param [position] {Number} If no pos is given the current position is used
@@ -961,7 +867,7 @@
             },
             _dragStart: function(){
                 this.isAnimated = false;
-                this._userInteractionStarted();
+                $(this.scroller).stop();
             },
             _dragMove: function(draggy){
                 if (draggy.relPos.x) {
@@ -977,16 +883,13 @@
 
                 if (draggy.horizontalVel < 9) {
 
+                    dir = 0;
                     if (draggy.horizontalVel < 9 && draggy.horizontalVel < 9) {
                         draggy.allowClick();
                     }
                 }
 
-                this._snapWithSpring(this._velocity, this.options.mandatorySnap);
-            },
-            _userInteractionStarted: function(){
-                this._startedInteractionAtIndex = this.getNearest();
-                this.stopScrollerAnimation();
+                this._snapTo(dir, draggy.horizontalVel, draggy.movedPos.x);
             },
             _setupTouch: function () {
                 if (!$.fn.draggy) {
@@ -1066,11 +969,8 @@
                     this._setOrder(curCell.elem, order);
                 }
             },
-
             _setPos: function (pos) {
                 var shouldWrapLeft, shouldWrapRight, unWrapLeft, unWrapRight, unitPos;
-
-                this._updateVelocity(this._pos, pos);
 
                 if (this.isCarousel) {
                     if (pos >= this.maxWrapLeft || pos <= this.minWrapRight) {
@@ -1117,35 +1017,6 @@
                 }
 
                 this.onslide.fireWith(this);
-            },
-
-            /**
-             * updates the internal scroll velocity in px/second
-             * @param  {Number} previousPos
-             * @param  {Number} newPos
-             * @param  {boolean} hard       disables filter / mixing
-             */
-            _updateVelocity: function(previousPos, newPos, hard){
-                var that = this;
-
-                clearTimeout(this._resetVelocityTimeout);
-
-                if(!this._latestVelocityUpdate){
-                    this._latestVelocityUpdate = Date.now();
-                    this._velocity = 0;
-                    return;
-                }
-
-                // calc the new velocity (add +1 for edge cases)
-                var currentVelocity = (newPos - previousPos) / (Date.now() - this._latestVelocityUpdate + 1) * 1000;
-
-                this._velocity = !hard ? this._velocity * 0.2 + currentVelocity * 0.8 : currentVelocity;
-                this._latestVelocityUpdate = Date.now();
-
-                this._resetVelocityTimeout = setTimeout(function(){
-                    that._velocity = 0;
-                    that._latestVelocityUpdate = null;
-                }, 100);
             },
             updateCells: function () {
                 var that = this;
