@@ -185,7 +185,13 @@ if (!window.rb) {
      * A jQuery/rb.$ plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
      * Also does not animate padding, margin, borders (use child elements)
      * @function external:"jQuery.fn".rbSlideDown
-     * @param options {object} All jQuery animate options
+     * @param options {object} All jQuery animate options and options below
+     * @param options.beforeCalculation {Function}
+     * @param options.autoDuration {Boolean}
+     * @param options.durationMax=900 {Number}
+     * @param options.durationBase=350 {Number}
+     * @param options.durationMultiplier=0.3 {Number}
+     * @param options.getHeight {Boolean}
      * @returns {jQueryfiedDOMList|Number}
      */
     $.fn.rbSlideDown = function (options) {
@@ -207,19 +213,34 @@ if (!window.rb) {
                     }
                 },
             });
+
+            if (opts.easing && !rb.$.easing[opts.easing]) {
+                rb.addEasing(opts.easing);
+            }
         }
 
         this.each(function () {
             var endValue;
             var $panel = $(this);
-            var startHeight = this.clientHeight + 'px';
+            var startHeight = $panel.innerHeight() + 'px';
 
             $panel.css({overflow: 'hidden', display: 'block', height: 'auto', visibility: 'inherit'});
 
-            endValue = this.clientHeight;
+            if(options.beforeCalculation){
+                options.beforeCalculation($panel);
+            }
+
+            endValue = $panel.innerHeight();
 
             if(options.getHeight){
                 ret = endValue;
+            }
+
+            if(options.autoDuration){
+                opts.duration = Math.min(
+                    (opts.durationBase || 350) + ((endValue - startHeight) * (opts.durationMultiplier || 0.3)),
+                    opts.durationMax || 900
+                );
             }
 
             $panel

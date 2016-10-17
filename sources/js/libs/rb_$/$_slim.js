@@ -835,6 +835,14 @@
     }
 
     if (!window.rb.$) {
+        /**
+         * @memberOf rb
+         * @type Function
+         *
+         * @param elements {String|Element|NodeList|Array]
+         *
+         * @returns {jQueryfiedDOMList}
+         */
         window.rb.$ = Dom;
     }
 

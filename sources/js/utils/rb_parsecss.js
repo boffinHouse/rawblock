@@ -73,5 +73,16 @@
         return rb.jsonParse(styles);
     };
 
+    rb.enableCustomCss = function(){
+        Object.assign(rb.Component.prototype, {
+            parseCSSOptions: function(){
+                return rb.parseComponentCss(this.element, this.origName, this._CssCfgExpando);
+            },
+            hasCssCfgChanged: function(){
+                return rb.hasComponentCssChanged(this.element, this.origName, this._CssCfgExpando);
+            },
+        });
+    };
+
     return rb.parseCss;
 }));
