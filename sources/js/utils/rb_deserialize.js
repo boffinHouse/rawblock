@@ -12,7 +12,9 @@
     var regQ = /^\?/;
 
     var addProps = function(param){
-        if(!param) return;
+        if(!param){
+            return;
+        }
 
         param = param.split('=');
 
