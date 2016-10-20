@@ -310,8 +310,9 @@
                 if(!this.options.wheel || !rb.debounce){return;}
 
                 var startValue;
-                var _isWheelStarted = false;
                 var that = this;
+                var _isWheelStarted = false;
+                var isScrollerDir = null;
                 var options = this.options;
 
                 var wheelAnalyzer = rb.WheelAnalyzer();
@@ -321,7 +322,12 @@
                     momentumBlocked = false;
                 };
 
-                var wheelEnd = function(){
+                var reset = function(){
+                    _isWheelStarted = false;
+                    isScrollerDir = null;
+                };
+
+                var wheelDirEnd = function(){
                     // prevent normal wheelEnd, when momentum is handled
                     if(momentumBlocked){
                         return;
@@ -331,7 +337,7 @@
                     var diff = that._pos - startValue;
                     var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 300);
 
-                    _isWheelStarted = false;
+                    reset();
 
                     if(nearestIndex != that._selectedIndex || Math.abs(diff) < threshold){
                         that.selectedIndex = nearestIndex;
@@ -342,25 +348,42 @@
                     }
                 };
 
-                var wheelEndDebounced = rb.debounce(wheelEnd, {delay: 66});
+                var wheelDirEndDebounced = rb.debounce(wheelDirEnd, {delay: 77});
+                var wheelEndDebounced = rb.debounce(reset, {delay: 99});
 
                 var wheelHandler = function(e){
+                    var x, y;
 
-                    if(!e.deltaMode && !options.switchedOff && options.wheel && Math.abs(e.deltaX) >= Math.abs(e.deltaY)){
-                        wheelAnalyzer.feedWheel(e);
+                    if(!e.deltaMode && !options.switchedOff && options.wheel){
 
-                        if(!momentumBlocked){
-                            if(!_isWheelStarted){
-                                _isWheelStarted = true;
-                                startValue = that._pos;
-                                $(that.scroller).stop();
+                        if(isScrollerDir !== false){
+                            x = Math.abs(e.deltaX);
+                            y = Math.abs(e.deltaY);
+
+                            if(isScrollerDir == null && x != y){
+                                isScrollerDir = x > y;
                             }
 
-                            that._setRelPos(e.deltaX * -1, true);
+                            if(x >= y || x){
+
+                                wheelAnalyzer.feedWheel(e);
+
+                                if(!momentumBlocked){
+                                    if(!_isWheelStarted){
+                                        _isWheelStarted = true;
+                                        startValue = that._pos;
+                                        $(that.scroller).stop();
+                                    }
+
+                                    that._setRelPos(e.deltaX * -1, true);
+                                    wheelDirEndDebounced();
+                                }
+
+                                e.preventDefault();
+                            }
+                        } else {
                             wheelEndDebounced();
                         }
-
-                        e.preventDefault();
                     }
                 };
 
@@ -385,7 +408,8 @@
                     .subscribe('interrupted', unblockMomentum)
                     .subscribe('recognized', function(data){
                         momentumBlocked = true;
-                        _isWheelStarted = false;
+
+                        reset();
 
                         // from px/s -> px/300ms
                         var velocity = data.deltaVelocity / 1000 * 300 * -1;
