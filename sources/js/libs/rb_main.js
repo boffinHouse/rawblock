@@ -1337,7 +1337,7 @@ if (!window.rb) {
         };
     })();
 
-    rb.addLog(rb, 1);
+    rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
 
     var cbs = [];
     var setupClick = function () {
@@ -2298,19 +2298,24 @@ if (!window.rb) {
             /* jshint loopfunc: true */
             (function (eventsObjs, methods) {
                 var handler = function(){
-                    var i, len, method;
+                    var i = 0;
+                    var args = Array.from(arguments);
 
-                    for(i = 0, len = methods.length; i < len; i++){
-                        method = methods[i];
+                    var runSuper = function(){
+                        var method = methods[i];
 
                         if(typeof method == 'string'){
                             method = that[method];
                         }
 
-                        if(method.apply(that, arguments) === false){
-                            break;
-                        }
-                    }
+                        i++;
+
+                        return method ? method.apply(that, args) : null;
+                    };
+
+                    args.push(runSuper);
+
+                    return runSuper();
                 };
 
                 eventsObjs.forEach(function(eventObj){
