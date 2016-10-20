@@ -182,9 +182,9 @@
         assert.equal(typeof modules.ext2.module.ext1, 'undefined');
         assert.equal(typeof modules.ext3.module.ext3, 'function');
 
-        assert.equal(modules.ext3.module.events.inherit, 'ext1');
-        assert.equal(modules.ext3.module.events.override, 'ext3');
-        assert.equal(modules.ext3.module.events.initial, 'ext3');
+        assert.deepEqual(modules.ext3.module.events.inherit, ['ext1']);
+        assert.deepEqual(modules.ext3.module.events.override, ['ext3', 'ext1']);
+        assert.deepEqual(modules.ext3.module.events.initial, ['ext3', 'ext1']);
         assert.equal(modules.ext3.module.events.newone, 'ext3');
 
         assert.equal(modules.ext2.module.events.inherit, 'ext1');

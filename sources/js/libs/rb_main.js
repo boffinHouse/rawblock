@@ -1582,7 +1582,6 @@ if (!window.rb) {
     }
     /* end: html escape */
 
-
     /**
      * Returns yes, if condition is true-thy no/empty string otherwise. Can be used inside of [`rb.template`]{@link rb.template}
      * @param condition
@@ -1617,8 +1616,39 @@ if (!window.rb) {
     var hooksCalled = {};
     var unregisteredFoundHook = {};
 
+    var extendEvents = function(value, args){
+        var prop;
+        var toMerge = args.shift();
+
+        if(toMerge){
+            for(prop in toMerge){
+                if(!value[prop]){
+                    value[prop] = [];
+                }
+
+                if(Array.isArray(toMerge[prop])){
+                    value[prop] = toMerge[prop].concat(value[prop]);
+                } else {
+                    value[prop].unshift(toMerge[prop]);
+                }
+            }
+        }
+
+        if(args.length){
+            extendEvents(value, args);
+        }
+
+        return value;
+    };
     var extendStatics = function (Class, proto, SuperClasss, prop) {
-        var value = $.extend(true, {}, SuperClasss[prop], proto[prop], Class[prop]);
+        var value;
+        var classObj = SuperClasss[prop] == Class[prop] ? null : Class[prop];
+
+        if(prop == 'events'){
+            value = extendEvents({}, [SuperClasss[prop], proto[prop], classObj]);
+        } else {
+            value = $.extend(true, {}, SuperClasss[prop], proto[prop], classObj);
+        }
 
         Object.defineProperty(Class, prop, {
             configurable: true,
@@ -1809,6 +1839,8 @@ if (!window.rb) {
 
         rb.ready.resolve();
     };
+
+    rb._extendEvts = extendEvents;
 
     rb.ready = rb.deferred();
 
@@ -2264,17 +2296,22 @@ if (!window.rb) {
             eventsObjs = rb.parseEventString(evt);
 
             /* jshint loopfunc: true */
-            (function (eventsObjs, method) {
-                var handler;
+            (function (eventsObjs, methods) {
+                var handler = function(){
+                    var i, len, method;
 
-                handler = (typeof method == 'string') ?
-                    function (e) {
-                        return that[method].apply(that, arguments);
-                    } :
-                    function () {
-                        return method.apply(that, arguments);
+                    for(i = 0, len = methods.length; i < len; i++){
+                        method = methods[i];
+
+                        if(typeof method == 'string'){
+                            method = that[method];
+                        }
+
+                        if(method.apply(that, arguments) === false){
+                            break;
+                        }
                     }
-                ;
+                };
 
                 eventsObjs.forEach(function(eventObj){
                     var prop, eventName;
@@ -3119,7 +3156,7 @@ if (!window.rb) {
             Object.assign(Class, prop.statics);
         }
 
-        Class.events = $.extend(true, Class.events || {}, prop.events);
+        Class.events = rb._extendEvts(Class.events || {}, [prop.events]);
 
         if (prop.events) {
             prop.events = null;
