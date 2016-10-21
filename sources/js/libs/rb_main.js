@@ -843,7 +843,7 @@ if (!window.rb) {
             event.delegatedTarget = target;
             event.delegateTarget = target;
 
-            ret = handler.apply(this, arguments);
+            ret = handler.apply(context, args);
 
             event.delegatedTarget = oldDelegatedTarget;
             event.delegateTarget = oldDelegateTarget;
