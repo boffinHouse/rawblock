@@ -1884,6 +1884,53 @@ if (!window.rb) {
         live.searchModules();
     };
 
+    var registerModule = function(name, Class, options){
+        var proto = Class.prototype;
+        var superProto = Object.getPrototypeOf(proto);
+        var superClass = superProto.constructor;
+
+        if (proto instanceof rb.Component) {
+            extendStatics(Class, proto, superClass, 'defaults');
+            extendStatics(Class, proto, superClass, 'events');
+
+            proto._CssCfgExpando = rb.Symbol('_CssCfgExpando');
+
+            if (!proto.hasOwnProperty('name')) {
+                proto.name = name;
+            }
+        }
+
+        if (rb.components[name]) {
+            rb.log(name + ' already exists.');
+        }
+
+        rb.components[name] = Class;
+
+        if (name.charAt(0) == '_') {
+            return;
+        }
+
+        if (!started && !implicitlyStarted) {
+            implicitlyStarted = true;
+            setTimeout(function () {
+                if (!elements && live.autoStart) {
+                    $(function () {
+                        if (!elements) {
+                            setTimeout(function () {
+                                if (!elements) {
+                                    live.init();
+                                }
+                            });
+                        }
+                    });
+                }
+            }, 9);
+        } else if (elements) {
+            live.searchModules();
+        }
+
+        return Class;
+    };
     /**
      * Registers a component class with a name and manages its livecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an `attached` or `detached` instance method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
      *
@@ -1894,6 +1941,7 @@ if (!window.rb) {
      * @memberof rb
      * @param {String} name The name of your component.
      * @param Class {Class} The Component class for your component.
+     *
      * @return Class {Class}
      *
      * @example
@@ -1927,55 +1975,15 @@ if (!window.rb) {
      * rb.live.register('time', Time);
      *
      */
-    live.register = function (name, Class, _noCheck) {
-        var proto = Class.prototype;
-        var superProto = Object.getPrototypeOf(proto);
-        var superClass = superProto.constructor;
-
-        if (proto instanceof rb.Component) {
-            extendStatics(Class, proto, superClass, 'defaults');
-            extendStatics(Class, proto, superClass, 'events');
-
-            proto._CssCfgExpando = rb.Symbol('_CssCfgExpando');
-
-            if (!proto.hasOwnProperty('name')) {
-                proto.name = name;
-            }
+    live.register = function (name, Class, options) {
+        if(options && options.asImportHook){
+            live.addImportHook(name, Class);
+        } else {
+            registerModule(name, Class, options);
         }
-
-        if (rb.components[name]) {
-            rb.log(name + ' already exists.');
-        }
-
-        rb.components[name] = Class;
-
-        if (name.charAt(0) == '_') {
-            return;
-        }
-
-        if (!_noCheck) {
-            if (!started && !implicitlyStarted) {
-                implicitlyStarted = true;
-                setTimeout(function () {
-                    if (!elements && live.autoStart) {
-                        $(function () {
-                            if (!elements) {
-                                setTimeout(function () {
-                                    if (!elements) {
-                                        live.init();
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }, 9);
-            } else if (elements) {
-                live.searchModules();
-            }
-        }
-
-        return Class;
     };
+
+
 
     /**
      * Allows to add import callbacks for not yet registered components. The importCallback is only called once per component class name. The names parameter is either the component name or '*' as a wildcard. In case names is an array of strings these are treated as aliases for the same module. (rb-plugins/rb_packageloader automatically adds a wildcard hook.) If only importCallback is passed it will be also treated as a wildcard.
@@ -2033,6 +2041,19 @@ if (!window.rb) {
         } else {
             add(names);
         }
+    };
+
+    live.import = function(moduleId){
+        var hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*']);
+        if (!rb.components[moduleId] && hook && !hooksCalled[moduleId]) {
+            hooksCalled[moduleId] = true;
+            /* jshint loopfunc: true */
+            hook(moduleId, moduleId, function () {
+                live._failed[moduleId] = true;
+            });
+        }
+
+        return rb.components[moduleId] || hook;
     };
 
     /**
@@ -2118,6 +2139,10 @@ if (!window.rb) {
                 moduleId = modulePath.split('/');
                 moduleId = moduleId[moduleId.length - 1];
 
+                if (!rb.components[moduleId]) {
+                    hook = live.import(moduleId);
+                }
+
                 if (rb.components[moduleId]) {
                     live.create(element, rb.components[moduleId]);
                     removeElements.push(element);
@@ -2125,18 +2150,7 @@ if (!window.rb) {
                 else if (live._failed[moduleId]) {
                     failed(element, moduleId);
                 }
-                else if ((hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*']))) {
-                    if (!hooksCalled[modulePath]) {
-                        hooksCalled[modulePath] = true;
-                        /* jshint loopfunc: true */
-                        hook(moduleId, modulePath, (function (element, moduleId) {
-                            return function () {
-                                failed(element, moduleId);
-                            };
-                        })(element, moduleId), element);
-                    }
-                }
-                else {
+                else if(!hook) {
                     failed(element, moduleId);
                 }
             }
@@ -3142,7 +3156,7 @@ if (!window.rb) {
 
     rb.Component.prototype.getElementsFromString = rb.Component.prototype.getElementsByString;
 
-    rb.Component.extend = function (name, prop, noCheck) {
+    var componentExtend = function (name, prop, noCheck) {
         var Class = rb.Class.extend.call(this, prop);
 
         if (prop.statics) {
@@ -3151,6 +3165,21 @@ if (!window.rb) {
         }
 
         live.register(name, Class, noCheck);
+        return Class;
+    };
+
+    rb.Component.extend = function (name, prop, options) {
+        var Class;
+        var that = this;
+        if(options && options.asImportHook){
+            Class = live.addImportHook(name, function(){
+                options.asImportHook = false;
+                return componentExtend.call(that, name, prop, options);
+            });
+        } else {
+            Class = componentExtend.call(that, name, prop, options);
+        }
+
         return Class;
     };
 
@@ -3387,8 +3416,7 @@ if (!window.rb) {
 
                 return this.target;
             },
-        },
-        true
+        }
     );
 
 })(window, document);
