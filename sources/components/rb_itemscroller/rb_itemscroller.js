@@ -590,6 +590,11 @@
                 } else {
                     position *= -1;
                 }
+
+                if(!this.isCarousel && position < this.minScroll){
+                    position = this.minScroll;
+                }
+
                 return (position || 0);
             },
             /**

@@ -1883,54 +1883,6 @@ if (!window.rb) {
 
         live.searchModules();
     };
-
-    var registerModule = function(name, Class, options){
-        var proto = Class.prototype;
-        var superProto = Object.getPrototypeOf(proto);
-        var superClass = superProto.constructor;
-
-        if (proto instanceof rb.Component) {
-            extendStatics(Class, proto, superClass, 'defaults');
-            extendStatics(Class, proto, superClass, 'events');
-
-            proto._CssCfgExpando = rb.Symbol('_CssCfgExpando');
-
-            if (!proto.hasOwnProperty('name')) {
-                proto.name = name;
-            }
-        }
-
-        if (rb.components[name]) {
-            rb.log(name + ' already exists.');
-        }
-
-        rb.components[name] = Class;
-
-        if (name.charAt(0) == '_') {
-            return;
-        }
-
-        if (!started && !implicitlyStarted) {
-            implicitlyStarted = true;
-            setTimeout(function () {
-                if (!elements && live.autoStart) {
-                    $(function () {
-                        if (!elements) {
-                            setTimeout(function () {
-                                if (!elements) {
-                                    live.init();
-                                }
-                            });
-                        }
-                    });
-                }
-            }, 9);
-        } else if (elements) {
-            live.searchModules();
-        }
-
-        return Class;
-    };
     /**
      * Registers a component class with a name and manages its livecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an `attached` or `detached` instance method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
      *
@@ -1975,12 +1927,52 @@ if (!window.rb) {
      * rb.live.register('time', Time);
      *
      */
-    live.register = function (name, Class, options) {
-        if(options && options.asImportHook){
-            live.addImportHook(name, Class);
-        } else {
-            registerModule(name, Class, options);
+    live.register = function (name, Class, noCheck) {
+        var proto = Class.prototype;
+        var superProto = Object.getPrototypeOf(proto);
+        var superClass = superProto.constructor;
+
+        if (proto instanceof rb.Component) {
+            extendStatics(Class, proto, superClass, 'defaults');
+            extendStatics(Class, proto, superClass, 'events');
+
+            proto._CssCfgExpando = rb.Symbol('_CssCfgExpando');
+
+            if (!proto.hasOwnProperty('name')) {
+                proto.name = name;
+            }
         }
+
+        if (rb.components[name]) {
+            rb.log(name + ' already exists.');
+        }
+
+        rb.components[name] = Class;
+
+        if (name.charAt(0) == '_' || noCheck) {
+            return;
+        }
+
+        if (!started && !implicitlyStarted) {
+            implicitlyStarted = true;
+            setTimeout(function () {
+                if (!elements && live.autoStart) {
+                    $(function () {
+                        if (!elements) {
+                            setTimeout(function () {
+                                if (!elements) {
+                                    live.init();
+                                }
+                            });
+                        }
+                    });
+                }
+            }, 9);
+        } else if (elements) {
+            live.searchModules();
+        }
+
+        return Class;
     };
 
 
@@ -2608,6 +2600,7 @@ if (!window.rb) {
              */
             init: function (element, initialDefaults) {
                 var origName = this.name;
+
                 /**
                  * Reference to the main element.
                  * @type {Element}
@@ -2629,7 +2622,7 @@ if (!window.rb) {
 
                 this.parseOptions(this.options);
 
-                this.name = this.options.name || rb.jsPrefix + this.name;
+                this.name = this.options.name || rb.jsPrefix + origName;
                 this.jsName = this.options.jsName || origName;
 
                 this._evtName = this.jsName + 'changed';
@@ -2642,6 +2635,8 @@ if (!window.rb) {
                  * @type {Function|{}}
                  */
                 this.templates = rb.templates[this.jsName] || rb.templates[origName] || {};
+
+                this.beforeConstruct();
 
                 _setupEventsByEvtObj(this);
             },
@@ -2740,6 +2735,7 @@ if (!window.rb) {
 			 * }
              */
             events: {},
+            beforeConstruct: $.noop,
             /**
              * Shortcut to [`rb.getComponent`]{@link rb.getComponent}
              * @function
@@ -3156,7 +3152,7 @@ if (!window.rb) {
 
     rb.Component.prototype.getElementsFromString = rb.Component.prototype.getElementsByString;
 
-    var componentExtend = function (name, prop, noCheck) {
+    rb.Component.extend = function (name, prop, noCheck) {
         var Class = rb.Class.extend.call(this, prop);
 
         if (prop.statics) {
@@ -3165,21 +3161,6 @@ if (!window.rb) {
         }
 
         live.register(name, Class, noCheck);
-        return Class;
-    };
-
-    rb.Component.extend = function (name, prop, options) {
-        var Class;
-        var that = this;
-        if(options && options.asImportHook){
-            Class = live.addImportHook(name, function(){
-                options.asImportHook = false;
-                return componentExtend.call(that, name, prop, options);
-            });
-        } else {
-            Class = componentExtend.call(that, name, prop, options);
-        }
-
         return Class;
     };
 
