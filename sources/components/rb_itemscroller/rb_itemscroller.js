@@ -320,6 +320,7 @@
 
                 var unblockMomentum = function(){
                     momentumBlocked = false;
+                    reset();
                 };
 
                 var reset = function(){
@@ -1262,9 +1263,10 @@
             },
             _createCarouselPages: function () {
                 var i, len, pageData, curWidth, pageCorrect, negativeIndex, lastPos;
-                var viewport = this.viewportWidth;
 
+                var viewport = this.viewportWidth;
                 var wasCarousel = this.isCarousel;
+
                 this.posPages = {left: [], right: []};
                 this.posPages.right.rbCells = [];
                 this.posPages.left.rbCells = [];
@@ -1272,7 +1274,7 @@
                 this.isCarousel = false;
 
                 if(supportSomeOrder && this.options.carousel && this.pageData.length > 1 && (this.cellData[this.cellData.length - 1].l / 1.99) >= this.viewportWidth){
-                    this.isCarousel = (this.cellData[this.cellData.length - 1].l / 2.3) > this.viewportWidth;
+                    this.isCarousel = (this.cellData[this.cellData.length - 1].l / 2.4) > this.viewportWidth;
 
                     if(!this.isCarousel && this.cellData[0].w > this.viewportWidth - 1 && this.cellData[1].w > this.viewportWidth - 1){
                         this.isCarousel = true;
