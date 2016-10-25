@@ -389,7 +389,11 @@ if (!window.rb) {
                 if (delay < 0) {
                     delay = 0;
                 }
-                setTimeout(getAF, delay);
+                if(!delay && (options.read || options.write)){
+                    getAF();
+                } else {
+                    setTimeout(getAF, delay);
+                }
             }
 
         };
