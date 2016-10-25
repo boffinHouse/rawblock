@@ -276,7 +276,9 @@
                 if ($.fn.draggy) {
                     $(this.viewport).draggy('destroy');
                 }
+
                 var cellCSS = {};
+
                 this.$cells
                     .rbChangeState('active{-}done')
                     .rbChangeState('active')
@@ -453,6 +455,7 @@
             },
             _mainSetup: function () {
                 var that = this;
+
                 rb.rAFQueue(function () {
                     $(that.viewport).css({
                         position: 'relative',
@@ -665,7 +668,9 @@
                 if (typeof cellIndex != 'number') {
                     cellIndex = this.$cells.index(cellIndex);
                 }
+
                 var cellData = this.cellData[cellIndex];
+
                 return cellData ? cellData[cellData.isSide ? 'uIndex' : 'pageIndex'] : -1;
             },
             /**
@@ -682,14 +687,14 @@
              * @returns {Boolean|String} Returns either true|false or 'partial'
              */
             isCellVisible: function (cellIndex) {
-
                 var cellData, cellLeft, cellRight, roundingTolerance;
-                var inview = false;
 
+                var inview = false;
                 var viewportLeft = this._pos * -1;
                 var viewportRight = viewportLeft + this.viewportWidth;
                 var viewportLeftPartial = viewportLeft;
                 var viewportRightPartial = viewportRight;
+
                 if (typeof cellIndex != 'number') {
                     cellIndex = this.$cells.index(cellIndex);
                 }
@@ -711,6 +716,7 @@
                         inview = 'partial';
                     }
                 }
+
                 return inview;
             },
             _slideProgress: function (tween, progress) {
@@ -719,6 +725,7 @@
             _slideComplete: function () {
                 var curPage = this.pageData[this._selectedIndex + this.baseIndex];
                 var activeDone = rb.statePrefix + 'active' + rb.nameSeparator + 'done';
+
                 this.isAnimated = false;
                 this.$cells.removeClass(activeDone);
 
@@ -730,6 +737,7 @@
                         .addClass(rb.statePrefix + 'activated' + rb.nameSeparator + 'done')
                     ;
                 }
+
                 this._trigger(this._evtName + 'completed');
             },
             /**
@@ -737,6 +745,7 @@
              */
             selectNextIndex: function () {
                 var index = this._selectedIndex + 1 + this.baseIndex;
+
                 if (index < this.pageData.length) {
                     index -= this.baseIndex;
                     this.selectedIndex = index;
@@ -748,6 +757,7 @@
              */
             selectPrevIndex: function () {
                 var index = this._selectedIndex - 1 + this.baseIndex;
+
                 if (index >= 0) {
                     index -= this.baseIndex;
                     this.selectedIndex = index;
@@ -761,10 +771,13 @@
              */
             selectIndex: function (index, noAnimate) {
                 var trigger, duration, setPos, curIndex;
+
                 var countIndex = index + this.baseIndex;
+
                 if (!arguments.length || countIndex < 0 || countIndex >= this.pageData.length || !this.$cells.length) {
                     return this._selectedIndex;
                 }
+
                 if (this.options.switchedOff) {
                     return;
                 }
@@ -831,6 +844,7 @@
                 }
 
                 this._selectedIndex = index;
+
                 return this._selectedIndex;
             },
             /**
@@ -858,6 +872,7 @@
             },
             _updateControls: function (pos) {
                 var isEnd, isStart;
+
                 var curPage = this.pageData[this._selectedIndex + this.baseIndex];
 
                 if (!this.isCarousel || this.isCarouselChanged) {
@@ -936,9 +951,9 @@
                 });
             },
             _setRelPos: function (relPos, keepInBounds) {
-                var newPos, minOverflow, maxOverflow, overflow, overflow_max;
+                var minOverflow, maxOverflow, overflow, overflow_max;
 
-                newPos = this._pos + relPos;
+                var newPos = this._pos + relPos;
 
                 // reduce relative change, if the new pos is out of min/maxScroll
                 if(keepInBounds && !this.isCarousel){
@@ -1065,6 +1080,7 @@
                 }
 
                 this.calculateLayout();
+
                 rb.rAFQueue(function () {
                     that.$scroller.prepend(that.helperElem);
                     that.$cells.addClass(that.name + rb.elementSeparator + 'cell');
@@ -1128,8 +1144,8 @@
                 }
             },
             _calculatePages: function () {
-                var overScrollPos;
-                var halfViewport, roundingTolerance, i, len, absMinScroll, nextPageLeft, nextI, curPage, cellData;
+                var overScrollPos, halfViewport, roundingTolerance, i, len, absMinScroll, nextPageLeft, nextI, curPage, cellData;
+
                 var scrollStep = this.options.scrollStep;
                 var pageLength = this.pageLength;
                 var overkillLength = 0;
@@ -1233,8 +1249,8 @@
                 }
             },
             _adjustSelectedIndex: function(){
-                var getIndex;
                 var active = this.$cells.filter('.' + rb.statePrefix + 'active').get(0);
+
                 if(active){
                     this._selectedIndex = this.getPageIndexOfCell(active);
                 } else if(this.pageLength < this.selectedIndex){
@@ -1243,6 +1259,7 @@
             },
             _addPosCorrect: function (pageData, cells, pageCorrect, wrappedIndex) {
                 var i, len, cell;
+
                 for (i = 0, len = pageData.cells.length; i < len; i++) {
                     cell = pageData.cells[i];
                     cell.uIndex = wrappedIndex > -1 ? cell.pageIndex + wrappedIndex : wrappedIndex;
@@ -1250,6 +1267,7 @@
                     cell.ur = cell.r + pageCorrect;
                     cells.push(cell);
                 }
+
                 return {
                     carouselWidth: pageCorrect,
                     ol: pageData.l,
