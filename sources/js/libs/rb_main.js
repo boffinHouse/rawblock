@@ -2376,7 +2376,7 @@ if (!window.rb) {
                                 rb.events[descriptor[1]](delegateEvents[i][0], delegateEvents[i][1], delegateEvents[i][2], opts);
                             }
                         } else {
-                            rb.logWarn('element not found', opts['@'], that);
+                            rb.logInfo('element not found', opts['@'], that);
                         }
 
                         if(descriptor[0] == 'remove'){
