@@ -60,9 +60,16 @@
      * @returns {*}
      */
     rb.getPseudo = function(element){
-        var value = rb.getStyles(element, '::before').content;
-        if(!value && element){
-            value = rb.getStyles(element).content;
+        var beforeStyles = rb.getStyles(element, '::before');
+        var value = beforeStyles.content;
+        var isValueNone = value == 'none';
+
+        if((isValueNone || !value) && element){
+            if(isValueNone){
+                value = beforeStyles.fontFamily;
+            } else {
+                value = rb.getStyles(element).content;
+            }
         }
 
         return value;
