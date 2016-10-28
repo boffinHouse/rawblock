@@ -60,6 +60,9 @@
      * @returns {*}
      */
     rb.getPseudo = function(element){
+        // Get data from hidden elements can be tricky:
+        // IE11 on Win7 does return content: 'none' for before. But can return fontFamily for the before element. (Safari 10 does not return the right fontFamily!.)
+        // Safari 8 does return content: ''|null for before. But can only read content for the element itself.
         var beforeStyles = rb.getStyles(element, '::before');
         var value = beforeStyles.content;
         var isValueNone = value == 'none';

@@ -69,8 +69,9 @@
         var abort;
         var oReq = new XMLHttpRequest();
         var abortCb = $.Callbacks();
+        var promise = rb.deferred();
 
-        var promise = new Promise(function (resolve, reject) {
+        (function () {
             var header;
             var data = options.data || null;
             var value = {opts: options};
@@ -85,9 +86,9 @@
                 promise.catch(rb.logWarn);
 
                 if (isSuccess) {
-                    resolve(value, oReq);
+                    promise.resolve(value, oReq);
                 } else {
-                    reject(value, oReq);
+                    promise.reject(value, oReq);
                 }
                 oReq = null;
             });
@@ -96,7 +97,7 @@
                 if(isAborted){return;}
                 getData(oReq, value);
                 promise.catch(rb.logWarn);
-                reject(value, oReq);
+                promise.reject(value, oReq);
                 oReq = null;
             });
 
@@ -111,7 +112,7 @@
                     abortCb.fire(value);
 
                     if(options.rejectAbort){
-                        reject(value);
+                        promise.reject(value);
                     }
                 }
             };
@@ -145,17 +146,17 @@
                 options.beforeSend(oReq);
             }
 
+            promise.abort = abort;
+
+            promise.onAbort = abortCb.add;
+            promise.offAbort = abortCb.remove;
+
+            promise.getXhr = function(){
+                return oReq;
+            };
+
             oReq.send(data);
-        });
-
-        promise.abort = abort;
-
-        promise.onAbort = abortCb.add;
-        promise.offAbort = abortCb.remove;
-
-        promise.getXhr = function(){
-            return oReq;
-        };
+        })();
 
         return promise;
     };
