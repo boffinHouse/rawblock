@@ -16,9 +16,16 @@
     rb.storage = {};
 
     ['session', 'local'].forEach(function(type){
-        var storage = window[type + 'Storage'];
+        var storage;
         var testStr = rb.getID();
-
+        
+        try{
+            storage = window[type + 'Storage'];
+        }
+        catch(e){
+            storage = {};
+        }
+        
         rb.storage[type] = {
             set: function(name, value){
                 try {
