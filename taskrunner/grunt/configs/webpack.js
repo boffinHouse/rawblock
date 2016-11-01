@@ -43,15 +43,15 @@ module.exports = {
 		},
 		module: {
 			loaders: [
-				//{
-				//	test: /\.jsx?$|\.es6$|\.es2015/,
-				//	exclude: /node_modules/,
-				//	loader: 'babel-loader',
-				//	query: {
-				//		plugins: [],
-				//		presets: ['es2015-loose'],
-				//	},
-				//},
+				{
+					test: /\.jsx?$|\.es6$|\.es2015/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+					query: {
+						plugins: [],
+						presets: ['es2015-loose', 'es2016', 'es2017'],
+					},
+				},
 				{
 					test: /\.css$/,
 					loader: 'style-loader!css-loader',

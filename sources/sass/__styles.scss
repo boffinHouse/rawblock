@@ -5,14 +5,14 @@ Main Stylesheet
 
 **********************************************************/
 // Functions / Mixins
-@import "helpers/index";
+@import "../../helpers";
 
 // Variables
 @import "settings/**/*.scss";
 
 // Basic Formatting
 @import 'normalize.css';
-@import "basics/rb_basics";
+@import "../../basics";
 @import "basics/rb_utils_custom";
 
 //
@@ -29,4 +29,4 @@ Main Stylesheet
 ));
 
 // All Components
-@import "../components/**/*.scss !../components/**/tests/**/*.scss !../components/**/*.async.scss !../components/**/*.js.scss";
+@import "../../components/**/*.scss !../../components/**/tests/**/*.scss !../../components/**/*.async.scss !../../components/**/*.js.scss";

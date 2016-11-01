@@ -1,0 +1,136 @@
+/*
+ * Component: Popover
+**********************************************************/
+
+
+// Variables
+//**********************************************************
+$popover-margin: 10px;
+$popover-bg-color: #111;
+$popover-arrow-size: 10px;
+
+
+// JS Config
+//**********************************************************
+$popover-js-cfg: (
+    name: popover,
+);
+
+
+
+
+//----------------------------------------------------------
+
+
+.rb-popover {
+    visibility: hidden;
+    position: absolute;
+    z-index: $zindex-popover;
+    width: 200px;
+    opacity: 0;
+    transition: 400ms opacity, 400ms visibility;
+
+    &::after {
+        position: absolute;
+        width: $popover-arrow-size;
+        height: $popover-arrow-size;
+        content: "";
+        background: #{$popover-bg-color};
+        transform: rotate(45deg);
+    }
+
+    &.is-open {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    &,
+    &.is-top,
+    &.is-bottom.is-flipped-y {
+        margin: 0 0 #{$popover-margin} 0;
+
+        &::after {
+            top: auto;
+            right: 0;
+            bottom: -$popover-arrow-size / 2;
+            left: 0;
+            margin: 0 auto;
+        }
+    }
+
+    &.is-flipped-y,
+    &.is-bottom,
+    &.is-top.is-flipped-y {
+        margin: #{$popover-margin} 0 0 0;
+
+        &::after {
+            top: -$popover-arrow-size / 2;
+            right: 0;
+            bottom: auto;
+            left: 0;
+            margin: 0 auto;
+        }
+    }
+
+    &.is-right,
+    &.is-left.is-flipped-x {
+        margin: 0 0 0 #{$popover-margin};
+
+        &::after {
+            top: 0;
+            right: auto;
+            bottom: 0;
+            left: -$popover-arrow-size / 2;
+            margin: auto 0;
+        }
+    }
+
+    &.is-left,
+    &.is-right.is-flipped-x {
+        margin: 0 #{$popover-margin} 0 0;
+
+        &::after {
+            top: 0;
+            right: -$popover-arrow-size / 2;
+            bottom: 0;
+            left: auto;
+            margin: auto 0;
+        }
+    }
+
+    //Popover JS Configs
+    &.is-top {
+        @include rb-js-export(map_merge($popover-js-cfg, (
+            my: "center bottom",
+            at: "center top"
+        )));
+    }
+
+    &.is-bottom {
+        @include rb-js-export(map_merge($popover-js-cfg, (
+            my: "center top",
+            at: "center bottom"
+        )));
+    }
+
+    &.is-right {
+        @include rb-js-export(map_merge($popover-js-cfg, (
+            my: "left middle",
+            at: "right middle"
+        )));
+    }
+
+    &.is-left {
+        @include rb-js-export(map_merge($popover-js-cfg, (
+            my: "right middle",
+            at: "left middle"
+        )));
+    }
+}
+
+.popover-content {
+    position: relative;
+    z-index: 2;
+    padding: 10px;
+    background: #{$popover-bg-color};
+}

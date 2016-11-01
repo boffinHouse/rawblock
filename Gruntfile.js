@@ -77,7 +77,6 @@
             'jshint',
             'uglify:inline',
             'assemble:dev',
-            'handlebars:dev',
             'jst',
             'webpack:dev',
             'sync',

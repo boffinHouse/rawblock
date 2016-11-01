@@ -11,7 +11,12 @@ tests
 jsdoc-md
 grunt
 taskrunner
-sources/components/**/tests
+sources
+components/**/*.scss
+components/**/*.hbs
+components/**/*.html
+components/**/*.json
+components/**/*-test.html
 
 .sass-cache
 .css

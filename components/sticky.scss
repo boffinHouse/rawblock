@@ -1,0 +1,93 @@
+/*
+ * Component: Sticky
+**********************************************************/
+
+
+// Variables
+//**********************************************************
+
+
+// JS-Config
+//**********************************************************
+$sticky-js-cfg: (
+    name: sticky,
+    container: ".is-sticky-parent", // false || 'parent' || 'positionedParent' || '.selector'
+    switchedOff: false,
+    topOffset: false,
+    bottomOffset: false,
+    progress: 0,
+    childSel: "find(.sticky-element)",
+    setWidth: true,
+    resetSwitchedOff: true,
+    childStyle: "",
+);
+
+
+
+//----------------------------------------------------------
+
+
+.rb-sticky {
+    @include rb-js-export(map_merge($sticky-js-cfg, (
+        topOffset: 0,
+        bottomOffset: false,
+    )));
+    //[1] DONT CHANGE: important set properties shouldn't be changed, use an outer or inner element to apply does styles
+    //[2] Default is top
+    float: none !important; //[1]
+    position: static;
+    z-index: 5;
+    top: auto;
+    right: auto !important; //[1]
+    bottom: auto;
+    left: auto !important; //[1]
+    padding: 0 !important; //[1]
+    backface-visibility: hidden;
+    border: none !important; //[1]
+
+    &.is-bottom {
+        @include rb-js-export(map_merge($sticky-js-cfg, (
+            bottomOffset: 0,
+            topOffset: false,
+        )));
+    }
+
+    &.is-fixed {
+        position: fixed !important;
+    }
+
+    &.is-top-150 {
+        @include rb-js-export(map_merge($sticky-js-cfg, (
+            topOffset: 150,
+            bottomOffset: false,
+        )));
+    }
+
+    &.is-bottom-15 {
+        @include rb-js-export(map_merge($sticky-js-cfg, (
+            bottomOffset: 150,
+            topOffset: false,
+        )));
+    }
+
+    &.progress-showcase {
+        @include exportToJS(map-merge($sticky-js-cfg, (
+        	progress: 100
+        )));
+        height: auto;
+        transition: 300ms background-color;
+
+        &.is-fixed-progressed {
+            background: #600;
+        }
+
+        .sticky-element {
+            @include exportToJS((
+                fontSize: 12,
+                minHeight: 50,
+            ));
+            min-height: 100px;
+            font-size: 18px;
+        }
+    }
+}

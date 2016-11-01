@@ -21,7 +21,7 @@
                         <div class="u-size-20">
                             <ul>
                                 {{#each pages }}
-                                    {{#contains basename "zdocs_"}}
+                                    {{#contains basename "_page"}}
                                         <li><a href ="{{ basename }}.html">{{data.title}}</a></li >
                                     {{/contains}}
                                 {{/each  }}
