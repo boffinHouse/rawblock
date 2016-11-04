@@ -41,20 +41,6 @@
         return moduleId;
     };
 
-    var addHook = function () {
-        if (rb.live && rb.live.addImportHook) {
-            rb.live.addImportHook('*', function (moduleId, moduleAttribute, reject) {
-                rb.loadPackage(moduleAttribute).then(function () {
-                    if (rb.components[moduleId]) {
-                        reject();
-                    }
-                });
-            });
-        } else {
-            setTimeout(addHook, 4);
-        }
-    };
-
     rb.packageConfig = packageConfig;
 
     /**
@@ -121,8 +107,6 @@
             addPackage(packageName);
         }
     };
-
-    addHook();
 
     return rb.loadPackage;
 

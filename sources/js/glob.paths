@@ -1,3 +1,4 @@
 ../../components/**/*.js
+../../utils/**/*.js
 !../../components/**/*.lazy.js
 !../../components/**/*-tests.js

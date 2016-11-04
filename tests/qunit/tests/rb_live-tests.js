@@ -124,7 +124,7 @@
 				assert.ok(Dummy.prototype.init.calledBefore(Dummy.prototype.attached));
 				assert.notOk(Dummy.prototype.detached.calledOnce);
 
-				return QUnit.afterAF(50)
+				return QUnit.afterAF(66)
 					.then(function(){
 						assert.equal(rb.$('.js-rb-live').length, 0);
 						assert.equal(rb.$('.js-rb-attached').length, 3);

@@ -232,7 +232,7 @@
             var done = assert.async();
 
             rbTest
-                .load('fixtures/itemscroller-fixture.html')
+                .load('itemscroller-fixture-tests.html')
                 .then(function () {
                     rbTest.win.rb.live.init();
                     var component = rbTest.win.rb.$('.rb-itemscroller')

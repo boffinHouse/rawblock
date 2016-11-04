@@ -5,7 +5,7 @@
  */
 module.exports = {
 	dist : {
-		src: ['sources/**/*.js', 'sources/js/libs/readme.md', '!sources/assemble/**/*.js'],
+		src: ['utils/**/*.js', 'js.md', '!sources/assemble/**/*.js'],
 		options: {
 			destination: 'jsdoc',
 			template : 'node_modules/jsdoc-oblivion/template',

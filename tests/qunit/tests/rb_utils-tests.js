@@ -200,49 +200,49 @@
         ;
     });
 
-    QUnit.test("rb.elementResize", function( assert ){
-        var done = assert.async();
-        var $mainElement;
-        var i = 0;
-        var fn = function(){
-            i++;
-        };
-        var content = '<div id="test-wrapper" style="position: relative; width: 300px; height: 30px;">' +
-            '<div style="height: 100%"></div>' +
-            '</div>';
-
-        rb.$('#qunit-fixture').html(content);
-
-        $mainElement = rb.$('#test-wrapper');
-        $mainElement.find('div').elementResize('add', fn);
-        assert.equal(i, 0);
-
-        QUnit.afterAF(19)
-            .then(function(){
-                return QUnit.afterAF(9);
-            })
-            .then(function(){
-                $mainElement.css({width: '350px'});
-                return QUnit.afterAF(239).then(function(){
-                    assert.equal(i, 1);
-                });
-            })
-            .then(function(){
-
-                $mainElement.css({width: '50px'});
-                return QUnit.afterAF(239).then(function(){
-                    assert.equal(i, 2);
-                });
-            })
-            .then(function(){
-                $mainElement.css({height: '250px'});
-                return QUnit.afterAF(239).then(function(){
-                    assert.equal(i, 3);
-                });
-            })
-            .then(done)
-        ;
-    });
+    // QUnit.test("rb.elementResize", function( assert ){
+    //     var done = assert.async();
+    //     var $mainElement;
+    //     var i = 0;
+    //     var fn = function(){
+    //         i++;
+    //     };
+    //     var content = '<div id="test-wrapper" style="position: relative; width: 300px; height: 30px;">' +
+    //         '<div style="height: 100%"></div>' +
+    //         '</div>';
+    //
+    //     rb.$('#qunit-fixture').html(content);
+    //
+    //     $mainElement = rb.$('#test-wrapper');
+    //     $mainElement.find('div').elementResize('add', fn);
+    //     assert.equal(i, 0);
+    //
+    //     QUnit.afterAF(19)
+    //         .then(function(){
+    //             return QUnit.afterAF(9);
+    //         })
+    //         .then(function(){
+    //             $mainElement.css({width: '350px'});
+    //             return QUnit.afterAF(239).then(function(){
+    //                 assert.equal(i, 1);
+    //             });
+    //         })
+    //         .then(function(){
+    //
+    //             $mainElement.css({width: '50px'});
+    //             return QUnit.afterAF(239).then(function(){
+    //                 assert.equal(i, 2);
+    //             });
+    //         })
+    //         .then(function(){
+    //             $mainElement.css({height: '250px'});
+    //             return QUnit.afterAF(239).then(function(){
+    //                 assert.equal(i, 3);
+    //             });
+    //         })
+    //         .then(done)
+    //     ;
+    // });
 
 
     QUnit.test("rb. .u-clickarea delegate", function( assert ){

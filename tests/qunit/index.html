@@ -35,35 +35,12 @@
 <script src="qunit-helper.js"></script>
 <script src="qunit-config.js"></script>
 
-<script>
-    (function () {
-        if (location.search.indexOf('jqueryinsteadrb') != -1) {
-            document.write('<script src="https://code.jquery.com/jquery-3.0.0.js"><\/script>');
-        } else if (location.search.indexOf('jquerysliminsteadrb') != -1){
-            document.write('<script src="https://code.jquery.com/jquery-3.0.0.slim.js"><\/script>');
-            document.write('<script src="../../sources/js/libs/rb_$/$_fx.js"><\/script>');
-        } else {
-            document.write('<script src="../../sources/js/libs/rb_$/$_slim.js"><\/script>');
-            document.write('<script src="../../sources/js/libs/rb_$/$_fx.js"><\/script>');
-        }
-    })();
-</script>
-
 <!-- scripts to test -->
-<script src="../../sources/js/libs/rb_crucial.js" data-cover=""></script>
-<script src="../../sources/js/libs/rb_main.js" data-cover=""></script>
+<script src="../../dev/js/_crucial-behavior.js"></script>
+<script src="../../dev/js/_main-behavior.js"></script>
 <script>
     rb.live.autoStart = false;
 </script>
-<script src="../../sources/js/utils/rb_draggy.js"></script>
-<script src="../../sources/js/utils/rb_scrollbarwidth.js"></script>
-<script src="../../sources/js/utils/rb_scrollintoview.js"></script>
-<script src="../../sources/js/utils/rb_elemresize.js"></script>
-
-<!--<script src="../sources/components/rb_itemscroller/rb_itemscroller.old" data-cover=""></script>-->
-<!--<script src="../sources/components/rb_itemscroller/rb_itemscroller-pagination.js" data-cover=""></script>-->
-<!--<script src="../sources/components/rb_itemscroller/rb_itemscroller-player.js" data-cover=""></script>-->
-<!--<script src="../sources/components/rb_itemscroller/rb_itemscroller-queries.js" data-cover=""></script>-->
 
 <!-- TESTS -->
 <script>
@@ -78,7 +55,7 @@
         }
 
         if (supportsClass) {
-            document.write('<script src="tests\/rb_component-tests.es6.js"><\/script>');
+//            document.write('<script src="tests\/rb_component-tests.es6.js"><\/script>');
         }
     })();
 </script>

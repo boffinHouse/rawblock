@@ -4,5 +4,5 @@
  * {@link} https://github.com/gruntjs/grunt-contrib-qunit/
  */
 module.exports = {
-	files: ['tests/funit/*.html', 'sources/components/**/tests/funit/*.html', '!fixtures/*.html'],
+	files: ['tests/qunit/*.html', 'components/**/*-tests.html', '!fixtures/*.html', '!components/**/*-fixture-tests.html'],
 };
