@@ -43,9 +43,14 @@
 
         grunt.registerTask('test', [
             'eslint',
-            //'connect:casper',
-            //'phantomcss',
             //'qunit',
+        ]);
+
+        grunt.registerTask('prepublish', [
+            'eslint',
+            'qunit',
+            'babel',
+            'copy:es5',
         ]);
 
         grunt.registerTask('svg', [
@@ -74,7 +79,7 @@
             //'csscomb',
             'svg',
             'css',
-            'jshint',
+            'eslint',
             'uglify:inline',
             'assemble:dev',
             'jst',

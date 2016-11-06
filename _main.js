@@ -187,7 +187,7 @@ if (!window.rb) {
      * @function external:"jQuery.fn".rbSlideDown
      * @param options {object} All jQuery animate options and options below
      * @param options.beforeCalculation {Function}
-     * @param options.autoDuration {Boolean}
+     * @param options.autoDuration {Boolean} deprecated use duration='auto' instead
      * @param options.durationMax=900 {Number}
      * @param options.durationBase=350 {Number}
      * @param options.durationMultiplier=0.3 {Number}
@@ -236,7 +236,7 @@ if (!window.rb) {
                 ret = endValue;
             }
 
-            if(options.autoDuration){
+            if(options.autoDuration || options.duration == 'auto'){
                 opts.duration = Math.min(
                     (opts.durationBase || 350) + ((endValue - startHeight) * (opts.durationMultiplier || 0.3)),
                     opts.durationMax || 900

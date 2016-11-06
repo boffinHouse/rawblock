@@ -21,6 +21,12 @@ module.exports = {
         cwd: '<%= paths.dev %>/',
         dest: '<%= paths.dist %>/',
         expand: true,
-        src: ['**/*', '!test-*.html']
+        src: ['**/*', '!test-*.html'],
     },
+    es5: {
+        cwd: 'components/',
+        dest: 'es5/components/',
+        expand: true,
+        src: ['**/*.ejs'],
+    }
 };

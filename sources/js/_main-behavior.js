@@ -1,8 +1,8 @@
 var ASSETBASEPATH = window.siteData && siteData.basePath || '';
 //load dom or jQuery
-require('../../$');
+require('../../_$');
 
-require('../../main');
+require('../../_main');
 
 rb.BezierEasing = require('bezier-easing');
 //require('./utils/rb_$$');

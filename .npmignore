@@ -9,14 +9,18 @@ bower_components
 styleguide
 tests
 jsdoc-md
+todos.md
+scaffold.js
 grunt
 taskrunner
 sources
 components/**/*.scss
 components/**/*.hbs
 components/**/*.html
+components/**/*.md
 components/**/*.json
 components/**/*-test.html
+components/**/*-tests.*
 
 .sass-cache
 .css
