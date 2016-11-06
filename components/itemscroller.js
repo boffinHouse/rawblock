@@ -357,7 +357,7 @@
                 var wheelHandler = function(e){
                     var x, y;
 
-                    if(!e.deltaMode && !options.switchedOff && options.wheel){
+                    if(!e.deltaMode && !options.switchedOff && options.wheel && !e.defaultPrevented){
 
                         if(isScrollerDir !== false){
                             x = Math.abs(e.deltaX);
@@ -1110,7 +1110,7 @@
                 var that = this;
                 var lastWidth = 0;
 
-                this.cellData = this.$cells.map(function (i) {
+                this.cellData = this.$cells.map(function () {
                     var returnWidth = lastWidth;
                     var width = that._getCellWidth(this);
 

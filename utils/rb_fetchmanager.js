@@ -152,7 +152,7 @@
                 promise.fetch = fetch(promise.options);
 
                 promise.onAbort(function(){
-                    that.onComplete(id);
+                    that.onComplete(promise.id);
                 });
 
                 promise.fetch.then(

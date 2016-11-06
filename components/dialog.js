@@ -320,7 +320,9 @@
                         e.preventDefault();
                         try {
                             focusElem[focusElem.length - 1].focus();
-                        } catch (er) { }
+                        } catch (er) {
+                            rb.logInfo('Focus error', er);
+                        }
                     }
                 }, true);
 
@@ -329,7 +331,9 @@
                         e.preventDefault();
                         try {
                             that.element.focus();
-                        } catch (er){}
+                        } catch (er){
+                            rb.logInfo('Focus error', er);
+                        }
                     }
                 }, true);
             },

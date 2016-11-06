@@ -1,0 +1,49 @@
+{
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 8,
+        "modules": true
+    },
+    "env": {
+        "browser": true,
+        "shared-node-browser": true,
+        "es6": true
+    },
+    "globals": {
+        "module": false,
+        "require": false,
+        "rb": true,
+        "appGlobals": true,
+        "lazySizes": false,
+        "QUnit": true,
+        "syn": true,
+        "sinon": true,
+        "rbTest": true,
+        "__webpack_public_path__": true,
+        "process": false
+    },
+    "extends": ["eslint:recommended"],
+    "rules": {
+        "block-scoped-var": [2],
+        "default-case": [1],
+        "no-caller": [2],
+        "no-unsafe-negation": [2],
+        "no-eval": [2],
+        "no-implicit-globals": [2],
+        "no-implied-eval": [2],
+        "no-loop-func": [2],
+        "no-script-url": [2],
+        "no-self-compare": [2],
+        "comma-dangle": [1, "always-multiline"],
+        "curly": [2, "multi-line"],
+        "no-unused-vars": [2, { "argsIgnorePattern": "^_", "args": "after-used", "varsIgnorePattern": "_"}],
+        "quotes": [2, "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
+        "radix": [2],
+        "no-with": [1],
+        "no-shadow": [1],
+        "no-useless-escape": [2],
+        "no-useless-concat": [2],
+        "no-useless-call": [2],
+        "semi": [2]
+    }
+}

@@ -6,7 +6,7 @@ if (!window.rb) {
     window.rb = {};
 }
 
-(function (window, document, undefined) {
+(function (window, document, _undefined) {
     'use strict';
 
     /* Begin: global vars end */
@@ -518,7 +518,7 @@ if (!window.rb) {
 
     /* Begin: parseValue */
     rb.parseValue = (function () {
-        var regNumber = /^\-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
+        var regNumber = /^-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
         /**
          * Parses a String into another type using JSON.parse, if this fails returns the given string
          * @alias rb#parseValue
@@ -541,7 +541,9 @@ if (!window.rb) {
             else if ((attrVal.startsWith('{') && attrVal.endsWith('}')) || (attrVal.startsWith('[') && attrVal.endsWith(']'))) {
                 try {
                     attrVal = JSON.parse(attrVal);
-                } catch (e) {}
+                } catch (e) {
+                    //continue
+                }
             }
             return attrVal;
         };
@@ -738,6 +740,7 @@ if (!window.rb) {
      * @param {String} [name] Human readable name of the easing.
      * @returns {Function} Easing a function
      */
+    var regEasingNumber = /([0-9.]+)/g;
     rb.addEasing = function (easing, name) {
         var bezierArgs;
         if (typeof easing != 'string') {
@@ -751,7 +754,7 @@ if (!window.rb) {
 
         BezierEasing = BezierEasing || rb.BezierEasing || window.BezierEasing;
 
-        if (BezierEasing && !$.easing[easing] && (bezierArgs = easing.match(/([0-9\.]+)/g)) && bezierArgs.length == 4) {
+        if (BezierEasing && !$.easing[easing] && (bezierArgs = easing.match(regEasingNumber)) && bezierArgs.length == 4) {
             bezierArgs = bezierArgs.map(function (str) {
                 return parseFloat(str);
             });
@@ -1105,7 +1108,9 @@ if (!window.rb) {
                 }
                 try {
                     element.focus();
-                } catch (e){}
+                } catch (e){
+                    //continue
+                }
                 restoreScrollPosition();
                 rb.isScriptFocus = false;
                 cleanup();
@@ -1288,7 +1293,7 @@ if (!window.rb) {
 
     (function(){
         var console = window.console || {};
-        var log = console.log && console.log.bind ? console.log : rb.$.noop;
+        var log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
         var logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
             var fnName = (errorName == 'log') ?
                 'log' :
@@ -1336,7 +1341,7 @@ if (!window.rb) {
                         obj.__isDebug = value;
                         setValue();
                     }
-                }
+                },
             });
         };
     })();
@@ -1416,7 +1421,7 @@ if (!window.rb) {
     };
 
     var regNum = /:(\d)+\s*$/;
-    var regTarget = /^\s*?\.?([a-z0-9_\$]+)\((.*?)\)\s*?/i;
+    var regTarget = /^\s*?\.?([a-z0-9_$]+)\((.*?)\)\s*?/i;
 
     /**
      * Returns an array of elements based on a string.
@@ -1578,12 +1583,14 @@ if (!window.rb) {
      */
     rb.escape = createEscaper(escapeMap);
 
-    if (!window._) {
+    /* eslint-disable no-undef */
+     if (!window._) {
         window._ = {};
     }
     if (!_.escape) {
         _.escape = rb.escape;
     }
+    /* eslint-enable no-undef */
     /* end: html escape */
 
     /**
@@ -2191,7 +2198,7 @@ if (!window.rb) {
 (function () {
     var rb = window.rb;
     var fnTest = (/xyz/.test(function () {
-            var a = xyz;
+            var a = xyz; // eslint-disable-line no-undef, no-unused-vars
         })) ?
             /\b_super\b/ :
             /.*/
@@ -2284,7 +2291,7 @@ if (!window.rb) {
     rb.Class = ES5Class;
 })();
 
-(function (window, document, live, undefined) {
+(function (window, document, live, _undefined) {
     'use strict';
 
     var focusClass, focusSel;
@@ -2369,7 +2376,7 @@ if (!window.rb) {
 
                         if(delegateEvents[i][0]){
                             if(Array.isArray(delegateEvents[i][0])){
-                                delegateEvents[i][0].forEach(function(elem) {
+                                delegateEvents[i][0].forEach(function(elem) { // eslint-disable-line no-loop-func
                                     rb.events[descriptor[1]](elem, delegateEvents[i][1], delegateEvents[i][2], opts);
                                 });
                             } else {
@@ -3190,7 +3197,7 @@ if (!window.rb) {
 
 })(window, document, rb.live);
 
-(function (window, document, undefined) {
+(function (window, document, _undefined) {
     'use strict';
     var rb = window.rb;
 
@@ -3290,7 +3297,7 @@ if (!window.rb) {
                     if (this.element != document.activeElement) {
                         this.element.focus();
                     }
-                } catch (e) {}
+                } catch (e) {} // eslint-disable-line no-empty
             },
             _onClick: function (e) {
                 var args;

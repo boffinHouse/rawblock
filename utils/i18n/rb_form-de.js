@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 window.rbValidation = window.rbValidation || {};
 window.rbValidation.messages = window.rbValidation.messages || {};
 

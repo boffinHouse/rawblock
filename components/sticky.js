@@ -351,8 +351,7 @@
                 }
             },
             _setProgressClass: function () {
-                this.element.classList
-                    [this.isProgressDone ? 'add' : 'remove'](rb.statePrefix + 'fixed' + rb.nameSeparator + 'progressed');
+                this.element.classList.toggle(rb.statePrefix + 'fixed' + rb.nameSeparator + 'progressed', this.isProgressDone);
             },
             updateLayout: function (shouldFix, shouldScroll, shouldWidth) {
                 var offset, trigger;

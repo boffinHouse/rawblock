@@ -7,7 +7,6 @@
 }(function () {
     'use strict';
     var rb = window.rb;
-    var $ = rb.$;
 
     var Listbox = rb.Component.extend('listbox',
         /** @lends rb.components.listbox.prototype */
@@ -209,13 +208,12 @@
                 if(isStartReached || isEndReached){
                     moveScroll = itemTop;
 
-                    this.$element
-                        [noAnimate ? 'prop' : 'animate'](
+                    this.$element[noAnimate ? 'prop' : 'animate'](
                         {
-                            scrollTop: moveScroll
+                            scrollTop: moveScroll,
                         },
                         {
-                            duration: 200
+                            duration: 200,
                         }
                     );
                 }

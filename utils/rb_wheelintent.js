@@ -51,7 +51,7 @@
                 this.removeEventListener('mousemove', special.rb_wheelintent.moveHandler);
             }
         },
-        add: function (elem, fn, opts) {
+        add: function (elem, fn, _opts) {
             var wheelData = elem[rbWheelProp];
 
             if(!wheelData){
@@ -69,7 +69,7 @@
 
             wheelData.cbs.add(fn);
         },
-        remove: function (elem, fn, opts) {
+        remove: function (elem, fn, _opts) {
             var wheelData = elem[rbWheelProp];
 
             if(!wheelData){return;}

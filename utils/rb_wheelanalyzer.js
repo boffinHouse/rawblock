@@ -9,7 +9,6 @@
 }(function () {
     'use strict';
     var rb = window.rb;
-    var $ = rb.$;
 
     var WHEELEVENTS_TO_MERGE = 2; // 2
     var WHEELEVENTS_TO_ANALAZE = 3;
@@ -17,7 +16,7 @@
     // var ABSDELTA_DECREASE_THRESHOLD = 3;
 
     var defaults = {
-        isDebug: true
+        isDebug: true,
     };
 
     var WheelAnalyzer = function(options){

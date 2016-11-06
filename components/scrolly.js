@@ -43,7 +43,7 @@
             },
             statics: {
                 regWhite: /\s/g,
-                regCalc: /(([+-]*\d+[\.\d]*)(px|vh|eh|vw|ew))/g,
+                regCalc: /(([+-]*\d+[.\d]*)(px|vh|eh|vw|ew))/g,
                 knownUnits: {vh: 1, eh: 1, vw: 1, ew: 1},
             },
             /**

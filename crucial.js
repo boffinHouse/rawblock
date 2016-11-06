@@ -26,7 +26,9 @@
         if(str){
             try {
                 ret = JSON.parse(str);
-            } catch (e) { }
+            } catch (e) {
+                //continue
+            }
         }
         return ret;
     };

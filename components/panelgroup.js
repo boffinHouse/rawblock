@@ -214,8 +214,7 @@
 
             },
             setSelectedState: function () {
-                this.element.classList
-                    [this.selectedIndexes.length ? 'add' : 'remove'](rb.statePrefix + 'selected' + rb.nameSeparator + 'within');
+                this.element.classList.toggle(rb.statePrefix + 'selected' + rb.nameSeparator + 'within', !!this.selectedIndexes.length);
             },
             _updatePanelInformation: function () {
                 var that = this;
@@ -271,7 +270,7 @@
 
                 this.$panelWrapper = $(this.getElementsFromString(options.panelWrapperSel));
 
-                this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0))).each(function (index) {
+                this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0))).each(function () {
                     var panel = live.create(this, rb.components.panel, {
                         jsName: jsPanelName,
                         name: panelName,
@@ -302,7 +301,7 @@
                     }
                 });
 
-                this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function (index) {
+                this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function () {
                     live.create(this, components.panelgroupbutton, {
                         preventDefault: options.preventDefault,
                         target: that.element,

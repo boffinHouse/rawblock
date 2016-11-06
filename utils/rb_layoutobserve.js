@@ -38,7 +38,7 @@
 
                 if(!(observer = element[layoutObserveProp])){
                     /* jshint loopfunc: true */
-                    rb.rAFQueue(function(){
+                    rb.rAFQueue(function(){ // eslint-disable-line no-loop-func
                         element.classList.remove(observeClass);
                     }, true);
                     continue;
@@ -93,7 +93,7 @@
     };
 
     rb.events.special.rb_layoutchange = {
-        add: function (elem, fn, opts) {
+        add: function (elem, fn, _opts) {
             var observer = elem[layoutObserveProp];
 
             if(!observer){
@@ -112,7 +112,7 @@
 
             observer.cbs.add(fn);
         },
-        remove: function (elem, fn, opts) {
+        remove: function (elem, fn, _opts) {
             var observer = elem[layoutObserveProp];
 
             if(!observer){return;}

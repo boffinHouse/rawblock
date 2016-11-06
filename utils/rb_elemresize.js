@@ -141,11 +141,11 @@
             wrapper.className = 'js' + rb.nameSeparator + 'element' + rb.nameSeparator + 'resize';
             wrapper.setAttribute('style', wrapperStyle + 'visibility:hidden;z-index: -1;opacity: 0;-webkit-overflow-scrolling:auto;');
             wrapper.innerHTML = '<span style="' + wrapperStyle + 'overflow: scroll;-webkit-overflow-scrolling:auto;">' +
-                '<span style="' + posStyle + '"><\/span>' +
-                '<\/span>' +
+                '<span style="' + posStyle + '"></span>' +
+                '</span>' +
                 '<span style="' + wrapperStyle + 'overflow: scroll;-webkit-overflow-scrolling:auto;">' +
-                '<span style="' + posStyle + 'width: 200%; height: 200%;"><\/span>' +
-                '<\/span>';
+                '<span style="' + posStyle + 'width: 200%; height: 200%;"></span>' +
+                '</span>';
 
             expandElem = wrapper.children[0];
             shrinkElem = wrapper.children[1];
@@ -187,7 +187,7 @@
             },
             remove: function (elem, fn) {
                 elementResize.remove(elem, fn, evt[1]);
-            }
+            },
         };
     });
 

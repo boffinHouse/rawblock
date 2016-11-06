@@ -8,7 +8,6 @@
     'use strict';
     /* jshint eqnull: true */
     var rb = window.rb;
-    var $ = rb.$;
 
     var MediaPlayer = rb.Component.extend('mediaplayer',
         /** @lends rb.components.mediaplayer.prototype */
@@ -66,9 +65,9 @@
                 }
             },
 
-            load: function(item){
+            load: function(_item){
 
-            }
+            },
         }
     );
 

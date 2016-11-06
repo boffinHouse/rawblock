@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 if (!window.rb) {
     window.rb = {};
 }

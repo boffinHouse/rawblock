@@ -50,11 +50,11 @@
             return;
         }
 
-        this.currentValue = o.from.value || parseInt(o.from) || 0;
+        this.currentValue = o.from.value || parseInt(o.from, 10) || 0;
         this.currentVelocity = o.from.velocity || 0;
         this.currentMass = o.mass || 1;
 
-        this.targetValue = o.target || 0;
+        this.targetValue = o.target || 0;
 
         this.lastUpdate = Date.now();
         this.ended = false;

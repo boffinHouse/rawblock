@@ -12,7 +12,7 @@
         window.rb = {};
     }
     var rb = window.rb;
-    var regPath = /^[.\/]|:\//;
+    var regPath = /^[./]|:\//;
 
     var rejectedPromise = new Promise(function (resolve, reject) {
         setTimeout(reject);
@@ -34,7 +34,6 @@
         if (!regPath.test(moduleId)) {
             if (packageIds.isModule) {
                 key = 'modulePath';
-                moduleId = moduleId;
             }
             moduleId = packageConfig[key] + moduleId;
         }

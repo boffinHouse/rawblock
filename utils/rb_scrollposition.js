@@ -29,7 +29,7 @@
                     left: box.left,
                     bottom: box.bottom,
                     right: box.right,
-                }
+                },
             };
         }
 
@@ -58,7 +58,7 @@
     }
 
     rb.events.special.rb_scrollposition = {
-        add: function (element, fn, opts) {
+        add: function (element, fn, _opts) {
             var positionObj = element[scrollPositionProp];
 
             if(!positionObj){
@@ -73,7 +73,7 @@
 
             positionObj.cbs.add(fn);
         },
-        remove: function (element, fn, opts) {
+        remove: function (element, fn, _opts) {
             var positionObj = element[scrollPositionProp];
 
             if(!positionObj){

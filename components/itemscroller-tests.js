@@ -3,15 +3,10 @@
     QUnit.module('itemscroller');
 
     var changedEvents = 0;
-    var changedCompletedEvents = 0;
     var pagelengthchangedEvents = 0;
 
     rb.$(document).on('itemscrollerchanged', function () {
         changedEvents++;
-    });
-
-    rb.$(document).on('itemscrollerchangedcompleted', function () {
-        changedCompletedEvents++;
     });
 
     rb.$(document).on('itemscrollerpagelengthchanged', function () {
@@ -42,11 +37,10 @@
             '</div>')
         ;
         changedEvents = 0;
-        changedCompletedEvents = 0;
         pagelengthchangedEvents = 0;
     });
 
-    QUnit.test("default option + switch into carousel", function (assert) {
+    QUnit.test('default option + switch into carousel', function (assert) {
         var done = assert.async();
         var component = rb.$('.rb-itemscroller').rbComponent();
         var setPosSpy = sinon.spy(component, 'setPos');
@@ -71,7 +65,6 @@
                 assert.strictEqual(component._selectedIndex, 1);
                 assert.numberClose(component._pos, -400);
                 assert.strictEqual(changedEvents, 1);
-                //assert.strictEqual(changedCompletedEvents, 1);
                 assert.notOk(component.isStartReached());
                 assert.notOk(component.isEndReached());
                 assert.notOk(component.element.querySelector('.itemscroller-btn-prev').disabled);
@@ -132,7 +125,7 @@
         ;
     });
 
-    QUnit.test("center mode", function (assert) {
+    QUnit.test('center mode', function (assert) {
         var done = assert.async();
         var component = rb.$('.rb-itemscroller')
             .attr({
@@ -226,55 +219,4 @@
         ;
     });
 
-    //Todo: fix tests
-    if(false && navigator.userAgent.indexOf('PhantomJS') == -1){
-        QUnit.test("itemscroller resize", function (assert) {
-            var done = assert.async();
-
-            rbTest
-                .load('itemscroller-fixture-tests.html')
-                .then(function () {
-                    rbTest.win.rb.live.init();
-                    var component = rbTest.win.rb.$('.rb-itemscroller')
-                        .css({width: '100%'})
-                        .rbComponent('itemscroller', {duration: 0, carousel: true});
-
-                    rbTest
-                        .wait(66)
-                        .then(function () {
-                            assert.strictEqual(component.baseLength, 5);
-                            assert.strictEqual(component.carouselWidth, 1000);
-                        })
-                        .resize(600)
-                        .wait(301)
-                        .then(function () {
-                            assert.strictEqual(component.baseLength, 2);
-                            assert.numberClose(component.carouselWidth, 1000);
-                        })
-                        .then(function(){
-                            component.$cells.css({width: '100%'});
-                        })
-                        .resize(300)
-                        .wait(301)
-                        .then(function(){
-                            assert.strictEqual(component.baseLength, 10);
-                            component.selectedIndex = 6;
-                        })
-                        .wait()
-                        .then(function(){
-                            assert.strictEqual(component.selectedIndex, 6);
-                            component.$cells.css({width: '25%'});
-                        })
-                        .resize(500)
-                        .wait(301)
-                        .then(function(){
-                            assert.strictEqual(component.baseLength, 3);
-                            assert.strictEqual(component.selectedIndex, 1);
-                        })
-                        .then(done)
-                    ;
-                })
-            ;
-        });
-    }
 })();

@@ -117,14 +117,13 @@
                 }
             },
             scrollRepostion: function(e){
-                var anchor;
                 if (!rb.root.contains(this.element)) {
                     this.teardownPopoverResize();
                     return;
                 }
 
                 if(!e || (this.options.updateOnResize && e.target.contains &&
-                    (anchor = this.getAnchor(this.lastOpeningOptions)))){
+                    this.getAnchor(this.lastOpeningOptions))){
                     this._reflow();
                 }
             },
@@ -184,7 +183,7 @@
 
                 return isOpening;
             },
-            close: function (options) {
+            close: function (_options) {
                 var isClosing = this._super.apply(this, arguments);
 
                 if (this.options.positioned) {

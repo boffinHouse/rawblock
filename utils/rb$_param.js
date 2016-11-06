@@ -10,7 +10,7 @@
     var rb = window.rb;
     var $ = rb.$;
     var r20 = /%20/g;
-    var rbracket = /\[\]$/;
+    var rbracket = /\[]$/;
 
     function buildParams( prefix, obj, add ) {
         var name;
@@ -31,7 +31,7 @@
 
         } else if (typeof obj == 'object' ) {
             for ( name in obj ) {
-                buildParams( prefix + '[' + name + ']', obj[ name ], traditional, add );
+                buildParams( prefix + '[' + name + ']', obj[ name ], add );
             }
 
         } else {
@@ -41,7 +41,7 @@
 
 
     if(!$.param){
-	    /**
+        /**
          * This is a direct copy of jQuery's param method without traditional option.
          * @param a
          * @returns {string}

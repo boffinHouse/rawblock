@@ -27,7 +27,7 @@
                 toNumber: function (i) {
                     return parseFloat(i) || 0;
                 },
-                regNumber: /(-*\d+[\.\d]*)/g,
+                regNumber: /(-*\d+[.\d]*)/g,
                 regWhite: /\s/g,
             },
             /**
@@ -188,7 +188,7 @@
                                 i2 = 0;
                                 if (!retFn) {
                                     /*jshint loopfunc: true */
-                                    retFn = function () {
+                                    retFn = function () { // eslint-disable-line no-loop-func
                                         var value = (animOptions.end[prop][i2] - option.value[i2]) * eased + option.value[i2];
                                         i2++;
                                         if (prop == 'backgroundColor') {

@@ -18,11 +18,11 @@
             var opts = Object.defineProperty({}, 'passive', {
                 get: function() {
                     supportsPassiveOption = true;
-                }
+                },
             });
             window.addEventListener('test' + rb.getID(), null, opts);
-        } catch (e) {}
-        return supportsPassiveOption;
+        } catch (e) {} // eslint-disable-line no-empty
+            return supportsPassiveOption;
     })();
     var useTouchAction = usePassiveListener || usePointer;
     var touchOpts = usePassiveListener ? {passive: true} : false;
@@ -65,6 +65,7 @@
         preventMove: true,
         useMouse: true,
         useTouch: true,
+        usePointerMouse: false,
         horizontal: true,
         vertical: true,
         exclude: false,
@@ -291,7 +292,7 @@
 
             this._onmousedown = function (e) {
                 that._destroyMouse();
-                if (e.defaultPrevented || !that.options.useMouse || !that.allowMouse || !that.allowedDragTarget(e.target)) {
+                if (e.defaultPrevented || e.button || !that.options.useMouse || !that.allowMouse || !that.allowedDragTarget(e.target)) {
                     return;
                 }
 
@@ -404,8 +405,11 @@
                         return;
                     }
 
+                    var isMouse = e.pointerType == 'mouse';
+
                     that._destroyPointer();
-                    if (e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !that.allowedDragTarget(e.target)) {
+
+                    if (e.defaultPrevented || e.isPrimary === false || (isMouse && !that.options.useMouse) || (isMouse && !that.options.usePointerMouse) || e.button || !that.options.useTouch || !that.allowTouch || !that.allowedDragTarget(e.target)) {
                         return;
                     }
 

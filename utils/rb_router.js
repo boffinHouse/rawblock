@@ -19,7 +19,6 @@
     var regSlashEnd = /\/$/;
     var regSlashBegin = /^\//;
     var regFullHash = /#(.*)$/;
-    var rootDomain = location.protocol + location.host;
 
     rb.Router = {
         routes: [],
@@ -142,7 +141,7 @@
                 this._listener();
             }
             return this;
-        }
+        },
     };
 
     return rb.Router;

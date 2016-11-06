@@ -14,7 +14,7 @@
         ;
     });
 
-    QUnit.test("rb_dialog", function (assert) {
+    QUnit.test('rb_dialog', function (assert) {
         var done = assert.async();
         var component = rb.$('.rb-dialog').rbComponent();
 
@@ -77,7 +77,7 @@
         ;
     });
 
-    QUnit.test("rb_dialog event handling", function (assert) {
+    QUnit.test('rb_dialog event handling', function (assert) {
         var done = assert.async();
         var component = rb.$('.rb-dialog').rbComponent();
         var change = 0;
@@ -92,7 +92,7 @@
         });
 
 
-        rb.$('.rb-dialog').on('dialogchanged', function (e) {
+        rb.$('.rb-dialog').on('dialogchanged', function () {
             changed++;
         });
 

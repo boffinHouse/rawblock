@@ -42,7 +42,7 @@
         ]);
 
         grunt.registerTask('test', [
-            'jshint',
+            'eslint',
             //'connect:casper',
             //'phantomcss',
             //'qunit',

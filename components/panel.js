@@ -149,7 +149,10 @@
                 if(!this.isOpen){
                     this.element.style.display = 'none';
                 } else if(this.element.style.display == 'none'){
-                    this.element.style.display = typeof this.options.setDisplay ? this.options.setDisplay : '';
+                    this.element.style.display = typeof this.options.setDisplay == 'string' ?
+                        this.options.setDisplay :
+                        ''
+                    ;
                 }
                 this._displayTimer = null;
             },

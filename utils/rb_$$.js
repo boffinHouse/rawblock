@@ -110,7 +110,7 @@
     });
 
     if (!$$.isReady) {
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener('DOMContentLoaded', function () {
             $$.isReady = true;
         });
     }

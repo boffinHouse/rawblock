@@ -1,4 +1,4 @@
-(function(window, undefined){
+(function(window, _undefined){
 	'use strict';
 	var queueExpando;
 	var defaultQueue = 'fx';
@@ -131,7 +131,7 @@
 	};
 
 	$.fn.clearQueue = function(queue){
-		this.elements.forEach(function(){
+		this.elements.forEach(function(element){
 			var queues = $.queue(element, queue);
 			if(queues.length){
 				queues.splice(0, queues.length);

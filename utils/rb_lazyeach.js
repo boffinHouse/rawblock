@@ -33,7 +33,7 @@
                 start = Date.now();
             } else if(Date.now() - start >= max){
                 /* jshint loopfunc: true */
-                rb.rIC(function(){
+                rb.rIC(function(){ // eslint-disable-line no-loop-func
                     rb.lazyList(list, handler, max, index);
                 });
                 break;
