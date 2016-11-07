@@ -966,6 +966,23 @@ if (!window.rb) {
             } else {
                 //todo: add passive support
                 element[action[1]](type, handler, !!(opts && opts.capture));
+
+                if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+                    if(opts && (type == 'mouseenter' || type == 'mouseleave' || type == 'focusin' || type == 'focusout')){
+
+                        if(!opts.capture && (opts.closest || opts.matches)){
+                            rb.logInfo('mouseenter/mouseleave/focusin/focusout delegated without capture option.', arguments);
+                        }
+
+                        if(opts.capture && opts.closest){
+                            rb.logInfo('mouseenter/mouseleave/focusin/focusout delegated with :closest instead of :matches.', arguments);
+                        }
+                    }
+
+                    if(type == 'focusin' || type == 'focusout'){
+                        rb.logInfo('focusin/focusout used. consider using focus/blur with :capture.', arguments);
+                    }
+                }
             }
         };
     });
@@ -2117,7 +2134,7 @@ if (!window.rb) {
         };
 
         var findElements = rb.throttle(function () {
-
+            let _time;
             var element, modulePath, moduleId, i, hook, len;
 
             if(mainInit){
@@ -2128,6 +2145,14 @@ if (!window.rb) {
 
             if (!len) {
                 return;
+            }
+
+            if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+                _time = Date.now();
+
+                if(len > 99){
+                    rb.logInfo(`${len} component elements has to be initiated. Try to lower this number.`);
+                }
             }
 
             for (i = 0; i < len; i++) {
@@ -2155,6 +2180,14 @@ if (!window.rb) {
                 }
                 else if(!hook) {
                     failed(element, moduleId);
+                }
+            }
+
+            if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+                _time = Date.now() - _time;
+
+                if(_time > 120){
+                    rb.logInfo(`Component initalization takes ${_time}. Try to lower this number.`);
                 }
             }
 
@@ -2326,6 +2359,12 @@ if (!window.rb) {
                         }
 
                         i++;
+
+                        if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+                            if(!method){
+                                rb.logInfo('no super event handler', that, args);
+                            }
+                        }
 
                         return method ? method.apply(that, args) : null;
                     };

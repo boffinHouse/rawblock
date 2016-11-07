@@ -377,7 +377,7 @@
         setupPointer: function(){
             var identifier;
             var that = this;
-
+            var options = this.options;
             var move = function (e) {
                 if(e.pointerId == identifier){
                     that.move(e, e);
@@ -409,7 +409,18 @@
 
                     that._destroyPointer();
 
-                    if (e.defaultPrevented || e.isPrimary === false || (isMouse && !that.options.useMouse) || (isMouse && !that.options.usePointerMouse) || e.button || !that.options.useTouch || !that.allowTouch || !that.allowedDragTarget(e.target)) {
+                    if (e.defaultPrevented || e.isPrimary === false || (isMouse && !options.useMouse) || e.button || !options.useTouch || !that.allowTouch || !that.allowedDragTarget(e.target)) {
+                        return;
+                    }
+
+                    if(e.target.nodeName != 'SELECT'){
+                        e.preventDefault();
+                    }
+
+                    if(isMouse && !options.usePointerMouse){
+                        if(options.useMouse && options.stopPropagation){
+                            e.stopImmediatePropagation();
+                        }
                         return;
                     }
 
@@ -418,9 +429,6 @@
                     that.allowMouse = false;
                     that.isType = 'pointer';
 
-                    if(e.target.nodeName != 'SELECT'){
-                        e.preventDefault();
-                    }
 
                     document.addEventListener('pointermove', move);
                     document.addEventListener('pointerup', end);
