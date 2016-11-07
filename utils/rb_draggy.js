@@ -413,15 +413,15 @@
                         return;
                     }
 
-                    if(e.target.nodeName != 'SELECT'){
-                        e.preventDefault();
-                    }
-
                     if(isMouse && !options.usePointerMouse){
                         if(options.useMouse && options.stopPropagation){
                             e.stopImmediatePropagation();
                         }
                         return;
+                    }
+
+                    if(e.target.nodeName != 'SELECT'){
+                        e.preventDefault();
                     }
 
                     identifier = e.pointerId;

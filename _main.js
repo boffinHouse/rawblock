@@ -1365,6 +1365,10 @@ if (!window.rb) {
 
     rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
 
+    if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+        rb.logInfo('rawblock dev mode active. Do not use in production');
+    }
+
     var cbs = [];
     var setupClick = function () {
         var clickClass = ['js', 'rb', 'click'].join(rb.nameSeparator);
