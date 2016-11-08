@@ -6,6 +6,12 @@ if (!window.rb) {
     window.rb = {};
 }
 
+if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+    rb.devData = {
+        componentsCount: 0,
+    };
+}
+
 (function (window, document, _undefined) {
     'use strict';
 
@@ -1366,7 +1372,7 @@ if (!window.rb) {
     rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
 
     if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-        rb.logInfo('rawblock dev mode active. Do not use in production');
+        rb.logWarn('rawblock dev mode active. Do not use in production');
     }
 
     var cbs = [];
@@ -1438,7 +1444,7 @@ if (!window.rb) {
             if (cbs.length == 1) {
                 this.clickClass = setupClick();
             }
-        }
+        },
     };
 
     var regNum = /:(\d)+\s*$/;
@@ -1915,6 +1921,8 @@ if (!window.rb) {
 
         live.searchModules();
     };
+
+
     /**
      * Registers a component class with a name and manages its livecycle. An instance of this class will be automatically constructed with the found element as the first argument. If the class has an `attached` or `detached` instance method these methods also will be invoked, if the element is removed or added from/to the DOM. In most cases the given class inherits from [`rb.Component`]{@link rb.Component}. All component classes are added to the `rb.components` namespace.
      *
@@ -1960,11 +1968,16 @@ if (!window.rb) {
      *
      */
     live.register = function (name, Class, noCheck) {
+        if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+            rb.devData.componentsCount++;
+        }
+
         var proto = Class.prototype;
         var superProto = Object.getPrototypeOf(proto);
         var superClass = superProto.constructor;
+        var isRbComponent = proto instanceof rb.Component;
 
-        if (proto instanceof rb.Component) {
+        if (isRbComponent) {
             extendStatics(Class, proto, superClass, 'defaults');
             extendStatics(Class, proto, superClass, 'events');
 
@@ -1974,6 +1987,7 @@ if (!window.rb) {
                 proto.name = name;
             }
         }
+
 
         if (rb.components[name]) {
             rb.log(name + ' already exists.');
@@ -2079,7 +2093,15 @@ if (!window.rb) {
 
         return rb.components[moduleId] || hook;
     };
-
+    if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+        rb.ready.then(()=>{
+            if(rb.devData.componentsCount > 66){
+                rb.logWarn(`${rb.devData.componentsCount} components were registered before rb.ready. Try to lower this number.`);
+            } else {
+                rb.logInfo(`${rb.devData.componentsCount} components were registered before rb.ready.`);
+            }
+        });
+    }
     /**
      * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback method. This method is normally only used automatically/internally by the mutation observer.
      *
@@ -2139,7 +2161,7 @@ if (!window.rb) {
 
         var findElements = rb.throttle(function () {
             let _time;
-            var element, modulePath, moduleId, i, hook, len;
+            let element, modulePath, moduleId, i, hook, len;
 
             if(mainInit){
                 mainInit();
@@ -2154,8 +2176,10 @@ if (!window.rb) {
             if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
                 _time = Date.now();
 
-                if(len > 99){
-                    rb.logInfo(`${len} component elements has to be initiated. Try to lower this number.`);
+                if(len > 80){
+                    rb.logWarn(`${len} component elements were initialized. Try to lower this number.`);
+                } else {
+                    rb.logInfo(`${len} component elements were initialized.`);
                 }
             }
 
@@ -2190,8 +2214,10 @@ if (!window.rb) {
             if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
                 _time = Date.now() - _time;
 
-                if(_time > 120){
-                    rb.logInfo(`Component initalization takes ${_time}. Try to lower this number.`);
+                if(_time > 80){
+                    rb.logWarn(`Component initialization without rendering took ${_time}. Try to lower this number.`);
+                } else {
+                    rb.logInfo(`Component initialization without rendering took ${_time}.`);
                 }
             }
 

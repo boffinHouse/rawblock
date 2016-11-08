@@ -63,13 +63,13 @@ module.exports = {
 				{
 					test: /\.ejs/,
 					loader: 'rb_template-loader',
-				}
-			]
+				},
+			],
 		},
 		resolve: {
 			alias: {
 
-			}
+			},
 		},
 	},
 	dev: {

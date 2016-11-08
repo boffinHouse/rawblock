@@ -7,8 +7,6 @@ require('../../_main');
 rb.BezierEasing = require('bezier-easing');
 //require('./utils/rb_$$');
 
-/* configuration */
-rb.isDebug = 1;
 
 //if webpack is used:
 __webpack_public_path__ = ASSETBASEPATH + 'js/';
