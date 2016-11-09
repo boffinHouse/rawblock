@@ -2614,7 +2614,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
 
         if(!component){
-            rb.logWarn('component not found', element, componentName);
+            rb.logInfo('component not found', element, componentName);
         }
         return component || null;
     };
