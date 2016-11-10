@@ -7,9 +7,7 @@ if (!window.rb) {
 }
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-    rb.devData = {
-        componentsCount: 0,
-    };
+    require('./utils/rb_debughelpers');
 }
 
 (function (window, document, _undefined) {
@@ -974,20 +972,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 element[action[1]](type, handler, !!(opts && opts.capture));
 
                 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-                    if(opts && (type == 'mouseenter' || type == 'mouseleave' || type == 'focusin' || type == 'focusout')){
-
-                        if(!opts.capture && (opts.closest || opts.matches)){
-                            rb.logInfo('mouseenter/mouseleave/focusin/focusout delegated without capture option.', arguments);
-                        }
-
-                        if(opts.capture && opts.closest){
-                            rb.logInfo('mouseenter/mouseleave/focusin/focusout delegated with :closest instead of :matches.', arguments);
-                        }
-                    }
-
-                    if(type == 'focusin' || type == 'focusout'){
-                        rb.logInfo('focusin/focusout used. consider using focus/blur with :capture.', arguments);
-                    }
+                    rb.debugHelpers.onEventsAdd(element, type, handler, opts);
                 }
             }
         };
@@ -2093,15 +2078,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         return rb.components[moduleId] || hook;
     };
-    if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-        rb.ready.then(()=>{
-            if(rb.devData.componentsCount > 66){
-                rb.logWarn(`${rb.devData.componentsCount} components were registered before rb.ready. Try to lower this number.`);
-            } else {
-                rb.logInfo(`${rb.devData.componentsCount} components were registered before rb.ready.`);
-            }
-        });
-    }
     /**
      * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback method. This method is normally only used automatically/internally by the mutation observer.
      *
@@ -2160,7 +2136,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         };
 
         var findElements = rb.throttle(function () {
-            let _time;
             let element, modulePath, moduleId, i, hook, len;
 
             if(mainInit){
@@ -2174,13 +2149,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
 
             if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-                _time = Date.now();
-
-                if(len > 80){
-                    rb.logWarn(`${len} component elements were initialized. Try to lower this number.`);
-                } else {
-                    rb.logInfo(`${len} component elements were initialized.`);
-                }
+                rb.debugHelpers.onSearchElementsStart();
             }
 
             for (i = 0; i < len; i++) {
@@ -2212,13 +2181,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
 
             if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-                _time = Date.now() - _time;
-
-                if(_time > 80){
-                    rb.logWarn(`Component initialization without rendering took ${_time}. Try to lower this number.`);
-                } else {
-                    rb.logInfo(`Component initialization without rendering took ${_time}.`);
-                }
+                rb.debugHelpers.onSearchElementsEnd(len);
             }
 
             removeInitClass();
