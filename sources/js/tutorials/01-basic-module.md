@@ -2,7 +2,7 @@
 
 As an example component we will create a "slim header". As soon as the user scrolls down a certain threshold the header gets slim. A full demo can be seen at [codepen (SlimHeader with rawblock)](http://codepen.io/aFarkas/pen/GNNMxR).
 
-##HTML of our clear input component
+##HTML of our slim header component
 
 A component markup always has to have a `data-module` attribute with the name of our component and in general a `js-rb-live` class to indicate, that rawblock should create the UI component immediately.
 
