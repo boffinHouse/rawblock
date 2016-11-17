@@ -1,32 +1,70 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['babel-runtime/helpers/typeof', 'babel-runtime/helpers/classCallCheck', 'babel-runtime/helpers/possibleConstructorReturn', 'babel-runtime/helpers/createClass', 'babel-runtime/helpers/inherits'], factory);
+        define([], factory);
     } else if (typeof exports !== "undefined") {
-        factory(require('babel-runtime/helpers/typeof'), require('babel-runtime/helpers/classCallCheck'), require('babel-runtime/helpers/possibleConstructorReturn'), require('babel-runtime/helpers/createClass'), require('babel-runtime/helpers/inherits'));
+        factory();
     } else {
         var mod = {
             exports: {}
         };
-        factory(global._typeof, global.classCallCheck, global.possibleConstructorReturn, global.createClass, global.inherits);
+        factory();
         global._childfx = mod.exports;
     }
-})(this, function (_typeof2, _classCallCheck2, _possibleConstructorReturn2, _createClass2, _inherits2) {
+})(this, function () {
     'use strict';
 
-    var _typeof3 = _interopRequireDefault(_typeof2);
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
 
-    var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
 
-    var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
 
-    var _createClass3 = _interopRequireDefault(_createClass2);
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    }
 
-    var _inherits3 = _interopRequireDefault(_inherits2);
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
 
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
         };
+    }();
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
     var rb = window.rb;
@@ -80,13 +118,13 @@
      */
 
     var _ChildFX = function (_rb$Component) {
-        (0, _inherits3.default)(_ChildFX, _rb$Component);
+        _inherits(_ChildFX, _rb$Component);
 
         _ChildFX.toNumber = function toNumber(i) {
             return parseFloat(i) || 0;
         };
 
-        (0, _createClass3.default)(_ChildFX, null, [{
+        _createClass(_ChildFX, null, [{
             key: 'defaults',
             get: function get() {
                 return {
@@ -97,9 +135,9 @@
         }]);
 
         function _ChildFX(element, initialDefaults) {
-            (0, _classCallCheck3.default)(this, _ChildFX);
+            _classCallCheck(this, _ChildFX);
 
-            var _this = (0, _possibleConstructorReturn3.default)(this, _rb$Component.call(this, element, initialDefaults));
+            var _this = _possibleConstructorReturn(this, _rb$Component.call(this, element, initialDefaults));
 
             _this.progress = -2;
             _this.updateChilds = rb.rAF(_this.updateChilds);
@@ -110,7 +148,7 @@
             var value = {};
             var endValue = options.end[prop];
 
-            if ((typeof endValue === 'undefined' ? 'undefined' : (0, _typeof3.default)(endValue)) == 'object') {
+            if ((typeof endValue === 'undefined' ? 'undefined' : _typeof(endValue)) == 'object') {
 
                 Object.assign(value, endValue);
                 options.end[prop] = endValue.value || 0;

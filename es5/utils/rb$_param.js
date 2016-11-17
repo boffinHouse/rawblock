@@ -1,28 +1,26 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['module', 'babel-runtime/helpers/typeof'], factory);
+        define(['module'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(module, require('babel-runtime/helpers/typeof'));
+        factory(module);
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod, global._typeof);
+        factory(mod);
         global.rb$_param = mod.exports;
     }
-})(this, function (module, _typeof2) {
+})(this, function (module) {
     'use strict';
 
-    var _typeof3 = _interopRequireDefault(_typeof2);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
 
     (function (factory) {
-        if ((typeof module === 'undefined' ? 'undefined' : (0, _typeof3.default)(module)) === 'object' && module.exports) {
+        if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
             module.exports = factory();
         } else {
             factory();
@@ -44,10 +42,10 @@
                     if (rbracket.test(prefix)) {
                         add(prefix, v);
                     } else {
-                        buildParams(prefix + '[' + ((typeof v === 'undefined' ? 'undefined' : (0, _typeof3.default)(v)) === 'object' && v != null ? i : '') + ']', v, add);
+                        buildParams(prefix + '[' + ((typeof v === 'undefined' ? 'undefined' : _typeof(v)) === 'object' && v != null ? i : '') + ']', v, add);
                     }
                 });
-            } else if ((typeof obj === 'undefined' ? 'undefined' : (0, _typeof3.default)(obj)) == 'object') {
+            } else if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) == 'object') {
                 for (name in obj) {
                     buildParams(prefix + '[' + name + ']', obj[name], add);
                 }

@@ -1,7 +1,7 @@
+let dataSymbol, regFocusable;
+const specialEvents = {};
 
-var dataSymbol, regFocusable;
-var specialEvents = {};
-var Dom = function (elements, context) {
+const Dom = function (elements, context) {
 
     if (!(this instanceof Dom)) {
         return new Dom(elements, context);

@@ -1,32 +1,36 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', 'babel-runtime/helpers/typeof'], factory);
+        define(['exports'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('babel-runtime/helpers/typeof'));
+        factory(exports);
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global._typeof);
+        factory(mod.exports);
         global.$_slim = mod.exports;
     }
-})(this, function (exports, _typeof2) {
+})(this, function (exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
 
-    var _typeof3 = _interopRequireDefault(_typeof2);
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
 
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
+    var dataSymbol = void 0,
+        regFocusable = void 0;
+    var specialEvents = {};
+    var target2 = '';
+    if ((typeof target2 === 'undefined' ? 'undefined' : _typeof(target2)) !== 'object' && typeof target2 != 'function') {
+        target2 = {};
     }
 
-    var dataSymbol, regFocusable;
-    var specialEvents = {};
     var Dom = function Dom(elements, context) {
 
         if (!(this instanceof Dom)) {
@@ -98,7 +102,7 @@
                 i++;
             }
 
-            if ((typeof target === 'undefined' ? 'undefined' : (0, _typeof3.default)(target)) !== 'object' && typeof target != 'function') {
+            if ((typeof target === 'undefined' ? 'undefined' : _typeof(target)) !== 'object' && typeof target != 'function') {
                 target = {};
             }
 
@@ -327,7 +331,7 @@
             return this;
         },
         before: function before(htmlstringOrDom) {
-            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : (0, _typeof3.default)(htmlstringOrDom)) != 'object';
+            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : _typeof(htmlstringOrDom)) != 'object';
             var target = !isHTMLString ? this.first() : this;
 
             target.elements.forEach(function (elem) {
@@ -344,7 +348,7 @@
             return this;
         },
         prepend: function prepend(htmlstringOrDom) {
-            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : (0, _typeof3.default)(htmlstringOrDom)) != 'object';
+            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : _typeof(htmlstringOrDom)) != 'object';
             var target = !isHTMLString ? this.first() : this;
 
             target.elements.forEach(function (elem) {
@@ -361,7 +365,7 @@
             return this;
         },
         append: function append(htmlstringOrDom) {
-            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : (0, _typeof3.default)(htmlstringOrDom)) != 'object';
+            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : _typeof(htmlstringOrDom)) != 'object';
             var target = !isHTMLString ? this.last() : this;
 
             target.elements.forEach(function (elem) {
@@ -379,7 +383,7 @@
             return this;
         },
         after: function after(htmlstringOrDom) {
-            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : (0, _typeof3.default)(htmlstringOrDom)) != 'object';
+            var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : _typeof(htmlstringOrDom)) != 'object';
             var target = !isHTMLString ? this.last() : this;
 
             target.elements.forEach(function (elem) {
@@ -413,7 +417,7 @@
         trigger: function trigger(type, options) {
             var firstEvent;
 
-            if ((typeof type === 'undefined' ? 'undefined' : (0, _typeof3.default)(type)) == 'object') {
+            if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
                 firstEvent = type;
                 type = firstEvent.type;
             }
@@ -574,7 +578,7 @@
         }
         fn[name] = function (fn) {
             var needle;
-            var type = typeof fn === 'undefined' ? 'undefined' : (0, _typeof3.default)(fn);
+            var type = typeof fn === 'undefined' ? 'undefined' : _typeof(fn);
 
             if (type != 'function') {
                 needle = fn;

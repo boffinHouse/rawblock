@@ -1,28 +1,26 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['module', 'babel-runtime/helpers/typeof', './rb_fetch', './rb$_param'], factory);
+        define(['module', './rb_fetch', './rb$_param'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(module, require('babel-runtime/helpers/typeof'), require('./rb_fetch'), require('./rb$_param'));
+        factory(module, require('./rb_fetch'), require('./rb$_param'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod, global._typeof, global.rb_fetch, global.rb$_param);
+        factory(mod, global.rb_fetch, global.rb$_param);
         global.rb_fetchmanager = mod.exports;
     }
-})(this, function (module, _typeof2) {
+})(this, function (module) {
     'use strict';
 
-    var _typeof3 = _interopRequireDefault(_typeof2);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
 
     (function (factory) {
-        if ((typeof module === 'undefined' ? 'undefined' : (0, _typeof3.default)(module)) === 'object' && module.exports) {
+        if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
             module.exports = factory();
         } else {
             factory();
@@ -41,7 +39,7 @@
                 return new FetchManager(managerId, options);
             }
 
-            if ((typeof managerId === 'undefined' ? 'undefined' : (0, _typeof3.default)(managerId)) == 'object') {
+            if ((typeof managerId === 'undefined' ? 'undefined' : _typeof(managerId)) == 'object') {
                 options = managerId;
                 managerId = null;
             }
@@ -75,7 +73,7 @@
                 var id;
                 var managerOptions = this.options;
 
-                if ((typeof url === 'undefined' ? 'undefined' : (0, _typeof3.default)(url)) == 'object') {
+                if ((typeof url === 'undefined' ? 'undefined' : _typeof(url)) == 'object') {
                     options = url;
                     url = options;
                 }

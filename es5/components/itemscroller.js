@@ -1,28 +1,26 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['module', 'babel-runtime/helpers/typeof', '../utils/rb_draggy', '../utils/rb_wheelanalyzer', '../utils/rb_resize', '../utils/rb_prefixed', '../utils/rb_debounce'], factory);
+        define(['module', '../utils/rb_draggy', '../utils/rb_wheelanalyzer', '../utils/rb_resize', '../utils/rb_prefixed', '../utils/rb_debounce'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(module, require('babel-runtime/helpers/typeof'), require('../utils/rb_draggy'), require('../utils/rb_wheelanalyzer'), require('../utils/rb_resize'), require('../utils/rb_prefixed'), require('../utils/rb_debounce'));
+        factory(module, require('../utils/rb_draggy'), require('../utils/rb_wheelanalyzer'), require('../utils/rb_resize'), require('../utils/rb_prefixed'), require('../utils/rb_debounce'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod, global._typeof, global.rb_draggy, global.rb_wheelanalyzer, global.rb_resize, global.rb_prefixed, global.rb_debounce);
+        factory(mod, global.rb_draggy, global.rb_wheelanalyzer, global.rb_resize, global.rb_prefixed, global.rb_debounce);
         global.itemscroller = mod.exports;
     }
-})(this, function (module, _typeof2) {
+})(this, function (module) {
     'use strict';
 
-    var _typeof3 = _interopRequireDefault(_typeof2);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
 
     (function (factory) {
-        if ((typeof module === 'undefined' ? 'undefined' : (0, _typeof3.default)(module)) === 'object' && module.exports) {
+        if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
             module.exports = factory();
         } else {
             factory();

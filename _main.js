@@ -3507,10 +3507,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
 })(window, document);
 
-(function () {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = window.rb;
-    }
-})();
+export default window.rb;
 
 

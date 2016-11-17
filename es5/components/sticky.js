@@ -1,34 +1,68 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', 'babel-runtime/helpers/classCallCheck', 'babel-runtime/helpers/possibleConstructorReturn', 'babel-runtime/helpers/createClass', 'babel-runtime/helpers/inherits'], factory);
+        define(['exports'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('babel-runtime/helpers/classCallCheck'), require('babel-runtime/helpers/possibleConstructorReturn'), require('babel-runtime/helpers/createClass'), require('babel-runtime/helpers/inherits'));
+        factory(exports);
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.classCallCheck, global.possibleConstructorReturn, global.createClass, global.inherits);
+        factory(mod.exports);
         global.sticky = mod.exports;
     }
-})(this, function (exports, _classCallCheck2, _possibleConstructorReturn2, _createClass2, _inherits2) {
+})(this, function (exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
 
-    var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
 
-    var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
 
-    var _createClass3 = _interopRequireDefault(_createClass2);
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    }
 
-    var _inherits3 = _interopRequireDefault(_inherits2);
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
 
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
         };
+    }();
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
     // import './_childfx';
@@ -91,13 +125,13 @@
      */
 
     var Sticky = function (_ref) {
-        (0, _inherits3.default)(Sticky, _ref);
+        _inherits(Sticky, _ref);
 
         Sticky.filterPos = function filterPos(pos) {
             return pos != null && pos > -1 && pos < Number.MAX_VALUE;
         };
 
-        (0, _createClass3.default)(Sticky, null, [{
+        _createClass(Sticky, null, [{
             key: 'defaults',
             get: function get() {
                 return {
@@ -115,9 +149,9 @@
         }]);
 
         function Sticky(element, initialDefaults) {
-            (0, _classCallCheck3.default)(this, Sticky);
+            _classCallCheck(this, Sticky);
 
-            var _this = (0, _possibleConstructorReturn3.default)(this, _ref.call(this, element, initialDefaults));
+            var _this = _possibleConstructorReturn(this, _ref.call(this, element, initialDefaults));
 
             _this.isFixed = false;
             _this.isScrollFixed = false;

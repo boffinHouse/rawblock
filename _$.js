@@ -1,8 +1,4 @@
-(function(){
-    'use strict';
-    if (typeof module == 'object' && module.exports && typeof require != 'undefined') {
-        var $ = require('./rb_$/$_slim');
-        require('./rb_$/$_fx');
-        module.exports = $;
-    }
-})();
+import rb$ from './rb_$/$_slim';
+import './rb_$/$_fx';
+
+export default rb$;

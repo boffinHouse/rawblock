@@ -1,31 +1,29 @@
 (function (global, factory) {
-    if (typeof define === "function" && define.amd) {
-        define(['module', 'babel-runtime/helpers/typeof', './rb_$/$_slim', './rb_$/$_fx'], factory);
-    } else if (typeof exports !== "undefined") {
-        factory(module, require('babel-runtime/helpers/typeof'), require('./rb_$/$_slim'), require('./rb_$/$_fx'));
-    } else {
-        var mod = {
-            exports: {}
-        };
-        factory(mod, global._typeof, global.$_slim, global.$_fx);
-        global._$ = mod.exports;
-    }
-})(this, function (module, _typeof2, $) {
-    'use strict';
+  if (typeof define === "function" && define.amd) {
+    define(['exports', './rb_$/$_slim', './rb_$/$_fx'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('./rb_$/$_slim'), require('./rb_$/$_fx'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.$_slim, global.$_fx);
+    global._$ = mod.exports;
+  }
+})(this, function (exports, _$_slim) {
+  'use strict';
 
-    var _typeof3 = _interopRequireDefault(_typeof2);
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
+  var _$_slim2 = _interopRequireDefault(_$_slim);
 
-    (function () {
-        'use strict';
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
 
-        if ((typeof module === 'undefined' ? 'undefined' : (0, _typeof3.default)(module)) == 'object' && module.exports && typeof require != 'undefined') {
-            module.exports = $;
-        }
-    })();
+  exports.default = _$_slim2.default;
 });

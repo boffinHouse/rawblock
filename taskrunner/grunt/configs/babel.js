@@ -3,9 +3,6 @@ module.exports = {
         presets: ['es2015-loose', 'es2016', 'es2017'],
         plugins: [
             'transform-es2015-modules-umd',
-            ['transform-runtime', {
-                polyfill: false,
-            }],
         ],
     },
     dist: {
