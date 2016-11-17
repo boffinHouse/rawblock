@@ -29,9 +29,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * Reference to the internally used dom.js or jQuery instance
      * @memberof rb
      */
-    rb.$ = rb.$ || window.jQuery || window.dom;
+    if(!rb.$){
+        rb.$ = window.jQuery;
+    }
 
-    var $ = rb.$;
+    const $ = rb.$;
 
     /**
      * Reference to the root element (mostly html element)
@@ -85,7 +87,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @returns {String|Symbol}
      */
     rb.Symbol = window.Symbol;
-    var id = Math.round(Date.now() * Math.random());
+    let id = Math.round(Date.now() * Math.random());
 
     /**
      * Returns a unique id based on Math.random and Date.now().
@@ -108,15 +110,16 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
 	/**
      * Creates a promise with a resolve and a reject method.
-     * @returns promise {Deferred}
+     * @returns {Deferred}
      */
     rb.deferred = function(){
-        var tmp = {
+        const tmp = {
             isResolved: false,
             isRejected: false,
             isDone: false,
         };
-        var promise = new Promise(function(resolve, reject){
+
+        const promise = new Promise(function(resolve, reject){
             tmp.resolve = function(data){
                 promise.isResolved = true;
                 promise.isDone = true;
@@ -345,40 +348,28 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @returns {function} the throttled function.
      */
     rb.throttle = function (fn, options) {
-        var running, that, args;
-        var lastTime = 0;
-        var Date = window.Date;
-        var _run = function () {
+        let running, that, args;
+
+        let lastTime = 0;
+        let Date = window.Date;
+
+        const _run = function () {
             running = false;
             lastTime = Date.now();
             fn.apply(that, args);
         };
-        var afterAF = function () {
+
+        let afterAF = function () {
             rb.rIC(_run);
         };
-        var getAF = function () {
-            rb.rAFQueue(afterAF);
-        };
 
-        if (!options) {
-            options = {};
-        }
-
-        if (!options.delay) {
-            options.delay = 200;
-        }
-
-        if (options.write) {
-            afterAF = _run;
-        } else if (!options.read) {
-            getAF = _run;
-        }
-
-        return function () {
+        const throttel = function () {
             if (running) {
                 return;
             }
-            var delay = options.delay;
+
+            let delay = options.delay;
+
             running = true;
 
             that = options.that || this;
@@ -399,8 +390,29 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     setTimeout(getAF, delay);
                 }
             }
-
         };
+
+        let getAF = function () {
+            rb.rAFQueue(afterAF);
+        };
+
+        if (!options) {
+            options = {};
+        }
+
+        if (!options.delay) {
+            options.delay = 200;
+        }
+
+        if (options.write) {
+            afterAF = _run;
+        } else if (!options.read) {
+            getAF = _run;
+        }
+
+        throttel._rbUnthrotteled = fn;
+
+        return throttel;
     };
     /* End: throttle */
 
@@ -678,7 +690,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /* Begin: rAFs helper */
 
     /**
-     * Invokes `rb.rAF` on multiple methodnames of on object.
+     * Invokes `rb.rAF` on multiple methodNames of on object.
      *
      * @memberof rb
      *
@@ -731,11 +743,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /* Begin: addEasing */
     var BezierEasing;
     var easingMap = {
-        ease: '0.25, 0.1, 0.25, 1',
-        linear: '0, 0, 1, 1',
-        'ease-in': '0.42, 0, 1, 1',
-        'ease-out': '0.00, 0.0, 0.58, 1',
-        'ease-in-out': '0.42, 0, 0.58, 1',
+        ease: '0.25,0.1,0.25,1',
+        linear: '0,0,1,1',
+        'ease-in': '0.42,0,1,1',
+        'ease-out': '0,0,0.58,1',
+        'ease-in-out': '0.42,0,0.58,1',
     };
     /**
      * Generates an easing function from a CSS easing value and adds it to the rb.$.easing object. requires npm module: "bezier-easing".
@@ -1179,20 +1191,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 for (i = 0, len = newFocusParents.length; i < len; i++) {
                     newFocusParents[i].classList.add(isClass);
                 }
-
-                //if((oldFocusParents && oldFocusParents.length) || newFocusParents.length){
-                //    rb.rIC(function(){
-                //        if(oldFocusParents){
-                //            for (i = 0, len = oldFocusParents.length; i < len; i++) {
-                //                rb.events.dispatch(oldFocusParents[i], 'rb_focusleave', {bubbles: false, cancelable: false});
-                //            }
-                //        }
-                //
-                //        for (i = 0, len = newFocusParents.length; i < len; i++) {
-                //            rb.events.dispatch(newFocusParents[i], 'rb_focusenter', {bubbles: false, cancelable: false});
-                //        }
-                //    });
-                //}
             }
 
             running = false;
@@ -1432,13 +1430,14 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         },
     };
 
-    var regNum = /:(\d)+\s*$/;
-    var regTarget = /^\s*?\.?([a-z0-9_$]+)\((.*?)\)\s*?/i;
+    const regNum = /:(\d)+\s*$/;
+    const regTarget = /^\s*?\.?([a-z0-9_$]+)\((.*?)\)\s*?/i;
+    const regPropTarget = /^@(.+)/;
 
     /**
      * Returns an array of elements based on a string.
      * @memberof rb
-     * @param targetStr {String} Either a whitespace separated list of ids or q jQuery traversal method. ("foo-1 bar-2", "next(.input)")
+     * @param targetStr {String} Either a whitespace separated list of ids ("foo-1 bar-2"), a jQuery traversal method ("next(.input)"), a DOM property prefixed with a '@' ("@form") or a predefined value (window, document, scrollingElement, scrollingEventObject).
      * @param element {Element} The element that should be used as starting point for the jQuery traversal method.
      * @returns {Element[]}
      */
@@ -1465,9 +1464,18 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     target = [rb.getScrollingEventObject()];
                     break;
                 default:
-                    if ((match = targetStr.match(regTarget))) {
+                    if((match = targetStr.match(regPropTarget)) && (match[1] in element)){
+                        target = element[match[1]];
 
-                        if (match[1] == '$' || match[1] == 'sel') {
+                        if('length' in target && !target.nodeType && ((target.length - 1) in target)){
+                            target = Array.from(target);
+                        } else {
+                            target = [target];
+                        }
+
+                    } else if ((match = targetStr.match(regTarget))) {
+
+                        if (match[1] == '$' || match[1] == '$$' || match[1] == 'sel') {
                             target = Array.from(document.querySelectorAll(match[2]));
                         } else if ($.fn[match[1]]) {
                             if (!match[2]) {
@@ -1478,6 +1486,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     } else {
                         targetStr = targetStr.split(regSplit);
                         target = [];
+
                         for (i = 0, len = targetStr.length; i < len; i++) {
                             temp = targetStr[i] && document.getElementById(targetStr[i]);
                             if (temp) {
@@ -1627,19 +1636,20 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 (function (window, document) {
     'use strict';
 
-    var elements, useMutationEvents, implicitlyStarted, liveBatch, initClass, attachedClass, started;
+    var elements, useMutationEvents, implicitlyStarted, liveBatch, initClass, attachedClass, watchCssClass, started;
 
-    var live = {};
-    var removeElements = [];
-    var rb = window.rb;
-    var $ = rb.$;
-    var componentExpando = rb.Symbol('_rbComponent');
-    var expando = rb.Symbol('_rbCreated');
-    var docElem = rb.root;
-    var hooksCalled = {};
-    var unregisteredFoundHook = {};
+    const live = {};
+    const removeElements = [];
+    const rb = window.rb;
+    const $ = rb.$;
+    const componentExpando = rb.Symbol('_rbComponent');
+    const expando = rb.Symbol('_rbCreated');
+    const docElem = rb.root;
+    const hooksCalled = {};
+    const unregisteredFoundHook = {};
+    const _CssCfgExpando = rb.Symbol('_CssCfgExpando');
 
-    var extendEvents = function(value, args){
+    const extendEvents = function(value, args){
         var prop;
         var toMerge = args.shift();
 
@@ -1663,7 +1673,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         return value;
     };
-    var extendStatics = function (Class, proto, SuperClasss, prop) {
+
+    const extendStatics = function (Class, proto, SuperClasss, prop) {
         var value;
         var classObj = SuperClasss[prop] == Class[prop] ? null : Class[prop];
 
@@ -1690,12 +1701,13 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
     };
 
-    var initClickCreate = function () {
+    let initClickCreate = function () {
         initClickCreate = $.noop;
         rb.click.add('module', function (elem) {
             rb.getComponent(elem);
             rb.rAFQueue(function () {
                 elem.classList.remove(rb.click.clickClass);
+
                 if(!elem.classList.contains(attachedClass)){
                     elem.classList.add(initClass);
                     live.searchModules();
@@ -1705,19 +1717,31 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         });
     };
 
-    var initWatchCss = function () {
+    let initWatchCss = function () {
         initWatchCss = $.noop;
-        var elements = document.getElementsByClassName(attachedClass);
+        const elements = document.getElementsByClassName(attachedClass);
+        const cssElements = document.getElementsByClassName(watchCssClass);
 
         rb.checkCssCfgs = function () {
-            var i, elem, component;
-            var len = elements.length;
+            let i, elem, component;
+            let len = elements.length;
+
             for (i = 0; i < len; i++) {
                 elem = elements[i];
                 component = elem && elem[componentExpando];
 
-                if (component && component.hasCssCfgChanged && component.hasCssCfgChanged()) {
+                if (component && component.origName && component.parseOptions && rb.hasComponentCssChanged(elem, component.origName)) {
                     component.parseOptions();
+                }
+            }
+
+            for (i = 0, len = cssElements.length; i < len; i++) {
+                elem = cssElements[i];
+
+                component = elem.getAttribute('data-module');
+
+                if (component && rb.hasComponentCssChanged(elem, component)) {
+                    live.import(component, elem, true);
                 }
             }
         };
@@ -1725,7 +1749,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         rb.resize.on(rb.checkCssCfgs);
     };
 
-    var initObserver = function () {
+    const initObserver = function () {
         var removeComponents = (function () {
             var runs, timer;
             var i = 0;
@@ -1787,10 +1811,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             document.addEventListener('DOMContentLoaded', live.searchModules);
             docElem.addEventListener('DOMNodeRemoved', (function () {
                 var mutation = {
-                    addedNodes: []
+                    addedNodes: [],
                 };
                 var mutations = [
-                    mutation
+                    mutation,
                 ];
                 var run = function () {
                     onMutation(mutations);
@@ -1809,7 +1833,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
     };
 
-    var createBatch = function () {
+    const createBatch = function () {
         var runs;
         var batch = [];
         var run = function () {
@@ -1828,10 +1852,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     runs = true;
                     setTimeout(run);
                 }
-            }
+            },
         };
     };
-    var extendOptions = function(obj){
+
+    const extendOptions = function(obj){
         if(obj){
             ['statePrefix', 'utilPrefix', 'jsPrefix', 'nameSeparator', 'elementSeparator', 'attrSel'].forEach(function(prefixName){
                 if(prefixName in obj && typeof obj[prefixName] == 'string') {
@@ -1840,7 +1865,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             });
         }
     };
-    var mainInit = function(){
+
+    let mainInit = function(){
 
         window.removeEventListener('click', mainInit, true);
         mainInit = false;
@@ -1849,6 +1875,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         initClass = ['js', 'rb', 'live'].join(rb.nameSeparator);
         attachedClass = ['js', 'rb', 'attached'].join(rb.nameSeparator);
+        watchCssClass = ['js', 'rb', 'watchcss'].join(rb.nameSeparator);
 
         elements = document.getElementsByClassName(initClass);
 
@@ -1904,7 +1931,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         liveBatch = createBatch();
 
-        live.searchModules();
+        live.searchModules._rbUnthrotteled();
     };
 
 
@@ -1965,8 +1992,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         if (isRbComponent) {
             extendStatics(Class, proto, superClass, 'defaults');
             extendStatics(Class, proto, superClass, 'events');
-
-            proto._CssCfgExpando = rb.Symbol('_CssCfgExpando');
 
             if (!proto.hasOwnProperty('name')) {
                 proto.name = name;
@@ -2066,14 +2091,29 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
     };
 
-    live.import = function(moduleId){
-        var hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*']);
-        if (!rb.components[moduleId] && hook && !hooksCalled[moduleId]) {
-            hooksCalled[moduleId] = true;
-            /* jshint loopfunc: true */
-            hook(moduleId, moduleId, function () {
-                live._failed[moduleId] = true;
-            });
+    live.import = function(moduleId, element, lazy){
+        const hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*']);
+
+        if (!rb.components[moduleId] && hook) {
+
+            if(!hooksCalled[moduleId]){
+                let cssConfig = element && lazy && rb.parseComponentCss(element, moduleId);
+
+                if(cssConfig && cssConfig.switchedOff){
+                    if(!element.classList.contains(watchCssClass)){
+                        rb.rAFQueue(function () {
+                            element.classList.add(watchCssClass);
+                        }, true);
+                    }
+                } else {
+                    hooksCalled[moduleId] = true;
+                    hook(moduleId, moduleId, function() {
+                        live._failed[moduleId] = true;
+                    });
+                }
+            }
+        } else {
+            live._failed[moduleId] = true;
         }
 
         return rb.components[moduleId] || hook;
@@ -2102,6 +2142,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         rb.rAFQueue(function () {
             element.classList.add(attachedClass);
+            element.classList.remove(watchCssClass);
         }, true);
 
         if (!element[expando] && instance && (instance.attached || instance.detached)) {
@@ -2136,7 +2177,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         };
 
         var findElements = rb.throttle(function () {
-            let element, modulePath, moduleId, i, hook, len;
+            let element, moduleId, i, hook, len;
 
             if(mainInit){
                 mainInit();
@@ -2160,12 +2201,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     continue;
                 }
 
-                modulePath = element.getAttribute('data-module') || '';
-                moduleId = modulePath.split('/');
-                moduleId = moduleId[moduleId.length - 1];
+                moduleId = element.getAttribute('data-module') || '';
 
                 if (!rb.components[moduleId]) {
-                    hook = live.import(moduleId);
+                    hook = live.import(moduleId, element, true);
                 }
 
                 if (rb.components[moduleId]) {
@@ -2210,6 +2249,14 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
 
         live._attached.splice(index, 1);
+    };
+
+    rb.hasComponentCssChanged = function(element, _name){
+        return rb.hasPseudoChanged(element, _CssCfgExpando);
+    };
+
+    rb.parseComponentCss = function(element, _name){
+        return rb.parsePseudo(element, _CssCfgExpando) || null;
     };
 
     return live;
@@ -2320,17 +2367,21 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 (function (window, document, live, _undefined) {
     'use strict';
 
-    var focusClass, focusSel;
-    var rb = window.rb;
-    var $ = rb.$;
-    var componentExpando = live.componentExpando;
-    var regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}|,|'|"|:))/g;
-    var regName = /\{name}/g;
-    var regJsName = /\{jsName}/g;
-    var regHtmlName = /\{htmlName}/g;
-    var regnameSeparator = /\{-}/g;
-    var regElementSeparator = /\{e}/g;
-    var _setupEventsByEvtObj = function (that) {
+    let focusClass, focusSel;
+    const rb = window.rb;
+    const $ = rb.$;
+    const componentExpando = live.componentExpando;
+    const regHTMLSel = /\.{(htmlName|name)}(.+?)(?=(\s|$|\+|\)|\(|\[|]|>|<|~|\{|}|,|'|"|:))/g;
+    const regName = /\{name}/g;
+    const regJsName = /\{jsName}/g;
+    const regHtmlName = /\{htmlName}/g;
+    const regnameSeparator = /\{-}/g;
+    const regElementSeparator = /\{e}/g;
+    const regUtilPrefix = /\{u}/g;
+    const regStatePrefix = /\{is}/g;
+    const handlerOptionsSymbol = rb.Symbol('handlerOptions');
+
+    const _setupEventsByEvtObj = function (that) {
         var eventsObjs, evt, oldCallbacks;
         var delegateEvents = [];
         var evts = that.constructor.events;
@@ -2341,6 +2392,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             /* jshint loopfunc: true */
             (function (eventsObjs, methods) {
                 var handler = function(){
+                    if(that.options.switchedOff && !handler[handlerOptionsSymbol].neverSwitchOff){return;}
+
                     var i = 0;
                     var args = Array.from(arguments);
 
@@ -2375,6 +2428,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     for(prop in eventObj.opts){
                         opts[prop] = that.interpolateName(eventObj.opts[prop]);
                     }
+
+                    handler[handlerOptionsSymbol] = opts;
 
                     if(!opts['@']){
                         rb.events.add(that.element, eventName, handler, opts);
@@ -2430,7 +2485,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             });
         }
     };
-    var replaceHTMLSel = rb.memoize((function(){
+
+    const replaceHTMLSel = rb.memoize((function(){
         var replacer = function(full, f1, f2){
             return '[' + rb.attrSel + '="{htmlName}' + f2 +'"]';
         };
@@ -2438,7 +2494,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             return str.replace(regHTMLSel, replacer);
         };
     })(), true);
-    var generateFocusClasses = function(){
+
+    const generateFocusClasses = function(){
         focusClass = ['js', 'rb', 'autofocus'].join(rb.nameSeparator);
         focusSel = '.' + focusClass;
     };
@@ -2565,10 +2622,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         if (!component && element) {
 
-            if (!rb.components[componentName]) {
-                componentName = (element.getAttribute('data-module') || '').split('/');
-
-                componentName = componentName[componentName.length - 1];
+            if (!componentName) {
+                componentName = element.getAttribute('data-module') || '';
             }
 
             if (rb.components[componentName]) {
@@ -2577,6 +2632,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
 
         if(!component){
+            if(componentName){
+                live.import(componentName);
+            }
             rb.logInfo('component not found', element, componentName);
         }
         return component || null;
@@ -2688,13 +2746,15 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
              * defaults Object, represent the default options of the component.
              * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
              *
+             * @static
+             * @memberOf rb.Component
+             *
              * @see rb.Component.prototype.setOption
              *
-             * @prop {Object} defaults
              * @prop {Boolean} defaults.debug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
              * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
-             * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
              * @prop {String} defaults.autofocusSel='' Overrides the js-rb-autofocus selector for the component.
+             * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
              * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
              *
              * @example
@@ -2742,6 +2802,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 focusDelay: 0,
                 debug: null,
                 autofocusSel: '',
+                switchedOff: false,
+                name: '',
+                jsName: '',
             },
 
             /**
@@ -2780,15 +2843,23 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             events: {},
             beforeConstruct: $.noop,
             /**
-             * Shortcut to [`rb.getComponent`]{@link rb.getComponent}
-             * @function
+             * Returns the component of an element. If a string is used, uses `this.getElementsByString` or `this.query` to get the element.
+             *
+             * @param element {Element|String}
+             * @param [moduleName] {String}
+             * @param [initialOpts] {Object}
              */
-            component: function(element, name, initialOpts){
+            component: function(element, moduleName, initialOpts){
                 if(typeof element == 'string'){
                     element = this.interpolateName(element);
                     element = rb.getElementsByString(element, this.element)[0] || this.query(element);
                 }
-                return rb.getComponent(element, name, initialOpts);
+
+                return rb.getComponent(element, moduleName, initialOpts);
+            },
+
+            rAFs: function(){
+                return rb.rAFs(this, ...arguments);
             },
 
             /**
@@ -2839,9 +2910,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     detail = type;
                     type = detail.type;
                 }
+
                 if (type == null) {
                     type = this._evtName;
-                } else if (!type.includes(this.jsName)) {
+                } else if (!type.startsWith(this.jsName)) {
                     type = this.jsName + type;
                 }
 
@@ -2988,6 +3060,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     .replace(regHtmlName, this.name)
                     .replace(regnameSeparator, rb.nameSeparator)
                     .replace(regElementSeparator, rb.elementSeparator)
+                    .replace(regUtilPrefix, rb.utilPrefix)
+                    .replace(regStatePrefix, rb.statePrefix)
                 ;
             },
 
@@ -3032,7 +3106,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
              * @param initialOpts
              */
             parseOptions: function (opts) {
-                var options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, this.parseCSSOptions(), this.parseHTMLOptions(), this._stickyOpts);
+                var options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, rb.parseComponentCss(this.element, this.origName), this.parseHTMLOptions(), this._stickyOpts);
                 this.setOptions(options);
             },
 
@@ -3059,8 +3133,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             /**
              * Sets an option. The function should be extended to react to dynamic option changes after instantiation.
              * @param name {String} Name of the option.
-             * @param isSticky=false {boolean} Whether the option can't be overwritten with CSS option.
              * @param value {*} Value of the option.
+             * @param isSticky=false {boolean} Whether the option can't be overwritten with CSS option.
              *
              * @example
              * class MyComponent extends rb.Component {
@@ -3162,18 +3236,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 var options = rb.jsonParse(element.getAttribute(mainOptions)) || {};
 
                 return rb.parseDataAttrs(element, options, this.origName, mainOptions);
-            },
-
-            /*
-             * parses the CSS options (::before pseudo) of the component
-             * @returns {{}}
-             */
-            parseCSSOptions: function() {
-                return rb.parsePseudo(this.element, this._CssCfgExpando) || false;
-            },
-
-            hasCssCfgChanged: function(){
-                return rb.hasPseudoChanged(this.element, this._CssCfgExpando);
             },
 
             destroy: function () {

@@ -26,7 +26,7 @@ module.exports = {
         ]
     },
     scss: {
-        files: ['<%= paths.src %>/sass/**/*.scss', '<%= paths.src %>/components/**/*.scss', '!<%= paths.src %>/sass/tmp_*.scss'],
+        files: ['<%= paths.src %>/sass/**/*.scss', 'helpers/**/*.scss', '!<%= paths.src %>/sass/tmp_*.scss'],
         tasks: ['css'],
         options: {
             debounceDelay: 100,
@@ -34,7 +34,7 @@ module.exports = {
         }
     },
     component: {
-        files: ['<%= paths.src %>/components/**/*.scss','<%= paths.src %>/components/**/*.{json,hbs,md}'],
+        files: ['components/**/*.scss','components/**/*.{json,hbs,md}'],
         tasks: ['css', 'newer:assemble:dev', 'prettify:dev'],
     },
     sync_img: {
@@ -54,7 +54,7 @@ module.exports = {
     //	tasks: ['test'] //
     //},
     templates: {
-        files: ['<%= paths.dev %>/js/_inlinehead-behavior.js', '<%= paths.src %>/templates/**/*.{json,hbs,md}', '<%= paths.src %>/components/**/*.{json,hbs,md}'],
+        files: ['<%= paths.dev %>/js/_inlinehead-behavior.js', '<%= paths.src %>/templates/**/*.{json,hbs,md}', 'components/**/*.{json,hbs,md}'],
         tasks: ['newer:assemble:dev', 'prettify:dev']
     },
     ejs: {

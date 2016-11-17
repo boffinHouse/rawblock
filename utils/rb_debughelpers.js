@@ -55,28 +55,30 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
             target.addEventListener = function(type, handler){
 
-                if(!this[eventSymbol]){
-                    this[eventSymbol] = {};
-                }
-                if(!this[eventSymbol][type]){
-                    this[eventSymbol][type] = [];
-                }
+                if(this){
+                    if(!this[eventSymbol]){
+                        this[eventSymbol] = {};
+                    }
+                    if(!this[eventSymbol][type]){
+                        this[eventSymbol][type] = [];
+                    }
 
-                this[eventSymbol][type].push(handler);
+                    this[eventSymbol][type].push(handler);
 
-                if(hasMultiHandlerCount(this[eventSymbol][type], handler)){
-                    setTimeout(()=>{
-                        if( (hasMultiHandlerCount(this[eventSymbol][type], handler)) ){
-                            rb.logWarn(`EventTarget has multiple same handlers for ${type}`, arguments, handler);
-                        }
-                    }, 99);
+                    if(hasMultiHandlerCount(this[eventSymbol][type], handler)){
+                        setTimeout(()=>{
+                            if( (hasMultiHandlerCount(this[eventSymbol][type], handler)) ){
+                                rb.logWarn(`EventTarget has multiple same handlers for ${type}`, arguments, handler);
+                            }
+                        }, 99);
+                    }
                 }
 
                 return addEventListener.apply(this, arguments);
             };
 
             target.removeEventListener = function(type, handler){
-                if(this[eventSymbol] && this[eventSymbol][type]){
+                if(this && this[eventSymbol] && this[eventSymbol][type]){
                     const index = this[eventSymbol][type].indexOf(handler);
 
                     if(index != -1){

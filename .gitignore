@@ -3,6 +3,7 @@ build
 dist
 dev
 doc
+es5
 jsdoc
 jsdoc-md
 tmp

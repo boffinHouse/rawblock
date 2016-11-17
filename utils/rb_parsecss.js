@@ -46,43 +46,43 @@
         return ret;
     }
 
-    rb.parseCss = function(element, name){
+    function parseCss(element, name){
         var styles = element.nodeType ? rb.getStyles(element) : element;
 
         return rb.jsonParse(
             removeLeadingQuotes(styles.getPropertyValue(name || defaultCSSProp) || '')
         );
-    };
+    }
 
-    rb.hasComponentCssChanged = function(element, name, symbol){
+    function hasComponentCssChanged(element, name, symbol){
         var nowStyles = getComponentCss(element, name);
-        var cachedStyles = element[symbol];
+        var cachedStyles = element[symbol] && element[symbol][name];
 
-        element[symbol] = nowStyles;
+        if(!element[symbol]){
+            element[symbol] = {};
+        }
+        element[symbol][symbol] = nowStyles;
 
         return nowStyles != cachedStyles;
-    };
+    }
 
-    rb.parseComponentCss = function(element, name, symbol){
-        var styles = element[symbol] || getComponentCss(element, name);
+    function parseComponentCss(element, name, symbol){
+        var styles = element[symbol] && element[symbol][name] || getComponentCss(element, name);
 
         if(symbol){
-            element[symbol] = styles;
+            if(!element[symbol]){
+                element[symbol] = {};
+            }
+            element[symbol][name] = styles;
         }
 
         return rb.jsonParse(styles);
-    };
+    }
 
     rb.enableCustomCss = function(){
-        Object.assign(rb.Component.prototype, {
-            parseCSSOptions: function(){
-                return rb.parseComponentCss(this.element, this.origName, this._CssCfgExpando);
-            },
-            hasCssCfgChanged: function(){
-                return rb.hasComponentCssChanged(this.element, this.origName, this._CssCfgExpando);
-            },
-        });
+        rb.parseComponentCss = parseComponentCss;
+        rb.hasComponentCssChanged = hasComponentCssChanged;
     };
 
-    return rb.parseCss;
+    return parseCss;
 }));
