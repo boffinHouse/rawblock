@@ -180,7 +180,7 @@ class SuperSlimHeader extends rb.components.slimheader {
 
 But you can also use the static `events` object of your component class. Normally rawblock binds all events to the component itself and gives you some options to help with event delegation. 
 
-But due to the fact that the `scroll` event happens outside of your component event delegation does not help here. For this you can use the `@' event option.
+But due to the fact that the `scroll` event happens outside of your component event delegation does not help here. For this you can use the `@' event option. Every event option is prefixed with a `:`.
 
 
 ```js

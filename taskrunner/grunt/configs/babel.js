@@ -19,7 +19,7 @@ module.exports = {
             {
                 expand: true,
                 cwd: '',
-                src: ['$.js', 'crucial.js', 'main.js'],
+                src: ['_$.js', '_crucial.js', '_main.js'],
                 dest: 'es5/',
             },
             {

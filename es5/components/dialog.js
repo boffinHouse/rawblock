@@ -1,0 +1,383 @@
+(function (global, factory) {
+    if (typeof define === "function" && define.amd) {
+        define(['exports', 'babel-runtime/helpers/typeof', 'babel-runtime/helpers/classCallCheck', 'babel-runtime/helpers/possibleConstructorReturn', 'babel-runtime/helpers/createClass', 'babel-runtime/helpers/inherits', '../utils/rb_scrollbarwidth'], factory);
+    } else if (typeof exports !== "undefined") {
+        factory(exports, require('babel-runtime/helpers/typeof'), require('babel-runtime/helpers/classCallCheck'), require('babel-runtime/helpers/possibleConstructorReturn'), require('babel-runtime/helpers/createClass'), require('babel-runtime/helpers/inherits'), require('../utils/rb_scrollbarwidth'));
+    } else {
+        var mod = {
+            exports: {}
+        };
+        factory(mod.exports, global._typeof, global.classCallCheck, global.possibleConstructorReturn, global.createClass, global.inherits, global.rb_scrollbarwidth);
+        global.dialog = mod.exports;
+    }
+})(this, function (exports, _typeof2, _classCallCheck2, _possibleConstructorReturn2, _createClass2, _inherits2) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    var _typeof3 = _interopRequireDefault(_typeof2);
+
+    var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+    var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+    var _createClass3 = _interopRequireDefault(_createClass2);
+
+    var _inherits3 = _interopRequireDefault(_inherits2);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    var rb = window.rb;
+    var $ = rb.$;
+    var regInputs = /^(?:input|textarea)$/i;
+
+    /**
+     * Class component to create a modal dialog with a backdrop.
+     *
+     * @name rb.components.dialog
+     *
+     * @extends rb.Component
+     *
+     * @param element {Element}
+     * @param [initialDefaults] {OptionsObject}
+     *
+     * @fires dialog#change Fires before a dialog's `isOpen` state changes; The default behavior can be prevented.
+     * @fires dialog#changed Fires after a dialog's `isOpen` state changed;
+     *
+     * @example
+     * <button aria-controls="dialog-1" data-module="button" type="button" class="js-rb-click">button</button>
+     * <div id="dialog-1" class="rb-dialog" data-module="dialog">
+     *     <div class="dialog-content">
+     *      {{dialogContent}}
+     *    </div>
+     *    <button type="button" class="dialog-close">close</button>
+     * </div>
+     * @example
+     * rb.$('.rb-dialog').rbComponent().open();
+     * rb.$('.rb-dialog').on('dialogchanged', function(){
+     *      console.log(rb.$(this).rbComponent().isOpen);
+     * });
+     */
+
+    var Dialog = function (_rb$Component) {
+        (0, _inherits3.default)(Dialog, _rb$Component);
+        (0, _createClass3.default)(Dialog, null, [{
+            key: 'defaults',
+            get: function get() {
+                return {
+                    open: false,
+                    closeOnEsc: true,
+                    closeOnBackdropClick: true,
+                    appendToBody: true,
+                    contentId: '',
+                    backdropClass: '',
+                    setDisplay: true,
+                    scrollPadding: 'paddingRight',
+                    trapKeyboard: true,
+                    setFocus: 'force',
+                    contentUrl: ''
+                };
+            }
+        }, {
+            key: 'events',
+            get: function get() {
+                return {
+                    'click:closest(.{name}{e}close)': function clickClosestNameEClose(e) {
+                        this.close();
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                };
+            }
+        }]);
+
+        function Dialog(element, initialDefaults) {
+            (0, _classCallCheck3.default)(this, Dialog);
+
+            var _this = (0, _possibleConstructorReturn3.default)(this, _rb$Component.call(this, element, initialDefaults));
+
+            /**
+             * @name rb.components.dialog.prototype.isOpen
+             * @type {boolean}
+             */
+            _this.isOpen = false;
+
+            _this.$backdrop = $(document.createElement('div')).addClass(_this.name + rb.elementSeparator + 'backdrop');
+
+            _this.contentElement = _this.query('.{name}{e}content');
+
+            _this.rAFs({ that: _this, throttle: true }, '_setup', '_addContent', '_setDisplay');
+
+            _this.rAFs({ throttle: true }, '_open', '_close');
+
+            if (_this.options.open) {
+                _this._setup();
+            } else {
+                setTimeout(_this._setup, 99 + 999 * Math.random());
+            }
+            return _this;
+        }
+
+        Dialog.prototype._setup = function _setup() {
+            if (this.isReady || !this.element.parentNode) {
+                return;
+            }
+
+            var backdrop = void 0,
+                isWrapped = void 0;
+
+            var backdropDocument = this.element.parentNode;
+            var backdropDocumentName = this.name + rb.elementSeparator + 'backdrop' + rb.nameSeparator + 'document';
+
+            this.trapKeyboardElemBefore = $(document.createElement('span')).attr({
+                'class': this.name + 'keyboardtrap',
+                'tabindex': this.options.trapKeyboard ? 0 : -1
+            }).get(0);
+
+            this.trapKeyboardElemAfter = this.trapKeyboardElemBefore.cloneNode();
+
+            this.isReady = true;
+
+            if (!backdropDocument || !backdropDocument.classList.contains(backdropDocumentName)) {
+                backdropDocument = document.createElement('div');
+                backdropDocument.className = backdropDocumentName;
+                this.$backdrop.append(backdropDocument);
+            } else if (backdropDocument && (backdrop = backdropDocument.parentNode) && backdrop.classList.contains(this.name + rb.elementSeparator + 'backdrop')) {
+                this.$backdrop = $(backdrop);
+                isWrapped = true;
+            }
+
+            this.backdropDocument = backdropDocument;
+
+            $(this.backdropDocument).before(this.trapKeyboardElemBefore).after(this.trapKeyboardElemAfter);
+
+            if (this.options.backdropClass) {
+                this.$backdrop.addClass(this.options.backdropClass);
+            }
+
+            if (this.options.appendToBody) {
+                document.body.appendChild(this.$backdrop.get(0));
+            } else if (!isWrapped) {
+                this.$element.before(this.$backdrop.get(0));
+            }
+
+            if (!isWrapped) {
+                backdropDocument.appendChild(this.element);
+            }
+
+            if (!this.element.getAttribute('tabindex')) {
+                this.element.setAttribute('tabindex', '-1');
+            }
+            if (!this.element.getAttribute('role')) {
+                this.element.setAttribute('role', 'group');
+            }
+
+            this._setUpEvents();
+
+            if (this.options.open) {
+                this.open();
+            } else if (this.options.setDisplay) {
+                this.$backdrop.css({ display: 'none' });
+            }
+        };
+
+        Dialog.prototype._open = function _open(options) {
+            var content = void 0;
+
+            if (this.contentElement && options && options.contentId && this._curContentId != options.contentId && (content = document.getElementById(options.contentId))) {
+                this._curContentId = options.contentId;
+                this.contentElement.innerHTML = content.innerHTML;
+            }
+
+            if (this._xhr) {
+                this.contentElement.innerHTML = '';
+                this.$backdrop.addClass(rb.statePrefix + 'loading');
+            }
+
+            this.$backdrop.css({ display: '' });
+            this.$backdrop.addClass(rb.statePrefix + 'open');
+
+            rb.$root.rbChangeState('open{-}' + this.name + '{-}within', true);
+
+            if (this._setScrollPadding && this.options.scrollPadding) {
+                document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
+            }
+
+            if (options.focusElement) {
+                this.setComponentFocus(options.focusElement);
+            } else {
+                this.storeActiveElement();
+            }
+
+            this._trigger(options);
+        };
+
+        Dialog.prototype.open = function open(options) {
+            var scrollbarWidth = void 0;
+
+            var mainOpts = this.options;
+
+            if (this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
+                return false;
+            }
+
+            if (!this.isReady) {
+                this._setup();
+            }
+
+            this.isOpen = true;
+
+            if (!options) {
+                options = {};
+            }
+
+            if ((0, _typeof3.default)(options.focusElement) != 'object' && (options.focusElement || mainOpts.setFocus)) {
+                options.focusElement = this.getFocusElement(options.focusElement || mainOpts.setFocus == 'force');
+            }
+
+            if (options.contentUrl) {
+                this._xhr = rb.fetch({ url: options.contentUrl }).then(this._addContent);
+            }
+
+            if (this.options.setDisplay && this._displayTimer) {
+                clearTimeout(this._displayTimer);
+                this._displayTimer = null;
+            }
+
+            this._setScrollPadding = this.options.scrollPadding && rb.root.clientHeight + 1 < rb.root.scrollHeight && (scrollbarWidth = rb.scrollbarWidth) && parseFloat(rb.getStyles(document.body)[this.options.scrollPadding]) + scrollbarWidth;
+
+            if (this._setScrollPadding) {
+                this._oldPaddingValue = document.body.style[this.options.scrollPadding];
+            }
+
+            if (!this.options.setDisplay && options.focusElement && regInputs.test(options.focusElement.nodeName)) {
+                this._open._rbUnrafedFn.call(this, options);
+            } else {
+                this._open(options);
+            }
+            return true;
+        };
+
+        Dialog.prototype._close = function _close(options) {
+            this.restoreFocus(true);
+
+            if (this._setScrollPadding && this._oldPaddingValue != null) {
+                document.body.style[this.options.scrollPadding] = this._oldPaddingValue;
+                this._setScrollPadding = 0;
+                this._oldPaddingValue = null;
+            }
+
+            this.$backdrop.removeClass(rb.statePrefix + 'open');
+            rb.$root.rbChangeState('open{-}' + this.name + '{-}within');
+
+            if (this.options.setDisplay) {
+                clearTimeout(this._displayTimer);
+                this._displayTimer = setTimeout(this._setDisplay, 5000);
+            }
+            this._trigger(options);
+        };
+
+        Dialog.prototype.close = function close(options) {
+            if (!this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
+                return false;
+            }
+            this.isOpen = false;
+            this._xhr = null;
+
+            this._close(options);
+            return true;
+        };
+
+        Dialog.prototype.toggle = function toggle(options) {
+            this[this.isOpen ? 'close' : 'open'](options);
+        };
+
+        Dialog.prototype._addContent = function _addContent(data) {
+            if (this._xhr && this.contentElement) {
+                this.contentElement.innerHTML = data.data;
+            }
+            this.$backdrop.removeClass(rb.statePrefix + 'loading');
+            this._xhr = null;
+        };
+
+        Dialog.prototype._setDisplay = function _setDisplay() {
+            this.$backdrop.css({ display: this.isOpen ? '' : 'none' });
+            this._displayTimer = null;
+        };
+
+        Dialog.prototype._setUpEvents = function _setUpEvents() {
+            var _this2 = this;
+
+            var options = this.options;
+
+            this.$backdrop.on('click', function (e) {
+                if (options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == _this2.backdropDocument)) {
+                    _this2.close();
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+            this.$backdrop.on('keydown', function (e) {
+                if (e.keyCode == 27 && options.closeOnEsc && !e.defaultPrevented) {
+                    _this2.close();
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
+            this.trapKeyboardElemBefore.addEventListener('focus', function (e) {
+                if (options.trapKeyboard) {
+                    var focusElem = _this2.queryAll('.{name}{e}close');
+
+                    e.preventDefault();
+                    try {
+                        focusElem[focusElem.length - 1].focus();
+                    } catch (er) {
+                        rb.logInfo('Focus error', er);
+                    }
+                }
+            }, true);
+
+            this.trapKeyboardElemAfter.addEventListener('focus', function (e) {
+
+                if (options.trapKeyboard) {
+                    e.preventDefault();
+                    try {
+                        _this2.element.focus();
+                    } catch (er) {
+                        rb.logInfo('Focus error', er);
+                    }
+                }
+            }, true);
+        };
+
+        return Dialog;
+    }(rb.Component);
+
+    rb.ready.then(function () {
+        rb.click.add('dialog', function (element, event, attr) {
+            var dialog;
+            var opts = rb.jsonParse(attr);
+
+            if (typeof opts == 'string') {
+                opts = { id: opts };
+            }
+            dialog = document.getElementById(opts.id);
+
+            if (dialog && (dialog = rb.getComponent(dialog))) {
+                dialog.open(opts);
+                event.preventDefault();
+            }
+        });
+    });
+
+    rb.live.register('dialog', Dialog);
+
+    exports.default = Dialog;
+});
