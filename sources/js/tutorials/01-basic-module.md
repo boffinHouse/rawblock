@@ -1,10 +1,10 @@
-#How to create a rawblock component
+#How to create a rawblock component I
 
 As an example component we will create a "slim header". As soon as the user scrolls down a certain threshold the header gets slim. A full demo can be seen at [codepen (SlimHeader with rawblock)](http://codepen.io/aFarkas/pen/GNNMxR).
 
 ##HTML of our slim header component
 
-A component markup always has to have a `data-module` attribute with the name of our component and in general a `js-rb-live` class to indicate, that rawblock should create the UI component immediately.
+A component markup always has to have a `data-module` attribute with the name of your component and in general a `js-rb-live` class to indicate, that rawblock should create the UI component immediately.
 
 The functional childs should have a class prefixed with the module name.
  
@@ -79,7 +79,7 @@ rb.live.register('slimheader', SlimHeader);
 
 A rawblock component can be configured in multiple ways.
 
-With JS
+With JS:
 
 ```js
 //change the default itself (Note: rawblock changes the defaults getter to a defaults object value.)
@@ -180,7 +180,7 @@ class SuperSlimHeader extends rb.components.slimheader {
 
 But you can also use the static `events` object of your component class. Normally rawblock binds all events to the component itself and gives you some options to help with event delegation. 
 
-But due to the fact that the `scroll` event happens outside of your component event delegation does not help here. For this you can use the `@' event option. Every event option is prefixed with a `:`.
+But due to the fact that the `scroll` event happens outside of your component event delegation does not help here. For this you can use the `@` event option. Every event option is prefixed with a `:`.
 
 
 ```js
@@ -238,13 +238,13 @@ class SlimHeader extends rb.Component {
 rb.live.register('slimheader', SlimHeader);
 ```
 
-###Improvements to 
-This will give us a full functional rawblock component. But it can be improved in multiple ways.
+###Improvements to our current component
+The code above will give us a full functional rawblock component. But it can be improved in multiple ways.
 
 Performance considerations
 
-1. `classList.toggle` is called with a very a frequency, even if the threshold expression has the same result as before.
-2. `classList.toggle` mutates the DOM outside a `requestAnimationFrame` (= layout write), which is likely to produce layout thrashing in a complex application.
+1. `classList.toggle` is called with a very high frequency, even if the threshold expression has the same result as before.
+2. `classList.toggle` mutates the DOM outside of a `requestAnimationFrame` (= layout write), which is likely to produce layout thrashing in a complex application.
 3. `handleScroll` could also be throttled.
 
 
@@ -338,22 +338,22 @@ class SlimHeader extends rb.Component {
 }
 ```
 
-The header component can be further improved with the following aspects: 
+The header component can be further improved under the following more rawblock specific aspects: 
 
 1.  A good component should dispatch an event as soon as it's state changes.
 
-    This can be realized using the `this._trigger` method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name. If a component only has one state that changes or one state can be seen as the main state the component should dispatch a `changed` state. 
+    This can be realized using the `_trigger` method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name. If a component only has one state that changes or one state can be seen as the main state the component should dispatch a `changed` state. 
     
-    In case no event name is given, `this._trigger` will automatically generate a `changed' state prefixed by the component name.
+    In case no event name is given, `_trigger` will automatically generate a `changed state prefixed by the component name.
 
 2.  rawblock allows you to define how state classes are defined (prefixed by `is-`, `modifier__` etc.). 
     To support this feature we need to use `rb.$.fn.rbChangeState` instead of `classList.toggle`.
     
-3.  Building responsive JS components often reveals, that you need to disable/switch off a component under certain media conditions and turn other on.
+3.  Building responsive JS components often reveals, that you need to disable/switch off a component under certain media conditions and turn others on.
     
     rawblock uses the convention to use the option `switchedOff` for those cases. In case `options.switchedOff` is `true` no event listener bound by the events object is called. 
     
-    Often the developer still has to do some work to react to those option changes.
+    Often the developer still has to do some work to react to those option changes (cleanup changed markup). In case your specifc project needs this or you want to build a general re-usable component you should do this.
      
 Our final improved code could look like this:
 
@@ -388,23 +388,9 @@ class SlimHeader extends rb.Component {
     setOption(name, value, isSticky){
         super.setOption(name, value, isSticky);
         
-        switch (name){
-            case 'switchedOff':
-                //remove isSlim state if it is switched off 
-                if(value){
-                    this.isSlim = false;
-                    this.changeState();
-                } else {
-                    //if it is switched on re-calculate the state
-                    this.calculateState();
-                }
-            break;
-            case 'topThreshold': 
-                //if the topThreshold changes immediately re-calculate the state
-                if(!this.options.switchedOff){
-                    this.calculateState();
-                }
-            break;
+        //if topThreshold or switchedOff option changed re-calculate with these options.
+        if(name == 'topThreshold' || name == 'switchedOff'){
+            this.calculateState();
         }
     }
     
@@ -415,7 +401,9 @@ class SlimHeader extends rb.Component {
     }
     
     calculateState(){
-        const shouldBeSlim = this.options.topThreshold < document.scrollingElement.scrollTop;
+        const {switchedOff, topThreshold} = this.options;
+        //if it is switchedOff it is never slim 
+        const shouldBeSlim = !switchedOff && topThreshold < document.scrollingElement.scrollTop;
         
         if(this.isSlim != shouldBeSlim){
             this.isSlim = shouldBeSlim;

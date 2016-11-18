@@ -1647,6 +1647,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     const docElem = rb.root;
     const hooksCalled = {};
     const unregisteredFoundHook = {};
+    const componentPromises = {};
     const _CssCfgExpando = rb.Symbol('_CssCfgExpando');
 
     const extendEvents = function(value, args){
@@ -2005,6 +2006,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         rb.components[name] = Class;
 
+        if(componentPromises[name]){
+            componentPromises[name].resolve(Class);
+        }
+
         if (name.charAt(0) == '_' || noCheck) {
             return;
         }
@@ -2094,8 +2099,16 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     live.import = function(moduleId, element, lazy){
         const hook = (unregisteredFoundHook[moduleId] || unregisteredFoundHook['*']);
 
-        if (!rb.components[moduleId] && hook) {
 
+        if(!componentPromises[moduleId] && (hook || rb.components[moduleId])){
+            componentPromises[moduleId] = rb.deferred();
+
+            if(rb.components[moduleId]){
+                componentPromises[moduleId].resolve();
+            }
+        }
+
+        if (!rb.components[moduleId] && hook) {
             if(!hooksCalled[moduleId]){
                 let cssConfig = element && lazy && rb.parseComponentCss(element, moduleId);
 
@@ -2109,6 +2122,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                     hooksCalled[moduleId] = true;
                     hook(moduleId, moduleId, function() {
                         live._failed[moduleId] = true;
+                        componentPromises[moduleId].reject();
                     });
                 }
             }
@@ -2116,7 +2130,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             live._failed[moduleId] = true;
         }
 
-        return rb.components[moduleId] || hook;
+        return componentPromises[moduleId];
     };
     /**
      * Constructs a component class with the given element. Also attaches the attached classes and calls optionally the `attached` callback method. This method is normally only used automatically/internally by the mutation observer.
@@ -2177,7 +2191,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         };
 
         var findElements = rb.throttle(function () {
-            let element, moduleId, i, hook, len;
+            let element, moduleId, i, componentPromise, len;
 
             if(mainInit){
                 mainInit();
@@ -2204,7 +2218,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 moduleId = element.getAttribute('data-module') || '';
 
                 if (!rb.components[moduleId]) {
-                    hook = live.import(moduleId, element, true);
+                    componentPromise = live.import(moduleId, element, true);
                 }
 
                 if (rb.components[moduleId]) {
@@ -2214,7 +2228,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 else if (live._failed[moduleId]) {
                     failed(element, moduleId);
                 }
-                else if(!hook) {
+                else if(!componentPromise) {
                     failed(element, moduleId);
                 }
             }
