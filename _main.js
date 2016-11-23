@@ -143,13 +143,15 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @param [add] {boolean}
      * @returns {jQueryfiedDOMList}
      */
-    $.fn.rbChangeState = function(state, add){
+    $.fn.rbToggleState = function(state, add){
         if(this.length){
             state = rb.statePrefix + (state.replace(regnameSeparator, rb.nameSeparator));
             this[add ? 'addClass' : 'removeClass'](state);
         }
         return this;
     };
+
+    $.fn.rbChangeState = $.fn.rbToggleState;
 
     /* Begin: rbSlideUp / rbSlideDown */
     /**
@@ -2918,7 +2920,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
              * @param [detail] {Object} The value for the event.detail property to transport event related information.
              * @returns {Event}
              */
-            _trigger: function (type, detail) {
+            trigger: function (type, detail) {
                 var opts;
                 if (typeof type == 'object') {
                     detail = type;
@@ -2953,6 +2955,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
              */
             getElementsByString: function (string, element) {
                 return rb.getElementsByString(this.interpolateName(string), element || this.element);
+            },
+
+            _trigger: function(){
+                this.logInfo('_trigger is deprecated use trigger instead');
+                return this.trigger.apply(this, arguments);
             },
 
             /*

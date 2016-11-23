@@ -26,10 +26,6 @@
     var dataSymbol = void 0,
         regFocusable = void 0;
     var specialEvents = {};
-    var target2 = '';
-    if ((typeof target2 === 'undefined' ? 'undefined' : _typeof(target2)) !== 'object' && typeof target2 != 'function') {
-        target2 = {};
-    }
 
     var Dom = function Dom(elements, context) {
 

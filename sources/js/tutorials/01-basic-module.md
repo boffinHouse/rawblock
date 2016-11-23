@@ -38,7 +38,7 @@ class SlimHeader extends rb.Component {
     }
     
     // attached is invoked either after the constructor or if the DOM element is added to the DOM
-    // Normally the attached method should be only used, if also the detached method is invoked.
+    // Normally the attached method should be used as an antagonist to the detached method.
     attached(){
         
     }
@@ -151,7 +151,7 @@ class SlimHeader extends rb.Component {
 
 ###Events
  
-JS events can be bound normally or using the events object. In our case we need to bind the `scroll` event to the `window` object.
+JS events can be bound normally or by using the events object. In our case we need to bind the `scroll` event to the `window` object.
 
 Due to the fact, that the `window` object remains even if our component is destroyed. It makes sense to use the `attached`/`detached` lifecycle callbacks.
 
@@ -180,7 +180,7 @@ class SuperSlimHeader extends rb.components.slimheader {
 
 But you can also use the static `events` object of your component class. Normally rawblock binds all events to the component itself and gives you some options to help with event delegation. 
 
-But due to the fact that the `scroll` event happens outside of your component event delegation does not help here. For this you can use the `@` event option. Every event option is prefixed with a `:`.
+But due to the fact that the `scroll` event happens outside of the component event delegation does not help here. For this you can use the `@` event option. Every event option is prefixed with a `:`.
 
 
 ```js
@@ -201,8 +201,15 @@ class SlimHeader extends rb.Component {
     }
 }
 ```
+####About event options:
 
-The `@` allows to bind listeners to other elements than the component element. These elements are retrieved by the `this.getElementsByString` method, which not only allows to use predefined values like `"window"` or `"document"`, but also to use jQuery-like traversing methods to select an element (i.e.: `"closest(form)"`, `"next(.item)"` etc.).
+There are 4 different kinds of event options:
+* The `@` allows to bind listeners to other elements than the component element. These elements are retrieved by the `this.getElementsByString` method, which not only allows to use predefined values like `"window"` or `"document"`, but also to use jQuery-like traversing methods to select an element (i.e.: `"submit:@(closest(form))"`, `"click:@(next(.item))"` etc.).
+* Native event options: `capture`, `once` and `passive`.
+* proxy functions: `closest`, `matches`, `keycodes` and some more.
+    * `closest` can be used for event delegation. For example `'click:closest(.button)'` means, if a click happens the proxy function will use the `closest` method on the `event.target` and if it finds an element will set the `event.delegatedTarget` property to this element and call the declared event handler.
+    * `matches` can also be used for event delegation. For example `'change:matches(.input)'` means, if a change happens the proxy function will use the `matches` method on the `event.target` and if it returns `true` will set the `event.delegatedTarget` property to this element and call the declared event handler.
+* Different options for custom events.
 
 ###Adding some logic
 
@@ -306,7 +313,7 @@ class SlimHeader extends rb.Component {
 }
 ```
 
-Point 3. could be fixed by using `rb.throttle`. But I assume that in our case the `calculateState` is so light, that throttling it won't affect the performance to much.
+Point 3. could be fixed by using `rb.throttle`. But I assume that in our case the `calculateState` is so light, that throttling it won't affect the performance too much.
 
 ```js
 class SlimHeader extends rb.Component {
@@ -342,12 +349,12 @@ The header component can be further improved under the following more rawblock s
 
 1.  A good component should dispatch an event as soon as it's state changes.
 
-    This can be realized using the `_trigger` method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name. If a component only has one state that changes or one state can be seen as the main state the component should dispatch a `changed` state. 
+    This can be realized using the `trigger` method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name. If a component only has one state that changes or one state can be seen as the main state the component should dispatch a `changed` state. 
     
-    In case no event name is given, `_trigger` will automatically generate a `changed state prefixed by the component name.
+    In case no event name is given, `trigger` will automatically generate this `changed` state event prefixed by the component name. (In our case `"slimheaderchanged"`.)
 
 2.  rawblock allows you to define how state classes are defined (prefixed by `is-`, `modifier__` etc.). 
-    To support this feature we need to use `rb.$.fn.rbChangeState` instead of `classList.toggle`.
+    To support this feature we need to use `rb.$.fn.rbToggleState` instead of `classList.toggle`.
     
 3.  Building responsive JS components often reveals, that you need to disable/switch off a component under certain media conditions and turn others on.
     
@@ -395,9 +402,9 @@ class SlimHeader extends rb.Component {
     }
     
     changeState(){
-        this.$element.rbChangeState('slim', this.isSlim);
+        this.$element.rbToggleState('slim', this.isSlim);
         //trigger the change
-        this._trigger();
+        this.trigger();
     }
     
     calculateState(){

@@ -35,6 +35,10 @@
                 if (type == 'focusin' || type == 'focusout') {
                     rb.logInfo('focusin/focusout used. consider using focus/blur with :capture.', arguments);
                 }
+
+                if (opts.closest && (type == 'input' || type == 'change')) {
+                    rb.logInfo(type + ' event has always a form field target. :matches(' + opts.closest + ') might be faster with the same result.', arguments);
+                }
             };
 
             var searchElementsStartTime = void 0;
