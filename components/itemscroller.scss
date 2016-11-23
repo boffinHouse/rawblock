@@ -40,7 +40,6 @@ $itemscroller-js-cfg: (
     left: 0;
     width: auto;
     height: 100%;
-    backface-visibility: hidden;
 
     // FOUC prevention in case of centerMode:
     // [1] tranlateX = 50% - (widthOfCell / 2)
