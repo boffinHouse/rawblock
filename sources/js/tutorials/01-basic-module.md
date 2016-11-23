@@ -251,7 +251,7 @@ The code above will give us a full functional rawblock component. But it can be 
 Performance considerations
 
 1. `classList.toggle` is called with a very high frequency, even if the threshold expression has the same result as before.
-2. `classList.toggle` mutates the DOM outside of a `requestAnimationFrame` (= layout write), which is likely to produce layout thrashing in a complex application.
+2. `classList.toggle` mutates the DOM (= layout write) outside of a `requestAnimationFrame`, which is likely to produce layout thrashing in a complex application.
 3. `handleScroll` could also be throttled.
 
 
@@ -345,7 +345,7 @@ class SlimHeader extends rb.Component {
 }
 ```
 
-The header component can be further improved under the following more rawblock specific aspects: 
+The slimheader component can be further improved under the following more rawblock specific aspects: 
 
 1.  A good component should dispatch an event as soon as it's state changes.
 
@@ -358,9 +358,9 @@ The header component can be further improved under the following more rawblock s
     
 3.  Building responsive JS components often reveals, that you need to disable/switch off a component under certain media conditions and turn others on.
     
-    rawblock uses the convention to use the option `switchedOff` for those cases. In case `options.switchedOff` is `true` no event listener bound by the events object is called. 
+    rawblock uses the convention to use the option `switchedOff` for those cases. In case `options.switchedOff` is `true` no event listener bound by the events object is called (Keep in mind, that this won't help, if your bound listeners are called async du to throttling or debouncing.). 
     
-    Often the developer still has to do some work to react to those option changes (cleanup changed markup). In case your specifc project needs this or you want to build a general re-usable component you should do this.
+    Often the developer still has to do some work to react to those option changes (cleanup changed markup). In case your specific project needs this or you want to build a general re-usable component you should do this.
      
 Our final improved code could look like this:
 
