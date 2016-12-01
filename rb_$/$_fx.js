@@ -1,4 +1,5 @@
-const Dom = window.rb && rb.$ || window.jQuery;
+const rb = window.rb;
+const Dom = rb && rb.$ || window.jQuery;
 const steps = {};
 
 const regUnit = /^\d+\.*\d*(px|em|rem|%|deg)$/;
@@ -32,16 +33,8 @@ const tween = function (element, endProps, options) {
             }
         }
     };
-    var step = function () {
-        if (hardStop) {
-            return;
-        }
+    const setPos = (pos) => {
         var prop, value, eased;
-        var pos = (Date.now() - start) / duration;
-
-        if (pos > 1 || isJumpToEnd) {
-            pos = 1;
-        }
 
         if (!isStopped) {
             eased = easing(pos);
@@ -71,6 +64,19 @@ const tween = function (element, endProps, options) {
                 options.progress.call(element, tweenObj, pos);
             }
         }
+    };
+    var step = function () {
+        if (hardStop) {
+            return;
+        }
+
+        var pos = (Date.now() - start) / duration;
+
+        if (pos > 1 || isJumpToEnd) {
+            pos = 1;
+        }
+
+        setPos(pos);
 
         if (pos < 1) {
             if (!isStopped) {
@@ -100,7 +106,11 @@ const tween = function (element, endProps, options) {
     tweenObj.opts = options;
     tweenObj.props = endProps;
 
-    rAF(step, false, true);
+    if(!options.stopped){
+        rAF(step, false, true);
+    }
+
+    return {tweenObj, element, step, setPos, options, duration};
 };
 
 tween.createPropValues = function (element, elementStyle, props, endProps, options) {
@@ -136,6 +146,8 @@ tween.createPropValues = function (element, elementStyle, props, endProps, optio
         props[prop].start = isNaN(tmpValue) ? props[prop].start : tmpValue;
     }
 };
+
+rb.$tween = tween;
 
 if(!Dom.fx){
     Dom.fx = {step: steps};
