@@ -1296,7 +1296,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /**
      * Returns an array of elements based on a string.
      * @memberof rb
-     * @param targetStr {String} Either a whitespace separated list of ids ("foo-1 bar-2"), a jQuery traversal method ("next(.input)"), a DOM property prefixed with a '@' ("@form") or a predefined value (window, document, scrollingElement, scrollingEventObject).
+     * @param targetStr {String} Either a whitespace separated list of ids ("foo-1 bar-2"), a jQuery traversal method ("next(.input)"), a DOM property prefixed with a '@' ("@form"), a predefined value (window, document, scrollingElement, scrollingEventObject) or a $$() wrapped selector to search the entire document.
      * @param element {Element} The element that should be used as starting point for the jQuery traversal method.
      * @returns {Element[]}
      */

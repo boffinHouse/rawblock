@@ -61,8 +61,9 @@ class Sticky extends (rb.components._childfx || rb.Component) {
      * @mixes rb.components._childfx.defaults
      *
      * @prop {String|Boolean} container=".is{-}{name}{-}parent" The container element, that is used to calculate the bounds in wich the element should be sticky to the viewport. If `false` its always sticky. Possible values: `false`, `"parent"`(direct parent element), `"positionedParent"`, `".closest-selector"`.
-     * @prop {Boolean|Number} topOffset=false If a number it sets sticky offset to the number.
-     * @prop {Boolean|Number} bottomOffset=false If a number it sets sticky offset to the number.
+     * @prop {Boolean|Number} topOffset=false If a number/string it sets sticky offset to the number.
+     * @prop {Boolean|Number} bottomOffset=false If a number/string it sets sticky offset to the number.
+     * @prop {String} offsetElements="" The height of these elements will be added to the calculated top or bottom offset. The elements are retrieved by `this.getElementsByString`.
      * @prop {Number} progress=0 Defines the distance in pixel a child animation should be added after an animation should be added.
      * @prop {Boolean} setWidth=true Whether the width of the sticky element should be set, while it is stuck.
      * @prop {Boolean} switchedOff=false Turns off the stickyness. (to be used in responsive context).
@@ -76,6 +77,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
             switchedOff: false,
             topOffset: false,
             bottomOffset: false,
+            offsetElements: '',
             progress: 0,
             setWidth: true,
             resetSwitchedOff: true,
@@ -161,6 +163,11 @@ class Sticky extends (rb.components._childfx || rb.Component) {
 
         this.elemStyles = rb.getStyles(this.element);
 
+        this.offsetElements = options.offsetElements ?
+            this.getElementsByString(options.offsetElements) :
+            []
+        ;
+
         this.posProp = (options.bottomOffset !== false) ?
             'bottom' :
             'top'
@@ -183,6 +190,8 @@ class Sticky extends (rb.components._childfx || rb.Component) {
                 this.containerStyles = rb.getStyles(this.container);
             }
         }
+
+        this.calcedOffset = this.offset;
 
         this._setScrollingElement();
     }
@@ -218,7 +227,8 @@ class Sticky extends (rb.components._childfx || rb.Component) {
     }
 
     calculateLayout() {
-        var box, elemOffset, containerBox, containerOffset;
+        let box, elemOffset, containerBox, containerOffset;
+
 
         this.minFixedPos = -1;
         this.maxFixedPos = Number.MAX_VALUE;
@@ -239,19 +249,23 @@ class Sticky extends (rb.components._childfx || rb.Component) {
 
         elemOffset = box[this.posProp] + this.scroll;
 
+        if(this.offsetElements.length){
+            this.calcedOffset = this.offset - this.offsetElements.reduce((prevValue, element) => prevValue + element.offsetHeight, 0);
+        }
+
         if (this.options.setWidth) {
             this.elemWidth = (this.isFixed ? this.clone : this.element).offsetWidth;
         }
 
         if (this.posProp == 'top') {
-            this.minFixedPos = elemOffset + this.offset;
+            this.minFixedPos = elemOffset + this.calcedOffset;
 
             if (this.options.progress) {
                 this.minProgressPos = this.minFixedPos;
                 this.maxProgressPos = this.minFixedPos + this.options.progress;
             }
         } else {
-            this.maxFixedPos = elemOffset - this.offset - this.viewportheight;
+            this.maxFixedPos = elemOffset - this.calcedOffset - this.viewportheight;
             if (this.options.progress) {
                 this.minProgressPos = this.maxFixedPos - this.options.progress;
                 this.maxProgressPos = this.maxFixedPos;
@@ -264,18 +278,18 @@ class Sticky extends (rb.components._childfx || rb.Component) {
             containerOffset = containerBox[this.posProp == 'top' ? 'bottom' : 'top'] + this.scroll;
 
             if (this.posProp == 'top') {
-                this.maxFixedPos = containerOffset + this.offset;
+                this.maxFixedPos = containerOffset + this.calcedOffset;
                 this.minScrollPos = this.maxFixedPos - box.height -
                     $.css(this.container, 'padding-bottom', true, this.containerStyles) -
                     $.css(this.element, 'margin-bottom', true, this.elemStyles);
-                this.maxFixedPos += 9 - this.offset;
+                this.maxFixedPos += 9 - this.calcedOffset;
                 this.maxScrollPos = this.maxFixedPos;
             } else {
-                this.minFixedPos = containerOffset - docElem.clientHeight - this.offset;
+                this.minFixedPos = containerOffset - docElem.clientHeight - this.calcedOffset;
                 this.maxScrollPos = this.minFixedPos + box.height +
                     $.css(this.container, 'padding-top', true, this.containerStyles) +
                     $.css(this.element, 'margin-top', true, this.elemStyles);
-                this.minFixedPos += 9 + this.offset;
+                this.minFixedPos += 9 + this.calcedOffset;
                 this.minScrollPos = this.minFixedPos;
             }
         }
@@ -379,7 +393,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
 
             if (shouldScroll) {
                 this.isScrollFixed = true;
-                offset = this.offset * -1;
+                offset = this.calcedOffset * -1;
 
                 if (this.posProp == 'top') {
                     offset += (this.minScrollPos - this.scroll);
@@ -390,7 +404,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
                 this.element.style[this.posProp] = offset + 'px';
             } else if (this.isScrollFixed) {
                 this.isScrollFixed = false;
-                this.element.style[this.posProp] = (this.offset * -1) + 'px';
+                this.element.style[this.posProp] = (this.calcedOffset * -1) + 'px';
             }
 
         } else if (this.isFixed) {
@@ -431,7 +445,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
             this.element.style.width = this.elemWidth + 'px';
         }
 
-        this.element.style[this.posProp] = (this.offset * -1) + 'px';
+        this.element.style[this.posProp] = (this.calcedOffset * -1) + 'px';
     }
 
     attachClone() {
