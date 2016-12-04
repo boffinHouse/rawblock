@@ -134,7 +134,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
             this._unfix();
             this.updateChilds(true);
             this.progress = -2;
-        } else if (name == 'bottomOffset' || name == 'topOffset' || (name == 'switchedOff' && !value)) {
+        } else if (name == 'offsetElements' || name == 'bottomOffset' || name == 'topOffset' || (name == 'switchedOff' && !value)) {
             this._unfix();
             this.element.style.top = '';
             this.element.style.bottom = '';
@@ -334,7 +334,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
 
         shouldWidth = shouldFix && this.isFixed && this.options.setWidth && this.element.offsetWidth != this.elemWidth;
 
-        if (shouldFix != this.isFixed || shouldScroll || this.isScrollFixed || shouldWidth) {
+        if (shouldFix != this.isFixed || shouldScroll || this.isScrollFixed || shouldWidth || (this.isFixed && this._setCalcedOffset != this.calcedOffset)) {
             this.updateLayout(shouldFix, shouldScroll, shouldWidth);
         }
 
@@ -402,7 +402,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
                 }
 
                 this.element.style[this.posProp] = offset + 'px';
-            } else if (this.isScrollFixed) {
+            } else if (this.isScrollFixed || this._setCalcedOffset != this.calcedOffset) {
                 this.isScrollFixed = false;
                 this.element.style[this.posProp] = (this.calcedOffset * -1) + 'px';
             }
@@ -411,6 +411,8 @@ class Sticky extends (rb.components._childfx || rb.Component) {
             this._unfix();
             trigger = true;
         }
+
+        this._setCalcedOffset = this.calcedOffset;
 
         if (trigger) {
             this.trigger();
