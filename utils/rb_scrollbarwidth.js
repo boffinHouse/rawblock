@@ -1,79 +1,68 @@
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        factory();
+let added, scrollbarWidth;
+
+const rb = window.rb;
+const $ = rb.$;
+
+let scrollbarDiv = document.createElement('div');
+
+const setStyle = rb.rAF(function(){
+    const size = scrollbarWidth || 0;
+    const className = rb.statePrefix + 'scrollbarwidth' + rb.nameSeparator + Math.round(size);
+
+    rb.root.style.setProperty('--rb-scrollbar-width', size + 'px', '');
+
+    rb.root.classList.add(className);
+
+    scrollbarDiv.remove();
+    scrollbarDiv = null;
+}, {throttle: true});
+
+const read = function(){
+    if(scrollbarWidth == null){
+        scrollbarWidth = scrollbarDiv.offsetWidth - scrollbarDiv.clientWidth;
+        rb.ready.then(setStyle);
     }
-}(function () {
-    'use strict';
+};
 
-    var added, scrollbarWidth, lastClass;
-    var rb = window.rb;
-    var $ = rb.$;
-    var scrollbarDiv = document.createElement('div');
-    var setStyle = rb.rAF(function(){
-        var size = scrollbarWidth || 0;
-        var className = rb.statePrefix + 'scrollbarwidth' + rb.nameSeparator + Math.round(size);
+const add = function(){
+    if(!added){
+        added = true;
+        scrollbarDiv.className = 'js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'scrollbarobserve';
+        (document.body || rb.root).appendChild(scrollbarDiv);
+        rb.rIC(read);
+    }
+};
 
-        rb.root.style.setProperty('--rb-scrollbar-width', size + 'px', '');
-
-        rb.root.classList.add(className);
-
-        if(lastClass){
-            rb.root.classList.remove(lastClass);
-        }
-
-        lastClass = className;
-
-        scrollbarDiv.remove();
-    }, {throttle: true});
-
-    var read = function(){
-        if(scrollbarWidth == null){
-            scrollbarWidth = scrollbarDiv.offsetWidth - scrollbarDiv.clientWidth;
-            rb.ready.then(setStyle);
-        }
-    };
-
-    var add = function(){
-        if(!added){
-            added = true;
-            scrollbarDiv.className = 'js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'scrollbarobserve';
-            (document.body || rb.root).appendChild(scrollbarDiv);
-            rb.rIC(read);
-        }
-    };
-    var getWidth = function(){
-        if(scrollbarWidth == null){
-            add();
-            read();
-        }
-        return scrollbarWidth;
-    };
+const getWidth = function(){
+    if(scrollbarWidth == null){
+        add();
+        read();
+    }
+    return scrollbarWidth;
+};
 
 
-    $(scrollbarDiv).css({
-        width: '99px',
-        height: '99px',
-        paddingLeft: '0px',
-        paddingRight: '0px',
-        borderLeftWidth: '0px',
-        borderRightWidth: '0px',
-        overflow: 'scroll',
-        position: 'absolute',
-        visibility: 'hidden',
-        top: '0px',
-        left: '0px',
-        zIndex: '-1',
-    });
+$(scrollbarDiv).css({
+    width: '99px',
+    height: '99px',
+    paddingLeft: '0px',
+    paddingRight: '0px',
+    borderLeftWidth: '0px',
+    borderRightWidth: '0px',
+    overflow: 'scroll',
+    position: 'absolute',
+    visibility: 'hidden',
+    top: '0px',
+    left: '0px',
+    zIndex: '-1',
+});
 
-    rb.rAFQueue(add);
+rb.rAFQueue(add);
 
-    Object.defineProperty(rb, 'scrollbarWidth', {
-        get: getWidth,
-        enumerable: true,
-        configurable: true,
-    });
+Object.defineProperty(rb, 'scrollbarWidth', {
+    get: getWidth,
+    enumerable: true,
+    configurable: true,
+});
 
-    return getWidth;
-}));
+export default getWidth;

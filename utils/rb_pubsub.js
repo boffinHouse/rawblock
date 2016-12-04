@@ -11,7 +11,7 @@
         window.rb = {};
     }
 
-    var rb = window.rb;
+    const rb = window.rb;
 
 	/**
      * extends an object with subscribe, unsubscribe and optionally with a publish method.
@@ -19,13 +19,15 @@
      * @param [options] {{}}
      *  @param options.privatePublish=false {boolean}
      *  @param options.topicSeparator=':/' {boolean|string}
+     *  @param options.eventName=false {boolean|string}
+     *  @param options.eventPromise=false {undefined|boolean|Promise|rb.deferred}
      * @returns {function} the publish function.
      */
     rb.createPubSub = function(obj, options){
-        var stores = {};
-        var stored = {};
+        const stores = {};
+        const stored = {};
 
-        var publish = function(topic, data, memoize){
+        const publish = function(topic, data, memoize){
             if(stores[topic]){
                 stores[topic].fireWith(data, [data]);
             }
@@ -37,7 +39,7 @@
             }
         };
 
-        var pub = function(topic, data, memoize){
+        const pub = function(topic, data, memoize){
             var topics, tmp;
             if(arguments.length == 3){
                 if(typeof memoize != 'boolean'){
@@ -51,7 +53,7 @@
                 topics = topic.split(options.topicSeparator);
 
                 if(topics.length > 1){
-                    topic = topics.reduce(function(mainTpoic, subTopic){
+                    topic = topics.reduce((mainTpoic, subTopic)=>{
                         publish(mainTpoic, data, memoize);
                         return mainTpoic + options.topicSeparator + subTopic;
                     });
@@ -70,7 +72,8 @@
 
         Object.assign(obj, {
             subscribe: function(topic, handler, getStored){
-                var tmp;
+                let tmp;
+
                 if(typeof getStored == 'function'){
                     tmp = handler;
                     handler = getStored;
@@ -98,6 +101,33 @@
 
         if(!options.privatePublish){
             obj.publish = pub;
+        }
+
+        if(options.eventName){
+            [['add', 'subscribe'], ['remove', 'unsubscribe']].forEach((action) => {
+                rb.events.special[action[0]] = function(element, handler, eventOpts = {}){
+                    if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+
+                        if(!options.topic){
+                            rb.logError('you need to define a topic', arguments);
+                        }
+
+                        if(element != window && element != document){
+                            rb.logError('subscribe/unsubscribe only to window/document', arguments);
+                        }
+                    }
+
+                    const addRemove = ()=>{
+                        obj[action[0]](options.topic, handler);
+                    };
+
+                    if(eventOpts.eventPromise && !eventOpts.eventPromise.isDone){
+                        eventOpts.eventPromise.then(addRemove);
+                    } else {
+                        addRemove();
+                    }
+                };
+            });
         }
 
         return pub;

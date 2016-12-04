@@ -1,88 +1,79 @@
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        factory();
-    }
-}(function () {
-    'use strict';
-    var rb = window.rb;
-    var defaultCSSProp = '--rb-cfg';
-    var watchCSSProp = '--rb-watch-css';
+const rb = window.rb;
+const defaultCSSProp = '--rb-cfg';
+const watchCSSProp = '--rb-watch-css';
 
-    var regStartQuote = /^\s?"?'?"?/;
-    var regEndQuote = /"?'?"?\s?$/;
-    var regEscapedQuote = /\\"/g;
+const regStartQuote = /^\s?"?'?"?/;
+const regEndQuote = /"?'?"?\s?$/;
+const regEscapedQuote = /\\"/g;
 
-    var removeLeadingQuotes = function (str) {
-        return str && str.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
-    };
+const removeLeadingQuotes = function (str) {
+    return str && str.replace(regStartQuote, '').replace(regEndQuote, '').replace(regEscapedQuote, '"');
+};
 
-    function getComponentCss(element, name){
-        var prop, style, rets;
+function getComponentCss(element, name){
+    let prop, style, rets;
 
-        var ret = 'null';
-        var styles = rb.getStyles(element);
-        var defaults = rb.components[name].defaults;
+    let ret = 'null';
+    const styles = rb.getStyles(element);
+    const defaults = rb.components[name].defaults;
 
-        name = '--' + name + '-';
+    name = '--' + name + '-';
 
-        if(styles.getPropertyValue(watchCSSProp)){
-            rets = [];
+    if(styles.getPropertyValue(watchCSSProp)){
+        rets = [];
 
-            for(prop in defaults){
-                style = styles.getPropertyValue(name + prop);
+        for(prop in defaults){
+            style = styles.getPropertyValue(name + prop);
 
-                if(style){
-                    rets.push('"'+ prop +'":'+ removeLeadingQuotes(style));
-                }
-            }
-
-            if(rets.length){
-                ret = '{' + rets.join(',') + '}';
+            if(style){
+                rets.push('"'+ prop +'":'+ removeLeadingQuotes(style));
             }
         }
 
-        return ret;
+        if(rets.length){
+            ret = '{' + rets.join(',') + '}';
+        }
     }
 
-    function parseCss(element, name){
-        var styles = element.nodeType ? rb.getStyles(element) : element;
+    return ret;
+}
 
-        return rb.jsonParse(
-            removeLeadingQuotes(styles.getPropertyValue(name || defaultCSSProp) || '')
-        );
+function parseCss(element, name){
+    let styles = element.nodeType ? rb.getStyles(element) : element;
+
+    return rb.jsonParse(
+        removeLeadingQuotes(styles.getPropertyValue(name || defaultCSSProp) || '')
+    );
+}
+
+function hasComponentCssChanged(element, name, symbol){
+    const nowStyles = getComponentCss(element, name);
+    const cachedStyles = element[symbol] && element[symbol][name];
+
+    if(!element[symbol]){
+        element[symbol] = {};
     }
+    element[symbol][symbol] = nowStyles;
 
-    function hasComponentCssChanged(element, name, symbol){
-        var nowStyles = getComponentCss(element, name);
-        var cachedStyles = element[symbol] && element[symbol][name];
+    return nowStyles != cachedStyles;
+}
 
+function parseComponentCss(element, name, symbol){
+    const styles = element[symbol] && element[symbol][name] || getComponentCss(element, name);
+
+    if(symbol){
         if(!element[symbol]){
             element[symbol] = {};
         }
-        element[symbol][symbol] = nowStyles;
-
-        return nowStyles != cachedStyles;
+        element[symbol][name] = styles;
     }
 
-    function parseComponentCss(element, name, symbol){
-        var styles = element[symbol] && element[symbol][name] || getComponentCss(element, name);
+    return rb.jsonParse(styles);
+}
 
-        if(symbol){
-            if(!element[symbol]){
-                element[symbol] = {};
-            }
-            element[symbol][name] = styles;
-        }
+rb.enableCustomCss = function(){
+    rb.parseComponentCss = parseComponentCss;
+    rb.hasComponentCssChanged = hasComponentCssChanged;
+};
 
-        return rb.jsonParse(styles);
-    }
-
-    rb.enableCustomCss = function(){
-        rb.parseComponentCss = parseComponentCss;
-        rb.hasComponentCssChanged = hasComponentCssChanged;
-    };
-
-    return parseCss;
-}));
+export default parseCss;

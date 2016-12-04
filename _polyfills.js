@@ -25,3 +25,19 @@ if(!Object.assign){
 if(!Array.prototype.findIndex){
     findIndex.shim();
 }
+
+if(!('scrollingElement' in document)){
+    const root = document.documentElement;
+
+    Object.defineProperty(document, 'scrollingElement', {
+        get: ((document.compatMode == 'BackCompat' || 'WebkitAppearance' in root.style) ?
+            function(){
+                return  document.body || root;
+            } :
+            function(){
+                return root;
+            }),
+        enumerable: true,
+        configurable: true,
+    });
+}

@@ -1,33 +1,23 @@
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        factory();
+const rb = window.rb;
+
+const regQ = /^\?/;
+
+const addProps = function(param){
+    if(!param){
+        return;
     }
-}(function () {
-    'use strict';
-    /* jshint eqnull: true */
-    var rb = window.rb;
 
-    var regQ = /^\?/;
+    param = param.split('=');
 
-    var addProps = function(param){
-        if(!param){
-            return;
-        }
+    this[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || '');
+};
 
-        param = param.split('=');
+rb.deserialize = function(str){
+    const obj = {};
 
-        this[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || '');
-    };
+    str.replace(regQ, '').replace('+', ' ').split('&').forEach(addProps, obj);
 
-    rb.deserialize = function(str){
-        var obj = {};
+    return obj;
+};
 
-        str.replace(regQ, '').replace('+', ' ').split('&').forEach(addProps, obj);
-
-        return obj;
-    };
-
-    return rb.deserialize;
-}));
+export default rb.deserialize;

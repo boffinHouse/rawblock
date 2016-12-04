@@ -1,143 +1,139 @@
-(function(window, _undefined){
-	'use strict';
-	var queueExpando;
-	var defaultQueue = 'fx';
-	var rb = window.rb;
-	var $ = rb.$;
+let queueExpando;
+const defaultQueue = 'fx';
+const rb = window.rb;
+const $ = rb.$;
 
-	$.queue = function(element, queue, cb) {
-		var queues;
+$.queue = function(element, queue, cb) {
+    var queues;
 
-		if (typeof queue == 'function') {
-			cb = queue;
-			queue = defaultQueue;
-		}
+    if (typeof queue == 'function') {
+        cb = queue;
+        queue = defaultQueue;
+    }
 
-		if(queue === true || !queue) {
-			queue = defaultQueue;
-		}
+    if(queue === true || !queue) {
+        queue = defaultQueue;
+    }
 
-		if(!queueExpando){
-			queueExpando = rb.Symbol('_rbQueue');
-		}
+    if(!queueExpando){
+        queueExpando = rb.Symbol('_rbQueue');
+    }
 
-		if( !(queues = element[queueExpando]) ){
-			queues = {};
-			element[queueExpando] = queues;
-		}
+    if( !(queues = element[queueExpando]) ){
+        queues = {};
+        element[queueExpando] = queues;
+    }
 
-		if ( !queues[queue] ) {
-			queues[queue] = [];
-		}
+    if ( !queues[queue] ) {
+        queues[queue] = [];
+    }
 
-		if (cb) {
-			queues[queue].push(cb);
-		}
+    if (cb) {
+        queues[queue].push(cb);
+    }
 
-		return queues[queue];
-	};
+    return queues[queue];
+};
 
-	$.dequeue = function(element, queue) {
-		var queues, fn;
+$.dequeue = function(element, queue) {
+    var queues, fn;
 
-		if(!queue || queue === true){
-			queue = defaultQueue;
-		}
+    if(!queue || queue === true){
+        queue = defaultQueue;
+    }
 
-		queues = queueExpando && element[queueExpando];
+    queues = queueExpando && element[queueExpando];
 
-		if ( queues && queues[queue] && (fn = queues[queue].shift()) ) {
-			fn.call(element);
-		}
+    if ( queues && queues[queue] && (fn = queues[queue].shift()) ) {
+        fn.call(element);
+    }
 
-		return queues[queue];
-	};
+    return queues[queue];
+};
 
-	$.fn.promise = function(queue){
-		var _run, queues, queueToEnd;
-		var deferred = {
-			resolve: function(){
-				if(!_run){
-					_run = true;
-					setTimeout(deferred.resolve);
-				}
-			}
-		};
-		var promise = new Promise(function(resolve){
-			deferred.resolve = resolve;
-		});
-		var element = this.get(0);
+$.fn.promise = function(queue){
+    var _run, queues, queueToEnd;
+    var deferred = {
+        resolve: function(){
+            if(!_run){
+                _run = true;
+                setTimeout(deferred.resolve);
+            }
+        }
+    };
+    var promise = new Promise(function(resolve){
+        deferred.resolve = resolve;
+    });
+    var element = this.get(0);
 
-		if(element){
-			queueToEnd = function(){
-				if(queues.length){
-					$.queue(element, queue, queueToEnd);
-					$.dequeue(element, queue);
-				} else {
-					deferred.resolve();
-				}
-			};
-			queues = $.queue(element, queue, queueToEnd);
-			if(queues.length == 1){
-				$.dequeue(element, queue);
-			}
-		} else {
-			deferred.resolve();
-		}
-		return promise;
-	};
+    if(element){
+        queueToEnd = function(){
+            if(queues.length){
+                $.queue(element, queue, queueToEnd);
+                $.dequeue(element, queue);
+            } else {
+                deferred.resolve();
+            }
+        };
+        queues = $.queue(element, queue, queueToEnd);
+        if(queues.length == 1){
+            $.dequeue(element, queue);
+        }
+    } else {
+        deferred.resolve();
+    }
+    return promise;
+};
 
-	['queue', 'dequeue'].forEach(function(methodName){
-		$.fn[methodName] = function(queue, callback){
-			this.elements.forEach(function(element){
-				$[methodName](element, queue, callback);
-			});
-			return this;
-		};
-	});
+['queue', 'dequeue'].forEach(function(methodName){
+    $.fn[methodName] = function(queue, callback){
+        this.elements.forEach(function(element){
+            $[methodName](element, queue, callback);
+        });
+        return this;
+    };
+});
 
-	$.fn.delay = function(queue, duration, cb) {
+$.fn.delay = function(queue, duration, cb) {
 
-		if(typeof queue == 'number') {
-			cb = duration;
-			duration = queue;
-			queue = defaultQueue;
-		}
+    if(typeof queue == 'number') {
+        cb = duration;
+        duration = queue;
+        queue = defaultQueue;
+    }
 
-		this.queue(queue, function(){
-			var elem = this;
-			var start = Date.now();
-			var startRaf = function(){
-				rb.rAFQueue(check, false, true);
-			};
-			var check = function(){
-				if(Date.now() - start >= duration){
-					if(cb){
-						cb.call(elem);
-					}
-					$.dequeue(elem, queue);
-				} else {
-					rb.rAFQueue(check, false, true);
-				}
-			};
-			if(duration > 66){
-				setTimeout(startRaf, duration - 66);
-			} else {
-				rb.rAFQueue(check, false, true);
-			}
-			duration -= 5;
-		});
-		return this;
-	};
+    this.queue(queue, function(){
+        var elem = this;
+        var start = Date.now();
+        var startRaf = function(){
+            rb.rAFQueue(check, false, true);
+        };
+        var check = function(){
+            if(Date.now() - start >= duration){
+                if(cb){
+                    cb.call(elem);
+                }
+                $.dequeue(elem, queue);
+            } else {
+                rb.rAFQueue(check, false, true);
+            }
+        };
+        if(duration > 66){
+            setTimeout(startRaf, duration - 66);
+        } else {
+            rb.rAFQueue(check, false, true);
+        }
+        duration -= 5;
+    });
+    return this;
+};
 
-	$.fn.clearQueue = function(queue){
-		this.elements.forEach(function(element){
-			var queues = $.queue(element, queue);
-			if(queues.length){
-				queues.splice(0, queues.length);
-			}
-		});
-		return this;
-	};
-
-})(window);
+$.fn.clearQueue = function(queue){
+    this.elements.forEach(function(element){
+        var queues = $.queue(element, queue);
+        if(queues.length){
+            queues.splice(0, queues.length);
+        }
+    });
+    return this;
+};

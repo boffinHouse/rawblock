@@ -1,45 +1,35 @@
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        factory();
+const rb = window.rb;
+
+rb.lazyEach = function(list, handler, max, index){
+
+    let item, start;
+    const length = list.length;
+
+    if(!max){
+        max = 4;
     }
-}(function () {
-    'use strict';
-    /* jshint eqnull: true */
-    var rb = window.rb;
 
-    rb.lazyEach = function(list, handler, max, index){
+    if(!index){
+        index = 0;
+    }
 
-        var item, start;
-        var length = list.length;
+    for(; index < length; index++){
+        item = list[index];
 
-        if(!max){
-            max = 4;
+        if(item){
+            handler(item);
         }
 
-        if(!index){
-            index = 0;
+        if(!start){
+            start = Date.now();
+        } else if(Date.now() - start >= max){
+            /* jshint loopfunc: true */
+            rb.rIC(function(){ // eslint-disable-line no-loop-func
+                rb.lazyList(list, handler, max, index);
+            });
+            break;
         }
+    }
+};
 
-        for(; index < length; index++){
-            item = list[index];
-
-            if(item){
-                handler(item);
-            }
-
-            if(!start){
-                start = Date.now();
-            } else if(Date.now() - start >= max){
-                /* jshint loopfunc: true */
-                rb.rIC(function(){ // eslint-disable-line no-loop-func
-                    rb.lazyList(list, handler, max, index);
-                });
-                break;
-            }
-        }
-    };
-
-    return rb.lazyEach;
-}));
+export default rb.lazyEach;

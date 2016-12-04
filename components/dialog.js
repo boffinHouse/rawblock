@@ -7,7 +7,7 @@ const regInputs = /^(?:input|textarea)$/i;
 /**
  * Class component to create a modal dialog with a backdrop.
  *
- * @name rb.components.dialog
+ * @alias rb.components.dialog
  *
  * @extends rb.Component
  *
@@ -188,7 +188,7 @@ class Dialog extends rb.Component {
             this.storeActiveElement();
         }
 
-        this._trigger(options);
+        this.trigger(options);
     }
 
     /**
@@ -201,7 +201,7 @@ class Dialog extends rb.Component {
 
         const mainOpts = this.options;
 
-        if (this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
+        if (this.isOpen || this.trigger(this._beforeEvtName, options).defaultPrevented) {
             return false;
         }
 
@@ -261,7 +261,7 @@ class Dialog extends rb.Component {
             clearTimeout(this._displayTimer);
             this._displayTimer = setTimeout(this._setDisplay, 5000);
         }
-        this._trigger(options);
+        this.trigger(options);
     }
 
     /**
@@ -270,7 +270,7 @@ class Dialog extends rb.Component {
      * @returns {boolean}
      */
     close(options) {
-        if (!this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
+        if (!this.isOpen || this.trigger(this._beforeEvtName, options).defaultPrevented) {
             return false;
         }
         this.isOpen = false;

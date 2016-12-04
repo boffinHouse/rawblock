@@ -399,7 +399,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
         }
 
         if (trigger) {
-            this._trigger();
+            this.trigger();
         }
     }
 
@@ -407,6 +407,7 @@ class Sticky extends (rb.components._childfx || rb.Component) {
         if (!this.isFixed) {
             return;
         }
+
         this.isFixed = false;
         this.isScrollFixed = false;
         this.element.classList.remove(rb.statePrefix + 'fixed');

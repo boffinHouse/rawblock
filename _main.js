@@ -153,132 +153,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
     $.fn.rbChangeState = $.fn.rbToggleState;
 
-    /* Begin: rbSlideUp / rbSlideDown */
-    /**
-     * A jQuery/rb.$ plugin to slideUp content. Difference to $.fn.slideUp: The plugin handles content hiding via height 0; visibility: hidden;
-     * Also does not animate padding, margin, borders (use child elements)
-     * @function external:"jQuery.fn".rbSlideUp
-     * @param [options] {object} All jQuery animate options
-     * @returns {jQueryfiedDOMList}
-     */
-    $.fn.rbSlideUp = function (options) {
-        if (!options) {
-            options = {};
-        }
-
-        if (this.length) {
-            var opts = Object.assign({}, options, {
-                always: function () {
-                    this.style.display = options.display ? 'none' : '';
-                    this.style.visibility = 'hidden';
-
-                    if (options.always) {
-                        return options.always.apply(this, arguments);
-                    }
-                }
-            });
-
-            if (opts.easing) {
-                rb.addEasing(opts.easing);
-            }
-            this
-                .stop()
-                .animate({height: 0}, opts)
-                .css({overflow: 'hidden', display: 'block', visibility: 'inherit'})
-            ;
-        }
-        return this;
-    };
-
-    /**
-     * A jQuery/rb.$ plugin to slideDown content. Difference to $.fn.slideDown: The plugin handles content showing also using visibility: 'inherit'
-     * Also does not animate padding, margin, borders (use child elements)
-     * @function external:"jQuery.fn".rbSlideDown
-     * @param options {object} All jQuery animate options and options below
-     * @param options.beforeCalculation {Function}
-     * @param options.autoDuration {Boolean} deprecated use duration='auto' instead
-     * @param options.durationMax=900 {Number}
-     * @param options.durationBase=350 {Number}
-     * @param options.durationMultiplier=0.3 {Number}
-     * @param options.getHeight {Boolean}
-     * @returns {jQueryfiedDOMList|Number}
-     */
-    $.fn.rbSlideDown = function (options) {
-        var opts;
-        var ret = this;
-
-        if (!options) {
-            options = {};
-        }
-
-        if (this.length) {
-            opts = Object.assign({}, options, {
-                always: function () {
-                    this.style.overflow = '';
-                    this.style.height = 'auto';
-
-                    if (options.always) {
-                        return options.always.apply(this, arguments);
-                    }
-                },
-            });
-
-            if (opts.easing && !rb.$.easing[opts.easing]) {
-                rb.addEasing(opts.easing);
-            }
-        }
-
-        this.each(function () {
-            var endValue;
-            var $panel = $(this);
-            var startHeight = $panel.innerHeight() + 'px';
-
-            $panel.css({overflow: 'hidden', display: 'block', height: 'auto', visibility: 'inherit'});
-
-            if(options.beforeCalculation){
-                options.beforeCalculation($panel);
-            }
-
-            endValue = $panel.innerHeight();
-
-            if(options.getHeight){
-                ret = endValue;
-            }
-
-            if(options.autoDuration || options.duration == 'auto'){
-                opts.duration = Math.min(
-                    (opts.durationBase || 350) + ((endValue - startHeight) * (opts.durationMultiplier || 0.3)),
-                    opts.durationMax || 900
-                );
-            }
-
-            $panel
-                .css({height: startHeight})
-                .animate({height: endValue}, opts)
-            ;
-        });
-
-        return ret;
-    };
-
-    /* End: rbSlideUp / rbSlideDown */
-
     /* Begin: getScrollingElement */
-
-    //Todo: move into polyfills
-    if(!('scrollingElement' in document)){
-        Object.defineProperty(document, 'scrollingElement', {
-            get: ((document.compatMode == 'BackCompat' || 'WebkitAppearance' in rb.root.style) ?
-                function(){
-                    return  document.body || rb.root;
-                } :
-                function(){
-                    return rb.root;
-                }),
-            enumerable: true,
-            configurable: true,
-        });
-    }
 
     /**
      * @memberof rb
@@ -313,28 +188,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         return scrollObj;
     };
     /* End: getScrollingElement */
-
-    /* Begin: contains */
-    var _contains = function (element) {
-        return element == this || element.contains(this);
-    };
-    /**
-     * Tests whether an element is inside or equal to a list of elements.
-     * @memberof rb
-     * @param containerElements {Element[]|Element} Array of elements that might contain innerElement.
-     * @param innerElement {Element} An element that might be inside of one of containerElements.
-     * @returns {Element|undefined|null} The first element in containerElements, that contains innerElement or is the innerElement.
-     */
-    rb.contains = function (containerElements, innerElement) {
-        return Array.isArray(containerElements) ?
-            containerElements.find(_contains, innerElement) :
-            _contains.call(innerElement, containerElements) ?
-                containerElements :
-                null
-            ;
-    };
-    rb.contains._contains = _contains;
-    /* End: contains */
 
     /* Begin: throttle */
     /**
@@ -826,12 +679,12 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
             event = new CustomEvent(type, options);
 
-            if(!event.isDefaultPrevented){
-                event.isDefaultPrevented = function(){
-                    rb.log('deprecated');
-                    return event.defaultPrevented;
-                };
-                event.isDefaultPrevented._deprecated = true;
+            if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+                if(!event.isDefaultPrevented){
+                    event.isDefaultPrevented = function(){
+                        rb.logError('deprecated');
+                    };
+                }
             }
 
             return event;
@@ -1036,6 +889,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             if (e.defaultPrevented || e.button == 2 || regInputs.test(e.target.nodeName || '') || e.target.matches(abortSels)) {
                 return;
             }
+
             var event, selection;
             var item = e.target.closest(clickAreaSel);
             var link = item && item.querySelector(clickAreaactionSel);
@@ -1390,7 +1244,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }, true);
 
         document.addEventListener('click', function (e) {
+            if(e.button){return;}
+
             var clickElem = e.target.closest(clickSel);
+
             while (clickElem) {
                 applyBehavior(clickElem, e);
 
@@ -1520,9 +1377,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @return {Object}
      */
     rb.parseDataAttrs = function(element, attrsObject, prefix, exclude){
-        var i, name;
-        var attributes = element.attributes;
-        var len = attributes.length;
+        let i, name;
+        const attributes = element.attributes;
+        const len = attributes.length;
 
         if(!attrsObject){
             attrsObject = {};
@@ -1542,7 +1399,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         return attrsObject;
     };
 
-    var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+    const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
     /**
      * Returns the descriptor of a property. Moves up the prototype chain to do so.
@@ -1572,18 +1429,19 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         '>': '&gt;',
         '"': '&quot;',
         "'": '&#x27;',
-        '`': '&#x60;'
+        '`': '&#x60;',
     };
 
     // Functions for escaping and unescaping strings to/from HTML interpolation.
-    var createEscaper = function (map) {
-        var escaper = function (match) {
+    const createEscaper = function (map) {
+        const escaper = function (match) {
             return map[match];
         };
         // Regexes for identifying a key that needs to be escaped
-        var source = '(?:' + Object.keys(map).join('|') + ')';
-        var testRegexp = new RegExp(source);
-        var replaceRegexp = new RegExp(source, 'g');
+        const source = '(?:' + Object.keys(map).join('|') + ')';
+        const testRegexp = new RegExp(source);
+        const replaceRegexp = new RegExp(source, 'g');
+
         return function (string) {
             string = string == null ? '' : '' + string;
             return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
@@ -1638,7 +1496,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 (function (window, document) {
     'use strict';
 
-    var elements, useMutationEvents, implicitlyStarted, liveBatch, initClass, attachedClass, watchCssClass, started;
+    let elements, useMutationEvents, liveBatch, initClass, attachedClass, watchCssClass, started;
 
     const live = {};
     const removeElements = [];
@@ -1653,8 +1511,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     const _CssCfgExpando = rb.Symbol('_CssCfgExpando');
 
     const extendEvents = function(value, args){
-        var prop;
-        var toMerge = args.shift();
+        let prop;
+        const toMerge = args.shift();
 
         if(toMerge){
             for(prop in toMerge){
@@ -1982,7 +1840,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * rb.live.register('time', Time);
      *
      */
-    live.register = function (name, Class, noCheck) {
+    live.register = function (name, Class, extend) {
         if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
             rb.devData.componentsCount++;
         }
@@ -2002,7 +1860,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
 
 
-        if (rb.components[name]) {
+        if (rb.components[name] && !extend) {
             rb.log(name + ' already exists.');
         }
 
@@ -2012,26 +1870,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             componentPromises[name].resolve(Class);
         }
 
-        if (name.charAt(0) == '_' || noCheck) {
-            return;
-        }
-
-        if (!started && !implicitlyStarted) {
-            implicitlyStarted = true;
-            setTimeout(function () {
-                if (!elements && live.autoStart) {
-                    $(function () {
-                        if (!elements) {
-                            setTimeout(function () {
-                                if (!elements) {
-                                    live.init();
-                                }
-                            });
-                        }
-                    });
-                }
-            }, 9);
-        } else if (elements) {
+        if (elements && name.charAt(0) != '_') {
             live.searchModules();
         }
 
@@ -3311,222 +3150,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     generateFocusClasses();
 
 })(window, document, rb.live);
-
-(function (window, document, _undefined) {
-    'use strict';
-    var rb = window.rb;
-
-    rb.Component.extend('button',
-        /** @lends rb.components.button.prototype */
-        {
-            /**
-             * @static
-             * @property {Object} defaults
-             * @property {String} defaults.target="" String that references the target element. Is processed by rb.elementFromStr.
-             * @property {String} defaults.type="toggle" Method name to invoke on target component.
-             * @property {Boolean} defaults.preventDefault=false Whether the default click action should prevented.
-             * @property {*} defaults.args=null Arguments to be used to invoke target method.
-             */
-            defaults: {
-                target: '',
-                type: 'toggle',
-                args: null,
-                switchedOff: false,
-            },
-            /**
-             * @constructs
-             * @classdesc Class component to create a button.
-             * @name rb.components.button
-             * @extends rb.Component
-             * @param {Element} element
-             * @example
-             * ```html
-             * <button type="button"
-             *  data-module="button"
-             *  class="js-rb-click"
-             *  aria-controls="panel-1"
-             *  data-button-type="open">
-             *      click me
-             * </button>
-             * <div id="panel-1" data-module="panel"></div>
-             * ```
-             */
-            init: function (element, initialDefaults) {
-
-                this._super(element, initialDefaults);
-
-                this._isFakeBtn = !this.element.matches('input, button');
-                this._resetPreventClick = this._resetPreventClick.bind(this);
-
-                rb.rAFs(this, {throttle: true}, '_switchOff', '_switchOn', '_setAriaControls');
-
-                this.setOption('args', this.options.args);
-
-                if (!this.options.switchedOff) {
-                    this.setOption('switchedOff', false);
-                }
-            },
-
-            events: {
-                click: '_onClick',
-                keydown: function (e) {
-                    if (this.options.switchedOff) {
-                        return;
-                    }
-                    var target;
-                    var component = this.panelComponent ||
-                        (target = this.getTarget()) && this.component(target);
-
-                    if (component && e.keyCode == 40 && this.element.getAttribute('aria-haspopup') == 'true') {
-                        if (!('isOpen' in component) || !component.isOpen) {
-                            this._onClick(e);
-                        } else {
-                            component.setComponentFocus();
-                        }
-                        e.preventDefault();
-                    } else {
-                        this._delegateFakeClick(e);
-                    }
-                },
-                keyup: '_delegateFakeClick',
-            },
-            _delegateFakeClick: function (e) {
-                if (this.options.switchedOff) {
-                    return;
-                }
-                if (this._isFakeBtn && (e.keyCode == 32 || e.keyCode == 13)) {
-                    e.preventDefault();
-
-                    if ((e.type == 'keyup' && e.keyCode == 32) || (e.type == 'keydown' && e.keyCode == 13)) {
-                        this._onClick(e);
-                        this._preventClick = true;
-                        setTimeout(this._resetPreventClick, 33);
-                    }
-                }
-            },
-            _resetPreventClick: function () {
-                this._preventClick = false;
-            },
-            _simpleFocus: function(){
-                try {
-                    if (this.element != document.activeElement) {
-                        this.element.focus();
-                    }
-                } catch (e) {} // eslint-disable-line no-empty
-            },
-            _onClick: function (e) {
-                var args;
-                if (this.options.switchedOff || this._preventClick || this.element.disabled) {
-                    return;
-                }
-                var target = this.getTarget();
-                var component = target && this.component(target);
-
-                if (!component) {
-                    return;
-                }
-
-                if (e && this.options.preventDefault && e.preventDefault) {
-                    e.preventDefault();
-                }
-
-                if (this.options.type in component) {
-                    args = this.args;
-
-                    this._simpleFocus();
-
-                    component.activeButtonComponent = this;
-                    if (typeof component[this.options.type] == 'function') {
-                        component[this.options.type].apply(component, args);
-                    } else {
-                        component[this.options.type] = args;
-                    }
-                }
-            },
-
-            setOption: function (name, value) {
-                this._super(name, value);
-
-                switch (name) {
-                    case 'target':
-                        this._setTarget(value);
-                        break;
-                    case 'args':
-                        if (value == null) {
-                            value = [];
-                        } else if (!Array.isArray(value)) {
-                            value = [value];
-                        }
-                        this.args = value;
-                        break;
-                    case 'switchedOff':
-                        if (value) {
-                            this._switchOff();
-                        } else {
-                            this._switchOn();
-                        }
-
-                        break;
-                }
-            },
-            _switchOff: function () {
-                if (this._isFakeBtn) {
-                    this.element.removeAttribute('role');
-                    this.element.removeAttribute('tabindex');
-                }
-            },
-            _switchOn: function () {
-                if (this._isFakeBtn) {
-                    this.element.setAttribute('role', 'button');
-                    this.element.setAttribute('tabindex', '0');
-                }
-            },
-            _setAriaControls: function () {
-                if(this.target){
-                    this.$element.attr({'aria-controls': this.getId(this.target)});
-                }
-            },
-
-            /**
-             * Changes/sets the target element.
-             * @param {Element|String} [element]
-             */
-            _setTarget: function (element) {
-                if(!element){
-                    element = this.options.target;
-                }
-
-                if(!element &&  !this.options.target){
-                    element = this.element.getAttribute('aria-controls');
-                }
-
-                this.target = (typeof element == 'string') ?
-                    this.getElementsByString(element)[0] :
-                    element
-                ;
-
-                this.targetAttr = element;
-
-                this._setAriaControls();
-            },
-
-            /**
-             * Returns the current target component of the button
-             * @returns {Element}
-             */
-            getTarget: function () {
-                var target = this.options.target || this.element.getAttribute('aria-controls');
-
-                if (!this.target || (target != this.targetAttr && target)) {
-                    this._setTarget();
-                }
-
-                return this.target;
-            },
-        }
-    );
-
-})(window, document);
 
 export default window.rb;
 
