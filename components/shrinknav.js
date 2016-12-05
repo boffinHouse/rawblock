@@ -195,11 +195,23 @@ class ShrinkNav extends rb.Component {
 
     addItemToBar(item){
         const index = this.menuItems.indexOf(item);
-        const posItem = this.allItems[item.position - 1];
 
-        if(posItem){
-            posItem.$item.after(item.$item);
-        } else {
+        let setElement = false;
+        let position = item.position - 1;
+
+        while(position >= 0 && !setElement){
+            const posItem = this.allItems[position];
+
+            if(posItem && posItem.parent == posItem.$item.parent().get(0)){
+                posItem.$item.after(item.$item);
+                setElement = true;
+                break;
+            }
+
+            position--;
+        }
+
+        if(!setElement){
             $(item.parent).prepend(item.$item);
         }
 
