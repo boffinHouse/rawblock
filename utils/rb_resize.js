@@ -99,4 +99,4 @@ rb.events.special.rb_resize = {
     },
 };
 
-export default rb.intersects;
+export default checkDimension;

@@ -1,0 +1,12 @@
+---
+title: shrinknav
+layout: docs_tpl.hbs
+---
+
+<article class="rb-docs">
+    {{> shrinknav}}
+        <hr/>
+    {{#mergeJSON 'isGrow: true'}}
+        <!--{{> shrinknav}}-->
+    {{/mergeJSON}}
+</article><!-- end rb-docs -->

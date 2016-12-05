@@ -1,0 +1,50 @@
+.shrinknav {
+    border: 1px solid #000;
+    display: flex;
+    list-style: none;
+    max-width: 100%;
+
+
+    &.is-grow {
+        @include rb-js-export((
+            growItems: true,
+        ));
+
+        .shrinknav-item {
+            flex-grow: 1;
+
+            &.is-toggle-item {
+                flex-grow: 0;
+            }
+        }
+    }
+}
+
+.shrinknav-item {
+    border: 1px solid #000;
+    padding: 10px;
+    flex-shrink: 0;
+
+    &.is-toggle-item {
+        position: relative;
+        padding: 0;
+        width: 3em;
+        display: none;
+    }
+
+    .is-submenu-within &.is-toggle-item {
+        display: block;
+    }
+
+}
+
+.shrinknav-panel {
+    position: absolute;
+    display: none;
+
+    &.is-open {
+        display: block;
+    }
+}
+
+

@@ -219,8 +219,8 @@ class Panel extends rb.Component {
         document.removeEventListener('focus', this._onOutSideAction, true);
     }
 
-    setOption(name, value) {
-        this._super(name, value);
+    setOption(name, value, isSticky) {
+        super.setOption(name, value, isSticky);
 
         if (name == 'easing' && value && typeof value == 'string') {
             rb.addEasing(value);
