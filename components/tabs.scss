@@ -55,7 +55,7 @@ $tabs-js-cfg: (
     border-top: 3px solid transparent;
     background: #e7e7e7;
 
-    &:not(:disabled){
+    &:not(:disabled):not([aria-disabled="true"]) {
         cursor: pointer;
 
         &:hover,

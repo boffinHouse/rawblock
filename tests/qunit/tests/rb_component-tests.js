@@ -8,6 +8,7 @@
             return;
         }
         var fn, tmpName, module;
+        const classes = {};
         var id = rb.getID();
         var name = 'ext1' + id;
 
@@ -21,48 +22,62 @@
             }
         };
 
-        modules.ext1 = {
-            name: name,
-            module: rb.Component.extend(name, {
-                statics: {
-                    ext1: function () {
-                    },
-                },
-                defaults: {
+        classes[name] = rb.live.register(name, class extends rb.Component {
+            static ext1(){
+
+            }
+
+            static get defaults(){
+                return {
                     initial: 'ext1',
                     inherit: 'ext1',
-                },
-                events: {
+                };
+            }
+
+            static get events(){
+                return {
                     initial: 'ext1',
                     inherit: 'ext1',
                     override: 'ext1',
                     'click': 'click',
                     'delegateevent .delegate': function () {
                         this.click();
-                    }
-                },
-                init: function (element) {
-                    this._super(element);
-                },
-                baseMethod: function () {
+                    },
+                };
+            }
 
-                },
-                click: function () {
+            constructor(element, initDefaults){
+                super(element, initDefaults);
+            }
 
-                },
-                overrideMethod: function () {
+            click(){
 
-                },
-                nfeMethod: function () {
+            }
 
-                },
-                get getter() {
-                    return 'getterext1';
-                },
-                set setter(value) {
-                    this._setterSet = value;
-                },
-            })
+            baseMethod(){
+
+            }
+
+            overrideMethod(){
+
+            }
+
+            nfeMethod(){
+
+            }
+
+            get getter() {
+                return 'getterext1';
+            }
+
+            set setter(value) {
+                this._setterSet = value;
+            }
+        });
+
+        modules.ext1 = {
+            name: name,
+            module: classes[name],
         };
 
         addSpy();
@@ -70,31 +85,38 @@
         id = rb.getID();
         tmpName = 'ext2' + id;
 
+        classes[tmpName] = rb.live.register(tmpName, class extends rb.components[name] {
+            static ext2(){
+
+            }
+
+            static get defaults(){
+                return {
+                    initial: 'ext2',
+                    inherit2: 'ext2',
+                };
+            }
+
+            constructor(element, initDefaults){
+                super(element, initDefaults);
+            }
+
+            get getter() {
+                return super.getter + 'getterext2';
+            }
+
+            set setter(value) {
+                this._setterSet = value + 'ext2';
+            }
+
+            overrideMethod() {
+
+            }
+        });
+
         modules.ext2 = {
             name: tmpName,
-            module: rb.components[name].extend(tmpName, {
-                statics: {
-                    ext2: function () {
-                    },
-                },
-                defaults: {
-                    initial: 'ext2',
-                    inherit2: 'ext2'
-                },
-
-                init: function (element) {
-                    this._super(element);
-                },
-                get getter() {
-                    return this._super() + 'getterext2';
-                },
-                set setter(value) {
-                    this._setterSet = value + 'ext2';
-                },
-                overrideMethod: function () {
-
-                }
-            })
+            module: rb.components[tmpName],
         };
 
         addSpy();
@@ -103,45 +125,51 @@
         id = rb.getID();
         tmpName = 'ext3' + id;
 
-        modules.ext3 = {
-            name: tmpName,
-            module: rb.components[name].extend(tmpName, {
-                statics: {
-                    ext3: function () {
-                    },
-                },
-                defaults: {
+        classes[tmpName] = rb.live.register(tmpName, class extends rb.components[name] {
+            static ext3(){
+
+            }
+
+            static get defaults(){
+                return {
                     initial: 'ext3',
-                },
-                events: {
+                };
+            }
+
+            static get events(){
+                return {
                     initial: 'ext3',
                     override: 'ext3',
                     newone: 'ext3',
-                },
-                init: function (element) {
-                    this._super(element);
-                },
-                baseMethod: function () {
-                    this._super();
-                },
-                nfeMethod: function nfeMethod() {
-                    nfeMethod._supbase.apply(this, arguments);
-                },
-            })
+                };
+            }
+
+            constructor(element, initDefaults){
+                super(element, initDefaults);
+            }
+
+            baseMethod(){
+                super.baseMethod();
+            }
+
+            nfeMethod(){
+                super.nfeMethod();
+            }
+        });
+
+        modules.ext3 = {
+            name: tmpName,
+            module: classes[tmpName],
         };
 
         addSpy();
     });
 
-    QUnit.test("rb.Component - inheritance", function (assert) {
+    QUnit.test('rb.Component - inheritance', function (assert) {
         var ext1 = rb.$(document.createElement('div')).rbComponent(modules.ext1.name);
         var ext2 = rb.$(document.createElement('div')).rbComponent(modules.ext2.name);
         var ext3 = rb.$(document.createElement('div')).rbComponent(modules.ext3.name);
 
-
-        assert.equal(modules.ext1.module.prototype.init.callCount, 3);
-        assert.equal(modules.ext2.module.prototype.init.callCount, 2);
-        assert.equal(modules.ext3.module.prototype.init.callCount, 1);
 
         assert.equal(modules.ext1.module.prototype.baseMethod.callCount, 0);
         assert.equal(modules.ext3.module.prototype.baseMethod.callCount, 0);
@@ -173,13 +201,13 @@
         assert.equal(ext3._setterSet, 'test3ext2');
     });
 
-    QUnit.test("rb.Component - inheritance - statics + defaults + events", function (assert) {
+    QUnit.test('rb.Component - inheritance - statics + defaults + events', function (assert) {
         var ext1 = rb.$(document.createElement('div')).rbComponent(modules.ext1.name);
         var ext2 = rb.$(document.createElement('div')).rbComponent(modules.ext2.name);
         var ext3 = rb.$(document.createElement('div')).rbComponent(modules.ext3.name);
 
         assert.equal(typeof modules.ext1.module.ext1, 'function');
-        assert.equal(typeof modules.ext2.module.ext1, 'undefined');
+        assert.equal(typeof modules.ext2.module.ext1, 'function');
         assert.equal(typeof modules.ext3.module.ext3, 'function');
 
         assert.deepEqual(modules.ext3.module.events.inherit, ['ext1']);
@@ -207,7 +235,7 @@
     });
 
 
-    QUnit.test("rb.Component - options/setOptions", function (assert) {
+    QUnit.test('rb.Component - options/setOptions', function (assert) {
         var callCount;
         var array = [1, 2];
         var obj = {foo: 'bar'};
@@ -276,7 +304,7 @@
 
     });
 
-    QUnit.test("rb.Component - events setup", function (assert) {
+    QUnit.test('rb.Component - events setup', function (assert) {
         var ext2Instance;
 
         var ext2elem = rb.$(document.createElement('div')).html('<div class="delegate"></div>');
@@ -298,7 +326,7 @@
         assert.equal(ext2Instance.click.callCount, 2);
     });
 
-    QUnit.test("rb.Component - getId", function (assert) {
+    QUnit.test('rb.Component - getId', function (assert) {
         var ext2Instance;
 
         var tmpId;
@@ -332,7 +360,7 @@
 
     });
 
-    QUnit.test("rb.Component - setComponentFocus / restoreFocus / setFocus", function (assert) {
+    QUnit.test('rb.Component - setComponentFocus / restoreFocus / setFocus', function (assert) {
         var ext2Instance;
 
         var done = assert.async();
@@ -409,7 +437,7 @@
         ;
     });
 
-    QUnit.test("rb.Component - _trigger", function (assert) {
+    QUnit.test('rb.Component - trigger', function (assert) {
         var ext2Instance;
         var events = {};
         var ext2elem = rb.$(document.createElement('div'));
@@ -441,25 +469,25 @@
 
         ext2Instance = ext2elem.rbComponent(modules.ext2.name);
 
-        assert.equal(ext2Instance._trigger().type, name + 'changed');
+        assert.equal(ext2Instance.trigger().type, name + 'changed');
 
         assert.equal(events[name + 'changed'].count, 1);
 
-        ext2Instance._trigger({fo: 'bar'});
+        ext2Instance.trigger({fo: 'bar'});
         assert.equal(events[name + 'changed'].count, 2);
         assert.deepEqual(events[name + 'changed'].last.detail, {fo: 'bar'});
 
-        ext2Instance._trigger({type: 'custom'});
+        ext2Instance.trigger({type: 'custom'});
         assert.equal(events[name + 'changed'].count, 2);
         assert.equal(events[name + 'custom'].count, 1);
 
 
-        ext2Instance._trigger('custom', {foo: 'bar2'});
+        ext2Instance.trigger('custom', {foo: 'bar2'});
         assert.equal(events[name + 'changed'].count, 2);
         assert.equal(events[name + 'custom'].count, 2);
         assert.deepEqual(events[name + 'custom'].last.detail, {foo: 'bar2'});
 
-        ext2elem.rbComponent()._trigger('changed');
+        ext2elem.rbComponent().trigger('changed');
         assert.equal(events[name + 'changed'].count, 3);
     });
 })();

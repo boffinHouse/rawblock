@@ -19,31 +19,37 @@
             }
         };
 
+
+
         module = {
             name: name,
-            component: rb.Component.extend(name, {
+            component: rb.live.register(name, class extends rb.Component {
+                constructor(element, initDefaults){
+                    super(element, initDefaults);
+                }
 
-                init: function (element) {
-                    this._super(element);
-                },
-                toggle: function () {
+                toggle() {
                     if (this.element.classList.contains('panel-open')) {
                         this.close();
                     } else {
                         this.open();
                     }
 
-                },
-                open: function () {
+                }
+
+                open() {
                     this.element.classList.add('panel-open');
-                },
-                close: function () {
+                }
+
+                close() {
                     this.element.classList.remove('panel-open');
-                },
-                special: function () {
+                }
+
+                special() {
                     this.element.classList.add('special-panel');
                 }
-            })
+
+            }),
         };
 
         addSpy();

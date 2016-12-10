@@ -125,3 +125,10 @@ rb.events.special.rb_layoutchange = {
 rb.events.special.rb_layoutobserve = rb.events.special.rb_layoutchange;
 
 export default rb.events.special.rb_layoutchange;
+
+if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+    if(rb.z__layoutobserve){
+        rb.logError('layoutobserve should only be added once');
+    }
+    rb.z__layoutobserve = true;
+}

@@ -10,7 +10,7 @@
         // Project settings
         var options = {
             config: {
-                src: "taskrunner/grunt/configs/*.js"
+                src: 'taskrunner/grunt/configs/*.js',
             },
             paths: {
                 src: 'sources',
@@ -19,14 +19,14 @@
                 tmp: 'tmp',
                 helper: {
                     task: 'taskrunner/grunt/configs',
-                    settings: 'taskrunner/task-settings'
+                    settings: 'taskrunner/task-settings',
                 }
             },
             ports: {
                 app: '8000',
                 test: '9001',
-                livereload: 35730
-            }
+                livereload: 35730,
+            },
         };
 
         grunt._rbOptions = options;
@@ -38,18 +38,23 @@
         grunt.task.loadTasks('taskrunner/grunt/tasks');
 
         grunt.registerTask('default', [
-            'build'
+            'build',
+        ]);
+
+        grunt.registerTask('lint', [
+            'eslint',
         ]);
 
         grunt.registerTask('test', [
-            'eslint',
-            //'qunit',
+            'webpack:dev',
+            'babel:tests',
+            'qunit',
         ]);
 
         grunt.registerTask('prepublish', [
-            'eslint',
-            'qunit',
-            'babel',
+            'lint',
+            'test',
+            'babel:publish',
             'copy:es5',
         ]);
 
@@ -70,7 +75,7 @@
         grunt.registerTask('build', [
             'dev',
             'connect:livereload',
-            'watch'
+            'watch',
         ]);
 
         grunt.registerTask('dev', [

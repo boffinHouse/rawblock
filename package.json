@@ -26,10 +26,11 @@
   },
   "scripts": {
     "test": "grunt test",
-    "prepublish": "grunt prepublish"
+    "prepublish": "grunt prepublish",
+    "lint": "grunt lint"
   },
   "pre-commit": [
-    "test"
+    "lint"
   ],
   "dependencies": {
     "array-includes": "~3.0.2",

@@ -5,12 +5,12 @@ module.exports = {
             'transform-es2015-modules-umd',
         ],
     },
-    dist: {
+    publish: {
         files: [
             {
                 expand: true,
                 cwd: 'components/',
-                src: ['**/*.js', '!*-tests.js', '!*-tests.js'],
+                src: ['**/*.js', '!*-tests.js', '!*-spec.js'],
                 dest: 'es5/components/',
             },
             {
@@ -30,7 +30,23 @@ module.exports = {
                 cwd: 'utils/',
                 src: ['**/*.js', '!*-tests.js', '!*-tests.js'],
                 dest: 'es5/utils/',
-            }
-        ]
-    }
+            },
+        ],
+    },
+    tests: {
+        files: [
+            {
+                expand: true,
+                cwd: 'components/',
+                src: ['**/*-tests.js'],
+                dest: 'tmp/tests/components/',
+            },
+            {
+                expand: true,
+                cwd: 'tests/qunit/tests/',
+                src: ['**/*-tests.js'],
+                dest: 'tmp/tests/',
+            },
+        ],
+    },
 };

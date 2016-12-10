@@ -850,76 +850,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /* End: rb.events */
 
     /**
-     * Invokes on the first element in collection the closest method and on the result the querySelector method.
-     * @function external:"jQuery.fn".closestFind
-     * @param {String} selectors Two selectors separated by a white space and/or comma. First is used for closest and second for querySelector. Example: `".rb-item, .item-input"`.
-     * @returns {jQueryfiedObject}
-     */
-    $.fn.closestFind = function (selectors) {
-        var sels;
-        var closestSel, findSel;
-        var elem = this.get(0);
-        if (elem) {
-            sels = selectors.split(regSplit);
-            closestSel = sels.shift();
-            findSel = sels.join(' ');
-            elem = elem.closest(closestSel);
-            if (elem) {
-                elem = elem.querySelector(findSel);
-            }
-        }
-        return $(elem || []);
-    };
-
-    /* Begin: clickarea delegate */
-    var initClickArea = function(){
-
-        var supportMouse = typeof window.MouseEvent == 'function';
-        var clickAreaSel = '.' + rb.utilPrefix + 'clickarea';
-        var clickAreaactionSel = '.' + rb.utilPrefix + 'clickarea' + rb.nameSeparator + 'action';
-        var abortSels = 'a[href], a[href] *, button *, ' + clickAreaactionSel + ', ' + clickAreaactionSel + ' *';
-
-        var getSelection = window.getSelection || function () {
-                return {};
-            };
-        var regInputs = /^(?:input|select|textarea|button|a)$/i;
-
-        document.addEventListener('click', function (e) {
-
-            if (e.defaultPrevented || e.button == 2 || regInputs.test(e.target.nodeName || '') || e.target.matches(abortSels)) {
-                return;
-            }
-
-            var event, selection;
-            var item = e.target.closest(clickAreaSel);
-            var link = item && item.querySelector(clickAreaactionSel);
-
-            if (link) {
-                selection = getSelection();
-                if (selection.anchorNode && !selection.isCollapsed && item.contains(selection.anchorNode)) {
-                    return;
-                }
-                if (supportMouse && link.dispatchEvent) {
-                    event = new MouseEvent('click', {
-                        cancelable: true,
-                        bubbles: true,
-                        shiftKey: e.shiftKey,
-                        altKey: e.altKey,
-                        ctrlKey: e.ctrlKey,
-                        metaKey: e.metaKey,
-                        button: e.button,
-                        which: e.which,
-                    });
-                    link.dispatchEvent(event);
-                } else if (link.click) {
-                    link.click();
-                }
-            }
-        });
-    };
-    /* End: clickarea delegate */
-
-    /**
      * Sets focus to an element. Note element has to be focusable
      * @memberof rb
      * @type function
@@ -1019,139 +949,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
         };
     })();
-
-    /* Begin: focus-within polyfill */
-    var initFocusWithin = function(){
-        var running = false;
-        var isClass = rb.utilPrefix + 'focus' + rb.nameSeparator + 'within';
-        var isClassSelector = '.' + isClass;
-
-        var updateFocus = function () {
-            var oldFocusParents, newFocusParents, i, len;
-
-            var parent = document.activeElement;
-
-            if(parent){
-                newFocusParents = [];
-
-                while (parent && parent.classList && !parent.classList.contains(isClass)) {
-                    newFocusParents.push(parent);
-                    parent = parent.parentNode;
-                }
-
-                if ((oldFocusParents = parent.querySelectorAll && parent.querySelectorAll(isClassSelector))) {
-                    for (i = 0, len = oldFocusParents.length; i < len; i++) {
-                        oldFocusParents[i].classList.remove(isClass);
-                    }
-                }
-                for (i = 0, len = newFocusParents.length; i < len; i++) {
-                    newFocusParents[i].classList.add(isClass);
-                }
-            }
-
-            running = false;
-        };
-
-        var update = function () {
-            if (!running) {
-                running = true;
-                rb.rAFQueue(updateFocus, true);
-            }
-        };
-
-        document.addEventListener('focus', update, true);
-        document.addEventListener('blur', update, true);
-        update();
-    };
-    /* End: focus-within polyfill */
-
-
-    /* * * Begin: keyboard-focus * * */
-
-    var initKeyboardFocus = function(){
-        var keyboardFocusElem;
-        var hasKeyboardFocus = false;
-        var isKeyboardBlocked = false;
-        var eventOpts = {passive: true, capture: true};
-        var root = rb.root;
-        var isClass = rb.utilPrefix + 'keyboardfocus';
-        var isWithinClass = rb.utilPrefix + 'keyboardfocus' + rb.nameSeparator + 'within';
-
-        var unblockKeyboardFocus = function (e) {
-            if(e.keyCode == 9){
-                isKeyboardBlocked = false;
-            }
-        };
-
-        var _removeChildFocus = function () {
-            if (keyboardFocusElem && keyboardFocusElem != document.activeElement) {
-                keyboardFocusElem.classList.remove(isClass);
-                keyboardFocusElem = null;
-            }
-        };
-
-        var removeChildFocus = function () {
-            if (keyboardFocusElem) {
-                rb.rAFQueue(_removeChildFocus);
-            }
-        };
-
-        var _removeKeyBoardFocus = rb.rAF(function () {
-            hasKeyboardFocus = false;
-            _removeChildFocus();
-            root.classList.remove(isWithinClass);
-        }, {throttle: true});
-
-        var removeKeyBoardFocus = function () {
-            isKeyboardBlocked = true;
-            if (hasKeyboardFocus) {
-                _removeKeyBoardFocus();
-            }
-        };
-
-        var setKeyboardFocus = rb.rAF(function () {
-
-            if (!isKeyboardBlocked || hasKeyboardFocus) {
-
-                if (keyboardFocusElem != document.activeElement) {
-                    _removeChildFocus();
-
-                    keyboardFocusElem = document.activeElement;
-
-                    if (keyboardFocusElem && keyboardFocusElem.classList) {
-                        keyboardFocusElem.classList.add(isClass);
-                    } else {
-                        keyboardFocusElem = null;
-                    }
-                }
-
-                if (!hasKeyboardFocus) {
-                    root.classList.add(isWithinClass);
-                }
-                hasKeyboardFocus = true;
-            }
-        }, {throttle: true});
-
-        var pointerEvents = (window.PointerEvent) ?
-                ['pointerdown', 'pointerup'] :
-                ['mousedown', 'mouseup']
-            ;
-
-        root.addEventListener('blur', removeChildFocus, eventOpts);
-        root.addEventListener('focus', function(){
-            if(!isKeyboardBlocked || hasKeyboardFocus){
-                setKeyboardFocus();
-            }
-        }, eventOpts);
-        root.addEventListener('keydown', unblockKeyboardFocus, eventOpts);
-        root.addEventListener('keypress', unblockKeyboardFocus, eventOpts);
-
-        pointerEvents.forEach(function (eventName) {
-            document.addEventListener(eventName, removeKeyBoardFocus, eventOpts);
-        });
-    };
-    /* End: keyboard-focus */
-
 
     (function(){
         var console = window.console || {};
@@ -1484,13 +1281,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     rb.if = function (condition, yes, no) {
         return condition ? yes : (no || '');
     };
-
-    rb._utilsInit = function(){
-        initClickArea();
-        initFocusWithin();
-        initKeyboardFocus();
-        rb._utilsInit = rb.$.noop;
-    };
 })(window, document);
 
 (function (window, document) {
@@ -1617,7 +1407,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             var main = function () {
                 var len, instance, element;
                 var start = Date.now();
-                for (len = live._attached.length; i < len && Date.now() - start < 4; i++) {
+                for (len = live._attached.length; i < len && Date.now() - start < 3; i++) {
                     element = live._attached[i];
 
                     if (element && (instance = element[componentExpando]) && !docElem.contains(element)) {
@@ -1739,8 +1529,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         watchCssClass = ['js', 'rb', 'watchcss'].join(rb.nameSeparator);
 
         elements = document.getElementsByClassName(initClass);
-
-        rb._utilsInit();
 
         initObserver();
 
@@ -2117,108 +1905,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     return live;
 })(window, document);
 
-/* Simple JavaScript Inheritance
- * By John Resig http://ejohn.org/
- * modified for better ES5 support by alex
- * MIT Licensed.
- */
-// Inspired by base2 and Prototype
-(function () {
-    var rb = window.rb;
-    var fnTest = (/xyz/.test(function () {
-            var a = xyz; // eslint-disable-line no-undef, no-unused-vars
-        })) ?
-            /\b_super\b/ :
-            /.*/
-        ;
-
-    // The base Class implementation (does nothing)
-    var ES5Class = function () {
-    };
-
-    ES5Class.mixin = function (prototype, _super, prop) {
-        var name, origDescriptor, descProp, superDescriptor;
-
-        if (arguments.length < 3) {
-            prop = _super;
-            _super = prototype;
-        }
-
-        // Copy the properties over onto the new prototype
-        for (name in prop) {
-            origDescriptor = Object.getOwnPropertyDescriptor(prop, name);
-            if (!origDescriptor) {
-                continue;
-            }
-
-            superDescriptor = (name in _super && rb.getPropertyDescriptor(_super, name));
-
-            for (descProp in origDescriptor) {
-                // Check if we're overwriting an existing function...
-                if (superDescriptor && typeof origDescriptor[descProp] == 'function' && typeof superDescriptor[descProp] == 'function') {
-
-                    //...and using super keyword
-                    if (fnTest.test(origDescriptor[descProp])) {
-                        /* jshint loopfunc: true */
-                        origDescriptor[descProp] = (function (_superFn, fn) {
-                            return function () {
-                                var tmp = this._super;
-
-                                // Add a new ._super() method that is the same method
-                                // but on the super-class
-                                this._super = _superFn;
-
-                                // The method only need to be bound temporarily, so we
-                                // remove it when we're done executing
-                                var ret = fn.apply(this, arguments);
-                                this._super = tmp;
-
-                                return ret;
-                            };
-                        })(superDescriptor[descProp], origDescriptor[descProp]);
-                    }
-
-                    //always allow NFE call for frequently called methods without this._super, but functionName._supbase
-                    //see http://techblog.netflix.com/2014/05/improving-performance-of-our-javascript.html
-                    origDescriptor[descProp]._supbase = superDescriptor[descProp];
-                }
-            }
-
-            Object.defineProperty(prototype, name, origDescriptor);
-        }
-    };
-
-    // Create a new Class that inherits from this class
-    ES5Class.extend = function (prop) {
-        var _super = this.prototype;
-        // Instantiate a base class (but only create the instance,
-        // don't run the init constructor)
-        var prototype = Object.create(_super);
-
-        ES5Class.mixin(prototype, _super, prop);
-
-        // The dummy class constructor
-        function Class() {
-            // All construction is actually done in the init method
-            if (('init' in this)) {
-                this.init.apply(this, arguments);
-            }
-        }
-
-        // Populate our constructed prototype object
-        Class.prototype = prototype;
-
-        // Enforce the constructor to be what we expect
-        Class.prototype.constructor = Class;
-
-        // And make this class extendable
-        Class.extend = this.extend || ES5Class.extend;
-
-        return Class;
-    };
-    rb.Class = ES5Class;
-})();
-
 (function (window, document, live, _undefined) {
     'use strict';
 
@@ -2497,655 +2183,609 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
     live.getComponent = rb.getComponent;
 
-    rb.Component = rb.Class.extend(
-        /** @lends rb.Component.prototype */
-        {
-            /**
-             * constructs the class
-             * @classdesc Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
-             *
-             * For the live cycle features see [rb.live.register]{@link rb.live.register}.
-             * @param element
-             * @param [initialDefaults] {Object}
-             * @constructs
-             *
-             * @example
-             * //<div class="js-rb-live" data-module="my-module"></div>
-             * rb.Component.extend('my-component', {
-			 *      defaults: {
-			 *          className: 'toggle-class',
-			 *      },
-			 *      events: {
-			 *          'click:closest(.change-btn)': 'changeClass',
-			 *      },
-			 *      init: function(element, initialDefaults){
-			 *          this._super(element, initialDefaults);
-			 *
-			 *          rb.rAFs(this, 'changeClass');
-			 *      },
-			 *      changeClass: function(){
-			 *          this.$element.toggleClass(this.options.className);
-			 *      }
-			 * });
-             * //If ES5 static extend method is used, rb.live.register is called implicitly.
-             *
-             * @example
-             * //<div class="js-rb-live" data-module="my-module"></div>
-             * rb.live.register('my-component', class MyComponent extends rb.Component {
-			 *      static get defaults(){
-			 *          return {
-			 *              className: 'toggle-class',
-			 *          };
-			 *      }
-			 *
-			 *      static get events(){
-			 *          return {
-			 *              'click .change-btn': 'changeClass',
-			 *          };
-			 *      }
-			 *
-			 *      constructor(element, initialDefaults){
-			 *          super(element, initialDefaults);
-			 *          rb.rAFs(this, 'changeClass');
-			 *      }
-			 *
-			 *      changeClass(){
-			 *          this.$element.toggleClass(this.options.className);
-			 *      }
-			 * });
-             */
-            init: function (element, initialDefaults) {
-                var origName = this.name;
 
-                /**
-                 * Reference to the main element.
-                 * @type {Element}
-                 */
-                this.element = element;
-                this.$element = $(element);
-
-                /**
-                 * Current options object constructed by defaults and overriding markup/CSS.
-                 * @type {{}}
-                 */
-                this.options = {};
-
-                this._initialDefaults = initialDefaults;
-                this._stickyOpts = {};
-                element[componentExpando] = this;
-
-                this.origName = origName;
-
-                this.parseOptions(this.options);
-
-                this.name = this.options.name || rb.jsPrefix + origName;
-                this.jsName = this.options.jsName || origName;
-
-                this._evtName = this.jsName + 'changed';
-                this._beforeEvtName = this.jsName + 'change';
-
-                rb.addLog(this, this.options.debug == null ? rb.isDebug : this.options.debug);
-
-                /**
-                 * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.
-                 * @type {Function|{}}
-                 */
-                this.templates = rb.templates[this.jsName] || rb.templates[origName] || {};
-
-                this.beforeConstruct();
-
-                _setupEventsByEvtObj(this);
-            },
+    /**
+     * Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
+     *
+     * For the live cycle features see [rb.live.register]{@link rb.live.register}.
+     * @param element
+     * @param [initialDefaults] {Object}
+     *
+     * @example
+     * //<div class="js-rb-live" data-module="my-module"></div>
+     * rb.live.register('my-component', class MyComponent extends rb.Component {
+     *      static get defaults(){
+     *          return {
+     *              className: 'toggle-class',
+     *          };
+     *      }
+     *
+     *      static get events(){
+     *          return {
+     *              'click:closest(.change-btn)': 'changeClass',
+     *          };
+     *      }
+     *
+     *      constructor(element, initialDefaults){
+     *          super(element, initialDefaults);
+     *          this.rAFs('changeClass');
+     *      }
+     *
+     *      changeClass(){
+     *          this.$element.toggleClass(this.options.className);
+     *      }
+     * });
+     */
+    rb.Component = class {
+        constructor(element, initialDefaults) {
+            var origName = this.name;
 
             /**
-             * defaults Object, represent the default options of the component.
-             * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
-             *
-             * @static
-             * @memberOf rb.Component
-             *
-             * @see rb.Component.prototype.setOption
-             *
-             * @prop {Boolean} defaults.debug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
-             * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
-             * @prop {String} defaults.autofocusSel='' Overrides the js-rb-autofocus selector for the component.
-             * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
-             * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
-             *
-             * @example
-             * <!-- overriding defaults with markup -->
-             * <div data-module="mymodule" data-mymodule-options='{"fooBar": false, "baz": true}'></div>
-             * <div data-module="mymodule" data-mymodule-foo-bar="false" data-mymodule-baz="true"></div>
-             *
-             * @example
-             *
-             * //creating a new component with different defaults:
-             * rb.live.register('special-accordion', class SpecialAccordion extends rb.components.accordion {
-			 *      static get defaults(){
-			 *          return {
-			 *              multiple: true,
-			 *          };
-			 *      }
-			 * });
-             *
-             * //overriding defaults (before initialization for all instances) with JS
-             * rb.components.accordion.defaults.multiple = true;
-             *
-             * //overriding defaults (after initialization for one instance) with JS
-             * var accordion = rb.getComponent(accordionElement);
-             * accordion.setOption('multiple', true);
-             *
-             * @example
-             * //overriding defaults using Sass
-             * .rb-accordion {
-			 *      (at)include rb-js-export((
-			 *          multiple: false
-			 *      ));
-			 * }
-             *
-             * //also works responsive:
-             * (at)media (max-width: 800px) {
-			 *   .rb-accordion {
-			 *      (at)include rb-js-export((
-			 *          multiple: false
-			 *      ));
-			 *   }
-			 * }
-             *
+             * Reference to the main element.
+             * @type {Element}
              */
-            defaults: {
-                focusDelay: 0,
-                debug: null,
-                autofocusSel: '',
-                switchedOff: false,
-                name: '',
-                jsName: '',
-            },
+            this.element = element;
+            this.$element = $(element);
 
             /**
-             * Events object can be used to specify events, that will be bound to the component element.
-             *
-             * The key specifies the event type and optional a selector (separated by a whitespace) for event delegation. The key will be interpolated with [`this.interpolateName`]{@link rb.Component#interpolateName}.
-             *
-             * The key also allows comma separated multiple events as also modifiers (`'event1,event2:modifier()'`). As modifier `"event:capture()"`, `"event:keycodes(13 32)"`, `"event:matches(.selector)"` and `"event:closest(.selector)"` (alias for `"event .selector"`) are known. The delegated element is available through the `delegatedTarget` property.
-             *
-             * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
-             *
-             *
-             * @example
-             *
-             * class MyComponent extends rb.Component {
-			 *      constructor(element, initialDefaults){
-			 *          super(element, initialDefaults);
-			 *          this.child = this.query('.{name}__close-button');
-			 *
-			 *          rb.rAFs(this, 'setLayout');
-			 *      }
-			 *
-			 *      static get events(){
-			 *          return {
-			 *              'mouseenter': '_onInteraction',
-			 *              'click .{name}__close-button': 'close',
-			 *              'focus:capture():matches(input, select)': '_onFocus',
-			 *              'mouseenter:capture():matches(.teaser)': '_delegatedMouseenter',
-			 *              'keypress:keycodes(13 32):matches(.ok-btn)': '_ok',
-			 *              'click:closest(.ok-btn)': '_ok',
-			 *              'submit:@(closest(form))': '_submit',
-			 *          }
-			 *      }
-			 * }
+             * Current options object constructed by defaults and overriding markup/CSS.
+             * @type {{}}
              */
-            events: {},
-            beforeConstruct: $.noop,
-            /**
-             * Returns the component of an element. If a string is used, uses `this.getElementsByString` or `this.query` to get the element.
-             *
-             * @param element {Element|String}
-             * @param [moduleName] {String}
-             * @param [initialOpts] {Object}
-             */
-            component: function(element, moduleName, initialOpts){
-                if(typeof element == 'string'){
-                    element = this.interpolateName(element);
-                    element = rb.getElementsByString(element, this.element)[0] || this.query(element);
-                }
+            this.options = {};
 
-                return rb.getComponent(element, moduleName, initialOpts);
-            },
+            this._initialDefaults = initialDefaults;
+            this._stickyOpts = {};
+            element[componentExpando] = this;
 
-            rAFs: function(){
-                return rb.rAFs(this, ...arguments);
-            },
+            this.origName = origName;
+
+            this.parseOptions(this.options);
+
+            this.name = this.options.name || rb.jsPrefix + origName;
+            this.jsName = this.options.jsName || origName;
+
+            this._evtName = this.jsName + 'changed';
+            this._beforeEvtName = this.jsName + 'change';
+
+            rb.addLog(this, this.options.debug == null ? rb.isDebug : this.options.debug);
 
             /**
-             * returns the id of an element, if no id exist generates one for the element
-             * @param {Element} [element], if no element is given. the component element is used.
-             * @param {Boolean} [async=true], sets the id async in a rAF
-             * @returns {String} id
+             * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.
+             * @type {Function|{}}
              */
-            getId: function (element, async) {
-                var id;
+            this.templates = rb.templates[this.jsName] || rb.templates[origName] || {};
 
-                if(typeof element == 'boolean'){
-                    async = element;
-                    element = null;
-                }
+            this.beforeConstruct();
 
-                if (!element) {
-                    element = this.element;
-                }
-
-                if(async == null){
-                    async = true;
-                }
-
-                if (!(id = element.id)) {
-                    id = 'js' + rb.nameSeparator + rb.getID();
-                    if(async){
-                        rb.rAFQueue(function(){
-                            element.id = id;
-                        }, true);
-                    } else {
-                        element.id = id;
-                    }
-                }
-
-                return id;
-            },
-
-            /**
-             * Dispatches an event on the component element and returns the Event object.
-             * @param [type='changed'] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component. If an opbject is passed this will be used as the `event.detail` property.
-             * @param [detail] {Object} The value for the event.detail property to transport event related information.
-             * @returns {Event}
-             */
-            trigger: function (type, detail) {
-                var opts;
-                if (typeof type == 'object') {
-                    detail = type;
-                    type = detail.type;
-                }
-
-                if (type == null) {
-                    type = this._evtName;
-                } else if (!type.startsWith(this.jsName)) {
-                    type = this.jsName + type;
-                }
-
-                opts = {detail: detail || {}};
-
-                if(detail){
-                    if('bubbles' in detail){
-                        opts.bubbles = detail.bubbles;
-                    }
-                    if('cancelable' in detail){
-                        opts.cancelable = detail.cancelable;
-                    }
-                }
-
-                return rb.events.dispatch(this.element, type, opts);
-            },
-
-            /**
-             * Uses [`rb.getElementsByString`]{@link rb.getElementsByString} with this.element as the element argument and interpolates string using `this.interpolateName`.
-             * @param {String} string
-             * @param {Element} [element=this.element]
-             * @returns {Element[]}
-             */
-            getElementsByString: function (string, element) {
-                return rb.getElementsByString(this.interpolateName(string), element || this.element);
-            },
-
-            _trigger: function(){
-                this.logInfo('_trigger is deprecated use trigger instead');
-                return this.trigger.apply(this, arguments);
-            },
-
-            /*
-             * shortcut to [`rb.setFocus`]{@link rb.setFocus}
-             * @borrows rb.setFocus as setFocus
-             */
-            setFocus: rb.setFocus,
-
-            /**
-             *
-             * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
-             * @returns {undefined|Element}
-             */
-            getFocusElement: function(element){
-                var focusElement;
-
-                if (element && element !== true) {
-                    if (element.nodeType == 1) {
-                        focusElement = element;
-                    } else if (typeof element == 'string') {
-                        focusElement = rb.elementFromStr(element, this.element)[0];
-                    }
-                } else {
-                    focusElement = this.options.autofocusSel &&
-                        this.query(this.options.autofocusSel) ||
-                        this.query(focusSel);
-                }
-
-                if (!focusElement && (element === true || this.element.classList.contains(focusClass))) {
-                    focusElement = this.element;
-                }
-                return focusElement;
-            },
-
-            /**
-             * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with the class `js-rb-autofocus` inside of the component element is focused.
-             * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
-             * @param [delay] {Number} The delay that should be used to focus an element.
-             */
-            setComponentFocus: function (element, delay) {
-                var focusElement;
-
-                if (typeof element == 'number') {
-                    delay = element;
-                    element = null;
-                }
-
-                focusElement = (!element || element.nodeType != 1) ?
-                    this.getFocusElement(element) :
-                    element
-                ;
-
-                this.storeActiveElement();
-
-                if (focusElement) {
-                    this.setFocus(focusElement, delay || this.options.focusDelay);
-                }
-            },
-
-            /**
-             * stores the activeElement for later restore.
-             *
-             * @returns {Element}
-             *
-             * @see rb.Component.prototype.restoreFocus
-             */
-            storeActiveElement: function(){
-                var activeElement = document.activeElement;
-
-                this._activeElement = (activeElement && activeElement.nodeName) ?
-                    activeElement :
-                    null;
-
-                return this._activeElement;
-            },
-
-            /**
-             * Restores the focus to the element, that had focus before `setComponentFocus` was invoked.
-             * @param [checkInside] {Boolean} If checkInside is true, the focus is only restored, if the current activeElement is inside the component itself.
-             * @param [delay] {Number}
-             */
-            restoreFocus: function (checkInside, delay) {
-                var activeElem = this._activeElement;
-
-                if (!activeElem) {
-                    return;
-                }
-
-                if (typeof checkInside == 'number') {
-                    delay = checkInside;
-                    checkInside = null;
-                }
-
-                this._activeElement = null;
-                if (!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)) {
-                    this.setFocus(activeElem, delay || this.options.focusDelay);
-                }
-            },
-
-            /**
-             * Interpolates {name}, {jsName} and {htmlName} to the name of the component. Helps to generate BEM-style Class-Structure.
-             * @param {String} str
-             * @param {Boolean} [isJs=false]
-             * @returns {string}
-             *
-             * @example
-             * //assume the name of the component is dialog
-             * this.interpolateName('.{name}__button'); //return '.dialog__button'
-             */
-            interpolateName: function (str, isJs) {
-
-                if(!isJs && rb.attrSel){
-                    str = replaceHTMLSel(str);
-                }
-
-                return str
-                    .replace(regName, isJs ? this.jsName : this.name)
-                    .replace(regJsName, this.jsName)
-                    .replace(regHtmlName, this.name)
-                    .replace(regnameSeparator, rb.nameSeparator)
-                    .replace(regElementSeparator, rb.elementSeparator)
-                    .replace(regUtilPrefix, rb.utilPrefix)
-                    .replace(regStatePrefix, rb.statePrefix)
-                ;
-            },
-
-            /**
-             * Returns first matched element. Interpolates selector with `interpolateName`.
-             * @param {String} selector
-             * @param {Element} [context=this.element]
-             * @returns {Element}
-             */
-
-            query: function (selector, context) {
-                return (context || this.element).querySelector(this.interpolateName(selector));
-            },
-
-            _qSA: function(selector, context){
-                return (context || this.element).querySelectorAll(this.interpolateName(selector));
-            },
-
-            /**
-             * Returns Array of matched elements. Interpolates selector with `interpolateName`.
-             * @param {String} selector
-             * @param {Element} [context=this.element]
-             * @returns {Element[]}
-             */
-            queryAll: function (selector, context) {
-                return Array.from(this._qSA(selector, context));
-            },
-
-            /**
-             * Returns jQuery list of matched elements. Interpolates selector with `interpolateName`.
-             * @param {String} selector
-             * @param {Element} [context=this.element]
-             * @returns {jQueryfiedNodeList}
-             */
-            $queryAll: function (selector, context) {
-                return $(this._qSA(selector, context));
-            },
-
-            /*
-             * Parses the Options from HTML (data-* attributes) and CSS using rb.parsePseudo. This function is automatically invoked by the init/constructor.
-             * @param opts
-             * @param initialOpts
-             */
-            parseOptions: function (opts) {
-                var options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, rb.parseComponentCss(this.element, this.origName), this.parseHTMLOptions(), this._stickyOpts);
-                this.setOptions(options);
-            },
-
-            /*
-             * Sets mutltiple options at once.
-             * @param opts
-             */
-            setOptions: function (opts, isSticky) {
-                var oldValue, newValue;
-
-                if(opts !== this.options){
-                    for (var prop in opts) {
-                        newValue = opts[prop];
-                        oldValue = this.options[prop];
-                        if (newValue !== oldValue &&
-                            (!oldValue || typeof newValue != 'object' || typeof oldValue != 'object' ||
-                            JSON.stringify(newValue) != JSON.stringify(oldValue))) {
-                            this.setOption(prop, newValue, isSticky);
-                        }
-                    }
-                }
-            },
-
-            /**
-             * Sets an option. The function should be extended to react to dynamic option changes after instantiation.
-             * @param name {String} Name of the option.
-             * @param value {*} Value of the option.
-             * @param isSticky=false {boolean} Whether the option can't be overwritten with CSS option.
-             *
-             * @example
-             * class MyComponent extends rb.Component {
-			 *      setOptions(name, value){
-			 *          super.setOption(name, value);
-			 *
-			 *          if(name == 'foo'){
-			 *              this.updateFoo();
-			 *          }
-			 *      }
-			 * }
-             */
-            setOption: function (name, value, isSticky) {
-                this.options[name] = value;
-
-                if(isSticky){
-                    this._stickyOpts[name] = value;
-                }
-
-                if (name == 'debug') {
-                    this.isDebug = value;
-                } else if ((name == 'name' || name == 'jsName') && this.name && this.jsName && this.logWarn) {
-                    this.logWarn('don\'t change name after init.');
-                }
-            },
-            setChildOption: function ($childs, name, value, isSticky) {
-                var run = function (elem) {
-                    var component = this && this[componentExpando] ||
-                        elem[componentExpando] ||
-                            elem;
-                    if (component && component.setOption) {
-                        component.setOption(name, value, isSticky);
-                    }
-                };
-
-                if($childs.each){
-                    $childs.each(run);
-                } else if($childs.forEach){
-                    $childs.forEach(run);
-                } else {
-                    run($childs);
-                }
-            },
-            /**
-             * Convenient method to render a template. Expects a template function with the given name added to the templates hash property of the component. The data will be extended with the name of the component.
-             * @param {String} [name]
-             * @param {Object} data
-             * @returns {String}
-             *
-             * @example
-             * //sources/_templates/my-component/main.ejs:
-             *
-             * //<div class="rb-<%= component %>">
-             * //    <h1 class="<%= component %>-header">
-             * //        <%- title ->
-             * //    </h1>
-             * //</div>
-             *
-             * //require('sources/js/_templates/my-component.js');
-             *
-             * rb.live.register('my-component', class MyComponent extends rb.Component {
-			 *      renderMain(){
-			 *          this.element.innerHTML = this.render('main', {title: 'foo'});
-			 *      }
-			 * });
-             */
-            render: function (name, data) {
-                if (typeof name == 'object') {
-                    data = name;
-                    name = '';
-                }
-                if (!data.name) {
-                    data.name = this.name;
-                }
-
-                if (!data.component) {
-                    data.component = this.component;
-                }
-
-                return this.templates[name] ?
-                    this.templates[name](data) :
-                    (!name && typeof this.templates == 'function') ?
-                        this.templates(data) :
-                        ''
-                    ;
-            },
-            /*
-             * parses the HTML options (data-*) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.
-             * @returns {{}}
-             */
-            parseHTMLOptions: function (_element) {
-                if(_element){
-                    rb.logError('use `rb.parseDataAttrs` instead of parseHTMLOptions.');
-                    return {};
-                }
-
-                var element = this.element;
-                var mainOptions = 'data-' + this.origName + '-options';
-                var options = rb.jsonParse(element.getAttribute(mainOptions)) || {};
-
-                return rb.parseDataAttrs(element, options, this.origName, mainOptions);
-            },
-
-            destroy: function () {
-                live.destroyComponent(this);
-            },
-
-            _super: function () {
-                this.logWarn('no _super');
-            },
-            /**
-             * Passes args to `console.log` if isDebug option is `true.
-             * @param {...*} args
-             */
-            log: function () {
-
-            },
+            _setupEventsByEvtObj(this);
         }
-    );
+
+        beforeConstruct(){}
+
+        /**
+         * Returns the component of an element. If a string is used, uses `this.getElementsByString` or `this.query` to get the element.
+         *
+         * @param element {Element|String}
+         * @param [moduleName] {String}
+         * @param [initialOpts] {Object}
+         */
+        component(element, moduleName, initialOpts){
+            if(typeof element == 'string'){
+                element = this.interpolateName(element);
+                element = rb.getElementsByString(element, this.element)[0] || this.query(element);
+            }
+
+            return rb.getComponent(element, moduleName, initialOpts);
+        }
+
+        rAFs(){
+            return rb.rAFs(this, ...arguments);
+        }
+
+        /**
+         * returns the id of an element, if no id exist generates one for the element
+         * @param {Element} [element], if no element is given. the component element is used.
+         * @param {Boolean} [async=true], sets the id async in a rAF
+         * @returns {String} id
+         */
+        getId(element, async) {
+            var id;
+
+            if(typeof element == 'boolean'){
+                async = element;
+                element = null;
+            }
+
+            if (!element) {
+                element = this.element;
+            }
+
+            if(async == null){
+                async = true;
+            }
+
+            if (!(id = element.id)) {
+                id = 'js' + rb.nameSeparator + rb.getID();
+                if(async){
+                    rb.rAFQueue(function(){
+                        element.id = id;
+                    }, true);
+                } else {
+                    element.id = id;
+                }
+            }
+
+            return id;
+        }
+
+        /**
+         * Dispatches an event on the component element and returns the Event object.
+         * @param [type='changed'] {String|Object} The event.type that should be created. If no type is given the name 'changed' is used. Automatically prefixes the type with the name of the component. If an opbject is passed this will be used as the `event.detail` property.
+         * @param [detail] {Object} The value for the event.detail property to transport event related information.
+         * @returns {Event}
+         */
+        trigger(type, detail) {
+            let opts;
+
+            if (typeof type == 'object') {
+                detail = type;
+                type = detail.type;
+            }
+
+            if (type == null) {
+                type = this._evtName;
+            } else if (!type.startsWith(this.jsName)) {
+                type = this.jsName + type;
+            }
+
+            opts = {detail: detail || {}};
+
+            if(detail){
+                if('bubbles' in detail){
+                    opts.bubbles = detail.bubbles;
+                }
+                if('cancelable' in detail){
+                    opts.cancelable = detail.cancelable;
+                }
+            }
+
+            return rb.events.dispatch(this.element, type, opts);
+        }
+
+        /**
+         * Uses [`rb.getElementsByString`]{@link rb.getElementsByString} with this.element as the element argument and interpolates string using `this.interpolateName`.
+         * @param {String} string
+         * @param {Element} [element=this.element]
+         * @returns {Element[]}
+         */
+        getElementsByString(string, element) {
+            return rb.getElementsByString(this.interpolateName(string), element || this.element);
+        }
+
+        _trigger(){
+            this.logInfo('_trigger is deprecated use trigger instead');
+            return this.trigger.apply(this, arguments);
+        }
+
+        /*
+         * shortcut to [`rb.setFocus`]{@link rb.setFocus}
+         * @borrows rb.setFocus as setFocus
+         */
+        setFocus(){
+            return rb.setFocus(...arguments);
+        }
+
+        /**
+         *
+         * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
+         * @returns {undefined|Element}
+         */
+        getFocusElement(element){
+            let focusElement;
+
+            if (element && element !== true) {
+                if (element.nodeType == 1) {
+                    focusElement = element;
+                } else if (typeof element == 'string') {
+                    focusElement = rb.elementFromStr(element, this.element)[0];
+                }
+            } else {
+                focusElement = this.options.autofocusSel &&
+                    this.query(this.options.autofocusSel) ||
+                    this.query(focusSel);
+            }
+
+            if (!focusElement && (element === true || this.element.classList.contains(focusClass))) {
+                focusElement = this.element;
+            }
+            return focusElement;
+        }
+
+        /**
+         * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with the class `js-rb-autofocus` inside of the component element is focused.
+         * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
+         * @param [delay] {Number} The delay that should be used to focus an element.
+         */
+        setComponentFocus(element, delay) {
+            let focusElement;
+
+            if (typeof element == 'number') {
+                delay = element;
+                element = null;
+            }
+
+            focusElement = (!element || element.nodeType != 1) ?
+                this.getFocusElement(element) :
+                element
+            ;
+
+            this.storeActiveElement();
+
+            if (focusElement) {
+                this.setFocus(focusElement, delay || this.options.focusDelay);
+            }
+        }
+
+        /**
+         * stores the activeElement for later restore.
+         *
+         * @returns {Element}
+         *
+         * @see rb.Component.prototype.restoreFocus
+         */
+        storeActiveElement(){
+            const activeElement = document.activeElement;
+
+            this._activeElement = (activeElement && activeElement.nodeName) ?
+                activeElement :
+                null;
+
+            return this._activeElement;
+        }
+
+        /**
+         * Restores the focus to the element, that had focus before `setComponentFocus` was invoked.
+         * @param [checkInside] {Boolean} If checkInside is true, the focus is only restored, if the current activeElement is inside the component itself.
+         * @param [delay] {Number}
+         */
+        restoreFocus(checkInside, delay) {
+            const activeElem = this._activeElement;
+
+            if (!activeElem) {
+                return;
+            }
+
+            if (typeof checkInside == 'number') {
+                delay = checkInside;
+                checkInside = null;
+            }
+
+            this._activeElement = null;
+            if (!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)) {
+                this.setFocus(activeElem, delay || this.options.focusDelay);
+            }
+        }
+
+        /**
+         * Interpolates {name}, {jsName} and {htmlName} to the name of the component. Helps to generate BEM-style Class-Structure.
+         * @param {String} str
+         * @param {Boolean} [isJs=false]
+         * @returns {string}
+         *
+         * @example
+         * //assume the name of the component is dialog
+         * this.interpolateName('.{name}__button'); //return '.dialog__button'
+         */
+        interpolateName(str, isJs) {
+
+            if(!isJs && rb.attrSel){
+                str = replaceHTMLSel(str);
+            }
+
+            return str
+                .replace(regName, isJs ? this.jsName : this.name)
+                .replace(regJsName, this.jsName)
+                .replace(regHtmlName, this.name)
+                .replace(regnameSeparator, rb.nameSeparator)
+                .replace(regElementSeparator, rb.elementSeparator)
+                .replace(regUtilPrefix, rb.utilPrefix)
+                .replace(regStatePrefix, rb.statePrefix)
+                ;
+        }
+
+        /**
+         * Returns first matched element. Interpolates selector with `interpolateName`.
+         * @param {String} selector
+         * @param {Element} [context=this.element]
+         * @returns {Element}
+         */
+        query(selector, context) {
+            return (context || this.element).querySelector(this.interpolateName(selector));
+        }
+
+        _qSA(selector, context){
+            return (context || this.element).querySelectorAll(this.interpolateName(selector));
+        }
+
+        /**
+         * Returns Array of matched elements. Interpolates selector with `interpolateName`.
+         * @param {String} selector
+         * @param {Element} [context=this.element]
+         * @returns {Element[]}
+         */
+        queryAll(selector, context) {
+            return Array.from(this._qSA(selector, context));
+        }
+
+        /**
+         * Returns jQuery list of matched elements. Interpolates selector with `interpolateName`.
+         * @param {String} selector
+         * @param {Element} [context=this.element]
+         * @returns {jQueryfiedNodeList}
+         */
+        $queryAll(selector, context) {
+            return $(this._qSA(selector, context));
+        }
+
+        /*
+         * Parses the Options from HTML (data-* attributes) and CSS using rb.parsePseudo. This function is automatically invoked by the init/constructor.
+         * @param opts
+         * @param initialOpts
+         */
+        parseOptions(opts) {
+            const options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, rb.parseComponentCss(this.element, this.origName), this.parseHTMLOptions(), this._stickyOpts);
+            this.setOptions(options);
+        }
+
+        /*
+         * Sets mutltiple options at once.
+         * @param opts
+         */
+        setOptions(opts, isSticky) {
+
+            if(opts !== this.options){
+                let oldValue, newValue;
+
+                for (var prop in opts) {
+                    newValue = opts[prop];
+                    oldValue = this.options[prop];
+
+                    if (newValue !== oldValue &&
+                        (!oldValue || typeof newValue != 'object' || typeof oldValue != 'object' ||
+                        JSON.stringify(newValue) != JSON.stringify(oldValue))) {
+                        this.setOption(prop, newValue, isSticky);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Sets an option. The function should be extended to react to dynamic option changes after instantiation.
+         * @param name {String} Name of the option.
+         * @param value {*} Value of the option.
+         * @param isSticky=false {boolean} Whether the option can't be overwritten with CSS option.
+         *
+         * @example
+         * class MyComponent extends rb.Component {
+         *      setOptions(name, value){
+         *          super.setOption(name, value);
+         *
+         *          if(name == 'foo'){
+         *              this.updateFoo();
+         *          }
+         *      }
+         * }
+         */
+        setOption(name, value, isSticky) {
+            this.options[name] = value;
+
+            if(isSticky){
+                this._stickyOpts[name] = value;
+            }
+
+            if (name == 'debug') {
+                this.isDebug = value;
+            } else if ((name == 'name' || name == 'jsName') && this.name && this.jsName && this.logWarn) {
+                this.logWarn('don\'t change name after init.');
+            }
+        }
+
+        setChildOption($childs, name, value, isSticky) {
+            const run = function (elem) {
+                const component = this && this[componentExpando] ||
+                    elem[componentExpando] ||
+                    elem;
+                if (component && component.setOption) {
+                    component.setOption(name, value, isSticky);
+                }
+            };
+
+            if($childs.each){
+                $childs.each(run);
+            } else if($childs.forEach){
+                $childs.forEach(run);
+            } else {
+                run($childs);
+            }
+        }
+
+        /**
+         * Convenient method to render a template. Expects a template function with the given name added to the templates hash property of the component. The data will be extended with the name of the component.
+         * @param {String} [name]
+         * @param {Object} data
+         * @returns {String}
+         *
+         * @example
+         * //sources/_templates/my-component/main.ejs:
+         *
+         * //<div class="rb-<%= component %>">
+         * //    <h1 class="<%= component %>-header">
+         * //        <%- title ->
+         * //    </h1>
+         * //</div>
+         *
+         * //require('sources/js/_templates/my-component.js');
+         *
+         * rb.live.register('my-component', class MyComponent extends rb.Component {
+         *      renderMain(){
+         *          this.element.innerHTML = this.render('main', {title: 'foo'});
+         *      }
+         * });
+         */
+        render(name, data) {
+            if (typeof name == 'object') {
+                data = name;
+                name = '';
+            }
+            if (!data.name) {
+                data.name = this.name;
+            }
+
+            if (!data.component) {
+                data.component = this.component;
+            }
+
+            return this.templates[name] ?
+                this.templates[name](data) :
+                (!name && typeof this.templates == 'function') ?
+                    this.templates(data) :
+                    ''
+                ;
+        }
+
+        /*
+         * parses the HTML options (data-*) of a given Element. This method is automatically invoked by the constructor or in case of a CSS option change.
+         * @returns {{}}
+         */
+        parseHTMLOptions(_element) {
+            if(_element){
+                rb.logError('use `rb.parseDataAttrs` instead of parseHTMLOptions.');
+                return {};
+            }
+
+            const element = this.element;
+            const mainOptions = 'data-' + this.origName + '-options';
+            const options = rb.jsonParse(element.getAttribute(mainOptions)) || {};
+
+            return rb.parseDataAttrs(element, options, this.origName, mainOptions);
+        }
+
+        destroy() {
+            live.destroyComponent(this);
+        }
+
+        /**
+         * Passes args to `console.log` if isDebug option is `true.
+         * @param {...*} args
+         */
+        log() {
+
+        }
+    };
+
+    Object.assign(rb.Component, {
+        /**
+         * defaults Object, represent the default options of the component.
+         * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
+         *
+         * @static
+         * @memberOf rb.Component
+         *
+         * @see rb.Component.prototype.setOption
+         *
+         * @prop {Boolean} defaults.debug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
+         * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
+         * @prop {String} defaults.autofocusSel='' Overrides the js-rb-autofocus selector for the component.
+         * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
+         * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
+         *
+         * @example
+         * <!-- overriding defaults with markup -->
+         * <div data-module="mymodule" data-mymodule-options='{"fooBar": false, "baz": true}'></div>
+         * <div data-module="mymodule" data-mymodule-foo-bar="false" data-mymodule-baz="true"></div>
+         *
+         * @example
+         *
+         * //creating a new component with different defaults:
+         * rb.live.register('special-accordion', class SpecialAccordion extends rb.components.accordion {
+         *      static get defaults(){
+         *          return {
+         *              multiple: true,
+         *          };
+         *      }
+         * });
+         *
+         * //overriding defaults (before initialization for all instances) with JS
+         * rb.components.accordion.defaults.multiple = true;
+         *
+         * //overriding defaults (after initialization for one instance) with JS
+         * var accordion = rb.getComponent(accordionElement);
+         * accordion.setOption('multiple', true);
+         *
+         * @example
+         * //overriding defaults using Sass
+         * .rb-accordion {
+         *      (at)include rb-js-export((
+         *          multiple: false
+         *      ));
+         * }
+         *
+         * //also works responsive:
+         * (at)media (max-width: 800px) {
+         *   .rb-accordion {
+         *      (at)include rb-js-export((
+         *          multiple: false
+         *      ));
+         *   }
+         * }
+         *
+         */
+        defaults: {
+            focusDelay: 0,
+            debug: null,
+            autofocusSel: '',
+            switchedOff: false,
+            name: '',
+            jsName: '',
+        },
+
+        /**
+         * Events object can be used to specify events, that will be bound to the component element.
+         *
+         * The key specifies the event type and optional a selector (separated by a whitespace) for event delegation. The key will be interpolated with [`this.interpolateName`]{@link rb.Component#interpolateName}.
+         *
+         * The key also allows comma separated multiple events as also modifiers (`'event1,event2:modifier()'`). As modifier `"event:capture()"`, `"event:keycodes(13 32)"`, `"event:matches(.selector)"` and `"event:closest(.selector)"` (alias for `"event .selector"`) are known. The delegated element is available through the `delegatedTarget` property.
+         *
+         * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
+         *
+         *
+         * @example
+         *
+         * class MyComponent extends rb.Component {
+         *      constructor(element, initialDefaults){
+         *          super(element, initialDefaults);
+         *          this.child = this.query('.{name}__close-button');
+         *
+         *          rb.rAFs(this, 'setLayout');
+         *      }
+         *
+         *      static get events(){
+         *          return {
+         *              'mouseenter': '_onInteraction',
+         *              'click .{name}__close-button': 'close',
+         *              'focus:capture():matches(input, select)': '_onFocus',
+         *              'mouseenter:capture():matches(.teaser)': '_delegatedMouseenter',
+         *              'keypress:keycodes(13 32):matches(.ok-btn)': '_ok',
+         *              'click:closest(.ok-btn)': '_ok',
+         *              'submit:@(closest(form))': '_submit',
+         *          }
+         *      }
+         * }
+         */
+        events: {},
+    });
 
     rb.Component.prototype.getElementsFromString = rb.Component.prototype.getElementsByString;
-
-    rb.Component.extend = function (name, prop, noCheck) {
-        var Class = rb.Class.extend.call(this, prop);
-
-        if (prop.statics) {
-            Object.assign(Class, prop.statics);
-            Class.prototype.statics = null;
-        }
-
-        live.register(name, Class, noCheck);
-        return Class;
-    };
-
-    rb.Component.mixin = function (Class, prop) {
-        Class.defaults = $.extend(true, Class.defaults || {}, prop.defaults);
-
-        if (prop.statics) {
-            Object.assign(Class, prop.statics);
-        }
-
-        Class.events = rb._extendEvts(Class.events || {}, [prop.events]);
-
-        if (prop.events) {
-            prop.events = null;
-        }
-
-        rb.Class.mixin(Class.prototype, prop);
-
-        return Class;
-    };
 
     generateFocusClasses();
 

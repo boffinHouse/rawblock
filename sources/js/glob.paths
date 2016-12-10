@@ -2,5 +2,6 @@
 ../../utils/**/*.js
 !../../components/**/*.lazy.js
 !../../components/**/*-tests.js
+!../../components/**/*-spec.js
 !../../utils/rb_elemresize.js
 !../../utils/rb_packageloader.js

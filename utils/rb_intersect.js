@@ -108,7 +108,7 @@ rb.events.special.rb_intersect = {
                 rb.events.remove(element, 'rb_layoutchange', checkIntersect);
             }
         }
-    }
+    },
 };
 
 export default rb.intersects;

@@ -38,9 +38,13 @@ $accordion-js-cfg: (
     border-bottom: 1px solid #aaa;
     background: #e6e6e6;
 
-    &:hover,
-    &:focus {
-        background: #ddd;;
+    &:not(:disabled):not([aria-disabled="true"]){
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+            background: #ddd;;
+        }
     }
 }
 
