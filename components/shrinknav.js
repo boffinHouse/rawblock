@@ -60,8 +60,6 @@ class ShrinkNav extends rb.Component {
         this._getItems();
         this._calcMinItems();
 
-        this.log(this);
-
         this.measureElements();
     }
 
@@ -114,10 +112,10 @@ class ShrinkNav extends rb.Component {
     hideItems(){
         const hideItems = [];
 
-        let currentMenuLength = this.menuItems.length;
-        let currentVisibleLength = this.visibleItems.length;
+        let currentMenuLength = this.panelmenuItems.length;
+        let currentVisibleLength = this.mainbarItems.length;
 
-        this.visibleItems.forEach((item)=>{
+        this.mainbarItems.forEach((item)=>{
             if(this.remainingWidth < 0 || currentMenuLength < this.minSubItems || currentVisibleLength < this.minItems ){
                 hideItems.push(item);
 
@@ -133,11 +131,11 @@ class ShrinkNav extends rb.Component {
     showElements(){
         let run = true;
         const changeItems = [];
-        const lastIndex = this.menuItems.length - 1;
-        let currentMenuLength = this.menuItems.length;
-        let currentVisibleLength = this.visibleItems.length;
+        const lastIndex = this.panelmenuItems.length - 1;
+        let currentMenuLength = this.panelmenuItems.length;
+        let currentVisibleLength = this.mainbarItems.length;
 
-        this.menuItems.forEach((item, index) => {
+        this.panelmenuItems.forEach((item, index) => {
             if(run){
                 if(index == lastIndex){
                     this.remainingWidth += this.toggleItemWidth;
@@ -175,7 +173,7 @@ class ShrinkNav extends rb.Component {
     }
 
     addItemsTo(items, isVisibleBar){
-        const hadSubmenu = !!this.menuItems.length;
+        const hadSubmenu = !!this.panelmenuItems.length;
 
         if(isVisibleBar){
             items.forEach(this.addItemToBar, this);
@@ -183,7 +181,7 @@ class ShrinkNav extends rb.Component {
             items.forEach(this.addItemToPanel, this);
         }
 
-        const hasMenus = !!this.menuItems.length;
+        const hasMenus = !!this.panelmenuItems.length;
 
         if(this.hasSubmenu !== hasMenus){
             this.hasSubmenu = hasMenus;
@@ -194,7 +192,7 @@ class ShrinkNav extends rb.Component {
     }
 
     addItemToBar(item){
-        const index = this.menuItems.indexOf(item);
+        const index = this.panelmenuItems.indexOf(item);
 
         let setElement = false;
         let position = item.position - 1;
@@ -216,29 +214,29 @@ class ShrinkNav extends rb.Component {
         }
 
         if(index != -1){
-            this.menuItems.splice(index, 1);
-            this.visibleItems.unshift(item);
+            this.panelmenuItems.splice(index, 1);
+            this.mainbarItems.unshift(item);
         }
     }
 
     addItemToPanel(item){
-        const index = this.visibleItems.indexOf(item);
+        const index = this.mainbarItems.indexOf(item);
 
         this.$submenu.prepend(item.$item);
 
         if(index != -1){
-            this.visibleItems.splice(index, 1);
-            this.menuItems.unshift(item);
+            this.mainbarItems.splice(index, 1);
+            this.panelmenuItems.unshift(item);
         }
     }
 
     measureElements(){
         const add = this.options.growItems ? -0.1 : 0.1;
-        const {menuItems} = this;
+        const {panelmenuItems} = this;
 
         this.innerWidth = this.$measureElement.innerWidth();
 
-        this.neededWidth = this.visibleItems.reduce((value, item) => {
+        this.neededWidth = this.mainbarItems.reduce((value, item) => {
             item.width = item.$item.outerWidth() + add;
             return value + item.width;
         }, 0);
@@ -246,12 +244,12 @@ class ShrinkNav extends rb.Component {
         this.toggleItemWidth = this.$toggleItem.outerWidth() || this.toggleItemWidth || 0;
         this.remainingWidth = this.innerWidth - this.neededWidth - this.toggleItemWidth;
 
-        if(this.remainingWidth < (menuItems.length ? 0 : -this.toggleItemWidth) + 0.1){
+        if(this.remainingWidth < (panelmenuItems.length ? 0 : -this.toggleItemWidth) + 0.1){
             this.hideItems();
-        } else if(this.menuItems.length) {
-            const itemWidth = menuItems.length == 1 ?
-                menuItems[0].width - this.toggleItemWidth :
-                menuItems[0].width
+        } else if(this.panelmenuItems.length) {
+            const itemWidth = panelmenuItems.length == 1 ?
+                panelmenuItems[0].width - this.toggleItemWidth :
+                panelmenuItems[0].width
             ;
 
             if(this.remainingWidth > itemWidth + 0.1){
@@ -291,17 +289,17 @@ class ShrinkNav extends rb.Component {
             });
         }
 
-        this.visibleItems = [...this.allItems];
+        this.mainbarItems = [...this.allItems];
 
-        this.visibleItems
+        this.mainbarItems
             .sort(
                 (item1, item2) =>
                     (item2.priority - item1.priority)
             )
         ;
 
-        this.visibleItems.reverse();
-        this.menuItems = [];
+        this.mainbarItems.reverse();
+        this.panelmenuItems = [];
 
     }
 

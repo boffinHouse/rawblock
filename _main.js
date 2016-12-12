@@ -2758,6 +2758,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          *
          * The value is either a string representing the name of a component method or a function reference. The function is always executed in context of the component.
          *
+         * @static
+         * @memberOf rb.Component
          *
          * @example
          *

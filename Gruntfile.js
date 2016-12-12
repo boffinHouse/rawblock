@@ -48,6 +48,7 @@
         grunt.registerTask('test', [
             'webpack:dev',
             'babel:tests',
+            'karma',
             'qunit',
         ]);
 
