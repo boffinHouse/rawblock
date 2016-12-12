@@ -1,52 +1,43 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['module'], factory);
+        define(["exports"], factory);
     } else if (typeof exports !== "undefined") {
-        factory(module);
+        factory(exports);
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod);
+        factory(mod.exports);
         global.rb_viewport = mod.exports;
     }
-})(this, function (module) {
-    'use strict';
+})(this, function (exports) {
+    "use strict";
 
-    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-        return typeof obj;
-    } : function (obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var rb = window.rb;
 
-    (function (factory) {
-        if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
-            module.exports = factory();
-        } else {
-            factory();
-        }
-    })(function () {
-        'use strict';
-        /* jshint eqnull: true */
+    /**
+     *
+     * @param element
+     * @param [margin=0] {Number}
+     * @param [intersect=0] {Number}
+     * @param [viewportWidth] {Number}
+     * @param [viewportHeight] {Number}
+     */
+    rb.checkInViewport = function (element, margin, intersect, viewportWidth, viewportHeight) {
+        var tmpValue = void 0,
+            boxArea = void 0,
+            intersectArea = void 0;
+        var value = false;
+        var box = element.getBoundingClientRect();
 
-        var rb = window.rb;
-
-        /**
-            *
-            * @param element
-            * @param [margin=0] {Number}
-            * @param [intersect=0] {Number}
-            * @param [viewportWidth] {Number}
-            * @param [viewportHeight] {Number}
-            */
-        rb.checkInViewport = function (element, margin, intersect, viewportWidth, viewportHeight) {
-            var tmpValue, boxArea, intersectArea;
-            var value = false;
+        if (box.top || box.left || box.right || box.bottom || element.getClientRects().length) {
             var top = 0;
             var left = 0;
             var right = viewportWidth || window.innerWidth;
             var bottom = viewportHeight || window.innerHeight;
-            var box = element.getBoundingClientRect();
 
             if (margin) {
                 top -= margin;
@@ -69,10 +60,10 @@
                     value = intersectArea / boxArea >= intersect;
                 }
             }
+        }
 
-            return value;
-        };
+        return value;
+    };
 
-        return rb.checkInViewport;
-    });
+    exports.default = rb.checkInViewport;
 });

@@ -139,6 +139,7 @@
                     switchedOff: false,
                     topOffset: false,
                     bottomOffset: false,
+                    offsetElements: '',
                     progress: 0,
                     setWidth: true,
                     resetSwitchedOff: true,
@@ -194,7 +195,7 @@
                 this._unfix();
                 this.updateChilds(true);
                 this.progress = -2;
-            } else if (name == 'bottomOffset' || name == 'topOffset' || name == 'switchedOff' && !value) {
+            } else if (name == 'offsetElements' || name == 'bottomOffset' || name == 'topOffset' || name == 'switchedOff' && !value) {
                 this._unfix();
                 this.element.style.top = '';
                 this.element.style.bottom = '';
@@ -223,6 +224,8 @@
 
             this.elemStyles = rb.getStyles(this.element);
 
+            this.offsetElements = options.offsetElements ? this.getElementsByString(options.offsetElements) : [];
+
             this.posProp = options.bottomOffset !== false ? 'bottom' : 'top';
 
             offsetName = this.posProp + 'Offset';
@@ -242,6 +245,8 @@
                     this.containerStyles = rb.getStyles(this.container);
                 }
             }
+
+            this.calcedOffset = this.offset;
 
             this._setScrollingElement();
         };
@@ -277,7 +282,10 @@
         };
 
         Sticky.prototype.calculateLayout = function calculateLayout() {
-            var box, elemOffset, containerBox, containerOffset;
+            var box = void 0,
+                elemOffset = void 0,
+                containerBox = void 0,
+                containerOffset = void 0;
 
             this.minFixedPos = -1;
             this.maxFixedPos = Number.MAX_VALUE;
@@ -298,19 +306,25 @@
 
             elemOffset = box[this.posProp] + this.scroll;
 
+            if (this.offsetElements.length) {
+                this.calcedOffset = this.offset - this.offsetElements.reduce(function (prevValue, element) {
+                    return prevValue + element.offsetHeight;
+                }, 0);
+            }
+
             if (this.options.setWidth) {
                 this.elemWidth = (this.isFixed ? this.clone : this.element).offsetWidth;
             }
 
             if (this.posProp == 'top') {
-                this.minFixedPos = elemOffset + this.offset;
+                this.minFixedPos = elemOffset + this.calcedOffset;
 
                 if (this.options.progress) {
                     this.minProgressPos = this.minFixedPos;
                     this.maxProgressPos = this.minFixedPos + this.options.progress;
                 }
             } else {
-                this.maxFixedPos = elemOffset - this.offset - this.viewportheight;
+                this.maxFixedPos = elemOffset - this.calcedOffset - this.viewportheight;
                 if (this.options.progress) {
                     this.minProgressPos = this.maxFixedPos - this.options.progress;
                     this.maxProgressPos = this.maxFixedPos;
@@ -323,14 +337,14 @@
                 containerOffset = containerBox[this.posProp == 'top' ? 'bottom' : 'top'] + this.scroll;
 
                 if (this.posProp == 'top') {
-                    this.maxFixedPos = containerOffset + this.offset;
+                    this.maxFixedPos = containerOffset + this.calcedOffset;
                     this.minScrollPos = this.maxFixedPos - box.height - $.css(this.container, 'padding-bottom', true, this.containerStyles) - $.css(this.element, 'margin-bottom', true, this.elemStyles);
-                    this.maxFixedPos += 9 - this.offset;
+                    this.maxFixedPos += 9 - this.calcedOffset;
                     this.maxScrollPos = this.maxFixedPos;
                 } else {
-                    this.minFixedPos = containerOffset - docElem.clientHeight - this.offset;
+                    this.minFixedPos = containerOffset - docElem.clientHeight - this.calcedOffset;
                     this.maxScrollPos = this.minFixedPos + box.height + $.css(this.container, 'padding-top', true, this.containerStyles) + $.css(this.element, 'margin-top', true, this.elemStyles);
-                    this.minFixedPos += 9 + this.offset;
+                    this.minFixedPos += 9 + this.calcedOffset;
                     this.minScrollPos = this.minFixedPos;
                 }
             }
@@ -375,7 +389,7 @@
 
             shouldWidth = shouldFix && this.isFixed && this.options.setWidth && this.element.offsetWidth != this.elemWidth;
 
-            if (shouldFix != this.isFixed || shouldScroll || this.isScrollFixed || shouldWidth) {
+            if (shouldFix != this.isFixed || shouldScroll || this.isScrollFixed || shouldWidth || this.isFixed && this._setCalcedOffset != this.calcedOffset) {
                 this.updateLayout(shouldFix, shouldScroll, shouldWidth);
             }
 
@@ -428,7 +442,7 @@
 
                 if (shouldScroll) {
                     this.isScrollFixed = true;
-                    offset = this.offset * -1;
+                    offset = this.calcedOffset * -1;
 
                     if (this.posProp == 'top') {
                         offset += this.minScrollPos - this.scroll;
@@ -437,17 +451,19 @@
                     }
 
                     this.element.style[this.posProp] = offset + 'px';
-                } else if (this.isScrollFixed) {
+                } else if (this.isScrollFixed || this._setCalcedOffset != this.calcedOffset) {
                     this.isScrollFixed = false;
-                    this.element.style[this.posProp] = this.offset * -1 + 'px';
+                    this.element.style[this.posProp] = this.calcedOffset * -1 + 'px';
                 }
             } else if (this.isFixed) {
                 this._unfix();
                 trigger = true;
             }
 
+            this._setCalcedOffset = this.calcedOffset;
+
             if (trigger) {
-                this._trigger();
+                this.trigger();
             }
         };
 
@@ -455,6 +471,7 @@
             if (!this.isFixed) {
                 return;
             }
+
             this.isFixed = false;
             this.isScrollFixed = false;
             this.element.classList.remove(rb.statePrefix + 'fixed');
@@ -478,7 +495,7 @@
                 this.element.style.width = this.elemWidth + 'px';
             }
 
-            this.element.style[this.posProp] = this.offset * -1 + 'px';
+            this.element.style[this.posProp] = this.calcedOffset * -1 + 'px';
         };
 
         Sticky.prototype.attachClone = function attachClone() {

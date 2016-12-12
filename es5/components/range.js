@@ -17,6 +17,53 @@
         value: true
     });
 
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
+
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    }
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+    }
 
     var rb = window.rb;
     var $ = rb.$;
@@ -25,131 +72,94 @@
         rb.i18n = {};
     }
 
-    var Range = rb.Component.extend('range',
-    /** @lends rb.components.range.prototype */
-    {
-        /**
-         * @static
-         * @prop {Object} defaults
-         * @prop {Boolean} animate Whether component should set animation class `is-animate`. Animation has to be done in CSS.
-         * @prop {String} axis='auto' Possible values: 'auto', 'horizontal', 'vertical'. ('auto' does not work, if we are in a display none wrapper and also adds some perf penalty)
-         * @prop {String|Boolean} inputs='find(input)' input element(s) to combine with the range. String is processed by rb.elementsFromStr.
-         * @prop {Number|Number[]} values=50 The initial/default value(s) of the range. Only if no inputs are found.
-         * @prop {Number|String} step=1 Stepping for the range. Also allows the string 'any'.
-         * @prop {Number} max=100 The maximum value of the range. If an input with a `data-max` or `max` attribute is found its this value is used.
-         * @prop {Number} min=0 The minimum value of the range. If an associated input with a `data-max` or `max` attribute is found its value is used.
-         * @prop {null|String|String[]} titles=null The title attribute for the thumb(s). (Only if no inputs with a title is found.)
-         * @prop {null|String|String[]} labelIds=null The labelIds for the thumb(s). To be used with aria-labelledby. (Only if no inputs with a label are found.)
-         * @prop {null|String|String[]} labels=null The labels for the thumb(s). To be used with aria-label. (Only if no inputs with a label are found.)
-         */
-        defaults: {
-            animate: true,
-            axis: 'auto',
-            inputs: 'find(input)',
-            values: 50,
-            step: 1,
-            max: 100,
-            min: 0,
-            titles: null,
-            labelIds: null,
-            labels: null
-        },
-        statics: {
-            horizontal: {
-                pos: 'left',
-                dim: 'width',
-                viewPos: 'x',
-                mousePos: 'clientX'
-            },
-            vertical: {
-                pos: 'bottom',
-                dim: 'height',
-                viewPos: 'y',
-                mousePos: 'clientY'
-            },
-            getNearestIndex: function getNearestIndex(pos, array) {
-                var i, len, cur, tmp;
-                var index = -1;
-                for (i = 0, len = array.length; i < len; i++) {
-                    tmp = Math.abs(pos - array[i]);
-                    if (!cur || cur > tmp) {
-                        index = i;
-                        cur = tmp;
-                    }
-                }
-                return index;
-            },
-            makeArray: function makeArray(array) {
-                if (!Array.isArray(array)) {
-                    array = array != null ? [array] : [];
-                }
-                return array;
+    /**
+     * Creates a range input control with one are more thumbs.
+     *
+     * @alias rb.component.range
+     *
+     * @extends rb.Component
+     * @fires componentName#changed
+     *
+     *
+     * @prop {Number[]} values Returns current values of the range control
+     * @prop {$.CallbackObject} oninput
+     * @prop {$.CallbackObject} oninput.add Adds a callback function.
+     * @prop {$.CallbackObject} oninput.remove Removes a callback function.
+     *
+     *
+     * @param element
+     * @param initialDefaults
+     *
+     * @example
+     * <div class="rb-range js-rb-live" data-module="range" data-values="[0, 100]"></div>
+     *
+     * <!-- combined with visible input -->
+     * <label for="range-1">range</label>
+     * <input value="10" min="1" max="10" type="number" id="range-1" />
+     * <div class="rb-range js-rb-live" data-module="range" data-inputs="range-1"></div>
+     *
+     * @example
+     *
+     * rb.$('.rb-range').rbComponent().oninput.add(function(index){
+     *      console.log('value changing', this.getValues(index));
+     * });
+     *
+     * rb.$('.rb-range').on('rangechanged', function(){
+     *      console.log('values changed', rb.$(this).rbComponent().getValues());
+     * });
+     */
+
+    var Range = function (_rb$Component) {
+        _inherits(Range, _rb$Component);
+
+        _createClass(Range, null, [{
+            key: 'defaults',
+            get: function get() {
+                return {
+                    animate: true,
+                    axis: 'auto',
+                    inputs: 'find(input)',
+                    values: 50,
+                    step: 1,
+                    max: 100,
+                    min: 0,
+                    titles: null,
+                    labelIds: null,
+                    labels: null
+                };
             }
-        },
-        /**
-         * @constructs
-         * @extends rb.Component
-         * @classdesc Creates a range input control with one are more thumbs.
-         *
-         * @fires componentName#changed
-         *
-         *
-         * @prop {Number[]} values Returns current values of the range control
-         * @prop {$.CallbackObject} oninput
-         * @prop {$.CallbackObject} oninput.add Adds a callback function.
-         * @prop {$.CallbackObject} oninput.remove Removes a callback function.
-         *
-         *
-         * @param element
-         * @param initialDefaults
-         *
-         * @example
-         * <div class="rb-range js-rb-live" data-module="range" data-values="[0, 100]"></div>
-         *
-         * <!-- combined with visible input -->
-         * <label for="range-1">range</label>
-         * <input value="10" min="1" max="10" type="number" id="range-1" />
-         * <div class="rb-range js-rb-live" data-module="range" data-inputs="range-1"></div>
-         *
-         * @example
-         *
-         * rb.$('.rb-range').rbComponent().oninput.add(function(index){
-         *      console.log('value changing', this.getValues(index));
-         * });
-         *
-         * rb.$('.rb-range').on('rangechanged', function(){
-         *      console.log('values changed', rb.$(this).rbComponent().getValues());
-         * });
-         */
-        init: function init(element, initialDefaults) {
-            this._super(element, initialDefaults);
+        }]);
 
-            this.pos = [];
+        function Range(element, initialDefaults) {
+            _classCallCheck(this, Range);
 
-            this._origin = 'component';
+            var _this = _possibleConstructorReturn(this, _rb$Component.call(this, element, initialDefaults));
 
-            this.oninput = $.Callbacks();
+            _this.pos = [];
 
-            this._setThumbValues = rb.rAF(this._setThumbValues, { batch: true });
-            this._setInputValues = rb.rAF(this._setInputValues, { batch: true });
-            this._setActivateClass = rb.rAF(this._setActivateClass);
-            this._setAnimateClass = rb.rAF(this._setAnimateClass);
-            this.oninput.fireWith = rb.rAF(this.oninput.fireWith);
-            this._generateMarkup = rb.rAF(this._generateMarkup);
-            this._updateMinMax = rb.rAF(this._updateMinMax);
+            _this._origin = 'component';
 
-            this._updateOptions = rb.throttle(function () {
+            _this.oninput = $.Callbacks();
+
+            _this.rAFs({ batch: true }, '_setThumbValues', '_setInputValues');
+            _this.rAFs('_setActivateClass', '_setAnimateClass', '_generateMarkup', '_updateMinMax');
+
+            _this.oninput.fireWith = rb.rAF(_this.oninput.fireWith);
+
+            _this._updateOptions = rb.throttle(function () {
                 this.updateInputData();
                 this._setThumbValues();
                 this._updateMinMax();
             }, { simple: true, delay: 0 });
 
-            this._detectAxis();
-            this._getOptionsByInputs();
-            this._generateMarkup();
-        },
-        setOption: function setOption(name, value, isSticky) {
-            this._super(name, value, isSticky);
+            _this._detectAxis();
+            _this._getOptionsByInputs();
+            _this._generateMarkup();
+            return _this;
+        }
+
+        Range.prototype.setOption = function setOption(name, value, isSticky) {
+            _rb$Component.prototype.setOption.call(this, name, value, isSticky);
 
             if (name == 'max' || name == 'min' || name == 'step') {
                 this._updateOptions();
@@ -157,22 +167,13 @@
                 this._getOptionsByInputs();
                 this._generateMarkup();
             }
-        },
-        /**
-         * Returns values or values[index]
-         * @param {Number} [index]
-         * @returns {Number|Number[]}
-         */
-        getValues: function getValues(index) {
+        };
+
+        Range.prototype.getValues = function getValues(index) {
             return index == null ? this.values : this.values[index];
-        },
-        /**
-         * Set the value of a thumb (and associated input) in the range control.
-         * @param {Number} value
-         * @param {Number} [index=0]
-         * @param {Boolean} [animate=false]
-         */
-        setValue: function setValue(value, index, animate) {
+        };
+
+        Range.prototype.setValue = function setValue(value, index, animate) {
             if (typeof index == 'boolean') {
                 animate = index;
                 index = 0;
@@ -183,16 +184,11 @@
             index = index || 0;
             this._origin = 'external';
             this._setValue(this.constrainMinMax(value), index, animate);
-            this._trigger({ origin: 'external', index: index });
+            this.trigger({ origin: 'external', index: index });
             this._origin = 'component';
-        },
-        /**
-         * Sets the value of a thumb (and associated input) to the next higher value.
-         * @param {Number} [factor]
-         * @param {Number} [index=0]
-         * @param {Boolean} [animate=false]
-         */
-        stepUp: function stepUp(factor, index, animate) {
+        };
+
+        Range.prototype.stepUp = function stepUp(factor, index, animate) {
             if (typeof index == 'boolean') {
                 animate = index;
                 index = 0;
@@ -203,27 +199,18 @@
 
             this._origin = 'external';
             this._doStep(factor, index, animate);
-            this._trigger({ origin: 'external', index: index });
+            this.trigger({ origin: 'external', index: index });
             this._origin = 'component';
-        },
-        /**
-         * Sets the value of a thumb (and associated input) to the next lower value.
-         * @param {Number} [factor]
-         * @param {Number} [index=0]
-         * @param {Boolean} [animate=false]
-         */
-        stepDown: function stepDown(factor, index, animate) {
+        };
+
+        Range.prototype.stepDown = function stepDown(factor, index, animate) {
             if (!factor) {
                 factor = 1;
             }
             this.stepUp(factor * -1, index, animate);
-        },
-        /**
-         * Parses a string to a number. Use `rb.i18n.parseNumber`, if available. Can be overridden.
-         * @param {String|Number} number
-         * @returns {Number}
-         */
-        parseNumber: function parseNumber(string) {
+        };
+
+        Range.prototype.parseNumber = function parseNumber(string) {
             if (typeof string != 'number') {
                 if (rb.i18n.formatNumber) {
                     string = rb.i18n.parseNumber.apply(rb.i18n, arguments);
@@ -232,24 +219,23 @@
                 }
             }
             return string;
-        },
-        /**
-         * Formats a number to a string. Use `rb.i18n.formatNumber`, if available. Can be overridden.
-         * @param {String|Number} number
-         * @returns {Number}
-         */
-        formatNumber: function formatNumber(number) {
+        };
+
+        Range.prototype.formatNumber = function formatNumber(number) {
             if (rb.i18n.formatNumber) {
                 number = rb.i18n.formatNumber.apply(rb.i18n, arguments);
             } else if (typeof number != 'string') {
                 number = number + '';
             }
             return number;
-        },
+        };
 
-        constrainMinMax: function constrainMinMax(value) {
-            var valModStep, alignValue;
+        Range.prototype.constrainMinMax = function constrainMinMax(value) {
+            var valModStep = void 0,
+                alignValue = void 0;
+
             var step = this.options.step;
+
             if (value > this.max) {
                 value = this.max;
             } else if (value < this.min) {
@@ -264,20 +250,23 @@
                 value = alignValue.toFixed(5) * 1;
             }
             return value;
-        },
+        };
 
-        posToValue: function posToValue(pos) {
+        Range.prototype.posToValue = function posToValue(pos) {
             var value = (this.max - this.min) * (pos / 100) + this.min;
             value = this.constrainMinMax(value);
             return value;
-        },
-        valueToPos: function valueToPos(value) {
-            var pos;
+        };
+
+        Range.prototype.valueToPos = function valueToPos(value) {
+            var pos = void 0;
+
             value = this.constrainMinMax(this.parseNumber(value));
             pos = 100 * ((value - this.min) / (this.max - this.min));
             return pos;
-        },
-        updateInputData: function updateInputData() {
+        };
+
+        Range.prototype.updateInputData = function updateInputData() {
             var options = this.options;
 
             this.max = null;
@@ -305,9 +294,13 @@
             }
 
             this._clacSteps();
-        },
-        _generateMarkup: function _generateMarkup() {
-            var $progress, list, tmp;
+        };
+
+        Range.prototype._generateMarkup = function _generateMarkup() {
+            var $progress = void 0,
+                list = void 0,
+                tmp = void 0;
+
             var that = this;
             var $rail = $(document.createElement('span'));
             var namePrefix = this.name + rb.elementSeparator;
@@ -359,8 +352,9 @@
             this._addLabelTitles();
 
             that.$element.append($rail.get(0));
-        },
-        _addLabelTitles: function _addLabelTitles() {
+        };
+
+        Range.prototype._addLabelTitles = function _addLabelTitles() {
             var that = this;
             var options = this.options;
             var titles = Range.makeArray(options.titles);
@@ -369,9 +363,10 @@
 
             if (this.inputs.length && !titles.length && !labelIds.length && !labels.length) {
                 this.inputs.forEach(function (input) {
+                    var title = input.title;
+
                     var id = '';
                     var elem = input.labels && input.labels[0];
-                    var title = input.title;
 
                     if (!('labels' in input) && input.id) {
                         elem = document.querySelector('label[for="' + input.id + '"]');
@@ -397,8 +392,9 @@
                     thumb.setAttribute('aria-labelledby', labelIds[index]);
                 }
             });
-        },
-        _detectAxis: function _detectAxis() {
+        };
+
+        Range.prototype._detectAxis = function _detectAxis() {
             this.axis = this.options.axis;
             if (this.axis == 'auto') {
                 this.axis = 'horizontal';
@@ -411,9 +407,9 @@
             if (!this.props) {
                 this.log('unknown axis: ' + this.axis, this);
             }
-        },
-        _getOptionsByInputs: function _getOptionsByInputs() {
+        };
 
+        Range.prototype._getOptionsByInputs = function _getOptionsByInputs() {
             var inputOpts = this.options.inputs;
 
             this.inputs = [];
@@ -423,17 +419,20 @@
                 this.inputs = rb.elementFromStr(inputOpts, this.element);
             }
             this.updateInputData();
-        },
-        _updateMinMax: function _updateMinMax() {
+        };
+
+        Range.prototype._updateMinMax = function _updateMinMax() {
             $(this.thumbs).attr({
                 'aria-valuemax': this.max,
                 'aria-valuemin': this.min
             });
-        },
-        _setActivateClass: function _setActivateClass() {
+        };
+
+        Range.prototype._setActivateClass = function _setActivateClass() {
             this.element.classList[this.isActivated ? 'add' : 'remove'](rb.statePrefix + 'active');
-        },
-        _activate: function _activate(index) {
+        };
+
+        Range.prototype._activate = function _activate(index) {
             if (!this.isActivated) {
                 this.isActivated = true;
                 if (index != null) {
@@ -441,30 +440,37 @@
                 }
                 this._setActivateClass();
             }
-        },
-        _deactivate: function _deactivate(index) {
+        };
+
+        Range.prototype._deactivate = function _deactivate(index) {
             if (this.isActivated) {
                 this.isActivated = false;
                 this._setActivateClass();
 
-                this._trigger({ origin: 'component', index: index });
+                this.trigger({ origin: 'component', index: index });
             }
-        },
-        _setAnimateClass: function _setAnimateClass() {
+        };
+
+        Range.prototype._setAnimateClass = function _setAnimateClass() {
             this.element.classList[this.isAnimated ? 'add' : 'remove'](rb.statePrefix + 'animate');
-        },
-        _setAnimate: function _setAnimate(animate) {
+        };
+
+        Range.prototype._setAnimate = function _setAnimate(animate) {
             animate = !!animate;
             if (animate != this.isAnimated) {
                 this.isAnimated = animate;
                 this._setAnimateClass();
             }
-        },
-        _getNearestTumb: function _getNearestTumb(pos) {
+        };
+
+        Range.prototype._getNearestThumb = function _getNearestThumb(pos) {
             return Range.getNearestIndex(pos, this.pos);
-        },
-        _setupEvents: function _setupEvents() {
-            var outerBox, notMoved, index;
+        };
+
+        Range.prototype._setupEvents = function _setupEvents() {
+            var outerBox = void 0,
+                notMoved = void 0,
+                index = void 0;
             var that = this;
 
             this.$element.draggy('destroy');
@@ -473,7 +479,7 @@
                 vertical: this.axis == 'vertical',
                 horizontal: this.axis == 'horizontal',
                 start: function start(draggy) {
-                    var pos;
+                    var pos = void 0;
                     notMoved = true;
                     outerBox = that.track.getBoundingClientRect();
                     //y
@@ -483,7 +489,7 @@
                         pos *= -1;
                     }
 
-                    index = that._getNearestTumb(pos);
+                    index = that._getNearestThumb(pos);
                     that._setValue(that.posToValue(pos), index, that.options.animate);
                     that.setFocus(that.thumbs[index]);
                     that._activate(index);
@@ -509,6 +515,7 @@
             $(this.inputs).each(function (index, input) {
                 var change = rb.throttle(function () {
                     var value = that.parseNumber(input.value);
+
                     if (!isNaN(value)) {
                         that._setValue(that.constrainMinMax(value), index, that.options.animate);
                     }
@@ -521,7 +528,9 @@
                 $(thumb).on('keyup', function () {
                     that._deactivate(index);
                 }).on('keydown', function (e) {
-                    var step, value;
+                    var step = void 0,
+                        value = void 0;
+
                     var code = e.keyCode;
 
                     if (code == 39 || code == 38) {
@@ -549,11 +558,13 @@
                     }
                 });
             });
-        },
-        _handleInputProperties: function _handleInputProperties(input) {
-            var value = this.parseNumber(input.value);
+        };
+
+        Range.prototype._handleInputProperties = function _handleInputProperties(input) {
             var max = input.getAttribute('data-max') || input.getAttribute('max');
             var min = input.getAttribute('data-min') || input.getAttribute('min');
+
+            var value = this.parseNumber(input.value);
             var step = this.step == null && (input.getAttribute('data-step') || input.getAttribute('step'));
 
             if (max) {
@@ -575,18 +586,23 @@
             }
 
             return value;
-        },
-        _parseInputsProperties: function _parseInputsProperties() {
+        };
+
+        Range.prototype._parseInputsProperties = function _parseInputsProperties() {
             this.values = this.inputs.map(this._handleInputProperties, this);
-        },
-        _doStep: function _doStep(factor, index, animate) {
+        };
+
+        Range.prototype._doStep = function _doStep(factor, index, animate) {
             if (!factor) {
                 factor = 1;
             }
             this._setValue(this.constrainMinMax(this.getValues(index) + this.defaultStepping * factor), index, animate);
-        },
-        _setValue: function _setValue(value, index, animate) {
-            var changed, beforeValue, afterValue;
+        };
+
+        Range.prototype._setValue = function _setValue(value, index, animate) {
+            var changed = void 0,
+                beforeValue = void 0,
+                afterValue = void 0;
 
             if (index == null) {
                 index = 0;
@@ -611,17 +627,18 @@
                 this._setInputValues(index);
                 this.oninput.fireWith(this, [index, this._origin]);
             }
-        },
-        _clacSteps: function _clacSteps() {
+        };
+
+        Range.prototype._clacSteps = function _clacSteps() {
             var range = this.max - this.min;
             this.defaultStep = 1;
 
             this.defaultStepping = this.options.step == 'any' ? Math.min(1, range / 100) : this.options.step;
 
             this.largeStep = Math.max(this.defaultStep * 2, range / this.defaultStep / 10);
-        },
+        };
 
-        _setThumbValue: function _setThumbValue(thumb, index) {
+        Range.prototype._setThumbValue = function _setThumbValue(thumb, index) {
             var value = this.values[index];
             var pos = this.valueToPos(value);
             var formatted = this.formatNumber(value);
@@ -637,30 +654,75 @@
             } else if (index == this.thumbs.length - 1 && this.progressMax) {
                 this.progressMax.style[this.props.dim] = 100 - pos + '%';
             }
-        },
-        _setThumbValues: function _setThumbValues(index) {
+        };
 
+        Range.prototype._setThumbValues = function _setThumbValues(index) {
             if (index == null) {
                 this.thumbs.forEach(this._setThumbValue, this);
             } else if (this.thumbs[index]) {
                 this._setThumbValue(this.thumbs[index], index);
             }
-        },
-        _setInputValue: function _setInputValue(input, index) {
+        };
+
+        Range.prototype._setInputValue = function _setInputValue(input, index) {
             var value = this.values[index];
+
             value = input.type == 'text' ? this.formatNumber(this.values[index]) : value;
             if (value != input.value) {
                 input.value = value;
             }
-        },
-        _setInputValues: function _setInputValues(index) {
+        };
+
+        Range.prototype._setInputValues = function _setInputValues(index) {
             if (index == null) {
                 this.inputs.forEach(this._setInputValue, this);
             } else if (this.inputs[index]) {
                 this._setInputValue(this.inputs[index], index);
             }
+        };
+
+        return Range;
+    }(rb.Component);
+
+    Object.assign(Range, {
+        horizontal: {
+            pos: 'left',
+            dim: 'width',
+            viewPos: 'x',
+            mousePos: 'clientX'
+        },
+        vertical: {
+            pos: 'bottom',
+            dim: 'height',
+            viewPos: 'y',
+            mousePos: 'clientY'
+        },
+        getNearestIndex: function getNearestIndex(pos, array) {
+            var i = void 0,
+                len = void 0,
+                cur = void 0,
+                tmp = void 0;
+
+            var index = -1;
+
+            for (i = 0, len = array.length; i < len; i++) {
+                tmp = Math.abs(pos - array[i]);
+                if (!cur || cur > tmp) {
+                    index = i;
+                    cur = tmp;
+                }
+            }
+            return index;
+        },
+        makeArray: function makeArray(array) {
+            if (!Array.isArray(array)) {
+                array = array != null ? [array] : [];
+            }
+            return array;
         }
     });
+
+    rb.live.register('range', Range);
 
     exports.default = Range;
 });

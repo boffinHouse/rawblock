@@ -1,75 +1,65 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['module'], factory);
+        define(['exports'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(module);
+        factory(exports);
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod);
+        factory(mod.exports);
         global.rb_prefixed = mod.exports;
     }
-})(this, function (module) {
+})(this, function (exports) {
     'use strict';
 
-    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-        return typeof obj;
-    } : function (obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    if (!window.rb) {
+        window.rb = {};
+    }
+    var style = document.createElement('b').style;
+    var rb = window.rb;
+    var $ = rb.$;
+    var prefixes = ['Webkit', 'webkit', 'Moz', 'moz', 'Ms', 'ms', 'O', 'o'];
 
-    (function (factory) {
-        if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
-            module.exports = factory();
-        } else {
-            factory();
+    /**
+     * Gets a string and returns a prefixed version. If empty string is returned there is no support.
+     *
+     * @memberof rb
+     *
+     * @param {String} name
+     * @param {Object} [object=document.createElement('b').style]
+     * @return {string}
+     */
+    rb.prefixed = function (name, object) {
+        object = object || style;
+
+        var i = void 0,
+            partName = void 0,
+            testName = void 0;
+        var ret = '';
+
+        name = $.camelCase(name);
+
+        if (name in object) {
+            ret = name;
         }
-    })(function () {
-        'use strict';
 
-        if (!window.rb) {
-            window.rb = {};
-        }
-        var style = document.createElement('b').style;
-        var rb = window.rb;
-        var $ = rb.$;
-        var prefixes = ['Webkit', 'webkit', 'Moz', 'moz', 'Ms', 'ms', 'O', 'o'];
-
-        /**
-         * Gets a string and returns a prefixed version. If empty string is returned there is no support.
-         *
-         * @memberof rb
-         *
-         * @param {String} name
-         * @param {Object} [object=document.createElement('b').style]
-         * @return {string}
-         */
-        rb.prefixed = function (name, object) {
-            object = object || style;
-            var i, partName, testName;
-            var ret = '';
-
-            name = $.camelCase(name);
-
-            if (name in object) {
-                ret = name;
-            }
-
-            if (!ret) {
-                partName = $.camelCase('-' + name);
-                for (i = 0; i < prefixes.length && !ret; i++) {
-                    testName = prefixes[i] + partName;
-                    if (testName in object) {
-                        ret = testName;
-                        break;
-                    }
+        if (!ret) {
+            partName = $.camelCase('-' + name);
+            for (i = 0; i < prefixes.length && !ret; i++) {
+                testName = prefixes[i] + partName;
+                if (testName in object) {
+                    ret = testName;
+                    break;
                 }
             }
+        }
 
-            return ret;
-        };
+        return ret;
+    };
 
-        return rb.prefixed;
-    });
+    exports.default = rb.prefixed;
 });

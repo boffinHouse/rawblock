@@ -40,6 +40,8 @@
             * @param [options] {{}}
             *  @param options.privatePublish=false {boolean}
             *  @param options.topicSeparator=':/' {boolean|string}
+            *  @param options.eventName=false {boolean|string}
+            *  @param options.eventPromise=false {undefined|boolean|Promise|rb.deferred}
             * @returns {function} the publish function.
             */
         rb.createPubSub = function (obj, options) {
@@ -91,7 +93,8 @@
 
             Object.assign(obj, {
                 subscribe: function subscribe(topic, handler, getStored) {
-                    var tmp;
+                    var tmp = void 0;
+
                     if (typeof getStored == 'function') {
                         tmp = handler;
                         handler = getStored;
@@ -119,6 +122,35 @@
 
             if (!options.privatePublish) {
                 obj.publish = pub;
+            }
+
+            if (options.eventName) {
+                [['add', 'subscribe'], ['remove', 'unsubscribe']].forEach(function (action) {
+                    rb.events.special[action[0]] = function (element, handler) {
+                        var eventOpts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+                        if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
+
+                            if (!options.topic) {
+                                rb.logError('you need to define a topic', arguments);
+                            }
+
+                            if (element != window && element != document) {
+                                rb.logError('subscribe/unsubscribe only to window/document', arguments);
+                            }
+                        }
+
+                        var addRemove = function addRemove() {
+                            obj[action[0]](options.topic, handler);
+                        };
+
+                        if (eventOpts.eventPromise && !eventOpts.eventPromise.isDone) {
+                            eventOpts.eventPromise.then(addRemove);
+                        } else {
+                            addRemove();
+                        }
+                    };
+                });
             }
 
             return pub;

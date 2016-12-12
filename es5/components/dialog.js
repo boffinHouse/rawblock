@@ -78,7 +78,7 @@
     /**
      * Class component to create a modal dialog with a backdrop.
      *
-     * @name rb.components.dialog
+     * @alias rb.components.dialog
      *
      * @extends rb.Component
      *
@@ -254,7 +254,7 @@
                 this.storeActiveElement();
             }
 
-            this._trigger(options);
+            this.trigger(options);
         };
 
         Dialog.prototype.open = function open(options) {
@@ -262,7 +262,7 @@
 
             var mainOpts = this.options;
 
-            if (this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
+            if (this.isOpen || this.trigger(this._beforeEvtName, options).defaultPrevented) {
                 return false;
             }
 
@@ -319,11 +319,11 @@
                 clearTimeout(this._displayTimer);
                 this._displayTimer = setTimeout(this._setDisplay, 5000);
             }
-            this._trigger(options);
+            this.trigger(options);
         };
 
         Dialog.prototype.close = function close(options) {
-            if (!this.isOpen || this._trigger(this._beforeEvtName, options).defaultPrevented) {
+            if (!this.isOpen || this.trigger(this._beforeEvtName, options).defaultPrevented) {
                 return false;
             }
             this.isOpen = false;

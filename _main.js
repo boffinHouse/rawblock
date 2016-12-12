@@ -835,8 +835,12 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             if(this.special[type]){
                 this.special[type][action[0]](element, handler, opts);
             } else {
-                //todo: add passive support
-                element[action[1]](type, handler, !!(opts && opts.capture));
+                const evtOpts = (opts && (opts.capture || opts.passive)) ?
+                    {passive: !!opts.passive, capture: !!opts.capture} :
+                    false
+                ;
+
+                element[action[1]](type, handler, evtOpts);
 
                 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
                     rb.debugHelpers.onEventsAdd(element, type, handler, opts);
@@ -2185,9 +2189,12 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
 
     /**
-     * Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
+     * Component Base1 Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
      *
      * For the live cycle features see [rb.live.register]{@link rb.live.register}.
+     *
+     * @alias rb.Component
+     *
      * @param element
      * @param [initialDefaults] {Object}
      *
@@ -2216,8 +2223,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      *      }
      * });
      */
-    rb.Component = class {
-        constructor(element, initialDefaults) {
+    class Component  {
+
+        constructor(element, initialDefaults){
+
             var origName = this.name;
 
             /**
@@ -2683,7 +2692,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
     };
 
-    Object.assign(rb.Component, {
+    Object.assign(Component, {
         /**
          * defaults Object, represent the default options of the component.
          * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
@@ -2787,7 +2796,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         events: {},
     });
 
-    rb.Component.prototype.getElementsFromString = rb.Component.prototype.getElementsByString;
+    Component.prototype.getElementsFromString = Component.prototype.getElementsByString;
+
+    rb.Component = Component;
 
     generateFocusClasses();
 

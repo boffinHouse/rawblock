@@ -16,7 +16,8 @@
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    var Dom = window.rb && rb.$ || window.jQuery;
+    var rb = window.rb;
+    var Dom = rb && rb.$ || window.jQuery;
     var steps = {};
 
     var regUnit = /^\d+\.*\d*(px|em|rem|%|deg)$/;
@@ -50,16 +51,8 @@
                 }
             }
         };
-        var step = function step() {
-            if (hardStop) {
-                return;
-            }
+        var setPos = function setPos(pos) {
             var prop, value, eased;
-            var pos = (Date.now() - start) / duration;
-
-            if (pos > 1 || isJumpToEnd) {
-                pos = 1;
-            }
 
             if (!isStopped) {
                 eased = easing(pos);
@@ -89,6 +82,19 @@
                     options.progress.call(element, tweenObj, pos);
                 }
             }
+        };
+        var step = function step() {
+            if (hardStop) {
+                return;
+            }
+
+            var pos = (Date.now() - start) / duration;
+
+            if (pos > 1 || isJumpToEnd) {
+                pos = 1;
+            }
+
+            setPos(pos);
 
             if (pos < 1) {
                 if (!isStopped) {
@@ -118,7 +124,11 @@
         tweenObj.opts = options;
         tweenObj.props = endProps;
 
-        rAF(step, false, true);
+        if (!options.stopped) {
+            rAF(step, false, true);
+        }
+
+        return { tweenObj: tweenObj, element: element, step: step, setPos: setPos, options: options, duration: duration };
     };
 
     tween.createPropValues = function (element, elementStyle, props, endProps, options) {
@@ -154,6 +164,8 @@
             props[prop].start = isNaN(tmpValue) ? props[prop].start : tmpValue;
         }
     };
+
+    rb.$tween = tween;
 
     if (!Dom.fx) {
         Dom.fx = { step: steps };
