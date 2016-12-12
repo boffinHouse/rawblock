@@ -2205,9 +2205,12 @@
         live.getComponent = rb.getComponent;
 
         /**
-         * Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
+         * Component Base1 Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
          *
          * For the live cycle features see [rb.live.register]{@link rb.live.register}.
+         *
+         * @alias rb.Component
+         *
          * @param element
          * @param [initialDefaults] {Object}
          *
@@ -2236,9 +2239,10 @@
          *      }
          * });
          */
-        rb.Component = function () {
-            function _class(element, initialDefaults) {
-                _classCallCheck(this, _class);
+
+        var Component = function () {
+            function Component(element, initialDefaults) {
+                _classCallCheck(this, Component);
 
                 var origName = this.name;
 
@@ -2282,9 +2286,9 @@
                 _setupEventsByEvtObj(this);
             }
 
-            _class.prototype.beforeConstruct = function beforeConstruct() {};
+            Component.prototype.beforeConstruct = function beforeConstruct() {};
 
-            _class.prototype.component = function component(element, moduleName, initialOpts) {
+            Component.prototype.component = function component(element, moduleName, initialOpts) {
                 if (typeof element == 'string') {
                     element = this.interpolateName(element);
                     element = rb.getElementsByString(element, this.element)[0] || this.query(element);
@@ -2293,11 +2297,11 @@
                 return rb.getComponent(element, moduleName, initialOpts);
             };
 
-            _class.prototype.rAFs = function rAFs() {
+            Component.prototype.rAFs = function rAFs() {
                 return rb.rAFs.apply(rb, [this].concat(Array.prototype.slice.call(arguments)));
             };
 
-            _class.prototype.getId = function getId(element, async) {
+            Component.prototype.getId = function getId(element, async) {
                 var id;
 
                 if (typeof element == 'boolean') {
@@ -2327,7 +2331,7 @@
                 return id;
             };
 
-            _class.prototype.trigger = function trigger(type, detail) {
+            Component.prototype.trigger = function trigger(type, detail) {
                 var opts = void 0;
 
                 if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
@@ -2355,20 +2359,20 @@
                 return rb.events.dispatch(this.element, type, opts);
             };
 
-            _class.prototype.getElementsByString = function getElementsByString(string, element) {
+            Component.prototype.getElementsByString = function getElementsByString(string, element) {
                 return rb.getElementsByString(this.interpolateName(string), element || this.element);
             };
 
-            _class.prototype._trigger = function _trigger() {
+            Component.prototype._trigger = function _trigger() {
                 this.logInfo('_trigger is deprecated use trigger instead');
                 return this.trigger.apply(this, arguments);
             };
 
-            _class.prototype.setFocus = function setFocus() {
+            Component.prototype.setFocus = function setFocus() {
                 return rb.setFocus.apply(rb, arguments);
             };
 
-            _class.prototype.getFocusElement = function getFocusElement(element) {
+            Component.prototype.getFocusElement = function getFocusElement(element) {
                 var focusElement = void 0;
 
                 if (element && element !== true) {
@@ -2387,7 +2391,7 @@
                 return focusElement;
             };
 
-            _class.prototype.setComponentFocus = function setComponentFocus(element, delay) {
+            Component.prototype.setComponentFocus = function setComponentFocus(element, delay) {
                 var focusElement = void 0;
 
                 if (typeof element == 'number') {
@@ -2404,7 +2408,7 @@
                 }
             };
 
-            _class.prototype.storeActiveElement = function storeActiveElement() {
+            Component.prototype.storeActiveElement = function storeActiveElement() {
                 var activeElement = document.activeElement;
 
                 this._activeElement = activeElement && activeElement.nodeName ? activeElement : null;
@@ -2412,7 +2416,7 @@
                 return this._activeElement;
             };
 
-            _class.prototype.restoreFocus = function restoreFocus(checkInside, delay) {
+            Component.prototype.restoreFocus = function restoreFocus(checkInside, delay) {
                 var activeElem = this._activeElement;
 
                 if (!activeElem) {
@@ -2430,7 +2434,7 @@
                 }
             };
 
-            _class.prototype.interpolateName = function interpolateName(str, isJs) {
+            Component.prototype.interpolateName = function interpolateName(str, isJs) {
 
                 if (!isJs && rb.attrSel) {
                     str = replaceHTMLSel(str);
@@ -2439,28 +2443,28 @@
                 return str.replace(regName, isJs ? this.jsName : this.name).replace(regJsName, this.jsName).replace(regHtmlName, this.name).replace(regnameSeparator, rb.nameSeparator).replace(regElementSeparator, rb.elementSeparator).replace(regUtilPrefix, rb.utilPrefix).replace(regStatePrefix, rb.statePrefix);
             };
 
-            _class.prototype.query = function query(selector, context) {
+            Component.prototype.query = function query(selector, context) {
                 return (context || this.element).querySelector(this.interpolateName(selector));
             };
 
-            _class.prototype._qSA = function _qSA(selector, context) {
+            Component.prototype._qSA = function _qSA(selector, context) {
                 return (context || this.element).querySelectorAll(this.interpolateName(selector));
             };
 
-            _class.prototype.queryAll = function queryAll(selector, context) {
+            Component.prototype.queryAll = function queryAll(selector, context) {
                 return Array.from(this._qSA(selector, context));
             };
 
-            _class.prototype.$queryAll = function $queryAll(selector, context) {
+            Component.prototype.$queryAll = function $queryAll(selector, context) {
                 return $(this._qSA(selector, context));
             };
 
-            _class.prototype.parseOptions = function parseOptions(opts) {
+            Component.prototype.parseOptions = function parseOptions(opts) {
                 var options = $.extend(true, opts || {}, this.constructor.defaults, this._initialDefaults, rb.parseComponentCss(this.element, this.origName), this.parseHTMLOptions(), this._stickyOpts);
                 this.setOptions(options);
             };
 
-            _class.prototype.setOptions = function setOptions(opts, isSticky) {
+            Component.prototype.setOptions = function setOptions(opts, isSticky) {
 
                 if (opts !== this.options) {
                     var oldValue = void 0,
@@ -2477,7 +2481,7 @@
                 }
             };
 
-            _class.prototype.setOption = function setOption(name, value, isSticky) {
+            Component.prototype.setOption = function setOption(name, value, isSticky) {
                 this.options[name] = value;
 
                 if (isSticky) {
@@ -2491,7 +2495,7 @@
                 }
             };
 
-            _class.prototype.setChildOption = function setChildOption($childs, name, value, isSticky) {
+            Component.prototype.setChildOption = function setChildOption($childs, name, value, isSticky) {
                 var run = function run(elem) {
                     var component = this && this[componentExpando] || elem[componentExpando] || elem;
                     if (component && component.setOption) {
@@ -2508,7 +2512,7 @@
                 }
             };
 
-            _class.prototype.render = function render(name, data) {
+            Component.prototype.render = function render(name, data) {
                 if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) == 'object') {
                     data = name;
                     name = '';
@@ -2524,7 +2528,7 @@
                 return this.templates[name] ? this.templates[name](data) : !name && typeof this.templates == 'function' ? this.templates(data) : '';
             };
 
-            _class.prototype.parseHTMLOptions = function parseHTMLOptions(_element) {
+            Component.prototype.parseHTMLOptions = function parseHTMLOptions(_element) {
                 if (_element) {
                     rb.logError('use `rb.parseDataAttrs` instead of parseHTMLOptions.');
                     return {};
@@ -2537,16 +2541,18 @@
                 return rb.parseDataAttrs(element, options, this.origName, mainOptions);
             };
 
-            _class.prototype.destroy = function destroy() {
+            Component.prototype.destroy = function destroy() {
                 live.destroyComponent(this);
             };
 
-            _class.prototype.log = function log() {};
+            Component.prototype.log = function log() {};
 
-            return _class;
+            return Component;
         }();
 
-        Object.assign(rb.Component, {
+        ;
+
+        Object.assign(Component, {
             /**
              * defaults Object, represent the default options of the component.
              * While a parsed option can be of any type, it is recommended to only use immutable values as defaults.
@@ -2650,7 +2656,9 @@
             events: {}
         });
 
-        rb.Component.prototype.getElementsFromString = rb.Component.prototype.getElementsByString;
+        Component.prototype.getElementsFromString = Component.prototype.getElementsByString;
+
+        rb.Component = Component;
 
         generateFocusClasses();
     })(window, document, rb.live);
