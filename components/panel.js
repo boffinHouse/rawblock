@@ -99,6 +99,7 @@ class Panel extends rb.Component {
         return {
             'click .{name}{e}close': function (e) {
                 this.close();
+
                 if (e) {
                     e.stopPropagation();
                     e.preventDefault();

@@ -75,7 +75,7 @@
     /**
      * Creates a range input control with one are more thumbs.
      *
-     * @alias rb.component.range
+     * @alias rb.components.range
      *
      * @extends rb.Component
      * @fires componentName#changed

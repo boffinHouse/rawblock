@@ -5,7 +5,7 @@ var inquirer = require('inquirer');
 var grunt = require('grunt');
 
 var copyDir = '.scaffold/';
-var installDir = 'sources/components/';
+var installDir = 'components/';
 
 var regName = /\{name}/g;
 var regFullName = /\{fullName}/g;
@@ -40,11 +40,6 @@ var groups = [
         onlyIfJs: true,
     },
     {
-        id: 'visualTests',
-        name: 'Visual tests',
-        isMinimal: false,
-    },
-    {
         id: 'docs',
         name: 'Documentation (md and doc page)',
     },
@@ -52,41 +47,18 @@ var groups = [
 var files = [
     {
         groupId: 'jsTests',
-        file: 'tests/funit/{name}-tests.html',
+        file: '{fullUnderscoreName}-spec.js',
         onlyIfJs: true,
     },
-    {
-        groupId: 'jsTests',
-        file: 'tests/funit/{name}-tests.js',
-        onlyIfJs: true,
-    },
-    {
-        groupId: 'visualTests',
-        file: 'tests/visual/test-{name}_page{isData}.hbs',
-        onlyIfData: true,
-    },
-    {
-        groupId: 'visualTests',
-        file: 'tests/visual/test-{name}_page{isNoData}.hbs',
-        onlyIfNoData: true,
-    },
-    {
-        groupId: 'visualTests',
-        file: 'tests/visual/testdata_{name}.json',
-        onlyIfData: true,
-    },
-    {
-        groupId: 'visualTests',
-        file: 'tests/visual/visualtests-{name}.js',
-    },
+
     {
         groupId: 'sass',
-        file: '_{fullUnderscoreName}{isJs}.scss',
+        file: '{fullUnderscoreName}{isJs}.scss',
         onlyIfJs: true,
     },
     {
         groupId: 'sass',
-        file: '_{fullUnderscoreName}{isNoJs}.scss',
+        file: '{fullUnderscoreName}{isNoJs}.scss',
         onlyIfNoJs: true,
     },
     {
@@ -125,16 +97,16 @@ var files = [
     },
     {
         groupId: 'docs',
-        file: 'zdocs_{name}_page.hbs',
+        file: '{fullUnderscoreName}_page.hbs',
     },
     {
         groupId: 'docs',
-        file: 'README{isData}.md',
+        file: '{fullUnderscoreName}{isData}.md',
         onlyIfData: true,
     },
     {
         groupId: 'docs',
-        file: 'README{isNoData}.md',
+        file: '{fullUnderscoreName}{isNoData}.md',
         onlyIfNoData: true,
     },
 ];
@@ -200,41 +172,41 @@ function questionPreset(){
             type: 'input',
             name: 'prefix',
             message: 'What prefix do you want to use? (type "-" for no namespace)',
-            default: function () { return 'rb'; },
+            default: function () { return '-'; },
         },
         {
-            type: "list",
-            name: "preset",
-            message: "What kind of component do you want to generate?",
+            type: 'list',
+            name: 'preset',
+            message: 'What kind of component do you want to generate?',
             choices: [
                 new inquirer.Separator('Minimum: (no data, no docs, no unit tests)'),
                 {
-                    name: "- Minimal without JS",
-                    value: "min"
+                    name: '- Minimal without JS',
+                    value: 'min',
                 },
                 {
-                    name: "- Minimal with JS",
-                    value: "min_js"
+                    name: '- Minimal with JS',
+                    value: 'min_js',
                 },
                 new inquirer.Separator('Medium: (no docs, no unit tests)'),
                 {
-                    name: "- Medium without JS",
-                    value: "medium"
+                    name: '- Medium without JS',
+                    value: 'medium',
                 },
                 {
-                    name: "- Medium with JS",
-                    value: "medium_js"
+                    name: '- Medium with JS',
+                    value: 'medium_js',
                 },
                 new inquirer.Separator('Full:'),
                 {
-                    name: "- Full without JS",
-                    value: "full"
+                    name: '- Full without JS',
+                    value: 'full',
                 },
                 {
-                    name: "- Full with JS",
-                    value: "full_js"
+                    name: '- Full with JS',
+                    value: 'full_js',
                 },
-            ]
+            ],
         },
     ];
 
@@ -255,15 +227,15 @@ function checkoutScaffold(choices){
                     return 'You must choose at least one file group.';
                 }
                 return true;
-            }
-        }
+            },
+        },
     ]).then(function( answers ) {
         copyFiles(answers.fileGroups);
     });
 }
 
 function copyFiles(fileGroups){
-    var baseInstallPath = path.join(installDir, fullUnderscoreName);
+    var baseInstallPath = installDir;
 
     files.forEach(function(file){
         var content, installPath;

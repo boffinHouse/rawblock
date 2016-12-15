@@ -283,6 +283,7 @@ class PanelGroup extends rb.Component {
                 adjustScroll: options.adjustScroll,
                 scrollIntoView: options.scrollIntoView,
                 setDisplay: options.setDisplay,
+                autofocusSel: options.autofocusSel,
             });
 
             panel.group = that.element;
@@ -493,7 +494,7 @@ class PanelGroup extends rb.Component {
             this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open', isSticky);
         } else if (name == 'easing' && value && typeof value == 'string') {
             rb.addEasing(value);
-        } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView' || name == 'setDisplay') {
+        } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView' || name == 'setDisplay' || name == 'autofocusSel') {
             this.setChildOption(this.$panels, name, value);
         } else if (name == 'closeOnFocusout') {
             this._addRemoveFocusOut();

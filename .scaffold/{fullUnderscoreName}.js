@@ -1,46 +1,37 @@
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        factory();
+const rb = window.rb;
+
+/**
+ * Class component to create a {Name}.
+ *
+ * @alias rb.components.{name}
+ *
+ * @extends rb.Component
+ *
+ * @param element {Element}
+ * @param [initialDefaults] {OptionsObject}
+ *
+ * @fires {name}#changed
+ *
+ * @example
+ * <div class="js-rb-live" data-module="{name}"></div>
+ */
+class {Name} extends rb.Component {
+    /**
+     * @static
+     * @mixes rb.Component.defaults
+     *
+     * @prop {String} foo='bar'
+     */
+    static get defaults() {
+        return {};
     }
-}(function () {
-    'use strict';
-    var rb = window.rb;
-    var $ = rb.$;
 
-    var {Name} = rb.Component.extend('{name}',
-        /** @lends rb.components.{name}.prototype */
-        {
-            /**
-             * @static
-             * @property {Object} defaults
-             */
-            defaults: {
+    constructor(element, initialDefaults) {
+        super(element, initialDefaults);
 
-            },
-            /**
-             * @constructs
-             * @classdesc Class component to create a {Name}.
-             * @name rb.components.{name}
-             * @extends rb.Component
-             * @param element {Element}
-             * @param [initialDefaults] {Object}
-             *
-             *
-             * @example
-             */
-            init: function (element, initialDefaults) {
-                this._super(element, initialDefaults);
-            },
-            events: {
 
-            },
-            setOption: function(name, value){
-                this._super(name, value);
-            },
-        }
-    );
+    }
+}
 
-    return {Name};
-}));
+rb.live.register('{name}', {Name});
+

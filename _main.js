@@ -1931,7 +1931,14 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         var delegateEvents = [];
         var evts = that.constructor.events;
 
+
+
         for (evt in evts) {
+
+            if(that.replaceEventKey){
+                evt = that.replaceEventKey(evt);
+            }
+
             eventsObjs = rb.parseEventString(evt);
 
             /* jshint loopfunc: true */
@@ -2033,7 +2040,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
     const replaceHTMLSel = rb.memoize((function(){
         var replacer = function(full, f1, f2){
-            return '[' + rb.attrSel + '="{htmlName}' + f2 +'"]';
+            return '[' + rb.attrSel + '~="{htmlName}' + f2 +'"]';
         };
         return function(str){
             return str.replace(regHTMLSel, replacer);
@@ -2189,7 +2196,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
 
     /**
-     * Component Base1 Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
+     * Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
      *
      * For the live cycle features see [rb.live.register]{@link rb.live.register}.
      *
