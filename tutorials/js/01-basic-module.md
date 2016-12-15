@@ -1,8 +1,8 @@
-#How to create a rawblock component I
+# How to create a rawblock component I
 
 As an example component we will create a "slim header". As soon as the user scrolls down a certain threshold the header gets slim. A full demo can be seen at [codepen (SlimHeader with rawblock)](http://codepen.io/aFarkas/pen/GNNMxR).
 
-##HTML of our slim header component
+## HTML of our slim header component
 
 A component markup always has to have a `data-module` attribute with the name of your component and in general a `js-rb-live` class to indicate, that rawblock should create the UI component immediately.
 
@@ -12,7 +12,7 @@ The functional childs should have a class prefixed with the module name.
 <div class="js-rb-live" data-module="slimheader"></div>
 ```
 
-##JS-Boilerplate of a rawblock component
+## JS-Boilerplate of a rawblock component
 
 ```js
 class SlimHeader extends rb.Component {
@@ -53,9 +53,9 @@ class SlimHeader extends rb.Component {
 rb.live.register('slimheader', SlimHeader);
 ```
 
-##SlimHeader JS Class
+## SlimHeader JS Class
 
-###Working with options
+### Working with options
 First we define the threshold as `topThreshold` in our `defaults` getter.
 
 ```js
@@ -149,7 +149,7 @@ class SlimHeader extends rb.Component {
 }
 ```
 
-###Events
+### Events
  
 JS events can be bound normally or by using the events object. In our case we need to bind the `scroll` event to the `window` object.
 
@@ -201,7 +201,7 @@ class SlimHeader extends rb.Component {
     }
 }
 ```
-####About event options:
+#### About event options:
 
 There are 4 different kinds of event options:
 * The `@` allows to bind listeners to other elements than the component element. These elements are retrieved by the `this.getElementsByString` method, which not only allows to use predefined values like `"window"` or `"document"`, but also to use jQuery-like traversing methods to select an element (i.e.: `"submit:@(closest(form))"`, `"click:@(next(.item))"` etc.).
@@ -211,7 +211,7 @@ There are 4 different kinds of event options:
     * `matches` can also be used for event delegation. For example `'change:matches(.input)'` means, if a change happens the proxy function will use the `matches` method on the `event.target` and if it returns `true` will set the `event.delegatedTarget` property to this element and call the declared event handler.
 * Different options for custom events.
 
-###Adding some logic
+### Adding some logic
 
 Now we can fill in some logic to add a class as soon as the header reaches our threshold.
 
@@ -245,7 +245,7 @@ class SlimHeader extends rb.Component {
 rb.live.register('slimheader', SlimHeader);
 ```
 
-###Improvements to our current component
+### Improvements to our current component
 The code above will give us a full functional rawblock component. But it can be improved in multiple ways.
 
 Performance considerations
