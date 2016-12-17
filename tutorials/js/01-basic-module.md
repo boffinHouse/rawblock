@@ -51,6 +51,9 @@ class SlimHeader extends rb.Component {
 
 //rb.live.register registers the Component class and defines the component name. The class is then added to the `rb.components` namespace (i.e. `rb.components.clearinput`).
 rb.live.register('slimheader', SlimHeader);
+
+//call rb.live.init in your main file to start rawblock.
+//rb.live.init();
 ```
 
 ## SlimHeader JS Class
@@ -255,7 +258,7 @@ Performance considerations
 3. `handleScroll` could also be throttled.
 
 
-To fix the 1. point we will add a `isSlim` property and only change the class if it has changed
+To fix the first point we will add a `isSlim` property and only change the class if it has changed
 
 ```js
 class SlimHeader extends rb.Component {
@@ -313,7 +316,7 @@ class SlimHeader extends rb.Component {
 }
 ```
 
-Point 3. could be fixed by using `rb.throttle`. But I assume that in our case the `calculateState` is so light, that throttling it won't affect the performance too much.
+Point 3. could be fixed by using `rb.throttle`. But I assume that in our refactored case the `calculateState` is so light, that throttling won't affect the performance too much.
 
 ```js
 class SlimHeader extends rb.Component {

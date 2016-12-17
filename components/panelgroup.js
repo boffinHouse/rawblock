@@ -20,14 +20,14 @@ const cleanupCSS = function () {
 };
 
 /**
- * Class component to create a tab-like or an accordion-like component.
+ * Class component to create a tab-like or an accordion-like component. Associates panelbuttons and panels and manages the `isOpen` state of the panels.
  *
  * @alias rb.components.panelgroup
  * @extends rb.Component
  *
  * @param element {Element}
  *
- * @fires panelgroup#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.
+ * @fires componentName#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.
  *
  * @prop {Number[]} selectedIndexes The index(es) of the open panel(s)
  * @prop {Element[]} selectedItems The dom element(s) of the open panel(s)
@@ -61,7 +61,7 @@ class PanelGroup extends rb.Component {
      * @property {Object} defaults
      * @property {Boolean}  toggle=true Whether a panel button toggles the state of a panel.
      * @property {Boolean}  multiple=false Whether multiple panels are allowed to be open at the same time. If `multiple` is `true` `toggle` is also automatically set to `true`.
-     * @property {Number}  selectedIndex=-1 The initially opened index. If no panel with the class `is-open` was found. If no panel should be opened by default use -1.
+     * @property {Number}  selectedIndex=-1 The initially opened index. If no panel with the class `is-open` was found. If no panel should be opened by default use -1. (For performance the `is-open` class should be favored instead of changing this value).
      * @property {Boolean}  closeOnFocusout=false Closes all panels of a group on focusout.
      * @property {String}  animation='' Possible animations: `adaptHeight` or `slide`. These should be combined with CSS transitions or animations.
      * @property {String}  easing='' Easing function for the animation.

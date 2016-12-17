@@ -10,7 +10,7 @@ const rb = window.rb;
  * @param element {Element}
  * @param [initialDefaults] {OptionsObject}
  *
- * @fires {name}#changed
+ * @fires componentName#changed
  *
  * @example
  * <div class="js-rb-live" data-module="{name}"></div>

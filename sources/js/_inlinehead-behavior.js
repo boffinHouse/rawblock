@@ -4,7 +4,7 @@
     var ASSETBASEPATH = window.siteData && siteData.basePath || '';
     var docElem = document.documentElement;
     var loadJs = function( src, ordered, cb ){
-        var script = document.createElement( "script" );
+        var script = document.createElement( 'script');
 
         if(cb){
             script.addEventListener('load', cb);

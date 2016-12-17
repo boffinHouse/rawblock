@@ -14,7 +14,7 @@ const $ = rb.$;
  * @param element {Element}
  * @param [initialDefaults] {OptionsObject}
  *
- * @fires shrinknav#changed
+ * @fires componentName#changed
  *
  * @example
  * <div class="js-rb-live" data-module="shrinknav"></div>

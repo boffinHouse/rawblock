@@ -1633,10 +1633,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      *
      */
     live.register = function (name, Class, extend) {
-        if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-            rb.devData.componentsCount++;
-        }
-
         var proto = Class.prototype;
         var superProto = Object.getPrototypeOf(proto);
         var superClass = superProto.constructor;
@@ -1657,6 +1653,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
 
         rb.components[name] = Class;
+
+        if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+            rb.debugHelpers.onRegisterComponent(name, Class);
+        }
 
         if(componentPromises[name]){
             componentPromises[name].resolve(Class);
@@ -2039,7 +2039,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
 
     const replaceHTMLSel = rb.memoize((function(){
-        var replacer = function(full, f1, f2){
+        const replacer = function(full, f1, f2){
             return '[' + rb.attrSel + '~="{htmlName}' + f2 +'"]';
         };
         return function(str){
@@ -2234,7 +2234,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
         constructor(element, initialDefaults){
 
-            var origName = this.name;
+            const origName = this.name;
 
             /**
              * Reference to the main element.
@@ -2305,7 +2305,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          * @returns {String} id
          */
         getId(element, async) {
-            var id;
+            let id;
 
             if(typeof element == 'boolean'){
                 async = element;
@@ -2583,8 +2583,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          *
          * @example
          * class MyComponent extends rb.Component {
-         *      setOptions(name, value){
-         *          super.setOption(name, value);
+         *      setOptions(name, value, isSticky){
+         *          super.setOption(name, value, isSticky);
          *
          *          if(name == 'foo'){
          *              this.updateFoo();
@@ -2697,7 +2697,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         log() {
 
         }
-    };
+    }
 
     Object.assign(Component, {
         /**

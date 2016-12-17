@@ -306,6 +306,20 @@ Object.assign(fn, {
 
         return this;
     },
+    text: function (htmlstring) {
+        var elem;
+
+        if (!arguments.length) {
+            elem = this.elements[0];
+            return elem && elem.textContent || '';
+        }
+
+        this.elements.forEach(function (elem) {
+            elem.textContent = htmlstring;
+        });
+
+        return this;
+    },
     before: function (htmlstringOrDom) {
         var isHTMLString = typeof htmlstringOrDom != 'object';
         var target = !isHTMLString ? this.first() : this;

@@ -14,8 +14,8 @@ const regInputs = /^(?:input|textarea)$/i;
  * @param element
  * @param initialDefaults
  *
- * @fires moduleName#change Fires before a panel's `isOpen` state changes. The default behavior can be prevented.
- * @fires moduleName#changed Fires after a panel's `isOpen` state changed.
+ * @fires componentName#change Fires before a panel's `isOpen` state changes. The default behavior can be prevented.
+ * @fires componentName#changed Fires after a panel's `isOpen` state changed.
  *
  * @property {Boolean} isOpen
  *

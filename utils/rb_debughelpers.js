@@ -25,6 +25,20 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
     };
 
+    helpers.onRegisterComponent = function(name, Class){
+        const proto = Class.prototype;
+        const attached = proto.attached;
+        const detached = proto.detached;
+        const isEmptyAttached = attached ? !attached.toString().trim() : false;
+        const isEmptyDetached = detached ? !detached.toString().trim() : false;
+
+        if((isEmptyAttached && (!detached || isEmptyDetached)) || (isEmptyDetached && (!attached || isEmptyAttached))){
+            rb.logWarn(`Component ${name} has empty attached/detached method.`);
+        }
+
+        rb.devData.componentsCount++;
+    };
+
     let searchElementsStartTime;
     helpers.onSearchElementsStart = function () {
         searchElementsStartTime = Date.now();
