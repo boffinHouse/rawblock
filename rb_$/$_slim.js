@@ -518,6 +518,7 @@ function getNodesAsOne(nodes){
     var isMatched = !!action[2];
     var isUnique = !!action[3];
     var isMethod = !!action[4];
+
     fn[action[0]] = function (sel) {
         var array = [];
         this.elements.forEach(function (elem, index) {
@@ -749,10 +750,12 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
 
         ['inner', 'outer', ''].forEach(function(modifier){
             var fnName = modifier ? modifier + names[1] : names[0];
+
             fn[fnName] = function(margin, value){
                 var styles, extraStyles, isBorderBox, doc;
                 var ret = 0;
                 var elem = this.elements[0];
+
                 if(margin != null && (typeof margin !== 'boolean' || value)){
                     rb.log(modifier + names[1] + ' is only supported as getter');
                 }

@@ -140,7 +140,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /**
      * A jQuery/rb.$ plugin to add or remove state classes.
      * @param state {string}
-     * @param [add] {boolean}
+     * @param [add=false] {boolean}
      * @returns {jQueryfiedDOMList}
      */
     $.fn.rbToggleState = function(state, add){
@@ -152,6 +152,16 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
 
     $.fn.rbChangeState = $.fn.rbToggleState;
+
+    ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before',
+        'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'attr', 'prop', 'css', 'rbToggleState'].forEach(($name) => {
+        $.fn[`${$name}Raf`] = function(){
+            rb.rAFQueue(()=>{
+                this[$name](...arguments);
+            }, true);
+            return this;
+        };
+    });
 
     /* Begin: getScrollingElement */
 

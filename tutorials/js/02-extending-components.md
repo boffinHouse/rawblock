@@ -31,7 +31,7 @@ In rawblock events and the CSS classes for elements are prefixed with the compon
 
 Our checklist component changes this now to `.checklist-panel` and `.checklist-btn`. Rawblock has the concept of basically 3 different names:
 
-* componentName: This is the name that was used to register the component and has to be used in the `data-module` attribute as also for changing option via the `data-*` attributes.
+* componentName: This is the name that was used to register the component and has to be used in the `data-module` attribute as also for changing options via the `data-*` attributes.
 * htmlName (defaults to the componentName): This is the name that is used to prefix element classes and can be changed via the `name` option. This is especially useful to create new CSS components based on an unmodified normal JS component.
 ```html
 <style type="text/scss">
@@ -129,13 +129,6 @@ To do this, we first save the current value `.checklist-value` as a default valu
 class CheckList extends rb.components.panelgroup {
 
     //...
-    
-    static get events(){
-            return {
-                // run updateValue everytime a checkbox/rawdio button changes
-                'change:matches(input[type="checkbox"], input[type="radio"])': 'updateValue',
-            };
-        }
 
     initItemOptions(){
         // get the value element
@@ -144,6 +137,13 @@ class CheckList extends rb.components.panelgroup {
         // ... and save the textContent as the defaultValue.
         this.defaultValue = this.valueElement && this.valueElement.textContent || '';
         this.currentValue = this.defaultValue;
+    }
+        
+    static get events(){
+        return {
+            // run updateValue everytime a checkbox/rawdio button changes
+            'change:matches(input[type="checkbox"], input[type="radio"])': 'updateValue',
+        };
     }
 
     updateValue(){
@@ -175,7 +175,7 @@ class CheckList extends rb.components.panelgroup {
 }
 ```
 
-Additionally we also want to automatically close the list if a radio button, but not a checkbox was changed. To do this we refactor change handler method. The panelgroup also gives us a nice method called `closeAll` to do exactly this.
+Additionally we also want to automatically close the list if a radio button, but not a checkbox was changed. To do this we refactor the change handler. The panelgroup gives us a nice method called [`closeAll`](rb.components.panelgroup.html#closeAll__anchor) to do exactly this.
 
 ```js
 class CheckList extends rb.components.panelgroup {
@@ -202,9 +202,11 @@ class CheckList extends rb.components.panelgroup {
 }
 ```
 
-As you can see you can not only add method names, but also functions to the event object. The event handler is not only passed the event object, but also a function, that will invoke a overridden handler defined in a super class.
+The event handler is not only passed the event object, but also a function, that will invoke a possible overridden handler defined in a super class.
+
+### A11y fixes
  
-Unfortunately change is also invoked by using the keyboard to navigate in the radio group. To only close the list if it was handled by mouse we add a `mouseup` listener.
+Unfortunately the `change` event is also dispatched by using the keyboard to navigate in the radio group. To only close the list if it was handled by mouse we add a `mouseup` listener.
  
 Our final component JS looks now like this:
 

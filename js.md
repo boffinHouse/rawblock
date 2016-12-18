@@ -29,17 +29,13 @@ A simple backbone to start playing around would look like this:
 ```
 
 ```js
-(function(){
-	'use strict';
+rb.live.register('my-component', class MyComponent extends rb.Component {
+    constructor(element, initialDefaults){
+        super(element, initialDefaults);
 
-	rb.live.register('my-component', class MyComponent extends rb.Component {
-		constructor(element, initialDefaults){
-			super(element, initialDefaults);
-
-			this.log(this.element);
-		}
-	});
-})();
+        this.log(this.element);
+    }
+});
 ```
 
 Getting started: Customizing/Extending existing components.

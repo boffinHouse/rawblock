@@ -59,13 +59,13 @@ const checkElements = function (e){
 const throtteledCheckElements = rb.throttle((function(e){
     elementIndex = 0;
     checkElements(e);
-}), {read: true, delay: 450});
+}), {read: true, delay: 400});
 
 const addEvents = function(){
     if(isInstalled){return;}
     isInstalled = true;
 
-    observeClass = ['js', 'rb', 'layoutobserve'].join(rb.nameSeparator);
+    observeClass = ['js', 'rb', 'layoutobserve'].join(rb.cssConfig.nameSeparator || rb.nameSeparator);
     observedElements = document.getElementsByClassName(observeClass);
 
     window.addEventListener('scroll', throtteledCheckElements, true);
@@ -86,7 +86,7 @@ const addEvents = function(){
     });
 };
 
-rb.events.special.rb_layoutchange = {
+rb.events.special.rb_layoutchange = rb.events.special.rb_layoutchange || {
     add: function (elem, fn, _opts) {
         let observer = elem[layoutObserveProp];
 
@@ -97,11 +97,11 @@ rb.events.special.rb_layoutchange = {
 
             elem[layoutObserveProp] = observer;
 
+            addEvents();
+
             rb.rAFQueue(function(){
                 elem.classList.add(observeClass);
             }, true);
-
-            addEvents();
         }
 
         observer.cbs.add(fn);
