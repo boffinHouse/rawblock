@@ -366,6 +366,8 @@ The slimheader component can be further improved under the following more rawblo
     This can be realized using the `trigger` method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name (jsName). If a component only has one state that changes or one state can be seen as the main state the component should dispatch a `changed` state. 
     
     In case no event name is given, `trigger` will automatically generate this `changed` state event prefixed by the component name. (In our case `"slimheaderchanged"`.)
+    
+    In case you are using a `*Raf` method to alter your DOM, your `trigger` call is not done in a rAF method and you want to dispatch the event after the DOM changes are done you can use the method `this.triggerRaf`.
 
 2.  rawblock allows you to define how state classes are defined (prefixed by `is-`, `modifier__` etc.). 
     To support this feature we need to use `rb.$.fn.rbToggleState` instead of `classList.toggle`.
@@ -421,7 +423,7 @@ class SlimHeader extends rb.Component {
         if(this.isSlim != shouldBeSlim){
             this.isSlim = shouldBeSlim;
             this.$element.rbToggleStateRaf('slim', this.isSlim);
-            this.trigger();
+            this.triggerRaf();
         }
     }
 }

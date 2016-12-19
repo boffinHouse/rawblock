@@ -2416,7 +2416,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             if (!(id = element.id)) {
                 id = 'js' + rb.nameSeparator + rb.getID();
                 if(async){
-                    rb.rAFQueue(function(){
+                    rb.rAFQueue(()=> {
                         element.id = id;
                     }, true);
                 } else {
@@ -2459,6 +2459,17 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
 
             return rb.events.dispatch(this.element, type, opts);
+        }
+
+        /**
+         * Dispatches an event on the component element at the next rAF.
+         *
+         * @see rb.Component.prototype.trigger
+         */
+        triggerRaf(){
+            rb.rAFQueue(() => {
+                this.trigger(...arguments);
+            }, true);
         }
 
         /**
