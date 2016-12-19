@@ -1,7 +1,7 @@
 const regHash = /^#/;
 const $ = window.rb.$ || window.jQuery;
 /**
- * A jQuery/rb.$ plugin to scroll an element into the viewort
+ * A jQuery/rb.$ plugin to scroll an element into the viewport
  * @function external:"jQuery.fn".scrollIntoView
  * @param options {object} All jQuery animate options and additional options
  * @param options.focus {Element} Element that should be focused after animation is done.

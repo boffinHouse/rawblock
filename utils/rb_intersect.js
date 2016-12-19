@@ -3,6 +3,7 @@ import checkInViewport from './rb_viewport';
 const rb = window.rb;
 const $ = rb.$;
 const intersectProp = rb.Symbol('intersect');
+const wait = Promise.resolve();
 
 rb.intersects = function(element, margin, intersect){
     const intersectValue = element[intersectProp];
@@ -68,7 +69,7 @@ rb.events.special.rb_intersect = {
         intersectValue[margin][intersect].cbs.add(fn);
 
         if(intersectValue[margin][intersect].value){
-            setTimeout(function(){
+            wait.then(function(){
                 if(intersectValue[margin][intersect].value){
                     fn.call(element, {target: element, type: 'rb_intersect', inViewport: true, originalEvent: $.Event('initial')});
                 }

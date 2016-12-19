@@ -6,7 +6,15 @@ As an example component we will create a "slim header". As soon as the user scro
 
 A component markup always has to have a `data-module` attribute with the name of your component and in general a `js-rb-live` class to indicate, that rawblock should create the UI component immediately.
 
-The functional childs should have a class prefixed with the module name.
+### Excusrion: Initializing components
+
+In general rawblock components have the class `js-rb-live` to be automatically created, if they are first seen in the document. In case a component only reacts to a `click` event and only needs to be created at this time, the author can a `js-rb-click` class instead.
+
+There is also the possibility to use the rb_lazymodules module to lazily create modules as soon as they become visible in the viewport using the `js-rb-lazylive` class. 
+
+Or a class can be fully omitted and the component can initialized from JS using the [`rb.getComponent`](rb.html#.getComponent__anchor) or `this.component` method.
+
+The functional childs should have a class prefixed with the component name (htmlName).
  
 ```html
 <div class="js-rb-live" data-module="slimheader"></div>
@@ -316,6 +324,23 @@ class SlimHeader extends rb.Component {
 }
 ```
 
+For small DOM changes rawblock also supports jQuery-like functions, that are called in a rAF. To these methods the string "Raf" is appended. In our case the method `toggleClassRaf` can be used:
+
+```js
+class SlimHeader extends rb.Component {
+    //... 
+    calculateState(){
+            const shouldBeSlim = this.options.topThreshold < document.scrollingElement.scrollTop;
+            
+            if(this.isSlim != shouldBeSlim){
+                this.isSlim = shouldBeSlim;
+                this.$element.toggleClassRaf('is-slim', this.isSlim);
+            }
+        }
+    }
+}
+```
+
 Point 3. could be fixed by using `rb.throttle`. But I assume that in our refactored case the `calculateState` is so light, that throttling won't affect the performance too much.
 
 ```js
@@ -327,23 +352,9 @@ class SlimHeader extends rb.Component {
         
         this.isSlim = false;
         
-        this.rAFs('changeState');
         this.calculateState = rb.throttle(this.calculateState);
         
         this.calculateState();
-    }
-    
-    changeState(){
-        this.element.classList.toggle('is-slim', this.isSlim);
-    }
-    
-    calculateState(){
-        const shouldBeSlim = this.options.topThreshold < document.scrollingElement.scrollTop;
-        
-        if(this.isSlim != shouldBeSlim){
-            this.isSlim = shouldBeSlim;
-            this.changeState();
-        }
     }
 }
 ```
@@ -352,7 +363,7 @@ The slimheader component can be further improved under the following more rawblo
 
 1.  A good component should dispatch an event as soon as it's state changes.
 
-    This can be realized using the `trigger` method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name. If a component only has one state that changes or one state can be seen as the main state the component should dispatch a `changed` state. 
+    This can be realized using the `trigger` method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name (jsName). If a component only has one state that changes or one state can be seen as the main state the component should dispatch a `changed` state. 
     
     In case no event name is given, `trigger` will automatically generate this `changed` state event prefixed by the component name. (In our case `"slimheaderchanged"`.)
 
@@ -374,7 +385,6 @@ class SlimHeader extends rb.Component {
     static get defaults(){
         return {
             topThreshold: 80,
-            //switchedOff: false, // is inherited by rb.Component
         };
     }
     
@@ -389,7 +399,6 @@ class SlimHeader extends rb.Component {
         
         this.isSlim = false;
         
-        this.rAFs('changeState');
         this.calculateState = rb.throttle(this.calculateState);
         
         this.calculateState();
@@ -404,12 +413,6 @@ class SlimHeader extends rb.Component {
         }
     }
     
-    changeState(){
-        this.$element.rbToggleState('slim', this.isSlim);
-        //trigger the change
-        this.trigger();
-    }
-    
     calculateState(){
         const {switchedOff, topThreshold} = this.options;
         //if it is switchedOff it is never slim 
@@ -417,7 +420,8 @@ class SlimHeader extends rb.Component {
         
         if(this.isSlim != shouldBeSlim){
             this.isSlim = shouldBeSlim;
-            this.changeState();
+            this.$element.rbToggleStateRaf('slim', this.isSlim);
+            this.trigger();
         }
     }
 }

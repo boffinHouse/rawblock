@@ -140,25 +140,108 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /**
      * A jQuery/rb.$ plugin to add or remove state classes.
      * @param state {string}
-     * @param [add=false] {boolean}
+     * @param [addRemove] {boolean}
      * @returns {jQueryfiedDOMList}
      */
-    $.fn.rbToggleState = function(state, add){
+    $.fn.rbToggleState = function(state, addRemove){
         if(this.length){
             state = rb.statePrefix + (state.replace(regnameSeparator, rb.nameSeparator));
-            this[add ? 'addClass' : 'removeClass'](state);
+            this.toggleClass(state, addRemove);
         }
         return this;
     };
 
     $.fn.rbChangeState = $.fn.rbToggleState;
 
+
+    /**
+     * Works same as jQuery.fn.addClass, but does this in a rAF
+     * @function external:"jQuery.fn".addClassRaf
+     */
+    /**
+     * Works same as jQuery.fn.removeClass, but does this in a rAF
+     * @function external:"jQuery.fn".removeClassRaf
+     */
+    /**
+     * Works same as jQuery.fn.toggleClass, but does this in a rAF
+     * @function external:"jQuery.fn".toggleClassRaf
+     */
+    /**
+     * Works same as jQuery.fn.append, but does this in a rAF
+     * @function external:"jQuery.fn".appendRaf
+     */
+    /**
+     * Works same as jQuery.fn.appendTo, but does this in a rAF
+     * @function external:"jQuery.fn".appendToRaf
+     */
+    /**
+     * Works same as jQuery.fn.prepend, but does this in a rAF
+     * @function external:"jQuery.fn".prependRaf
+     */
+    /**
+     * Works same as jQuery.fn.prependTo, but does this in a rAF
+     * @function external:"jQuery.fn".prependToRaf
+     */
+    /**
+     * Works same as jQuery.fn.removeClass, but does this in a rAF
+     * @function external:"jQuery.fn".removeClassRaf
+     */
+    /**
+     * Works same as jQuery.fn.after, but does this in a rAF
+     * @function external:"jQuery.fn".afterRaf
+     */
+    /**
+     * Works same as jQuery.fn.before, but does this in a rAF
+     * @function external:"jQuery.fn".beforeRaf
+     */
+    /**
+     * Works same as jQuery.fn.insertAfter, but does this in a rAF
+     * @function external:"jQuery.fn".insertAfterRaf
+     */
+    /**
+     * Works same as jQuery.fn.insertBefore, but does this in a rAF
+     * @function external:"jQuery.fn".insertBeforeRaf
+     */
+    /**
+     * Works same as jQuery.fn.html, but does this in a rAF
+     * @function external:"jQuery.fn".htmlRaf
+     */
+    /**
+     * Works same as jQuery.fn.text, but does this in a rAF
+     * @function external:"jQuery.fn".textRaf
+     */
+    /**
+     * Works same as jQuery.fn.removeClass, but does this in a rAF
+     * @function external:"jQuery.fn".removeClassRaf
+     */
+    /**
+     * Works same as jQuery.fn.remove, but does this in a rAF
+     * @function external:"jQuery.fn".removeRaf
+     */
+    /**
+     * Works same as jQuery.fn.attr, but does this in a rAF
+     * @function external:"jQuery.fn".attrRaf
+     */
+    /**
+     * Works same as jQuery.fn.prop, but does this in a rAF
+     * @function external:"jQuery.fn".propRaf
+     */
+    /**
+     * Works same as jQuery.fn.css, but does this in a rAF
+     * @function external:"jQuery.fn".cssRaf
+     */
+    /**
+     * Works same as jQuery.fn.rbToggleState, but does this in a rAF
+     * @function external:"jQuery.fn".rbToggleStateRaf
+     */
     ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before',
         'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'attr', 'prop', 'css', 'rbToggleState'].forEach(($name) => {
         $.fn[`${$name}Raf`] = function(){
-            rb.rAFQueue(()=>{
-                this[$name](...arguments);
-            }, true);
+            if(this.length){
+                rb.rAFQueue(()=>{
+                    this[$name](...arguments);
+                }, true);
+            }
             return this;
         };
     });
@@ -2175,8 +2258,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      *
      * @memberof rb
      * @param {Element} element - DOM element
-     * @param {String} [componentName] - optional name of the component (if element has no `data-module="componentName"`).
-     * @param {Object} [initialOpts] - only use if component is not initialized otherwise use `setOption`/`setOptions`
+     * @param {String} [componentName] - optional name of the component (if component isn't created yet and the element has no `data-module="componentName"`).
+     * @param {Object} [initialOpts] - only use if component is not created otherwise use `setOption`/`setOptions`
      * @returns {Object} A component instance
      */
     rb.getComponent = function (element, componentName, initialOpts) {

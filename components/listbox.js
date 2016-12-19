@@ -277,7 +277,7 @@ class Listbox extends rb.Component {
     _changeChecked() {
         this.$items
             .filter('.' + rb.statePrefix + 'checked')
-            .rbChangeState('checked')
+            .rbToggleState('checked', false)
             .removeAttr('aria-checked')
         ;
 

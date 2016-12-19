@@ -372,7 +372,7 @@ class Panel extends rb.Component {
 
         if(this.options.itemWrapper){
             $(this.element.closest(this.interpolateName(this.options.itemWrapper)))
-                .rbChangeState('selected{-}within', true);
+                .rbToggleState('selected{-}within', true);
         }
 
         if (this.groupComponent) {
@@ -446,7 +446,7 @@ class Panel extends rb.Component {
 
         if(this.options.itemWrapper){
             $(this.element.closest(this.interpolateName(this.options.itemWrapper)))
-                .rbChangeState('selected{-}within');
+                .rbToggleState('selected{-}within', false);
         }
 
         if (this.groupComponent) {

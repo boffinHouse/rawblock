@@ -447,6 +447,31 @@ Object.assign(fn, {
     last: function(){
         return Dom(this.elements[this.elements.length - 1]);
     },
+    data: function(name, value){
+        let ret;
+
+        if(arguments.length){
+            const mergeObject = typeof name != 'string';
+
+            ret = this;
+
+            this.elements.forEach((element)=>{
+                const data = getData(element, true)._;
+
+                if(mergeObject){
+                    Dom.extend(data, name);
+                } else {
+                    data[name] = value;
+                }
+            });
+        } else if(this[0]) {
+            const data = getData(this[0], true)._;
+
+            ret = name ? data[name] : data;
+        }
+
+        return ret;
+    },
 });
 
 function getNodesAsOne(nodes){
@@ -644,22 +669,34 @@ fn.detach = fn.remove;
 });
 
 Dom.data = function (element, name, value) {
+    const data = getData(element);
+
+    if (value !== undefined) {
+        data._[name] = value;
+    }
+
+    return name ? data._[name] : data._;
+};
+
+function getData(element, getAttrs){
     if (!dataSymbol) {
         dataSymbol = rb.Symbol('_rb$data');
     }
-    var data = element[dataSymbol];
+
+    let data = element[dataSymbol];
 
     if (!data) {
-        data = {};
+        data = {_: {}, isAttr: false};
         element[dataSymbol] = data;
     }
 
-    if (value !== undefined) {
-        data[name] = value;
+    if(!data.isAttr && getAttrs){
+        Dom.extend(data._, Dom.extend(rb.parseDataAttrs(element), data._));
     }
 
-    return name ? data[name] : data;
-};
+
+    return data;
+}
 
 if (!('onfocusin' in window) || !('onfocusout' in window)) {
     [['focusin', 'focus'], ['focusout', 'blur']].forEach(function (evts) {
