@@ -1,10 +1,8 @@
-if (!window.rb) {
-    window.rb = {};
-}
+import './deferred';
 
 const rb = window.rb;
 const $ = rb.$;
-const regQuery = ( /\?/ );
+const regQuery = (/\?/);
 const getData = function (oReq, obj) {
     obj.xhr = oReq;
     obj.data = oReq.response || oReq.responseXML || oReq.responseText;
@@ -24,8 +22,8 @@ const getData = function (oReq, obj) {
  * @param {String|Object} url Either the URL to send for the request or the options Object.
  * @param {Object} [options]
  *  @param {String} [options.url] The URL for the request.
- *  @param {String|null} [options.username=null] The URL for the request.
- *  @param {String|null} [options.password=null] The URL for the request.
+ *  @param {String|undefined} [options.username=undefined] The URL for the request.
+ *  @param {String|undefined} [options.password=undefined] The URL for the request.
  *  @param {String} [options.type='GET'] The request type to use.
  *  @param {object} [options.data=null] The send data.
  *  @param {object} [options.headers=null] headers to send.
@@ -39,8 +37,8 @@ const getData = function (oReq, obj) {
  *
  * rb.fetch('api/user.json?id=12')
  *  .then(function(response, xhr){
-	 *      console.log(response.data);
-	 *  });
+ *      console.log(response.data);
+ *  });
  */
 rb.fetch = function (url, options) {
     if (typeof url == 'object') {
@@ -50,8 +48,8 @@ rb.fetch = function (url, options) {
 
     options = Object.assign({
         type: 'get',
-        username: null,
-        password: null,
+        username: undefined,
+        password: undefined,
         processData: true,
         contentType: true,
         rejectAbort: true,
@@ -59,14 +57,39 @@ rb.fetch = function (url, options) {
 
     let abort;
     let oReq = new XMLHttpRequest();
-    const abortCb = $.Callbacks();
     const promise = rb.deferred();
 
     (function () {
-        var header;
-        let data = options.data || null;
-        const value = {opts: options};
+        let header;
         let isAborted = false;
+        let data = options.data || null;
+
+        const value = {opts: options};
+
+        const createAbort = function(){
+            const abortCb = $.Callbacks();
+
+            abort = function(){
+                if(oReq){
+                    getData(oReq, value);
+                    isAborted = true;
+                    oReq.abort();
+
+                    value.status = 'canceled';
+                    promise.catch(rb.logWarn);
+                    abortCb.fire(value);
+
+                    if(options.rejectAbort){
+                        promise.reject(value);
+                    }
+                }
+            };
+
+            promise.abort = abort;
+
+            promise.onAbort = abortCb.add;
+            promise.offAbort = abortCb.remove;
+        };
 
         oReq.addEventListener('load', function () {
             const status = oReq.status;
@@ -96,26 +119,17 @@ rb.fetch = function (url, options) {
             oReq = null;
         });
 
-        abort = function(){
-            if(oReq){
-                getData(oReq, value);
-                isAborted = true;
-                oReq.abort();
 
-                value.status = 'canceled';
-                promise.catch(rb.logWarn);
-                abortCb.fire(value);
-
-                if(options.rejectAbort){
-                    promise.reject(value);
-                }
-            }
-        };
 
         options.type = options.type.toUpperCase();
 
-        if(options.processData && data && $.param && typeof data == 'object'){
-            data = $.param(data);
+        if(options.processData && data && typeof data == 'object'){
+
+            if($.param){
+                data = $.param(data);
+            } else if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+                rb.logError('no $.param for fetch stringify');
+            }
 
             if(options.type == 'GET'){
                 url += (regQuery.test(url) ? '&' : '?') + data;
@@ -141,10 +155,20 @@ rb.fetch = function (url, options) {
             options.beforeSend(oReq);
         }
 
-        promise.abort = abort;
+        promise.abort = function(){
+            createAbort();
+            return promise.abort(...arguments);
+        };
 
-        promise.onAbort = abortCb.add;
-        promise.offAbort = abortCb.remove;
+        promise.onAbort = function(){
+            createAbort();
+            return promise.add(...arguments);
+        };
+
+        promise.offAbort = function(){
+            createAbort();
+            return promise.remove(...arguments);
+        };
 
         promise.getXhr = function(){
             return oReq;
