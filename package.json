@@ -43,6 +43,7 @@
     "es6-promise": "~3.2.1",
     "function-bind": "~1.1.0",
     "is-nan": "~1.2.1",
+    "mobx": "^2.7.0",
     "normalize.css": "~4.2.0",
     "object-assign": "~4.1.0",
     "string.prototype.endswith": "~0.2.0",
