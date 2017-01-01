@@ -51,6 +51,7 @@ class ComposerComponent extends rb.Component {
 
         });
 
+        return initialDefaults;
     }
 
     _createChildComponent(componentName, componentElement, initialDefaults, opts){
