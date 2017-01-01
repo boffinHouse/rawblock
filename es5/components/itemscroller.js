@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', '../utils/rb_draggy', '../utils/rb_wheelanalyzer', '../utils/rb_resize', '../utils/rb_prefixed', '../utils/rb_debounce'], factory);
+        define(['exports', '../utils/draggy', '../utils/wheelanalyzer', '../utils/resize', '../utils/prefixed', '../utils/debounce'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('../utils/rb_draggy'), require('../utils/rb_wheelanalyzer'), require('../utils/rb_resize'), require('../utils/rb_prefixed'), require('../utils/rb_debounce'));
+        factory(exports, require('../utils/draggy'), require('../utils/wheelanalyzer'), require('../utils/resize'), require('../utils/prefixed'), require('../utils/debounce'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.rb_draggy, global.rb_wheelanalyzer, global.rb_resize, global.rb_prefixed, global.rb_debounce);
+        factory(mod.exports, global.draggy, global.wheelanalyzer, global.resize, global.prefixed, global.debounce);
         global.itemscroller = mod.exports;
     }
 })(this, function (exports) {
@@ -274,7 +274,7 @@
 
             var cellCSS = {};
 
-            this.$cells.rbChangeState('active{-}done').rbChangeState('active').rbChangeState('activated{-}done').rbChangeState('activated');
+            this.$cells.rbToggleState('active{-}done', false).rbToggleState('active', false).rbToggleState('activated{-}done', false).rbToggleState('activated', false);
 
             cellCSS[orderProp] = '';
 
@@ -643,11 +643,15 @@
             this.selectIndex(this.getPageIndexOfCell(cellIndex), noAnimate);
         };
 
-        ItemScroller.prototype.isCellVisible = function isCellVisible(cellIndex) {
-            var cellData, cellLeft, cellRight, roundingTolerance;
+        ItemScroller.prototype.isCellVisible = function isCellVisible(cellIndex, useEndPos) {
+            var cellData = void 0,
+                cellLeft = void 0,
+                cellRight = void 0,
+                roundingTolerance = void 0;
 
             var inview = false;
-            var viewportLeft = this._pos * -1;
+            var pos = typeof useEndPos == 'number' ? useEndPos : useEndPos && this._endPos != null ? this._endPos : this._pos;
+            var viewportLeft = pos * -1;
             var viewportRight = viewportLeft + this.viewportWidth;
             var viewportLeftPartial = viewportLeft;
             var viewportRightPartial = viewportRight;
@@ -758,6 +762,8 @@
                 duration = this.duration * (setPos < this._pos ? this._pos - setPos : setPos - this._pos) / this.viewportWidth;
                 duration = Math.max(Math.min(duration, this.maxDuration), this.minDuration);
 
+                this._endPos = setPos;
+
                 if (noAnimate) {
                     this.setPos(setPos);
                     this.isAnimated = false;
@@ -816,9 +822,9 @@
 
                 this.isCarouselChanged = false;
 
-                this.$queryAll('.{htmlName}{e}btn{-}next').prop({ disabled: isEnd }).rbChangeState('disabled', isEnd);
+                this.$queryAll('.{htmlName}{e}btn{-}next').prop({ disabled: isEnd }).rbToggleState('disabled', isEnd);
 
-                this.$queryAll('.{htmlName}{e}btn{-}prev').prop({ disabled: isStart }).rbChangeState('disabled', isStart);
+                this.$queryAll('.{htmlName}{e}btn{-}prev').prop({ disabled: isStart }).rbToggleState('disabled', isStart);
             }
 
             this.element.setAttribute('data-current-index', this._selectedIndex + 1);

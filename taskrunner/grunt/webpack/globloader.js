@@ -1,22 +1,18 @@
-"use strict";
+const path = require('path');
+const regSplit = /\s+/gm;
+const expand = require('glob-expand');
 
-var loaderUtils = require("loader-utils");
-var path = require("path");
-var regSplit = /\s+/gm;
-var grunt = require('grunt');
-
-module.exports = function (content, sourceMap) {
-
-    var patterns = content.trim().split(regSplit);
-    var files = grunt.file.expand(
+module.exports = function (content, _sourceMap) {
+    const patterns = content.trim().split(regSplit);
+    const files = expand(
         {
             'cwd': path.dirname(this.resourcePath),
-            'filter': 'isFile'
+            'filter': 'isFile',
         },
         patterns
     );
 
-    return "module.exports = [\n" + files.map(function (file) {
-            return "  require(" + JSON.stringify(file) + ")";
-        }).join(",\n") + "\n];";
+    return 'module.exports = [\n' + files.map(function (file) {
+            return '  require(' + JSON.stringify(file) + ')';
+        }).join(',\n') + '\n];';
 };

@@ -1,8 +1,8 @@
-import '../utils/rb_draggy';
-import '../utils/rb_wheelanalyzer';
-import '../utils/rb_resize';
-import '../utils/rb_prefixed';
-import '../utils/rb_debounce';
+import '../utils/draggy';
+import '../utils/wheelanalyzer';
+import '../utils/resize';
+import '../utils/prefixed';
+import '../utils/debounce';
 
 const rb = window.rb;
 const $ = rb.$;
@@ -701,16 +701,23 @@ class ItemScroller extends rb.Component {
     /**
      * Returns whether a specific cell is in scroller viewport
      * @param cellIndex {Number|Element} Either the index of the cell or the cell DOM element
+     * @param [useEndPos=false] {boolean|Number} Wether to use the endpos in case of an animating scroller. In case a number is given this will be used.
      * @returns {Boolean|String} Returns either true|false or 'partial'
      */
-    isCellVisible(cellIndex) {
-        var cellData, cellLeft, cellRight, roundingTolerance;
+    isCellVisible(cellIndex, useEndPos) {
+        let cellData, cellLeft, cellRight, roundingTolerance;
 
-        var inview = false;
-        var viewportLeft = this._pos * -1;
-        var viewportRight = viewportLeft + this.viewportWidth;
-        var viewportLeftPartial = viewportLeft;
-        var viewportRightPartial = viewportRight;
+        let inview = false;
+        const pos = typeof useEndPos == 'number' ?
+            useEndPos :
+            useEndPos && this._endPos != null ?
+            this._endPos :
+            this._pos
+        ;
+        let viewportLeft = pos * -1;
+        let viewportRight = viewportLeft + this.viewportWidth;
+        let viewportLeftPartial = viewportLeft;
+        let viewportRightPartial = viewportRight;
 
         if (typeof cellIndex != 'number') {
             cellIndex = this.$cells.index(cellIndex);
@@ -833,6 +840,8 @@ class ItemScroller extends rb.Component {
             duration = this.duration * ((setPos < this._pos) ? this._pos - setPos : setPos - this._pos) / this.viewportWidth;
             duration = Math.max(Math.min(duration, this.maxDuration), this.minDuration);
 
+            this._endPos = setPos;
+
             if (noAnimate) {
                 this.setPos(setPos);
                 this.isAnimated = false;
@@ -842,7 +851,7 @@ class ItemScroller extends rb.Component {
                 this.$scroller
                     .animate(
                         {
-                            rbItemscrollerPos: setPos
+                            rbItemscrollerPos: setPos,
                         },
                         {
                             easing: 'linear',

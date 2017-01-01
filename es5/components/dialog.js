@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', '../utils/rb_scrollbarwidth'], factory);
+        define(['exports', '../utils/scrollbarwidth', './_focus-component'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('../utils/rb_scrollbarwidth'));
+        factory(exports, require('../utils/scrollbarwidth'), require('./_focus-component'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.rb_scrollbarwidth);
+        factory(mod.exports, global.scrollbarwidth, global._focusComponent);
         global.dialog = mod.exports;
     }
 })(this, function (exports) {
@@ -80,7 +80,7 @@
      *
      * @alias rb.components.dialog
      *
-     * @extends rb.Component
+     * @extends rb.components._focus_component
      *
      * @param element {Element}
      * @param [initialDefaults] {OptionsObject}
@@ -103,8 +103,8 @@
      * });
      */
 
-    var Dialog = function (_rb$Component) {
-        _inherits(Dialog, _rb$Component);
+    var Dialog = function (_rb$components$_focus) {
+        _inherits(Dialog, _rb$components$_focus);
 
         _createClass(Dialog, null, [{
             key: 'defaults',
@@ -139,7 +139,7 @@
         function Dialog(element, initialDefaults) {
             _classCallCheck(this, Dialog);
 
-            var _this = _possibleConstructorReturn(this, _rb$Component.call(this, element, initialDefaults));
+            var _this = _possibleConstructorReturn(this, _rb$components$_focus.call(this, element, initialDefaults));
 
             /**
              * @name rb.components.dialog.prototype.isOpen
@@ -242,7 +242,7 @@
             this.$backdrop.css({ display: '' });
             this.$backdrop.addClass(rb.statePrefix + 'open');
 
-            rb.$root.rbChangeState('open{-}' + this.name + '{-}within', true);
+            rb.$root.rbToggleState('open{-}' + this.name + '{-}within', true);
 
             if (this._setScrollPadding && this.options.scrollPadding) {
                 document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
@@ -313,7 +313,7 @@
             }
 
             this.$backdrop.removeClass(rb.statePrefix + 'open');
-            rb.$root.rbChangeState('open{-}' + this.name + '{-}within');
+            rb.$root.rbToggleState('open{-}' + this.name + '{-}within', false);
 
             if (this.options.setDisplay) {
                 clearTimeout(this._displayTimer);
@@ -397,7 +397,7 @@
         };
 
         return Dialog;
-    }(rb.Component);
+    }(rb.components._focus_component);
 
     rb.ready.then(function () {
         rb.click.add('dialog', function (element, event, attr) {

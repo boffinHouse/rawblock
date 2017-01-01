@@ -1,4 +1,4 @@
-import '../utils/rb_scrollbarwidth';
+import '../utils/scrollbarwidth';
 import './_focus-component';
 
 const rb = window.rb;

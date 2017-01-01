@@ -1,21 +1,31 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './utils/rb_debughelpers'], factory);
+        define(['exports', './utils/global-rb', './utils/deferred', './utils/debughelpers'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./utils/rb_debughelpers'));
+        factory(exports, require('./utils/global-rb'), require('./utils/deferred'), require('./utils/debughelpers'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.rb_debughelpers);
+        factory(mod.exports, global.globalRb, global.deferred, global.debughelpers);
         global._main = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _globalRb, _deferred) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _globalRb2 = _interopRequireDefault(_globalRb);
+
+    var _deferred2 = _interopRequireDefault(_deferred);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -29,14 +39,6 @@
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
 
-    if (!window.rb) {
-        /**
-         * rawblock main object holds classes and util properties and methods to work with rawblock
-         * @namespace rb
-         */
-        window.rb = {};
-    }
-
     if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {}
 
     (function (window, document, _undefined) {
@@ -44,10 +46,11 @@
 
         /* Begin: global vars end */
 
-        var rb = window.rb;
         var regnameSeparator = /\{-}/g;
         var regSplit = /\s*?,\s*?|\s+?/g;
         var slice = Array.prototype.slice;
+
+        _globalRb2.default.deferred = _deferred2.default;
 
         /**
          * The jQuery or dom.js (rb.$) plugin namespace.
@@ -59,52 +62,52 @@
          * Reference to the internally used dom.js or jQuery instance
          * @memberof rb
          */
-        if (!rb.$) {
-            rb.$ = window.jQuery;
+        if (!_globalRb2.default.$) {
+            _globalRb2.default.$ = window.jQuery;
         }
 
-        var $ = rb.$;
+        var $ = _globalRb2.default.$;
 
         /**
          * Reference to the root element (mostly html element)
          * @memberof rb
          * @type {Element}
          */
-        rb.root = document.documentElement;
+        _globalRb2.default.root = document.documentElement;
 
         /**
          * Reference to the jQueryfied/rb.$ root element
          * @memberof rb
          * @type {jQueryfiedDOMList}
          */
-        rb.$root = $(rb.root);
+        _globalRb2.default.$root = $(_globalRb2.default.root);
 
         /**
          * Reference to the jQueryfied/rb.$ window object
          * @memberof rb
          * @type {jQueryfiedDOMList}
          */
-        rb.$win = $(window);
+        _globalRb2.default.$win = $(window);
 
         /**
          * Reference to the jQueryfied//rb.$ document object
          * @memberof rb
          * @type {jQueryfiedDOMList}
          */
-        rb.$doc = $(document);
+        _globalRb2.default.$doc = $(document);
 
         /**
          * Namespace for global template functions. Compiled JavaScript templates should be added to this hash object. (see jst grunt task).
          * @memberof rb
          */
-        rb.templates = {};
+        _globalRb2.default.templates = {};
 
-        rb.statePrefix = 'is-';
-        rb.utilPrefix = 'u-';
-        rb.jsPrefix = '';
-        rb.nameSeparator = '-';
-        rb.elementSeparator = '-';
-        rb.attrSel = '';
+        _globalRb2.default.statePrefix = 'is-';
+        _globalRb2.default.utilPrefix = 'u-';
+        _globalRb2.default.jsPrefix = '';
+        _globalRb2.default.nameSeparator = '-';
+        _globalRb2.default.elementSeparator = '-';
+        _globalRb2.default.attrSel = '';
 
         /* End: global vars end */
 
@@ -116,7 +119,7 @@
          * @type {Function}
          * @returns {String|Symbol}
          */
-        rb.Symbol = window.Symbol;
+        _globalRb2.default.Symbol = window.Symbol;
         var id = Math.round(Date.now() * Math.random());
 
         /**
@@ -124,64 +127,130 @@
          * @memberof rb
          * @returns {string}
          */
-        rb.getID = function () {
+        _globalRb2.default.getID = function () {
             id += Math.round(Math.random() * 1000);
             return id.toString(36);
         };
 
-        if (!rb.Symbol) {
-            rb.Symbol = function (name) {
+        if (!_globalRb2.default.Symbol) {
+            _globalRb2.default.Symbol = function (name) {
                 name = name || '_';
-                return name + rb.getID();
+                return name + _globalRb2.default.getID();
             };
         }
 
         /* End: ID/Symbol */
 
         /**
-            * Creates a promise with a resolve and a reject method.
-            * @returns {Deferred}
-            */
-        rb.deferred = function () {
-            var tmp = {
-                isResolved: false,
-                isRejected: false,
-                isDone: false
-            };
-
-            var promise = new Promise(function (resolve, reject) {
-                tmp.resolve = function (data) {
-                    promise.isResolved = true;
-                    promise.isDone = true;
-                    return resolve(data);
-                };
-                tmp.reject = function (data) {
-                    promise.isRejected = true;
-                    promise.isDone = true;
-                    return reject(data);
-                };
-            });
-
-            Object.assign(promise, tmp);
-
-            return promise;
-        };
-
-        /**
          * A jQuery/rb.$ plugin to add or remove state classes.
          * @param state {string}
-         * @param [add] {boolean}
+         * @param [addRemove] {boolean}
          * @returns {jQueryfiedDOMList}
          */
-        $.fn.rbToggleState = function (state, add) {
+        $.fn.rbToggleState = function (state, addRemove) {
             if (this.length) {
-                state = rb.statePrefix + state.replace(regnameSeparator, rb.nameSeparator);
-                this[add ? 'addClass' : 'removeClass'](state);
+                state = _globalRb2.default.statePrefix + state.replace(regnameSeparator, _globalRb2.default.nameSeparator);
+                this.toggleClass(state, addRemove);
             }
+
             return this;
         };
 
         $.fn.rbChangeState = $.fn.rbToggleState;
+
+        /**
+         * Works same as jQuery.fn.addClass, but does this in a rAF
+         * @function external:"jQuery.fn".addClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.removeClass, but does this in a rAF
+         * @function external:"jQuery.fn".removeClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.toggleClass, but does this in a rAF
+         * @function external:"jQuery.fn".toggleClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.append, but does this in a rAF
+         * @function external:"jQuery.fn".appendRaf
+         */
+        /**
+         * Works same as jQuery.fn.appendTo, but does this in a rAF
+         * @function external:"jQuery.fn".appendToRaf
+         */
+        /**
+         * Works same as jQuery.fn.prepend, but does this in a rAF
+         * @function external:"jQuery.fn".prependRaf
+         */
+        /**
+         * Works same as jQuery.fn.prependTo, but does this in a rAF
+         * @function external:"jQuery.fn".prependToRaf
+         */
+        /**
+         * Works same as jQuery.fn.removeClass, but does this in a rAF
+         * @function external:"jQuery.fn".removeClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.after, but does this in a rAF
+         * @function external:"jQuery.fn".afterRaf
+         */
+        /**
+         * Works same as jQuery.fn.before, but does this in a rAF
+         * @function external:"jQuery.fn".beforeRaf
+         */
+        /**
+         * Works same as jQuery.fn.insertAfter, but does this in a rAF
+         * @function external:"jQuery.fn".insertAfterRaf
+         */
+        /**
+         * Works same as jQuery.fn.insertBefore, but does this in a rAF
+         * @function external:"jQuery.fn".insertBeforeRaf
+         */
+        /**
+         * Works same as jQuery.fn.html, but does this in a rAF
+         * @function external:"jQuery.fn".htmlRaf
+         */
+        /**
+         * Works same as jQuery.fn.text, but does this in a rAF
+         * @function external:"jQuery.fn".textRaf
+         */
+        /**
+         * Works same as jQuery.fn.removeClass, but does this in a rAF
+         * @function external:"jQuery.fn".removeClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.remove, but does this in a rAF
+         * @function external:"jQuery.fn".removeRaf
+         */
+        /**
+         * Works same as jQuery.fn.attr, but does this in a rAF
+         * @function external:"jQuery.fn".attrRaf
+         */
+        /**
+         * Works same as jQuery.fn.prop, but does this in a rAF
+         * @function external:"jQuery.fn".propRaf
+         */
+        /**
+         * Works same as jQuery.fn.css, but does this in a rAF
+         * @function external:"jQuery.fn".cssRaf
+         */
+        /**
+         * Works same as jQuery.fn.rbToggleState, but does this in a rAF
+         * @function external:"jQuery.fn".rbToggleStateRaf
+         */
+        ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before', 'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'attr', 'prop', 'css', 'rbToggleState'].forEach(function ($name) {
+            $.fn[$name + 'Raf'] = function () {
+                var _this = this,
+                    _arguments = arguments;
+
+                if (this.length) {
+                    _globalRb2.default.rAFQueue(function () {
+                        _this[$name].apply(_this, _arguments);
+                    }, true);
+                }
+                return this;
+            };
+        });
 
         /* Begin: getScrollingElement */
 
@@ -190,7 +259,7 @@
          * @deprecated use `document.scrollingElement` instead
          * @returns {Element} The DOM element that scrolls the viewport (either html or body)
          */
-        rb.getScrollingElement = function () {
+        _globalRb2.default.getScrollingElement = function () {
             return document.scrollingElement;
         };
 
@@ -199,13 +268,13 @@
             * @type function
             * @memberof rb
             */
-        rb.getPageScrollingElement = rb.getScrollingElement;
+        _globalRb2.default.getPageScrollingElement = _globalRb2.default.getScrollingElement;
 
-        rb.getScrollingEventObject = function (element) {
+        _globalRb2.default.getScrollingEventObject = function (element) {
             var scrollObj;
 
             if (!element) {
-                element = rb.getPageScrollingElement();
+                element = _globalRb2.default.getPageScrollingElement();
             }
 
             if (element.matches && element.ownerDocument && element.matches('html, body')) {
@@ -232,7 +301,7 @@
          *  @param {boolean} options.unthrottle=false -  Wether function should be invoked directly.
          * @returns {function} the throttled function.
          */
-        rb.throttle = function (fn, options) {
+        _globalRb2.default.throttle = function (fn, options) {
             var running = void 0,
                 that = void 0,
                 args = void 0;
@@ -247,7 +316,7 @@
             };
 
             var afterAF = function afterAF() {
-                rb.rIC(_run);
+                _globalRb2.default.rIC(_run);
             };
 
             var throttel = function throttel() {
@@ -280,7 +349,7 @@
             };
 
             var getAF = function getAF() {
-                rb.rAFQueue(afterAF);
+                _globalRb2.default.rAFQueue(afterAF);
             };
 
             if (!options) {
@@ -305,7 +374,7 @@
 
         /* Begin: resize */
         var iWidth, cHeight, installed;
-        var docElem = rb.root;
+        var docElem = _globalRb2.default.root;
 
         /**
          *
@@ -316,11 +385,11 @@
          * @property {Function} resize.on Adds the passed function to listen to the global window.resize
          * @property {Function} resize.off Removes the passed function to unlisten from the global window.resize
          */
-        rb.resize = Object.assign(rb.$.Callbacks(), {
+        _globalRb2.default.resize = Object.assign(_globalRb2.default.$.Callbacks(), {
             _setup: function _setup() {
                 if (!installed) {
                     installed = true;
-                    rb.rIC(function () {
+                    _globalRb2.default.rIC(function () {
                         iWidth = innerWidth;
                         cHeight = docElem.clientHeight;
                     });
@@ -344,14 +413,14 @@
             }
         });
 
-        rb.resize._run = rb.throttle(function () {
+        _globalRb2.default.resize._run = _globalRb2.default.throttle(function () {
             if (iWidth != innerWidth || cHeight != docElem.clientHeight) {
                 iWidth = innerWidth;
                 cHeight = docElem.clientHeight;
 
                 this.fire();
             }
-        }, { that: rb.resize, read: true });
+        }, { that: _globalRb2.default.resize, read: true });
 
         /* End: resize */
 
@@ -366,10 +435,10 @@
          * @example
          * var innerWidth = rb.getCSSNumbers(domElement, ['paddingLeft', 'paddingRight', 'width'];
          */
-        rb.getCSSNumbers = function (element, styles, onlyPositive) {
+        _globalRb2.default.getCSSNumbers = function (element, styles, onlyPositive) {
             var i, value;
             var numbers = 0;
-            var cStyles = rb.getStyles(element);
+            var cStyles = _globalRb2.default.getStyles(element);
             if (!Array.isArray(styles)) {
                 styles = [styles];
             }
@@ -394,7 +463,7 @@
             * @param [justOne] {boolean}
             * @returns {Function}
             */
-        rb.memoize = function (fn, justOne) {
+        _globalRb2.default.memoize = function (fn, justOne) {
             var cache = {};
             return justOne ? function (argsString) {
                 if (argsString in cache) {
@@ -415,7 +484,7 @@
         /* End: memoize */
 
         /* Begin: parseValue */
-        rb.parseValue = function () {
+        _globalRb2.default.parseValue = function () {
             var regNumber = /^-{0,1}\+{0,1}\d+?\.{0,1}\d*?$/;
             /**
              * Parses a String into another type using JSON.parse, if this fails returns the given string
@@ -447,7 +516,7 @@
         /* End: parseValue */
 
         /* Begin: idleCallback */
-        rb.rIC = window.requestIdleCallback ? function (fn) {
+        _globalRb2.default.rIC = window.requestIdleCallback ? function (fn) {
             return requestIdleCallback(fn, { timeout: 99 });
         } : function (fn) {
             return setTimeout(fn);
@@ -456,7 +525,7 @@
 
         /* Begin: rAF helpers */
 
-        rb.rAFQueue = function () {
+        _globalRb2.default.rAFQueue = function () {
             var isInProgress, inProgressStack;
             var fns1 = [];
             var fns2 = [];
@@ -520,7 +589,7 @@
         *      }
         *  }
          */
-        rb.rAF = function (fn, options) {
+        _globalRb2.default.rAF = function (fn, options) {
             var running, args, that, inProgress;
             var batchStack = [];
             var run = function run() {
@@ -542,7 +611,7 @@
                 }
                 if (!running) {
                     running = true;
-                    rb.rAFQueue(run, inProgress);
+                    _globalRb2.default.rAFQueue(run, inProgress);
                 }
             };
 
@@ -553,7 +622,7 @@
             inProgress = !options.queue;
 
             if (fn._rbUnrafedFn) {
-                rb.log('double rafed', fn);
+                _globalRb2.default.log('double rafed', fn);
             }
 
             rafedFn._rbUnrafedFn = fn;
@@ -577,7 +646,7 @@
          * @example
          * rb.rAFs(this, {throttle: true}, 'renderList', 'renderCircle');
          */
-        rb.rAFs = function (obj) {
+        _globalRb2.default.rAFs = function (obj) {
             var options;
             var args = slice.call(arguments);
 
@@ -588,7 +657,7 @@
             }
 
             args.forEach(function (fn) {
-                obj[fn] = rb.rAF(obj[fn], options);
+                obj[fn] = _globalRb2.default.rAF(obj[fn], options);
             });
         };
         /* End: rAFs helper */
@@ -609,7 +678,7 @@
             var elem = this.get(0);
 
             if (elem) {
-                ret = rb.getComponent(elem, name, initialOpts);
+                ret = _globalRb2.default.getComponent(elem, name, initialOpts);
             }
 
             return ret;
@@ -633,7 +702,7 @@
          * @returns {Function} Easing a function
          */
         var regEasingNumber = /([0-9.]+)/g;
-        rb.addEasing = function (easing, name) {
+        _globalRb2.default.addEasing = function (easing, name) {
             var bezierArgs;
             if (typeof easing != 'string') {
                 return;
@@ -644,7 +713,7 @@
                 easing = easingMap[easing];
             }
 
-            BezierEasing = BezierEasing || rb.BezierEasing || window.BezierEasing;
+            BezierEasing = BezierEasing || _globalRb2.default.BezierEasing || window.BezierEasing;
 
             if (BezierEasing && !$.easing[easing] && (bezierArgs = easing.match(regEasingNumber)) && bezierArgs.length == 4) {
                 bezierArgs = bezierArgs.map(function (str) {
@@ -668,7 +737,7 @@
 
         /* Begin: cssSupports */
         var CSS = window.CSS;
-        rb.cssSupports = CSS && CSS.supports ? function () {
+        _globalRb2.default.cssSupports = CSS && CSS.supports ? function () {
             return CSS.supports.apply(CSS, arguments);
         } : function () {
             return '';
@@ -677,9 +746,9 @@
 
         /* Begin: rb.events */
 
-        rb.events = {
+        _globalRb2.default.events = {
             _init: function _init() {
-                this.proxyKey = rb.Symbol('_fnProxy');
+                this.proxyKey = _globalRb2.default.Symbol('_fnProxy');
             },
             Event: function Event(type, options) {
                 var event;
@@ -700,7 +769,7 @@
                 if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
                     if (!event.isDefaultPrevented) {
                         event.isDefaultPrevented = function () {
-                            rb.logError('deprecated');
+                            _globalRb2.default.logError('deprecated');
                         };
                     }
                 }
@@ -750,32 +819,32 @@
             },
             proxies: {
                 closest: function closest(handler, selector) {
-                    var proxy = rb.events.proxy(handler, 'closest', selector);
+                    var proxy = _globalRb2.default.events.proxy(handler, 'closest', selector);
 
                     if (!proxy) {
                         proxy = function proxy(e) {
-                            return rb.events._runDelegate(e, e.target.closest(selector), handler, this, arguments);
+                            return _globalRb2.default.events._runDelegate(e, e.target.closest(selector), handler, this, arguments);
                         };
-                        rb.events.proxy(handler, 'closest', selector, proxy);
+                        _globalRb2.default.events.proxy(handler, 'closest', selector, proxy);
                     }
 
                     return proxy;
                 },
                 matches: function matches(handler, selector) {
-                    var proxy = rb.events.proxy(handler, 'matches', selector);
+                    var proxy = _globalRb2.default.events.proxy(handler, 'matches', selector);
 
                     if (!proxy) {
                         proxy = function proxy(e) {
-                            return rb.events._runDelegate(e, e.target.matches(selector) ? e.target : null, handler, this, arguments);
+                            return _globalRb2.default.events._runDelegate(e, e.target.matches(selector) ? e.target : null, handler, this, arguments);
                         };
-                        rb.events.proxy(handler, 'matches', selector, proxy);
+                        _globalRb2.default.events.proxy(handler, 'matches', selector, proxy);
                     }
 
                     return proxy;
                 },
                 keycodes: function keycodes(handler, _keycodes) {
                     var keycodesObj;
-                    var proxy = rb.events.proxy(handler, 'keycodes', _keycodes);
+                    var proxy = _globalRb2.default.events.proxy(handler, 'keycodes', _keycodes);
 
                     if (!proxy) {
                         proxy = function proxy(e) {
@@ -790,20 +859,20 @@
                                 return handler.apply(this, arguments);
                             }
                         };
-                        rb.events.proxy(handler, 'keycodes', _keycodes, proxy);
+                        _globalRb2.default.events.proxy(handler, 'keycodes', _keycodes, proxy);
                     }
 
                     return proxy;
                 },
                 once: function once(handler, _once, opts, type) {
-                    var proxy = rb.events.proxy(handler, 'conce', '');
+                    var proxy = _globalRb2.default.events.proxy(handler, 'conce', '');
                     if (!proxy) {
                         proxy = function proxy(e) {
                             var ret = handler.apply(this, arguments);
-                            rb.events.remove(e && e.target || this, type, handler, opts);
+                            _globalRb2.default.events.remove(e && e.target || this, type, handler, opts);
                             return ret;
                         };
-                        rb.events.proxy(handler, 'conce', '', proxy);
+                        _globalRb2.default.events.proxy(handler, 'conce', '', proxy);
                     }
                     return proxy;
                 }
@@ -827,7 +896,7 @@
             special: {}
         };
 
-        rb.events.proxies.delegate = rb.events.proxies.closest;
+        _globalRb2.default.events.proxies.delegate = _globalRb2.default.events.proxies.closest;
 
         [['add', 'addEventListener'], ['remove', 'removeEventListener']].forEach(function (action) {
             /**
@@ -848,9 +917,9 @@
              * @param handler
              * @param opts
              */
-            rb.events[action[0]] = function (element, type, handler, opts) {
+            _globalRb2.default.events[action[0]] = function (element, type, handler, opts) {
                 if (!this.special[type] || this.special[type].applyProxies !== false) {
-                    handler = rb.events.applyProxies(handler, opts, type);
+                    handler = _globalRb2.default.events.applyProxies(handler, opts, type);
                 }
                 if (this.special[type]) {
                     this.special[type][action[0]](element, handler, opts);
@@ -860,13 +929,13 @@
                     element[action[1]](type, handler, evtOpts);
 
                     if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
-                        rb.debugHelpers.onEventsAdd(element, type, handler, opts);
+                        _globalRb2.default.debugHelpers.onEventsAdd(element, type, handler, opts);
                     }
                 }
             };
         });
 
-        rb.events._init();
+        _globalRb2.default.events._init();
 
         /* End: rb.events */
 
@@ -877,7 +946,7 @@
          * @param element The element that needs to get focus.
          * @param [delay] {Number} The delay to focus the element.
          */
-        rb.setFocus = function () {
+        _globalRb2.default.setFocus = function () {
             var element, attempts, abort, focusTimer;
             var scrollableElements = [];
             var regKeyboadElements = /^(?:input|textarea)$/i;
@@ -924,14 +993,14 @@
 
                 if (!element || abort || attempts > 9) {
                     cleanup();
-                } else if (rb.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)) {
-                    rb.isScriptFocus = true;
-                    rb.$doc.trigger('rbscriptfocus');
+                } else if (_globalRb2.default.getStyles(element).visibility != 'hidden' && (element.offsetHeight || element.offsetWidth)) {
+                    _globalRb2.default.isScriptFocus = true;
+                    _globalRb2.default.$doc.trigger('rbscriptfocus');
                     calcScrollableElements();
 
                     if ($.prop(element, 'tabIndex') < 0 && !element.getAttribute('tabindex')) {
                         element.setAttribute('tabindex', '-1');
-                        element.classList.add('js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'scriptfocus');
+                        element.classList.add('js' + _globalRb2.default.nameSeparator + 'rb' + _globalRb2.default.nameSeparator + 'scriptfocus');
                     }
                     try {
                         element.focus();
@@ -939,7 +1008,7 @@
                         //continue
                     }
                     restoreScrollPosition();
-                    rb.isScriptFocus = false;
+                    _globalRb2.default.isScriptFocus = false;
                     cleanup();
                 } else {
                     if (attempts == 2) {
@@ -973,13 +1042,13 @@
 
         (function () {
             var console = window.console || {};
-            var log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
+            var log = console.log && console.log.bind ? console.log : _globalRb2.default.$.noop; //eslint-disable-line no-unused-vars
             var logs = ['error', 'warn', 'info', 'log'].map(function (errorName, errorLevel) {
                 var fnName = errorName == 'log' ? 'log' : 'log' + errorName.charAt(0).toUpperCase() + errorName.substr(1);
                 return {
                     name: fnName,
                     errorLevel: errorLevel,
-                    fn: (console[errorName] && console[errorName].bind ? console[errorName] : rb.$.noop).bind(console)
+                    fn: (console[errorName] && console[errorName].bind ? console[errorName] : _globalRb2.default.$.noop).bind(console)
                 };
             });
 
@@ -989,8 +1058,8 @@
              * @param obj    {Object}
              * @param [initial] {Boolean}
              */
-            rb.addLog = function (obj, initial) {
-                var fakeLog = rb.$.noop;
+            _globalRb2.default.addLog = function (obj, initial) {
+                var fakeLog = _globalRb2.default.$.noop;
 
                 var setValue = function setValue() {
                     var level = obj.__isDebug;
@@ -1020,15 +1089,15 @@
             };
         })();
 
-        rb.addLog(rb, typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production' ? true : 1);
+        _globalRb2.default.addLog(_globalRb2.default, typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production' ? true : 1);
 
         if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
-            rb.logWarn('rawblock dev mode active. Do not use in production');
+            _globalRb2.default.logWarn('rawblock dev mode active. Do not use in production');
         }
 
         var cbs = [];
         var _setupClick = function setupClick() {
-            var clickClass = ['js', 'rb', 'click'].join(rb.nameSeparator);
+            var clickClass = ['js', 'rb', 'click'].join(_globalRb2.default.nameSeparator);
             var clickSel = '.' + clickClass;
             var applyBehavior = function applyBehavior(clickElem, e) {
                 var i, len, attr, found;
@@ -1046,7 +1115,7 @@
                     clickElem.classList.remove(clickClass);
                 }
             };
-            _setupClick = rb.$.noop;
+            _setupClick = _globalRb2.default.$.noop;
 
             document.addEventListener('keydown', function (e) {
                 var elem = e.target;
@@ -1089,7 +1158,7 @@
         *
         * });
          */
-        rb.click = {
+        _globalRb2.default.click = {
             cbs: cbs,
             add: function add(name, fn) {
                 cbs.push({
@@ -1113,7 +1182,7 @@
          * @param element {Element} The element that should be used as starting point for the jQuery traversal method.
          * @returns {Element[]}
          */
-        rb.getElementsByString = function (targetStr, element) {
+        _globalRb2.default.getElementsByString = function (targetStr, element) {
             var i, len, target, temp, num, match;
 
             if (targetStr) {
@@ -1130,10 +1199,10 @@
                         target = [document];
                         break;
                     case 'scrollingElement':
-                        target = [rb.getPageScrollingElement()];
+                        target = [_globalRb2.default.getPageScrollingElement()];
                         break;
                     case 'scrollingEventObject':
-                        target = [rb.getScrollingEventObject()];
+                        target = [_globalRb2.default.getScrollingEventObject()];
                         break;
                     default:
                         if ((match = targetStr.match(regPropTarget)) && match[1] in element) {
@@ -1176,7 +1245,7 @@
             return target || [];
         };
 
-        rb.elementFromStr = rb.getElementsByString;
+        _globalRb2.default.elementFromStr = _globalRb2.default.getElementsByString;
 
         /**
          * Parses data-* attributes and returns an object.
@@ -1188,7 +1257,7 @@
          * @param {String} [exclude]
          * @return {Object}
          */
-        rb.parseDataAttrs = function (element, attrsObject, prefix, exclude) {
+        _globalRb2.default.parseDataAttrs = function (element, attrsObject, prefix, exclude) {
             var i = void 0,
                 name = void 0;
             var attributes = element.attributes;
@@ -1205,7 +1274,7 @@
             for (i = 0; i < len; i++) {
                 name = attributes[i].nodeName;
                 if (name != exclude && name.startsWith(prefix)) {
-                    attrsObject[$.camelCase(name.replace(prefix, ''))] = rb.parseValue(attributes[i].nodeValue);
+                    attrsObject[$.camelCase(name.replace(prefix, ''))] = _globalRb2.default.parseValue(attributes[i].nodeValue);
                 }
             }
 
@@ -1224,7 +1293,7 @@
          * @param {String} name
          * @returns {Object|undefined}
          */
-        rb.getPropertyDescriptor = function getPropertyDescriptor(object, name) {
+        _globalRb2.default.getPropertyDescriptor = function getPropertyDescriptor(object, name) {
             var proto = object,
                 descriptor;
             if (name in proto) {
@@ -1235,59 +1304,6 @@
             return descriptor;
         };
 
-        /* begin: html escape */
-        // List of HTML entities for escaping.
-        var escapeMap = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#x27;',
-            '`': '&#x60;'
-        };
-
-        // Functions for escaping and unescaping strings to/from HTML interpolation.
-        var createEscaper = function createEscaper(map) {
-            var escaper = function escaper(match) {
-                return map[match];
-            };
-            // Regexes for identifying a key that needs to be escaped
-            var source = '(?:' + Object.keys(map).join('|') + ')';
-            var testRegexp = new RegExp(source);
-            var replaceRegexp = new RegExp(source, 'g');
-
-            return function (string) {
-                string = string == null ? '' : '' + string;
-                return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
-            };
-        };
-
-        /**
-         * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
-         * their corresponding HTML entities.
-         *
-         * @static
-         * @memberOf rb
-         * @category String
-         * @param {string} [string=''] The string to escape.
-         * @returns {string} Returns the escaped string.
-         * @example
-         *
-         * rb.escape('fred, barney, & pebbles');
-         * // => 'fred, barney, &amp; pebbles'
-         */
-        rb.escape = createEscaper(escapeMap);
-
-        /* eslint-disable no-undef */
-        if (!window._) {
-            window._ = {};
-        }
-        if (!_.escape) {
-            _.escape = rb.escape;
-        }
-        /* eslint-enable no-undef */
-        /* end: html escape */
-
         /**
          * Returns yes, if condition is true-thy no/empty string otherwise. Can be used inside of [`rb.template`]{@link rb.template}
          * @param condition
@@ -1295,7 +1311,7 @@
          * @param {String} [no=""]
          * @returns {string}
          */
-        rb.if = function (condition, yes, no) {
+        _globalRb2.default.if = function (condition, yes, no) {
             return condition ? yes : no || '';
         };
     })(window, document);
@@ -1649,10 +1665,6 @@
          *
          */
         live.register = function (name, Class, extend) {
-            if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
-                rb.devData.componentsCount++;
-            }
-
             var proto = Class.prototype;
             var superProto = Object.getPrototypeOf(proto);
             var superClass = superProto.constructor;
@@ -1672,6 +1684,10 @@
             }
 
             rb.components[name] = Class;
+
+            if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
+                rb.debugHelpers.onRegisterComponent(name, Class);
+            }
 
             if (componentPromises[name]) {
                 componentPromises[name].resolve(Class);
@@ -1926,8 +1942,6 @@
     (function (window, document, live, _undefined) {
         'use strict';
 
-        var focusClass = void 0,
-            focusSel = void 0;
         var rb = window.rb;
         var $ = rb.$;
         var componentExpando = live.componentExpando;
@@ -1947,6 +1961,11 @@
             var evts = that.constructor.events;
 
             for (evt in evts) {
+
+                if (that.replaceEventKey) {
+                    evt = that.replaceEventKey(evt);
+                }
+
                 eventsObjs = rb.parseEventString(evt);
 
                 /* jshint loopfunc: true */
@@ -2051,19 +2070,12 @@
 
         var replaceHTMLSel = rb.memoize(function () {
             var replacer = function replacer(full, f1, f2) {
-                return '[' + rb.attrSel + '="{htmlName}' + f2 + '"]';
+                return '[' + rb.attrSel + '~="{htmlName}' + f2 + '"]';
             };
             return function (str) {
                 return str.replace(regHTMLSel, replacer);
             };
         }(), true);
-
-        var generateFocusClasses = function generateFocusClasses() {
-            focusClass = ['js', 'rb', 'autofocus'].join(rb.nameSeparator);
-            focusSel = '.' + focusClass;
-        };
-
-        rb.ready.then(generateFocusClasses);
 
         rb.parseEventString = rb.memoize(function (eventStr) {
             var i, len, data, opts, char;
@@ -2175,8 +2187,8 @@
          *
          * @memberof rb
          * @param {Element} element - DOM element
-         * @param {String} [componentName] - optional name of the component (if element has no `data-module="componentName"`).
-         * @param {Object} [initialOpts] - only use if component is not initialized otherwise use `setOption`/`setOptions`
+         * @param {String} [componentName] - optional name of the component (if component isn't created yet and the element has no `data-module="componentName"`).
+         * @param {Object} [initialOpts] - only use if component is not created otherwise use `setOption`/`setOptions`
          * @returns {Object} A component instance
          */
         rb.getComponent = function (element, componentName, initialOpts) {
@@ -2205,7 +2217,7 @@
         live.getComponent = rb.getComponent;
 
         /**
-         * Component Base1 Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
+         * Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
          *
          * For the live cycle features see [rb.live.register]{@link rb.live.register}.
          *
@@ -2302,7 +2314,7 @@
             };
 
             Component.prototype.getId = function getId(element, async) {
-                var id;
+                var id = void 0;
 
                 if (typeof element == 'boolean') {
                     async = element;
@@ -2359,6 +2371,15 @@
                 return rb.events.dispatch(this.element, type, opts);
             };
 
+            Component.prototype.triggerRaf = function triggerRaf() {
+                var _this2 = this,
+                    _arguments2 = arguments;
+
+                rb.rAFQueue(function () {
+                    _this2.trigger.apply(_this2, _arguments2);
+                }, true);
+            };
+
             Component.prototype.getElementsByString = function getElementsByString(string, element) {
                 return rb.getElementsByString(this.interpolateName(string), element || this.element);
             };
@@ -2370,68 +2391,6 @@
 
             Component.prototype.setFocus = function setFocus() {
                 return rb.setFocus.apply(rb, arguments);
-            };
-
-            Component.prototype.getFocusElement = function getFocusElement(element) {
-                var focusElement = void 0;
-
-                if (element && element !== true) {
-                    if (element.nodeType == 1) {
-                        focusElement = element;
-                    } else if (typeof element == 'string') {
-                        focusElement = rb.elementFromStr(element, this.element)[0];
-                    }
-                } else {
-                    focusElement = this.options.autofocusSel && this.query(this.options.autofocusSel) || this.query(focusSel);
-                }
-
-                if (!focusElement && (element === true || this.element.classList.contains(focusClass))) {
-                    focusElement = this.element;
-                }
-                return focusElement;
-            };
-
-            Component.prototype.setComponentFocus = function setComponentFocus(element, delay) {
-                var focusElement = void 0;
-
-                if (typeof element == 'number') {
-                    delay = element;
-                    element = null;
-                }
-
-                focusElement = !element || element.nodeType != 1 ? this.getFocusElement(element) : element;
-
-                this.storeActiveElement();
-
-                if (focusElement) {
-                    this.setFocus(focusElement, delay || this.options.focusDelay);
-                }
-            };
-
-            Component.prototype.storeActiveElement = function storeActiveElement() {
-                var activeElement = document.activeElement;
-
-                this._activeElement = activeElement && activeElement.nodeName ? activeElement : null;
-
-                return this._activeElement;
-            };
-
-            Component.prototype.restoreFocus = function restoreFocus(checkInside, delay) {
-                var activeElem = this._activeElement;
-
-                if (!activeElem) {
-                    return;
-                }
-
-                if (typeof checkInside == 'number') {
-                    delay = checkInside;
-                    checkInside = null;
-                }
-
-                this._activeElement = null;
-                if (!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)) {
-                    this.setFocus(activeElem, delay || this.options.focusDelay);
-                }
             };
 
             Component.prototype.interpolateName = function interpolateName(str, isJs) {
@@ -2495,23 +2454,6 @@
                 }
             };
 
-            Component.prototype.setChildOption = function setChildOption($childs, name, value, isSticky) {
-                var run = function run(elem) {
-                    var component = this && this[componentExpando] || elem[componentExpando] || elem;
-                    if (component && component.setOption) {
-                        component.setOption(name, value, isSticky);
-                    }
-                };
-
-                if ($childs.each) {
-                    $childs.each(run);
-                } else if ($childs.forEach) {
-                    $childs.forEach(run);
-                } else {
-                    run($childs);
-                }
-            };
-
             Component.prototype.render = function render(name, data) {
                 if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) == 'object') {
                     data = name;
@@ -2550,8 +2492,6 @@
             return Component;
         }();
 
-        ;
-
         Object.assign(Component, {
             /**
              * defaults Object, represent the default options of the component.
@@ -2563,8 +2503,6 @@
              * @see rb.Component.prototype.setOption
              *
              * @prop {Boolean} defaults.debug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
-             * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
-             * @prop {String} defaults.autofocusSel='' Overrides the js-rb-autofocus selector for the component.
              * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
              * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
              *
@@ -2610,9 +2548,7 @@
              *
              */
             defaults: {
-                focusDelay: 0,
                 debug: null,
-                autofocusSel: '',
                 switchedOff: false,
                 name: '',
                 jsName: ''
@@ -2659,9 +2595,7 @@
         Component.prototype.getElementsFromString = Component.prototype.getElementsByString;
 
         rb.Component = Component;
-
-        generateFocusClasses();
-    })(window, document, rb.live);
+    })(window, document, _globalRb2.default.live);
 
     exports.default = window.rb;
 });

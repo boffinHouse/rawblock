@@ -1,13 +1,13 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', './rb_$/$_slim', './rb_$/$_fx'], factory);
+    define(['exports', './rb_$/$_slim', './utils/global-rb', './rb_$/$_fx'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('./rb_$/$_slim'), require('./rb_$/$_fx'));
+    factory(exports, require('./rb_$/$_slim'), require('./utils/global-rb'), require('./rb_$/$_fx'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.$_slim, global.$_fx);
+    factory(mod.exports, global.$_slim, global.globalRb, global.$_fx);
     global._$ = mod.exports;
   }
 })(this, function (exports, _$_slim) {

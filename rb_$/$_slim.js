@@ -241,11 +241,17 @@ Object.assign(fn, {
         this.elements.forEach(function (elem) {
             var prop;
             var eStyle = elem.style;
+
             for (prop in style) {
                 if (Dom.cssHooks[prop] && Dom.cssHooks[prop].set) {
                     Dom.cssHooks[prop].set(elem, style[prop]);
                 } else {
-                    eStyle[prop] = style[prop];
+                    const propValue = (!Dom.cssNumber[prop] && typeof style[prop] == 'number') ?
+                        style[prop] + 'px' :
+                        style[prop]
+                    ;
+
+                    eStyle[prop] = propValue;
                 }
             }
         });
@@ -778,7 +784,6 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
         requestAnimationFrame(add);
     }
 
-
     Dom.support.boxSizingReliable = boxSizingReliable;
 
     [['height', 'Height'], ['width', 'Width']].forEach(function(names){
@@ -787,14 +792,23 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
 
         ['inner', 'outer', ''].forEach(function(modifier){
             var fnName = modifier ? modifier + names[1] : names[0];
+            var innerName = 'inner' + names[1];
 
-            fn[fnName] = function(margin, value){
+            fn[fnName] = function(margin){
                 var styles, extraStyles, isBorderBox, doc;
                 var ret = 0;
                 var elem = this.elements[0];
 
-                if(margin != null && (typeof margin !== 'boolean' || value)){
-                    rb.log(modifier + names[1] + ' is only supported as getter');
+                if(margin != null && typeof margin == 'number'){
+                    this.each(function(){
+                        const $elem = Dom(elem);
+                        const size = $elem[fnName]() - $elem[innerName]();
+
+                        rb.rAFQueue(()=>{
+                            $elem.css({[cssName]: margin - size});
+                        }, true);
+                    });
+                    return this;
                 }
 
                 if(elem){
@@ -875,10 +889,6 @@ if (!Dom.isReady) {
     document.addEventListener('DOMContentLoaded', function () {
         Dom.isReady = true;
     });
-}
-
-if (!window.rb) {
-    window.rb = {};
 }
 
 if (!window.rb.$) {

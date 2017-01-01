@@ -1,22 +1,15 @@
+import rb from './utils/global-rb';
 import deferred from './utils/deferred';
 
-if (!window.rb) {
-    /**
-     * rawblock main object holds classes and util properties and methods to work with rawblock
-     * @namespace rb
-     */
-    window.rb = {};
-}
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-    require('./utils/rb_debughelpers');
+    require('./utils/debughelpers');
 }
 
 (function (window, document, _undefined) {
     'use strict';
 
     /* Begin: global vars end */
-    const rb = window.rb;
     const regnameSeparator = /\{-}/g;
     const regSplit = /\s*?,\s*?|\s+?/g;
     const slice = Array.prototype.slice;
@@ -123,11 +116,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             state = rb.statePrefix + (state.replace(regnameSeparator, rb.nameSeparator));
             this.toggleClass(state, addRemove);
         }
+
         return this;
     };
 
     $.fn.rbChangeState = $.fn.rbToggleState;
-
 
     /**
      * Works same as jQuery.fn.addClass, but does this in a rAF
@@ -1289,59 +1282,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
         return descriptor;
     };
-
-    /* begin: html escape */
-    // List of HTML entities for escaping.
-    var escapeMap = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#x27;',
-        '`': '&#x60;',
-    };
-
-    // Functions for escaping and unescaping strings to/from HTML interpolation.
-    const createEscaper = function (map) {
-        const escaper = function (match) {
-            return map[match];
-        };
-        // Regexes for identifying a key that needs to be escaped
-        const source = '(?:' + Object.keys(map).join('|') + ')';
-        const testRegexp = new RegExp(source);
-        const replaceRegexp = new RegExp(source, 'g');
-
-        return function (string) {
-            string = string == null ? '' : '' + string;
-            return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
-        };
-    };
-
-    /**
-     * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
-     * their corresponding HTML entities.
-     *
-     * @static
-     * @memberOf rb
-     * @category String
-     * @param {string} [string=''] The string to escape.
-     * @returns {string} Returns the escaped string.
-     * @example
-     *
-     * rb.escape('fred, barney, & pebbles');
-     * // => 'fred, barney, &amp; pebbles'
-     */
-    rb.escape = createEscaper(escapeMap);
-
-    /* eslint-disable no-undef */
-     if (!window._) {
-        window._ = {};
-    }
-    if (!_.escape) {
-        _.escape = rb.escape;
-    }
-    /* eslint-enable no-undef */
-    /* end: html escape */
 
     /**
      * Returns yes, if condition is true-thy no/empty string otherwise. Can be used inside of [`rb.template`]{@link rb.template}
@@ -2583,25 +2523,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 this.isDebug = value;
             } else if ((name == 'name' || name == 'jsName') && this.name && this.jsName && this.logWarn) {
                 this.logWarn('don\'t change name after init.');
-            }
-        }
-
-        setChildOption($childs, name, value, isSticky) {
-            const run = function (elem) {
-                const component = this && this[componentExpando] ||
-                    elem[componentExpando] ||
-                    elem;
-                if (component && component.setOption) {
-                    component.setOption(name, value, isSticky);
-                }
-            };
-
-            if($childs.each){
-                $childs.each(run);
-            } else if($childs.forEach){
-                $childs.forEach(run);
-            } else {
-                run($childs);
             }
         }
 
