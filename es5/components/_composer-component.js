@@ -86,10 +86,19 @@
             }
 
             opts.forEach(function (option) {
-                var optionName = typeof option == 'string' ? option : option.name;
+                var optionName = void 0,
+                    childName = void 0;
                 var compute = option.computeValue;
 
-                initialDefaults[optionName] = compute ? compute(_this2.options[optionName], optionName, _this2) : _this2.options[optionName];
+                if (typeof option == 'string') {
+                    optionName = option;
+                    childName = option;
+                } else {
+                    optionName = option.name;
+                    childName = option.childName || optionName;
+                }
+
+                initialDefaults[childName] = compute ? compute(_this2.options[optionName], optionName, _this2) : _this2.options[optionName];
 
                 if (!_this2[childOptionExpando][optionName]) {
                     _this2[childOptionExpando][optionName] = {};
@@ -98,7 +107,8 @@
                 if (!_this2[childOptionExpando][optionName][componentName]) {
                     _this2[childOptionExpando][optionName][componentName] = {
                         components: [],
-                        compute: compute
+                        compute: compute,
+                        childName: childName
                     };
                 }
             });
@@ -145,7 +155,7 @@
                     var computedValue = option.compute ? option.compute(value, name, _this5) : value;
 
                     option.components.forEach(function (component) {
-                        component.setOption(name, computedValue, isSticky);
+                        component.setOption(option.childName, computedValue, isSticky);
                     });
                 };
 

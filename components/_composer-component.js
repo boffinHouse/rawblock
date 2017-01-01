@@ -27,13 +27,19 @@ class ComposerComponent extends rb.Component {
         }
 
         opts.forEach(option => {
-            const optionName = typeof option == 'string' ?
-                option :
-                option.name
-            ;
+            let optionName, childName;
             const compute = option.computeValue;
 
-            initialDefaults[optionName] = compute ?
+            if(typeof option == 'string'){
+                optionName = option;
+                childName = option;
+            } else {
+                optionName = option.name;
+                childName = option.childName || optionName;
+            }
+
+
+            initialDefaults[childName] = compute ?
                 compute(this.options[optionName], optionName, this) :
                 this.options[optionName]
             ;
@@ -45,7 +51,8 @@ class ComposerComponent extends rb.Component {
             if(!this[childOptionExpando][optionName][componentName]){
                 this[childOptionExpando][optionName][componentName] = {
                     components: [],
-                    compute
+                    compute,
+                    childName,
                 };
             }
 
@@ -93,7 +100,7 @@ class ComposerComponent extends rb.Component {
                 ;
 
                 option.components.forEach((component)=>{
-                    component.setOption(name, computedValue, isSticky);
+                    component.setOption(option.childName, computedValue, isSticky);
                 });
             }
         }

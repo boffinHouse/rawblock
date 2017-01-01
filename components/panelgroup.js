@@ -288,7 +288,8 @@ class PanelGroup extends rb.components._composer_component {
 
         this.createChildComponents('panelbutton', this.$buttons.get(), [
             {
-                name: 'type',
+                name: 'toggle',
+                childName: 'type',
                 computeValue: (value) => value ? 'toggle' : 'open',
             },
             'preventDefault',
