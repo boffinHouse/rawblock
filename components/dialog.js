@@ -177,7 +177,10 @@ class Dialog extends rb.components._focus_component {
         this.$backdrop.css({display: ''});
         this.$backdrop.addClass(rb.statePrefix + 'open');
 
-        rb.$root.rbToggleState('open{-}' + this.name +'{-}within', true);
+        rb.$root
+            .rbToggleState('open{-}' + this.name +'{-}within', true)
+            .rbToggleState('open{-}dialog{-}within', true)
+        ;
 
         if(this._setScrollPadding && this.options.scrollPadding){
             document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
@@ -256,7 +259,10 @@ class Dialog extends rb.components._focus_component {
         }
 
         this.$backdrop.removeClass(rb.statePrefix + 'open');
-        rb.$root.rbToggleState('open{-}' + this.name +'{-}within', false);
+        rb.$root
+            .rbToggleState('open{-}' + this.name +'{-}within', false)
+            .rbToggleState('open{-}dialog{-}within', false)
+        ;
 
         if(this.options.setDisplay){
             clearTimeout(this._displayTimer);
