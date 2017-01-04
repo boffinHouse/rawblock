@@ -123,7 +123,7 @@ rb.fetch = function (url, options) {
 
         options.type = options.type.toUpperCase();
 
-        if(options.processData && data && typeof data == 'object'){
+        if(options.processData && data && typeof data == 'object' && !(data instanceof window.FormData)){
 
             if($.param){
                 data = $.param(data);

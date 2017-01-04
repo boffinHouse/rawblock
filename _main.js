@@ -1099,8 +1099,15 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         setupClick = rb.$.noop;
 
         document.addEventListener('keydown', function (e) {
-            var elem = e.target;
+            const elem = e.target;
             if ((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains(clickClass)) {
+                applyBehavior(elem, e);
+            }
+        }, true);
+
+        document.addEventListener('change', function (e) {
+            const elem = e.target;
+            if (elem.classList.contains(clickClass)) {
                 applyBehavior(elem, e);
             }
         }, true);
