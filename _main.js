@@ -187,6 +187,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @function external:"jQuery.fn".removeRaf
      */
     /**
+     * Works same as jQuery.fn.removeAttr, but does this in a rAF
+     * @function external:"jQuery.fn".removeAttrRaf
+     */
+    /**
      * Works same as jQuery.fn.attr, but does this in a rAF
      * @function external:"jQuery.fn".attrRaf
      */
@@ -203,7 +207,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @function external:"jQuery.fn".rbToggleStateRaf
      */
     ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before',
-        'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'attr', 'prop', 'css', 'rbToggleState'].forEach(($name) => {
+        'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'removeAttr', 'attr', 'prop', 'css', 'rbToggleState'].forEach(($name) => {
         $.fn[`${$name}Raf`] = function(){
             if(this.length){
                 rb.rAFQueue(()=>{

@@ -38,8 +38,7 @@
                 rules: [],
                 isPending: false,
                 isDirty: true,
-                errorRule: null,
-                asyncIndex: -1
+                errorRule: null
             };
 
             element[expando] = validityInfo;
@@ -48,7 +47,7 @@
         return validityInfo;
     }
 
-    function checkRule() {
+    function satifiesRule() {
         // todo
     }
 
@@ -65,25 +64,25 @@
 
         validityInfo.isDirty = true;
 
-        if (validity.valid || validity.customError && errorRule) {
-            if (!errorRule.isAsync || checkRule(errorRule, validityInfo, value)) {
-                var asyncRule = void 0;
+        if (validity.valid || validity.customError && errorRule && (errorRule.isAsync || satifiesRule(errorRule, validityInfo, value))) {
 
-                for (var ruleName in rules) {
-                    var currentRule = rules[ruleName];
+            var asyncRule = void 0;
 
-                    if (ruleName in validity.data && currentRule != errorRule && (currentRule.isAsync && (asyncRule = currentRule) || !checkRule(currentRule, validityInfo, value))) {
-                        break;
-                    }
-                }
+            for (var ruleName in rules) {
+                var currentRule = rules[ruleName];
 
-                if (asyncRule && !validityInfo.errorRule) {
-                    checkAsyncRule(asyncRule, validityInfo, value);
+                if (ruleName in validity.data && currentRule != errorRule && (currentRule.isAsync && (asyncRule = currentRule) || !satifiesRule(currentRule, validityInfo, value))) {
+                    validityInfo.errorRule = currentRule;
+                    break;
                 }
             }
-        }
 
-        validityInfo.isDirty = false;
+            if (asyncRule && !validityInfo.errorRule) {
+                checkAsyncRule(asyncRule, validityInfo, value);
+            }
+
+            validityInfo.isDirty = false;
+        }
     }
 
     var validity = { check: check, addRule: addRule };

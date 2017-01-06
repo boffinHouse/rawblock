@@ -52,7 +52,11 @@ $.fn.scrollIntoView = function (options) {
                 }
 
                 if ( (focus = options.focus) ) {
-                    if(typeof focus == 'string'){
+                    let focusType = typeof focus;
+
+                    if(focusType == 'boolean'){
+                        focus = elem;
+                    } else if(focusType == 'string'){
                         focus = regHash.test(focus) ? document.querySelector(focus) : document.getElementById(focus);
                     }
 
@@ -91,5 +95,7 @@ $.fn.scrollIntoView = function (options) {
 
     return this;
 };
+
+$.fn.rbScrollIntoView = $.fn.scrollIntoView;
 
 export default $.fn.scrollIntoView;

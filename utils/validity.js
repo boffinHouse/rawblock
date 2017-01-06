@@ -21,7 +21,6 @@ function getCustomValidityInfo(element){
             isPending: false,
             isDirty: true,
             errorRule: null,
-            asyncIndex: -1,
         };
 
         element[expando] = validityInfo;
@@ -30,7 +29,7 @@ function getCustomValidityInfo(element){
     return validityInfo;
 }
 
-function checkRule(){
+function satifiesRule(){
     // todo
 }
 
@@ -46,25 +45,26 @@ function check(element){
 
     validityInfo.isDirty = true;
 
-    if(validity.valid || (validity.customError && errorRule)){
-        if(!errorRule.isAsync || checkRule(errorRule, validityInfo, value)){
-            let asyncRule;
+    if(validity.valid || (validity.customError && errorRule && (errorRule.isAsync || satifiesRule(errorRule, validityInfo, value)))){
 
-            for(let ruleName in rules){
-                const currentRule = rules[ruleName];
+        let asyncRule;
 
-                if(ruleName in validity.data && currentRule != errorRule && ( (currentRule.isAsync && (asyncRule = currentRule)) || !checkRule(currentRule, validityInfo, value))){
-                    break;
-                }
-            }
+        for(let ruleName in rules){
+            const currentRule = rules[ruleName];
 
-            if(asyncRule && !validityInfo.errorRule){
-                checkAsyncRule(asyncRule, validityInfo, value);
+            if(ruleName in validity.data && currentRule != errorRule && ( (currentRule.isAsync && (asyncRule = currentRule)) || !satifiesRule(currentRule, validityInfo, value))){
+                validityInfo.errorRule = currentRule;
+                break;
             }
         }
+
+        if(asyncRule && !validityInfo.errorRule){
+            checkAsyncRule(asyncRule, validityInfo, value);
+        }
+
+        validityInfo.isDirty = false;
     }
 
-    validityInfo.isDirty = false;
 }
 
 const validity = {check, addRule};

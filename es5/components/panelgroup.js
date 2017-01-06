@@ -321,7 +321,8 @@
             this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper));
 
             this.createChildComponents('panelbutton', this.$buttons.get(), [{
-                name: 'type',
+                name: 'toggle',
+                childName: 'type',
                 computeValue: function computeValue(value) {
                     return value ? 'toggle' : 'open';
                 }

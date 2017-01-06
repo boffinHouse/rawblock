@@ -16,6 +16,13 @@
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+
     var regHash = /^#/;
     var $ = window.rb.$ || window.jQuery;
 
@@ -77,7 +84,11 @@
                     }
 
                     if (focus = options.focus) {
-                        if (typeof focus == 'string') {
+                        var focusType = typeof focus === 'undefined' ? 'undefined' : _typeof(focus);
+
+                        if (focusType == 'boolean') {
+                            focus = elem;
+                        } else if (focusType == 'string') {
                             focus = regHash.test(focus) ? document.querySelector(focus) : document.getElementById(focus);
                         }
 
@@ -110,6 +121,8 @@
 
         return this;
     };
+
+    $.fn.rbScrollIntoView = $.fn.scrollIntoView;
 
     exports.default = $.fn.scrollIntoView;
 });

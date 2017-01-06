@@ -147,7 +147,7 @@
 
             options.type = options.type.toUpperCase();
 
-            if (options.processData && data && (typeof data === 'undefined' ? 'undefined' : _typeof(data)) == 'object') {
+            if (options.processData && data && (typeof data === 'undefined' ? 'undefined' : _typeof(data)) == 'object' && !(data instanceof window.FormData)) {
 
                 if ($.param) {
                     data = $.param(data);

@@ -223,6 +223,10 @@
          * @function external:"jQuery.fn".removeRaf
          */
         /**
+         * Works same as jQuery.fn.removeAttr, but does this in a rAF
+         * @function external:"jQuery.fn".removeAttrRaf
+         */
+        /**
          * Works same as jQuery.fn.attr, but does this in a rAF
          * @function external:"jQuery.fn".attrRaf
          */
@@ -238,7 +242,7 @@
          * Works same as jQuery.fn.rbToggleState, but does this in a rAF
          * @function external:"jQuery.fn".rbToggleStateRaf
          */
-        ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before', 'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'attr', 'prop', 'css', 'rbToggleState'].forEach(function ($name) {
+        ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before', 'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'removeAttr', 'attr', 'prop', 'css', 'rbToggleState'].forEach(function ($name) {
             $.fn[$name + 'Raf'] = function () {
                 var _this = this,
                     _arguments = arguments;
@@ -1120,6 +1124,13 @@
             document.addEventListener('keydown', function (e) {
                 var elem = e.target;
                 if ((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains(clickClass)) {
+                    applyBehavior(elem, e);
+                }
+            }, true);
+
+            document.addEventListener('change', function (e) {
+                var elem = e.target;
+                if (elem.classList.contains(clickClass)) {
                     applyBehavior(elem, e);
                 }
             }, true);
