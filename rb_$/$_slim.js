@@ -6,8 +6,15 @@ const Dom = function (elements, context) {
     if (!(this instanceof Dom)) {
         return new Dom(elements, context);
     }
+
     if (typeof elements == 'string') {
-        elements = Array.from((context || document).querySelectorAll(elements));
+        if(regHTML.test(elements)){
+            elements = Dom.parseHTML(elements, context);
+        } else if(context && context.length > 1 && context instanceof Dom){
+            return context.find(elements);
+        } else {
+            elements = Array.from((context || document).querySelectorAll(elements));
+        }
     } else if (typeof elements == 'function') {
         if (Dom.isReady) {
             elements(Dom);
@@ -34,6 +41,7 @@ const Dom = function (elements, context) {
 };
 var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
 var regWhite = /\s+/g;
+var regHTML = /^\s*</;
 var fn = Dom.prototype;
 var class2type = {};
 var toString = class2type.toString;
@@ -125,6 +133,11 @@ Object.assign(Dom, {
     cssHooks: {},
     support: {},
     isReady: document.readyState != 'loading',
+    parseHTML: function(string, context = document){
+        const div = context.createElement('div');
+        div.innerHTML = string;
+        return new Dom(div.childNodes).remove().get();
+    },
     noop: function () {
     },
     q: function (sel, context) {
@@ -470,8 +483,8 @@ Object.assign(fn, {
                     data[name] = value;
                 }
             });
-        } else if(this[0]) {
-            const data = getData(this[0], true)._;
+        } else if(this.elements[0]) {
+            const data = getData(this.elements[0], true)._;
 
             ret = name ? data[name] : data;
         }
@@ -598,9 +611,11 @@ fn.detach = fn.remove;
 ['map', 'filter', 'not'].forEach(function (name) {
     var isNot;
     var arrayFn = name;
+
     if ((isNot = name == 'not')) {
         arrayFn = 'filter';
     }
+
     fn[name] = function (fn) {
         var needle;
         var type = typeof fn;
@@ -801,7 +816,7 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
 
                 if(margin != null && typeof margin == 'number'){
                     this.each(function(){
-                        const $elem = Dom(elem);
+                        const $elem = new Dom(elem);
                         const size = $elem[fnName]() - $elem[innerName]();
 
                         rb.rAFQueue(()=>{
@@ -891,7 +906,7 @@ if (!Dom.isReady) {
     });
 }
 
-if (!window.rb.$) {
+if (window.rb && !window.rb.$) {
     /**
      * @memberOf rb
      * @type Function

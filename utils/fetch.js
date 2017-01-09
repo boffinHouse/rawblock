@@ -28,7 +28,7 @@ const getData = function (oReq, obj) {
  *  @param {object} [options.data=null] The send data.
  *  @param {object} [options.headers=null] headers to send.
  *  @param {boolean} [options.processData=true] Data should be processed.
- *  @param {boolean} [options.contentType=true] Wether cCntent-Type should be changed.
+ *  @param {boolean} [options.contentType=true] Wether content-Type should be changed.
  *  @param {boolean} [options.rejectAbort=true] XHR abort/cancel will reject promise.
  *  @param {function} [options.beforeSend] A callback function to allow modification of the XHR object before it is send.
  * @returns {Promise}
@@ -162,12 +162,12 @@ rb.fetch = function (url, options) {
 
         promise.onAbort = function(){
             createAbort();
-            return promise.add(...arguments);
+            return promise.onAbort(...arguments);
         };
 
         promise.offAbort = function(){
             createAbort();
-            return promise.remove(...arguments);
+            return promise.offAbort(...arguments);
         };
 
         promise.getXhr = function(){

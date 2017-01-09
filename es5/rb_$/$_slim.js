@@ -32,8 +32,15 @@
         if (!(this instanceof Dom)) {
             return new Dom(elements, context);
         }
+
         if (typeof elements == 'string') {
-            elements = Array.from((context || document).querySelectorAll(elements));
+            if (regHTML.test(elements)) {
+                elements = Dom.parseHTML(elements, context);
+            } else if (context && context.length > 1 && context instanceof Dom) {
+                return context.find(elements);
+            } else {
+                elements = Array.from((context || document).querySelectorAll(elements));
+            }
         } else if (typeof elements == 'function') {
             if (Dom.isReady) {
                 elements(Dom);
@@ -60,6 +67,7 @@
     };
     var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
     var regWhite = /\s+/g;
+    var regHTML = /^\s*</;
     var fn = Dom.prototype;
     var class2type = {};
     var toString = class2type.toString;
@@ -148,6 +156,13 @@
         cssHooks: {},
         support: {},
         isReady: document.readyState != 'loading',
+        parseHTML: function parseHTML(string) {
+            var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
+
+            var div = context.createElement('div');
+            div.innerHTML = string;
+            return new Dom(div.childNodes).remove().get();
+        },
         noop: function noop() {},
         q: function q(sel, context) {
             return new Dom((context || document).querySelectorAll(sel));
@@ -490,8 +505,8 @@
                         }
                     });
                 })();
-            } else if (this[0]) {
-                var data = getData(this[0], true)._;
+            } else if (this.elements[0]) {
+                var data = getData(this.elements[0], true)._;
 
                 ret = name ? data[name] : data;
             }
@@ -616,9 +631,11 @@
     ['map', 'filter', 'not'].forEach(function (name) {
         var isNot;
         var arrayFn = name;
+
         if (isNot = name == 'not') {
             arrayFn = 'filter';
         }
+
         fn[name] = function (fn) {
             var needle;
             var type = typeof fn === 'undefined' ? 'undefined' : _typeof(fn);
@@ -809,7 +826,7 @@
 
                     if (margin != null && typeof margin == 'number') {
                         this.each(function () {
-                            var $elem = Dom(elem);
+                            var $elem = new Dom(elem);
                             var size = $elem[fnName]() - $elem[innerName]();
 
                             rb.rAFQueue(function () {
@@ -877,7 +894,7 @@
         });
     }
 
-    if (!window.rb.$) {
+    if (window.rb && !window.rb.$) {
         /**
          * @memberOf rb
          * @type Function

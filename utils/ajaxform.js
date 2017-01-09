@@ -1,8 +1,17 @@
+/**
+ * @module ajaxform
+ */
+
 import '../rb_$/$_serialize';
 import fetch from './fetch';
 
 const $ = window.rb.$ || window.jQuery;
 
+/**
+ * Returns option to fetch a form using rb.fetch.
+ * @param element {HTMLFormElement}
+ * @return {{url: (string), type: string, data: *}}
+ */
 export function getFormFetchOptions(element){
     const fetchOpts = {
         url: element.action,
@@ -22,6 +31,12 @@ export function getFormFetchOptions(element){
     return fetchOpts;
 }
 
+/**
+ * Fetches a form using rb.fetch
+ *
+ * @param element {HTMLFormElement}
+ * @return {Promise}
+ */
 export default function fetchForm(element){
     return fetch(getFormFetchOptions(element));
 }
