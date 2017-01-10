@@ -245,15 +245,19 @@ Object.assign(fn, {
     eq: function (number) {
         return new Dom(this.elements[number] ? [this.elements[number]] : []);
     },
-    css: function (style) {
-        var elem;
+    css: function (style, value) {
+        let elem;
         if (typeof style == 'string') {
-            elem = this.elements[0];
-            return elem && Dom.css(elem, style);
+            if(arguments.length == 1){
+                elem = this.elements[0];
+                return elem && Dom.css(elem, style);
+            }
+
+            style = {[style]: value};
         }
         this.elements.forEach(function (elem) {
-            var prop;
-            var eStyle = elem.style;
+            let prop;
+            const eStyle = elem.style;
 
             for (prop in style) {
                 if (Dom.cssHooks[prop] && Dom.cssHooks[prop].set) {
@@ -270,28 +274,41 @@ Object.assign(fn, {
         });
         return this;
     },
-    prop: function (props) {
-        var elem;
+    prop: function (props, value) {
+        let elem;
+
         if (typeof props == 'string') {
-            elem = this.elements[0];
-            return elem && Dom.prop(elem, props);
+            if(arguments.length == 1){
+                elem = this.elements[0];
+                return elem && Dom.prop(elem, props);
+            }
+
+            props = {[props]: value};
         }
+
         this.elements.forEach(function (elem) {
-            var prop;
+            let prop;
+
             for (prop in props) {
                 Dom.prop(elem, prop, props[prop]);
             }
         });
         return this;
     },
-    attr: function (attrs) {
-        var elem;
+    attr: function (attrs, value) {
+        let elem;
+
         if (typeof attrs == 'string') {
-            elem = this.elements[0];
-            return elem && elem.getAttribute(attrs);
+            if(arguments.length == 1){
+                elem = this.elements[0];
+                return elem && elem.getAttribute(attrs);
+            }
+
+            attrs = {[attrs]: value};
         }
         this.elements.forEach(function (elem) {
-            var attr;
+            let attr;
+
             for (attr in attrs) {
                 elem.setAttribute(attr, attrs[attr]);
             }
@@ -494,7 +511,7 @@ Object.assign(fn, {
 });
 
 function getNodesAsOne(nodes){
-    var node = nodes;
+    let node = nodes;
 
     if(!nodes.nodeType){
         if(nodes instanceof Dom){
@@ -669,21 +686,31 @@ fn.detach = fn.remove;
 
 [['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function (action) {
     Dom.fn[action[0]] = function (type, sel, fn) {
-        var useFn;
-        if (typeof sel == 'function') {
-            fn = sel;
-            sel = null;
-        }
-
-        if (sel) {
-            useFn = rb.events.proxies.delegate(fn, sel);
+        if(typeof type == 'object'){
+            this.elements.forEach(function (elem) {
+                let key;
+                for(key in type){
+                    elem[action[1]](key, type[key], false);
+                }
+            });
         } else {
-            useFn = fn;
-        }
+            let useFn;
 
-        this.elements.forEach(function (elem) {
-            elem[action[1]](type, useFn, false);
-        });
+            if (typeof sel == 'function') {
+                fn = sel;
+                sel = null;
+            }
+
+            if (sel) {
+                useFn = rb.events.proxies.delegate(fn, sel);
+            } else {
+                useFn = fn;
+            }
+
+            this.elements.forEach(function (elem) {
+                elem[action[1]](type, useFn, false);
+            });
+        }
 
         return this;
     };
@@ -715,29 +742,7 @@ function getData(element, getAttrs){
         Dom.extend(data._, Dom.extend(rb.parseDataAttrs(element), data._));
     }
 
-
     return data;
-}
-
-if (!('onfocusin' in window) || !('onfocusout' in window)) {
-    [['focusin', 'focus'], ['focusout', 'blur']].forEach(function (evts) {
-        specialEvents[evts[0]] = {
-            setup: function (data, ns, handler) {
-                var focusHandler = function (e) {
-                    handler({type: evts[0], target: e.target});
-                };
-
-                Dom.data(this, '_handler' + evts[0], focusHandler);
-                this.addEventListener(evts[1], focusHandler, true);
-            },
-            teardown: function () {
-                var focusHandler = Dom.data(this, '_handler' + evts[0]);
-                if (focusHandler) {
-                    this.removeEventListener(evts[1], focusHandler, true);
-                }
-            },
-        };
-    });
 }
 
 if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tabIndex != -1){
@@ -807,7 +812,6 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
 
         ['inner', 'outer', ''].forEach(function(modifier){
             var fnName = modifier ? modifier + names[1] : names[0];
-            var innerName = 'inner' + names[1];
 
             fn[fnName] = function(margin){
                 var styles, extraStyles, isBorderBox, doc;
@@ -817,7 +821,7 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
                 if(margin != null && typeof margin == 'number'){
                     this.each(function(){
                         const $elem = new Dom(elem);
-                        const size = $elem[fnName]() - $elem[innerName]();
+                        const size = $elem[fnName]() - $elem[cssName]();
 
                         rb.rAFQueue(()=>{
                             $elem.css({[cssName]: margin - size});
