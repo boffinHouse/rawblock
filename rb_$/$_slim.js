@@ -486,7 +486,9 @@ Object.assign(fn, {
     data: function(name, value){
         let ret;
 
-        if(arguments.length){
+        const isSetter = typeof name == 'object' || value != undefined;
+
+        if(isSetter){
             const mergeObject = typeof name != 'string';
 
             ret = this;

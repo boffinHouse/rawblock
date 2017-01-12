@@ -13,8 +13,8 @@ const $ = window.rb.$;
  * //<div id="yo"></div>
  * //<a data-target="yo"></a>
  *
- * $('#yo').attrLinked('data-target=id'); // returns '[data-target="yo"]' elements.
- * $('#yo').attrLinked('data-target=id').attrLinked('id=data-target'); // returns '[id="yo"]' elements.
+ * $('#yo').attrLinked('data-target={id}'); // returns '[data-target="yo"]' elements.
+ * $('#yo').attrLinked('data-target={id}').attrLinked('id={data-target}'); // returns '[id="yo"]' elements.
  */
 $.fn.attrLinked = function (attributeSelector) {
     let newCollection;
