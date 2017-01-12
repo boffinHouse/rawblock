@@ -40,7 +40,7 @@ const addProps = function(param){
 rb.deserialize = function(str){
     const obj = {};
 
-    str.replace(regQ, '').replace(regPlus, ' ').split('&').forEach(addProps, obj);
+    (str || '').replace(regQ, '').replace(regPlus, ' ').split('&').forEach(addProps, obj);
 
     return obj;
 };
