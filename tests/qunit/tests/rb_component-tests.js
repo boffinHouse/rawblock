@@ -22,7 +22,7 @@
             }
         };
 
-        classes[name] = rb.live.register(name, class extends rb.Component {
+        classes[name] = rb.live.register(name, class extends rb.components._focus_component {
             static ext1(){
 
             }

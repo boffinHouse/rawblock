@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './itemscroller', '../utils/rb_keyboardfocus'], factory);
+        define(['exports', './itemscroller', '../utils/keyboardfocus'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./itemscroller'), require('../utils/rb_keyboardfocus'));
+        factory(exports, require('./itemscroller'), require('../utils/keyboardfocus'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.itemscroller, global.rb_keyboardfocus);
+        factory(mod.exports, global.itemscroller, global.keyboardfocus);
         global.itemscrollerPlayer = mod.exports;
     }
 })(this, function (exports) {

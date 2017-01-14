@@ -1,4 +1,5 @@
-import '../utils/rb_scrollbarwidth';
+import '../utils/scrollbarwidth';
+import './_focus-component';
 
 const rb = window.rb;
 const $ = rb.$;
@@ -9,7 +10,7 @@ const regInputs = /^(?:input|textarea)$/i;
  *
  * @alias rb.components.dialog
  *
- * @extends rb.Component
+ * @extends rb.components._focus_component
  *
  * @param element {Element}
  * @param [initialDefaults] {OptionsObject}
@@ -31,10 +32,10 @@ const regInputs = /^(?:input|textarea)$/i;
  *      console.log(rb.$(this).rbComponent().isOpen);
  * });
  */
-class Dialog extends rb.Component {
+class Dialog extends rb.components._focus_component {
     /**
      * @static
-     * @mixes rb.Component.defaults
+     * @mixes rb.components._focus_component.defaults
      *
      * @property {Boolean} defaults.open=false Whether the dialog should be open by default
      * @property {Boolean} defaults.appendToBody=true
@@ -176,7 +177,10 @@ class Dialog extends rb.Component {
         this.$backdrop.css({display: ''});
         this.$backdrop.addClass(rb.statePrefix + 'open');
 
-        rb.$root.rbToggleState('open{-}' + this.name +'{-}within', true);
+        rb.$root
+            .rbToggleState('open{-}' + this.name +'{-}within', true)
+            .rbToggleState('open{-}dialog{-}within', true)
+        ;
 
         if(this._setScrollPadding && this.options.scrollPadding){
             document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
@@ -255,7 +259,10 @@ class Dialog extends rb.Component {
         }
 
         this.$backdrop.removeClass(rb.statePrefix + 'open');
-        rb.$root.rbToggleState('open{-}' + this.name +'{-}within', false);
+        rb.$root
+            .rbToggleState('open{-}' + this.name +'{-}within', false)
+            .rbToggleState('open{-}dialog{-}within', false)
+        ;
 
         if(this.options.setDisplay){
             clearTimeout(this._displayTimer);

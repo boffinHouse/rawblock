@@ -1,5 +1,5 @@
 import './itemscroller';
-import '../utils/rb_keyboardfocus';
+import '../utils/keyboardfocus';
 
 const rb = window.rb;
 

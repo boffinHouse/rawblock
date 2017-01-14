@@ -1,9 +1,6 @@
-if (!window.rb) {
-    window.rb = {};
-}
-let getPseudoToParse;
+import rb from './utils/global-rb';
 
-const rb = window.rb;
+let getPseudoToParse;
 
 const regStartQuote = /^"?'?"?/;
 const regEndQuote = /"?'?"?$/;

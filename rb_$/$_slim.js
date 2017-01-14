@@ -6,8 +6,15 @@ const Dom = function (elements, context) {
     if (!(this instanceof Dom)) {
         return new Dom(elements, context);
     }
+
     if (typeof elements == 'string') {
-        elements = Array.from((context || document).querySelectorAll(elements));
+        if(regHTML.test(elements)){
+            elements = Dom.parseHTML(elements, context);
+        } else if(context && context.length > 1 && context instanceof Dom){
+            return context.find(elements);
+        } else {
+            elements = Array.from((context || document).querySelectorAll(elements));
+        }
     } else if (typeof elements == 'function') {
         if (Dom.isReady) {
             elements(Dom);
@@ -34,6 +41,7 @@ const Dom = function (elements, context) {
 };
 var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
 var regWhite = /\s+/g;
+var regHTML = /^\s*</;
 var fn = Dom.prototype;
 var class2type = {};
 var toString = class2type.toString;
@@ -125,6 +133,11 @@ Object.assign(Dom, {
     cssHooks: {},
     support: {},
     isReady: document.readyState != 'loading',
+    parseHTML: function(string, context = document){
+        const div = context.createElement('div');
+        div.innerHTML = string;
+        return new Dom(div.childNodes).remove().get();
+    },
     noop: function () {
     },
     q: function (sel, context) {
@@ -232,47 +245,70 @@ Object.assign(fn, {
     eq: function (number) {
         return new Dom(this.elements[number] ? [this.elements[number]] : []);
     },
-    css: function (style) {
-        var elem;
+    css: function (style, value) {
+        let elem;
         if (typeof style == 'string') {
-            elem = this.elements[0];
-            return elem && Dom.css(elem, style);
+            if(arguments.length == 1){
+                elem = this.elements[0];
+                return elem && Dom.css(elem, style);
+            }
+
+            style = {[style]: value};
         }
         this.elements.forEach(function (elem) {
-            var prop;
-            var eStyle = elem.style;
+            let prop;
+            const eStyle = elem.style;
+
             for (prop in style) {
                 if (Dom.cssHooks[prop] && Dom.cssHooks[prop].set) {
                     Dom.cssHooks[prop].set(elem, style[prop]);
                 } else {
-                    eStyle[prop] = style[prop];
+                    const propValue = (!Dom.cssNumber[prop] && typeof style[prop] == 'number') ?
+                        style[prop] + 'px' :
+                        style[prop]
+                    ;
+
+                    eStyle[prop] = propValue;
                 }
             }
         });
         return this;
     },
-    prop: function (props) {
-        var elem;
+    prop: function (props, value) {
+        let elem;
+
         if (typeof props == 'string') {
-            elem = this.elements[0];
-            return elem && Dom.prop(elem, props);
+            if(arguments.length == 1){
+                elem = this.elements[0];
+                return elem && Dom.prop(elem, props);
+            }
+
+            props = {[props]: value};
         }
+
         this.elements.forEach(function (elem) {
-            var prop;
+            let prop;
+
             for (prop in props) {
                 Dom.prop(elem, prop, props[prop]);
             }
         });
         return this;
     },
-    attr: function (attrs) {
-        var elem;
+    attr: function (attrs, value) {
+        let elem;
+
         if (typeof attrs == 'string') {
-            elem = this.elements[0];
-            return elem && elem.getAttribute(attrs);
+            if(arguments.length == 1){
+                elem = this.elements[0];
+                return elem && elem.getAttribute(attrs);
+            }
+
+            attrs = {[attrs]: value};
         }
         this.elements.forEach(function (elem) {
-            var attr;
+            let attr;
+
             for (attr in attrs) {
                 elem.setAttribute(attr, attrs[attr]);
             }
@@ -450,7 +486,9 @@ Object.assign(fn, {
     data: function(name, value){
         let ret;
 
-        if(arguments.length){
+        const isSetter = typeof name == 'object' || value != undefined;
+
+        if(isSetter){
             const mergeObject = typeof name != 'string';
 
             ret = this;
@@ -464,8 +502,8 @@ Object.assign(fn, {
                     data[name] = value;
                 }
             });
-        } else if(this[0]) {
-            const data = getData(this[0], true)._;
+        } else if(this.elements[0]) {
+            const data = getData(this.elements[0], true)._;
 
             ret = name ? data[name] : data;
         }
@@ -475,7 +513,7 @@ Object.assign(fn, {
 });
 
 function getNodesAsOne(nodes){
-    var node = nodes;
+    let node = nodes;
 
     if(!nodes.nodeType){
         if(nodes instanceof Dom){
@@ -592,9 +630,11 @@ fn.detach = fn.remove;
 ['map', 'filter', 'not'].forEach(function (name) {
     var isNot;
     var arrayFn = name;
+
     if ((isNot = name == 'not')) {
         arrayFn = 'filter';
     }
+
     fn[name] = function (fn) {
         var needle;
         var type = typeof fn;
@@ -648,21 +688,31 @@ fn.detach = fn.remove;
 
 [['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function (action) {
     Dom.fn[action[0]] = function (type, sel, fn) {
-        var useFn;
-        if (typeof sel == 'function') {
-            fn = sel;
-            sel = null;
-        }
-
-        if (sel) {
-            useFn = rb.events.proxies.delegate(fn, sel);
+        if(typeof type == 'object'){
+            this.elements.forEach(function (elem) {
+                let key;
+                for(key in type){
+                    elem[action[1]](key, type[key], false);
+                }
+            });
         } else {
-            useFn = fn;
-        }
+            let useFn;
 
-        this.elements.forEach(function (elem) {
-            elem[action[1]](type, useFn, false);
-        });
+            if (typeof sel == 'function') {
+                fn = sel;
+                sel = null;
+            }
+
+            if (sel) {
+                useFn = rb.events.proxies.delegate(fn, sel);
+            } else {
+                useFn = fn;
+            }
+
+            this.elements.forEach(function (elem) {
+                elem[action[1]](type, useFn, false);
+            });
+        }
 
         return this;
     };
@@ -694,29 +744,7 @@ function getData(element, getAttrs){
         Dom.extend(data._, Dom.extend(rb.parseDataAttrs(element), data._));
     }
 
-
     return data;
-}
-
-if (!('onfocusin' in window) || !('onfocusout' in window)) {
-    [['focusin', 'focus'], ['focusout', 'blur']].forEach(function (evts) {
-        specialEvents[evts[0]] = {
-            setup: function (data, ns, handler) {
-                var focusHandler = function (e) {
-                    handler({type: evts[0], target: e.target});
-                };
-
-                Dom.data(this, '_handler' + evts[0], focusHandler);
-                this.addEventListener(evts[1], focusHandler, true);
-            },
-            teardown: function () {
-                var focusHandler = Dom.data(this, '_handler' + evts[0]);
-                if (focusHandler) {
-                    this.removeEventListener(evts[1], focusHandler, true);
-                }
-            },
-        };
-    });
 }
 
 if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tabIndex != -1){
@@ -778,7 +806,6 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
         requestAnimationFrame(add);
     }
 
-
     Dom.support.boxSizingReliable = boxSizingReliable;
 
     [['height', 'Height'], ['width', 'Width']].forEach(function(names){
@@ -788,13 +815,21 @@ if(document.createElement('a').tabIndex !== 0 || document.createElement('i').tab
         ['inner', 'outer', ''].forEach(function(modifier){
             var fnName = modifier ? modifier + names[1] : names[0];
 
-            fn[fnName] = function(margin, value){
+            fn[fnName] = function(margin){
                 var styles, extraStyles, isBorderBox, doc;
                 var ret = 0;
                 var elem = this.elements[0];
 
-                if(margin != null && (typeof margin !== 'boolean' || value)){
-                    rb.log(modifier + names[1] + ' is only supported as getter');
+                if(margin != null && typeof margin == 'number'){
+                    this.each(function(){
+                        const $elem = new Dom(elem);
+                        const size = $elem[fnName]() - $elem[cssName]();
+
+                        rb.rAFQueue(()=>{
+                            $elem.css({[cssName]: margin - size});
+                        }, true);
+                    });
+                    return this;
                 }
 
                 if(elem){
@@ -877,11 +912,7 @@ if (!Dom.isReady) {
     });
 }
 
-if (!window.rb) {
-    window.rb = {};
-}
-
-if (!window.rb.$) {
+if (window.rb && !window.rb.$) {
     /**
      * @memberOf rb
      * @type Function

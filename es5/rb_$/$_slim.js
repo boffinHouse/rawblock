@@ -32,8 +32,15 @@
         if (!(this instanceof Dom)) {
             return new Dom(elements, context);
         }
+
         if (typeof elements == 'string') {
-            elements = Array.from((context || document).querySelectorAll(elements));
+            if (regHTML.test(elements)) {
+                elements = Dom.parseHTML(elements, context);
+            } else if (context && context.length > 1 && context instanceof Dom) {
+                return context.find(elements);
+            } else {
+                elements = Array.from((context || document).querySelectorAll(elements));
+            }
         } else if (typeof elements == 'function') {
             if (Dom.isReady) {
                 elements(Dom);
@@ -60,6 +67,7 @@
     };
     var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
     var regWhite = /\s+/g;
+    var regHTML = /^\s*</;
     var fn = Dom.prototype;
     var class2type = {};
     var toString = class2type.toString;
@@ -148,6 +156,13 @@
         cssHooks: {},
         support: {},
         isReady: document.readyState != 'loading',
+        parseHTML: function parseHTML(string) {
+            var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
+
+            var div = context.createElement('div');
+            div.innerHTML = string;
+            return new Dom(div.childNodes).remove().get();
+        },
         noop: function noop() {},
         q: function q(sel, context) {
             return new Dom((context || document).querySelectorAll(sel));
@@ -261,11 +276,14 @@
             this.elements.forEach(function (elem) {
                 var prop;
                 var eStyle = elem.style;
+
                 for (prop in style) {
                     if (Dom.cssHooks[prop] && Dom.cssHooks[prop].set) {
                         Dom.cssHooks[prop].set(elem, style[prop]);
                     } else {
-                        eStyle[prop] = style[prop];
+                        var propValue = !Dom.cssNumber[prop] && typeof style[prop] == 'number' ? style[prop] + 'px' : style[prop];
+
+                        eStyle[prop] = propValue;
                     }
                 }
             });
@@ -487,8 +505,8 @@
                         }
                     });
                 })();
-            } else if (this[0]) {
-                var data = getData(this[0], true)._;
+            } else if (this.elements[0]) {
+                var data = getData(this.elements[0], true)._;
 
                 ret = name ? data[name] : data;
             }
@@ -613,9 +631,11 @@
     ['map', 'filter', 'not'].forEach(function (name) {
         var isNot;
         var arrayFn = name;
+
         if (isNot = name == 'not') {
             arrayFn = 'filter';
         }
+
         fn[name] = function (fn) {
             var needle;
             var type = typeof fn === 'undefined' ? 'undefined' : _typeof(fn);
@@ -797,14 +817,25 @@
 
             ['inner', 'outer', ''].forEach(function (modifier) {
                 var fnName = modifier ? modifier + names[1] : names[0];
+                var innerName = 'inner' + names[1];
 
-                fn[fnName] = function (margin, value) {
+                fn[fnName] = function (margin) {
                     var styles, extraStyles, isBorderBox, doc;
                     var ret = 0;
                     var elem = this.elements[0];
 
-                    if (margin != null && (typeof margin !== 'boolean' || value)) {
-                        rb.log(modifier + names[1] + ' is only supported as getter');
+                    if (margin != null && typeof margin == 'number') {
+                        this.each(function () {
+                            var $elem = new Dom(elem);
+                            var size = $elem[fnName]() - $elem[innerName]();
+
+                            rb.rAFQueue(function () {
+                                var _$elem$css;
+
+                                $elem.css((_$elem$css = {}, _$elem$css[cssName] = margin - size, _$elem$css));
+                            }, true);
+                        });
+                        return this;
                     }
 
                     if (elem) {
@@ -863,11 +894,7 @@
         });
     }
 
-    if (!window.rb) {
-        window.rb = {};
-    }
-
-    if (!window.rb.$) {
+    if (window.rb && !window.rb.$) {
         /**
          * @memberOf rb
          * @type Function

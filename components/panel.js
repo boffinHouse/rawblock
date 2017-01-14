@@ -1,6 +1,7 @@
 import './panelbutton';
-import '../utils/rb$_slide-up-down';
-import '../utils/rb_contains';
+import './_focus-component';
+import '../utils/$_slide-up-down';
+import '../utils/contains';
 
 const rb = window.rb;
 const $ = rb.$;
@@ -9,7 +10,7 @@ const regInputs = /^(?:input|textarea)$/i;
 /**
  * Class component to create a panel. The visibility should be handled using CSS. The component mainly toggles the class `is-open`.
  * @alias rb.components.panel
- * @extends rb.Component
+ * @extends rb.components._focus_component
  *
  * @param element
  * @param initialDefaults
@@ -30,10 +31,11 @@ const regInputs = /^(?:input|textarea)$/i;
  *      console.log(rb.$(this).rbComponent().isOpen);
  * });
  */
-class Panel extends rb.Component {
+class Panel extends rb.components._focus_component {
     /**
      * @static
-     * @mixes rb.Component.defaults
+     * @mixes rb.components._focus_component.defaults
+     *
      * @property {Object} defaults
      * @property {String} defaults.animation='' Predefined animation: 'slide'. These should be combined with CSS transitions or animations.
      * @property {String} defaults.easing='' CSS Easing function for the animation.

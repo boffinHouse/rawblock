@@ -84,6 +84,7 @@
      * @param [initialDefaults] {OptionsObject}
      *
      * @fires componentName#changed
+     * @fires componentName#selectedchanged
      *
      * @example
      * <div class="js-rb-live" data-module="listbox">
@@ -101,7 +102,7 @@
                 return {
                     focusElement: '',
                     defaultSelected: 0,
-                    checkWithSpace: false,
+                    checkWithSpace: true,
                     disconnected: false
                 };
             }

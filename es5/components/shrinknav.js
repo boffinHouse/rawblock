@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', '../utils/rb_resize'], factory);
+        define(['exports', '../utils/resize'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('../utils/rb_resize'));
+        factory(exports, require('../utils/resize'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.rb_resize);
+        factory(mod.exports, global.resize);
         global.shrinknav = mod.exports;
     }
 })(this, function (exports) {

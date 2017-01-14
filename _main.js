@@ -1,23 +1,20 @@
-if (!window.rb) {
-    /**
-     * rawblock main object holds classes and util properties and methods to work with rawblock
-     * @namespace rb
-     */
-    window.rb = {};
-}
+import rb from './utils/global-rb';
+import deferred from './utils/deferred';
+
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-    require('./utils/rb_debughelpers');
+    require('./utils/debughelpers');
 }
 
 (function (window, document, _undefined) {
     'use strict';
 
     /* Begin: global vars end */
-    var rb = window.rb;
-    var regnameSeparator = /\{-}/g;
-    var regSplit = /\s*?,\s*?|\s+?/g;
-    var slice = Array.prototype.slice;
+    const regnameSeparator = /\{-}/g;
+    const regSplit = /\s*?,\s*?|\s+?/g;
+    const slice = Array.prototype.slice;
+
+    rb.deferred = deferred;
 
     /**
      * The jQuery or dom.js (rb.$) plugin namespace.
@@ -108,35 +105,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
     /* End: ID/Symbol */
 
-	/**
-     * Creates a promise with a resolve and a reject method.
-     * @returns {Deferred}
-     */
-    rb.deferred = function(){
-        const tmp = {
-            isResolved: false,
-            isRejected: false,
-            isDone: false,
-        };
-
-        const promise = new Promise(function(resolve, reject){
-            tmp.resolve = function(data){
-                promise.isResolved = true;
-                promise.isDone = true;
-                return resolve(data);
-            };
-            tmp.reject = function(data){
-                promise.isRejected = true;
-                promise.isDone = true;
-                return reject(data);
-            };
-        });
-
-        Object.assign(promise, tmp);
-
-        return promise;
-    };
-
     /**
      * A jQuery/rb.$ plugin to add or remove state classes.
      * @param state {string}
@@ -148,11 +116,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             state = rb.statePrefix + (state.replace(regnameSeparator, rb.nameSeparator));
             this.toggleClass(state, addRemove);
         }
+
         return this;
     };
 
     $.fn.rbChangeState = $.fn.rbToggleState;
-
 
     /**
      * Works same as jQuery.fn.addClass, but does this in a rAF
@@ -219,6 +187,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @function external:"jQuery.fn".removeRaf
      */
     /**
+     * Works same as jQuery.fn.removeAttr, but does this in a rAF
+     * @function external:"jQuery.fn".removeAttrRaf
+     */
+    /**
      * Works same as jQuery.fn.attr, but does this in a rAF
      * @function external:"jQuery.fn".attrRaf
      */
@@ -235,7 +207,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @function external:"jQuery.fn".rbToggleStateRaf
      */
     ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before',
-        'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'attr', 'prop', 'css', 'rbToggleState'].forEach(($name) => {
+        'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'removeAttr', 'attr', 'prop', 'css', 'rbToggleState'].forEach(($name) => {
         $.fn[`${$name}Raf`] = function(){
             if(this.length){
                 rb.rAFQueue(()=>{
@@ -1131,8 +1103,15 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         setupClick = rb.$.noop;
 
         document.addEventListener('keydown', function (e) {
-            var elem = e.target;
+            const elem = e.target;
             if ((e.keyCode == 40 || e.keyCode == 32 || e.keyCode == 13) && elem.classList.contains(clickClass)) {
+                applyBehavior(elem, e);
+            }
+        }, true);
+
+        document.addEventListener('change', function (e) {
+            const elem = e.target;
+            if (elem.classList.contains(clickClass)) {
                 applyBehavior(elem, e);
             }
         }, true);
@@ -1314,59 +1293,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
         return descriptor;
     };
-
-    /* begin: html escape */
-    // List of HTML entities for escaping.
-    var escapeMap = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#x27;',
-        '`': '&#x60;',
-    };
-
-    // Functions for escaping and unescaping strings to/from HTML interpolation.
-    const createEscaper = function (map) {
-        const escaper = function (match) {
-            return map[match];
-        };
-        // Regexes for identifying a key that needs to be escaped
-        const source = '(?:' + Object.keys(map).join('|') + ')';
-        const testRegexp = new RegExp(source);
-        const replaceRegexp = new RegExp(source, 'g');
-
-        return function (string) {
-            string = string == null ? '' : '' + string;
-            return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
-        };
-    };
-
-    /**
-     * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
-     * their corresponding HTML entities.
-     *
-     * @static
-     * @memberOf rb
-     * @category String
-     * @param {string} [string=''] The string to escape.
-     * @returns {string} Returns the escaped string.
-     * @example
-     *
-     * rb.escape('fred, barney, & pebbles');
-     * // => 'fred, barney, &amp; pebbles'
-     */
-    rb.escape = createEscaper(escapeMap);
-
-    /* eslint-disable no-undef */
-     if (!window._) {
-        window._ = {};
-    }
-    if (!_.escape) {
-        _.escape = rb.escape;
-    }
-    /* eslint-enable no-undef */
-    /* end: html escape */
 
     /**
      * Returns yes, if condition is true-thy no/empty string otherwise. Can be used inside of [`rb.template`]{@link rb.template}
@@ -2005,7 +1931,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 (function (window, document, live, _undefined) {
     'use strict';
 
-    let focusClass, focusSel;
     const rb = window.rb;
     const $ = rb.$;
     const componentExpando = live.componentExpando;
@@ -2139,13 +2064,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             return str.replace(regHTMLSel, replacer);
         };
     })(), true);
-
-    const generateFocusClasses = function(){
-        focusClass = ['js', 'rb', 'autofocus'].join(rb.nameSeparator);
-        focusSel = '.' + focusClass;
-    };
-
-    rb.ready.then(generateFocusClasses);
 
     rb.parseEventString = rb.memoize(function(eventStr){
         var i, len, data, opts, char;
@@ -2496,97 +2414,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
 
         /**
-         *
-         * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
-         * @returns {undefined|Element}
-         */
-        getFocusElement(element){
-            let focusElement;
-
-            if (element && element !== true) {
-                if (element.nodeType == 1) {
-                    focusElement = element;
-                } else if (typeof element == 'string') {
-                    focusElement = rb.elementFromStr(element, this.element)[0];
-                }
-            } else {
-                focusElement = this.options.autofocusSel &&
-                    this.query(this.options.autofocusSel) ||
-                    this.query(focusSel);
-            }
-
-            if (!focusElement && (element === true || this.element.classList.contains(focusClass))) {
-                focusElement = this.element;
-            }
-            return focusElement;
-        }
-
-        /**
-         * Sets the focus and remembers the activeElement before. If setComponentFocus is invoked with no argument. The element with the class `js-rb-autofocus` inside of the component element is focused.
-         * @param [element] {Element|Boolean|String} The element that should be focused. In case a string is passed the string is converted to an element using `rb.elementFromStr`
-         * @param [delay] {Number} The delay that should be used to focus an element.
-         */
-        setComponentFocus(element, delay) {
-            let focusElement;
-
-            if (typeof element == 'number') {
-                delay = element;
-                element = null;
-            }
-
-            focusElement = (!element || element.nodeType != 1) ?
-                this.getFocusElement(element) :
-                element
-            ;
-
-            this.storeActiveElement();
-
-            if (focusElement) {
-                this.setFocus(focusElement, delay || this.options.focusDelay);
-            }
-        }
-
-        /**
-         * stores the activeElement for later restore.
-         *
-         * @returns {Element}
-         *
-         * @see rb.Component.prototype.restoreFocus
-         */
-        storeActiveElement(){
-            const activeElement = document.activeElement;
-
-            this._activeElement = (activeElement && activeElement.nodeName) ?
-                activeElement :
-                null;
-
-            return this._activeElement;
-        }
-
-        /**
-         * Restores the focus to the element, that had focus before `setComponentFocus` was invoked.
-         * @param [checkInside] {Boolean} If checkInside is true, the focus is only restored, if the current activeElement is inside the component itself.
-         * @param [delay] {Number}
-         */
-        restoreFocus(checkInside, delay) {
-            const activeElem = this._activeElement;
-
-            if (!activeElem) {
-                return;
-            }
-
-            if (typeof checkInside == 'number') {
-                delay = checkInside;
-                checkInside = null;
-            }
-
-            this._activeElement = null;
-            if (!checkInside || this.element == document.activeElement || this.element.contains(document.activeElement)) {
-                this.setFocus(activeElem, delay || this.options.focusDelay);
-            }
-        }
-
-        /**
          * Interpolates {name}, {jsName} and {htmlName} to the name of the component. Helps to generate BEM-style Class-Structure.
          * @param {String} str
          * @param {Boolean} [isJs=false]
@@ -2710,25 +2537,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
         }
 
-        setChildOption($childs, name, value, isSticky) {
-            const run = function (elem) {
-                const component = this && this[componentExpando] ||
-                    elem[componentExpando] ||
-                    elem;
-                if (component && component.setOption) {
-                    component.setOption(name, value, isSticky);
-                }
-            };
-
-            if($childs.each){
-                $childs.each(run);
-            } else if($childs.forEach){
-                $childs.forEach(run);
-            } else {
-                run($childs);
-            }
-        }
-
         /**
          * Convenient method to render a template. Expects a template function with the given name added to the templates hash property of the component. The data will be extended with the name of the component.
          * @param {String} [name]
@@ -2814,8 +2622,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          * @see rb.Component.prototype.setOption
          *
          * @prop {Boolean} defaults.debug=rb.isDebug If `true` log method wirtes into console. Inherits from `rb.isDebug`.
-         * @prop {Number} defaults.focusDelay=0 Default focus delay for `setComponentFocus`. Can be used to avoid interference between focusing and an animation.
-         * @prop {String} defaults.autofocusSel='' Overrides the js-rb-autofocus selector for the component.
          * @prop {String|undefined} defaults.name=undefined Overrides the name of the component, which is used for class names by `interpolateName` and its dependent methods.
          * @prop {Boolean} defaults.jsName=undefined Overrides the jsName of the component, which is used for events by `interpolateName` and its dependent methods.
          *
@@ -2861,9 +2667,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          *
          */
         defaults: {
-            focusDelay: 0,
             debug: null,
-            autofocusSel: '',
             switchedOff: false,
             name: '',
             jsName: '',
@@ -2910,8 +2714,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     Component.prototype.getElementsFromString = Component.prototype.getElementsByString;
 
     rb.Component = Component;
-
-    generateFocusClasses();
 
 })(window, document, rb.live);
 

@@ -1,0 +1,38 @@
+.selectlist-panelgroup {
+    @include rb-js-export((
+        name: selectlist-panelgroup,
+    ));
+    position: relative;
+}
+
+.selectlist-panelgroup-panel {
+    display: none;
+    position: absolute;
+    outline: none;
+    z-index: 9;
+
+    &.is-open {
+        display: block;
+    }
+}
+
+.selectlist-listbox {
+    @include rb-js-export((
+        name: selectlist-listbox,
+    ));
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+}
+
+.selectlist-listbox-item {
+    display: block;
+
+    &.is-selected {
+        outline: 1px dotted #aaa;
+    }
+
+    &.is-checked {
+        background: #0a6ebd;
+    }
+}
