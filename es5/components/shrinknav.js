@@ -79,7 +79,7 @@
      * @param element {Element}
      * @param [initialDefaults] {OptionsObject}
      *
-     * @fires shrinknav#changed
+     * @fires componentName#changed
      *
      * @example
      * <div class="js-rb-live" data-module="shrinknav"></div>
@@ -145,9 +145,9 @@
 
         ShrinkNav.prototype._calcMinItems = function _calcMinItems() {
             var fullLength = this.allItems.length;
-            var _options = this.options;
-            var minSubItems = _options.minSubItems;
-            var minItems = _options.minItems;
+            var _options = this.options,
+                minSubItems = _options.minSubItems,
+                minItems = _options.minItems;
 
             var needItems = minSubItems + minItems;
 
@@ -326,10 +326,10 @@
         ShrinkNav.prototype._getItems = function _getItems() {
             var _this4 = this;
 
-            var _options2 = this.options;
-            var items = _options2.items;
-            var toggleItemSelector = _options2.toggleItemSelector;
-            var togglePanel = _options2.togglePanel;
+            var _options2 = this.options,
+                items = _options2.items,
+                toggleItemSelector = _options2.toggleItemSelector,
+                togglePanel = _options2.togglePanel;
 
 
             var toggleItem = this.query(toggleItemSelector);

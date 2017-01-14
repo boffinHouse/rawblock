@@ -83,7 +83,7 @@
      * @param element {Element}
      * @param [initialDefaults] {OptionsObject}
      *
-     * @fires listbox#changed
+     * @fires componentName#changed
      *
      * @example
      * <div class="js-rb-live" data-module="listbox">
@@ -328,7 +328,7 @@
         };
 
         Listbox.prototype._changeChecked = function _changeChecked() {
-            this.$items.filter('.' + rb.statePrefix + 'checked').rbChangeState('checked').removeAttr('aria-checked');
+            this.$items.filter('.' + rb.statePrefix + 'checked').rbToggleState('checked', false).removeAttr('aria-checked');
 
             if (this.checkedItem) {
                 this.checkedItem.classList.add(rb.statePrefix + 'checked');

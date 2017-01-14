@@ -326,6 +326,20 @@
 
             return this;
         },
+        text: function text(htmlstring) {
+            var elem;
+
+            if (!arguments.length) {
+                elem = this.elements[0];
+                return elem && elem.textContent || '';
+            }
+
+            this.elements.forEach(function (elem) {
+                elem.textContent = htmlstring;
+            });
+
+            return this;
+        },
         before: function before(htmlstringOrDom) {
             var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : _typeof(htmlstringOrDom)) != 'object';
             var target = !isHTMLString ? this.first() : this;
@@ -451,6 +465,35 @@
         },
         last: function last() {
             return Dom(this.elements[this.elements.length - 1]);
+        },
+        data: function data(name, value) {
+            var _this = this;
+
+            var ret = void 0;
+
+            if (arguments.length) {
+                (function () {
+                    var mergeObject = typeof name != 'string';
+
+                    ret = _this;
+
+                    _this.elements.forEach(function (element) {
+                        var data = getData(element, true)._;
+
+                        if (mergeObject) {
+                            Dom.extend(data, name);
+                        } else {
+                            data[name] = value;
+                        }
+                    });
+                })();
+            } else if (this[0]) {
+                var data = getData(this[0], true)._;
+
+                ret = name ? data[name] : data;
+            }
+
+            return ret;
         }
     });
 
@@ -521,6 +564,7 @@
         var isMatched = !!action[2];
         var isUnique = !!action[3];
         var isMethod = !!action[4];
+
         fn[action[0]] = function (sel) {
             var array = [];
             this.elements.forEach(function (elem, index) {
@@ -643,22 +687,33 @@
     });
 
     Dom.data = function (element, name, value) {
+        var data = getData(element);
+
+        if (value !== undefined) {
+            data._[name] = value;
+        }
+
+        return name ? data._[name] : data._;
+    };
+
+    function getData(element, getAttrs) {
         if (!dataSymbol) {
             dataSymbol = rb.Symbol('_rb$data');
         }
+
         var data = element[dataSymbol];
 
         if (!data) {
-            data = {};
+            data = { _: {}, isAttr: false };
             element[dataSymbol] = data;
         }
 
-        if (value !== undefined) {
-            data[name] = value;
+        if (!data.isAttr && getAttrs) {
+            Dom.extend(data._, Dom.extend(rb.parseDataAttrs(element), data._));
         }
 
-        return name ? data[name] : data;
-    };
+        return data;
+    }
 
     if (!('onfocusin' in window) || !('onfocusout' in window)) {
         [['focusin', 'focus'], ['focusout', 'blur']].forEach(function (evts) {
@@ -742,10 +797,12 @@
 
             ['inner', 'outer', ''].forEach(function (modifier) {
                 var fnName = modifier ? modifier + names[1] : names[0];
+
                 fn[fnName] = function (margin, value) {
                     var styles, extraStyles, isBorderBox, doc;
                     var ret = 0;
                     var elem = this.elements[0];
+
                     if (margin != null && (typeof margin !== 'boolean' || value)) {
                         rb.log(modifier + names[1] + ' is only supported as getter');
                     }

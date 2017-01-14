@@ -83,14 +83,14 @@
     };
 
     /**
-     * Class component to create a tab-like or an accordion-like component.
+     * Class component to create a tab-like or an accordion-like component. Associates panelbuttons and panels and manages the `isOpen` state of the panels.
      *
      * @alias rb.components.panelgroup
      * @extends rb.Component
      *
      * @param element {Element}
      *
-     * @fires panelgroup#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.
+     * @fires componentName#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.
      *
      * @prop {Number[]} selectedIndexes The index(es) of the open panel(s)
      * @prop {Element[]} selectedItems The dom element(s) of the open panel(s)
@@ -316,7 +316,8 @@
                     closeOnEsc: options.closeOnEsc,
                     adjustScroll: options.adjustScroll,
                     scrollIntoView: options.scrollIntoView,
-                    setDisplay: options.setDisplay
+                    setDisplay: options.setDisplay,
+                    autofocusSel: options.autofocusSel
                 });
 
                 panel.group = that.element;
@@ -498,7 +499,7 @@
                 this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open', isSticky);
             } else if (name == 'easing' && value && typeof value == 'string') {
                 rb.addEasing(value);
-            } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView' || name == 'setDisplay') {
+            } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView' || name == 'setDisplay' || name == 'autofocusSel') {
                 this.setChildOption(this.$panels, name, value);
             } else if (name == 'closeOnFocusout') {
                 this._addRemoveFocusOut();

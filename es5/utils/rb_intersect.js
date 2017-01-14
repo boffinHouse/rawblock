@@ -28,6 +28,7 @@
     var rb = window.rb;
     var $ = rb.$;
     var intersectProp = rb.Symbol('intersect');
+    var wait = Promise.resolve();
 
     rb.intersects = function (element, margin, intersect) {
         var intersectValue = element[intersectProp];
@@ -93,7 +94,7 @@
             intersectValue[margin][intersect].cbs.add(fn);
 
             if (intersectValue[margin][intersect].value) {
-                setTimeout(function () {
+                wait.then(function () {
                     if (intersectValue[margin][intersect].value) {
                         fn.call(element, { target: element, type: 'rb_intersect', inViewport: true, originalEvent: $.Event('initial') });
                     }

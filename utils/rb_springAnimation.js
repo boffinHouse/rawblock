@@ -1,7 +1,8 @@
+// aliases
 const rb = window.rb;
 const $ = rb.$;
-const rAF = window.requestAnimationFrame;
-const cAF = window.cancelAnimationFrame;
+// const rAF = window.requestAnimationFrame;
+// const cAF = window.cancelAnimationFrame;
 
 // default options
 const defaults = {
@@ -14,10 +15,13 @@ const defaults = {
     from: null, // [number, object] { value, velocity }
     target: null,
 
+    // keep alive thresholds
+    accelerationThreshold: 25,
+
     // callbacks
     progress: $.noop,
     complete: $.noop,
-    stop: $.noop,
+    stop: $.noop
 };
 
 const SpringAnimation = function(options){
@@ -25,7 +29,7 @@ const SpringAnimation = function(options){
         return new SpringAnimation(options);
     }
 
-    const o = this.options = Object.assign(defaults, options);
+    const o = this.options = Object.assign({}, defaults, options);
 
     /* spring stiffness, in kg/s^2 */
     this.springStiffness = o.stiffness * -1; //k
@@ -46,6 +50,7 @@ const SpringAnimation = function(options){
 
     this.targetValue = o.target || 0;
 
+    this.averageFrameTime = 10;
     this.lastUpdate = Date.now();
     this.ended = false;
 
@@ -55,12 +60,20 @@ const SpringAnimation = function(options){
 
 Object.assign(SpringAnimation.prototype, {
     update: function(){
-        this.updateAF = rAF(this._update);
+        rb.rAFQueue(this._update, false, true);
     },
     _update: function(){
+        if(this.ended){ return; }
+
         const now = Date.now();
-        const timeElasped = (now - this.lastUpdate + 1);
-        const rate = (1/1000) * timeElasped;
+
+        // need to keep frame time in bounds (otherwise calcucations gets crazy)
+        const timeElapsed = Math.max(10, Math.min(66.66, now - this.lastUpdate));
+
+        // average frame time out, to get a smoother transition
+        this.averageFrameTime = Math.round((2 * this.averageFrameTime + timeElapsed) / 3);
+
+        const rate = (1/1000) * this.averageFrameTime;
 
         // calc spring and damper forces
         const displacement = this.currentValue - this.targetValue;
@@ -76,10 +89,15 @@ Object.assign(SpringAnimation.prototype, {
         this.currentValue = this.currentValue + (this.currentVelocity * rate);
         this.lastUpdate = now;
 
+        if(this.averageFrameTime >= 60){
+            rb.logWarn('SpringAnimation | frame rate is very low!');
+        }
+
         this.options.progress(this.getProgressState());
 
-        if(Math.abs(displacement) <= 0.5 && Math.abs(this.currentVelocity) <= 0.5){
-            this.options.complete(this.getProgressState());
+        // rewrite keep alive, to forceSpring && acc
+        if( Math.abs(acceleration) < this.options.accelerationThreshold && Math.abs(forceSpring) < 25 ){
+            this.finish();
         } else {
             this.update();
         }
@@ -87,14 +105,37 @@ Object.assign(SpringAnimation.prototype, {
     getProgressState: function(){
         return {
             currentValue: this.currentValue,
-            velocity: this.velocity,
+            currentVelocity: this.currentVelocity
         };
     },
     stop: function(){
-        cAF(this.updateAF);
-        this.options.stop(this.getProgressState());
+        if(!this.ended){
+            this.options.stop(this.getProgressState());
+        }
+        this.ended = true;
+
+        // logAverageElapsedTime();
     },
+    finish: function(){
+        this.ended = true;
+        this.currentValue = this.targetValue;
+
+        rb.rAFQueue(()=>{
+            this.options.progress(this.getProgressState());
+            this.options.complete(this.getProgressState());
+        }, false, true);
+    }
 });
+
+// Chrome: ~17-18
+// Safari: ~17
+// FF: ~21
+// IE10: 32-75 (errorlike sometimes > 100)
+// IE11: 34-55  (errorlike sometimes 60 and > 150)
+// Edge: 21-47 (jumpy 60 alsmost errorlike also 80)
+// function logAverageElapsedTime(){
+// 	console.warn('... AVERAGE ELAPSED TIME:', timeElapsedTotal/timeElapsedUpdates, timeElapsedUpdates, timeElapsedTotal);
+// }
 
 rb.SpringAnimation = SpringAnimation;
 

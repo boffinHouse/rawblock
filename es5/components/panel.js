@@ -77,8 +77,8 @@
      * @param element
      * @param initialDefaults
      *
-     * @fires moduleName#change Fires before a panel's `isOpen` state changes. The default behavior can be prevented.
-     * @fires moduleName#changed Fires after a panel's `isOpen` state changed.
+     * @fires componentName#change Fires before a panel's `isOpen` state changes. The default behavior can be prevented.
+     * @fires componentName#changed Fires after a panel's `isOpen` state changed.
      *
      * @property {Boolean} isOpen
      *
@@ -388,7 +388,7 @@
             }
 
             if (this.options.itemWrapper) {
-                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbChangeState('selected{-}within', true);
+                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbToggleState('selected{-}within', true);
             }
 
             if (this.groupComponent) {
@@ -448,7 +448,7 @@
             this.element.setAttribute('aria-hidden', 'true');
 
             if (this.options.itemWrapper) {
-                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbChangeState('selected{-}within');
+                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbToggleState('selected{-}within', false);
             }
 
             if (this.groupComponent) {
@@ -559,6 +559,7 @@
                 return {
                     'click .{name}{e}close': function clickNameEClose(e) {
                         this.close();
+
                         if (e) {
                             e.stopPropagation();
                             e.preventDefault();

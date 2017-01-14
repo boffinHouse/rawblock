@@ -137,10 +137,10 @@
             return str;
         },
         setOptions: function setOptions(options) {
-            var _options = this.options;
-            var my = _options.my;
-            var at = _options.at;
-            var collision = _options.collision;
+            var _options = this.options,
+                my = _options.my,
+                at = _options.at,
+                collision = _options.collision;
 
 
             this.options = Object.assign({

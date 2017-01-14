@@ -170,18 +170,112 @@
         /**
          * A jQuery/rb.$ plugin to add or remove state classes.
          * @param state {string}
-         * @param [add] {boolean}
+         * @param [addRemove] {boolean}
          * @returns {jQueryfiedDOMList}
          */
-        $.fn.rbToggleState = function (state, add) {
+        $.fn.rbToggleState = function (state, addRemove) {
             if (this.length) {
                 state = rb.statePrefix + state.replace(regnameSeparator, rb.nameSeparator);
-                this[add ? 'addClass' : 'removeClass'](state);
+                this.toggleClass(state, addRemove);
             }
             return this;
         };
 
         $.fn.rbChangeState = $.fn.rbToggleState;
+
+        /**
+         * Works same as jQuery.fn.addClass, but does this in a rAF
+         * @function external:"jQuery.fn".addClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.removeClass, but does this in a rAF
+         * @function external:"jQuery.fn".removeClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.toggleClass, but does this in a rAF
+         * @function external:"jQuery.fn".toggleClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.append, but does this in a rAF
+         * @function external:"jQuery.fn".appendRaf
+         */
+        /**
+         * Works same as jQuery.fn.appendTo, but does this in a rAF
+         * @function external:"jQuery.fn".appendToRaf
+         */
+        /**
+         * Works same as jQuery.fn.prepend, but does this in a rAF
+         * @function external:"jQuery.fn".prependRaf
+         */
+        /**
+         * Works same as jQuery.fn.prependTo, but does this in a rAF
+         * @function external:"jQuery.fn".prependToRaf
+         */
+        /**
+         * Works same as jQuery.fn.removeClass, but does this in a rAF
+         * @function external:"jQuery.fn".removeClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.after, but does this in a rAF
+         * @function external:"jQuery.fn".afterRaf
+         */
+        /**
+         * Works same as jQuery.fn.before, but does this in a rAF
+         * @function external:"jQuery.fn".beforeRaf
+         */
+        /**
+         * Works same as jQuery.fn.insertAfter, but does this in a rAF
+         * @function external:"jQuery.fn".insertAfterRaf
+         */
+        /**
+         * Works same as jQuery.fn.insertBefore, but does this in a rAF
+         * @function external:"jQuery.fn".insertBeforeRaf
+         */
+        /**
+         * Works same as jQuery.fn.html, but does this in a rAF
+         * @function external:"jQuery.fn".htmlRaf
+         */
+        /**
+         * Works same as jQuery.fn.text, but does this in a rAF
+         * @function external:"jQuery.fn".textRaf
+         */
+        /**
+         * Works same as jQuery.fn.removeClass, but does this in a rAF
+         * @function external:"jQuery.fn".removeClassRaf
+         */
+        /**
+         * Works same as jQuery.fn.remove, but does this in a rAF
+         * @function external:"jQuery.fn".removeRaf
+         */
+        /**
+         * Works same as jQuery.fn.attr, but does this in a rAF
+         * @function external:"jQuery.fn".attrRaf
+         */
+        /**
+         * Works same as jQuery.fn.prop, but does this in a rAF
+         * @function external:"jQuery.fn".propRaf
+         */
+        /**
+         * Works same as jQuery.fn.css, but does this in a rAF
+         * @function external:"jQuery.fn".cssRaf
+         */
+        /**
+         * Works same as jQuery.fn.rbToggleState, but does this in a rAF
+         * @function external:"jQuery.fn".rbToggleStateRaf
+         */
+        ['addClass', 'removeClass', 'toggleClass', 'append', 'appendTo', 'prepend', 'prependTo', 'after', 'before', 'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'attr', 'prop', 'css', 'rbToggleState'].forEach(function ($name) {
+            $.fn[$name + 'Raf'] = function () {
+                var _this = this,
+                    _arguments = arguments;
+
+                if (this.length) {
+                    rb.rAFQueue(function () {
+                        _this[$name].apply(_this, _arguments);
+                    }, true);
+                }
+                return this;
+            };
+        });
 
         /* Begin: getScrollingElement */
 
@@ -1649,10 +1743,6 @@
          *
          */
         live.register = function (name, Class, extend) {
-            if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
-                rb.devData.componentsCount++;
-            }
-
             var proto = Class.prototype;
             var superProto = Object.getPrototypeOf(proto);
             var superClass = superProto.constructor;
@@ -1672,6 +1762,10 @@
             }
 
             rb.components[name] = Class;
+
+            if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
+                rb.debugHelpers.onRegisterComponent(name, Class);
+            }
 
             if (componentPromises[name]) {
                 componentPromises[name].resolve(Class);
@@ -1947,6 +2041,11 @@
             var evts = that.constructor.events;
 
             for (evt in evts) {
+
+                if (that.replaceEventKey) {
+                    evt = that.replaceEventKey(evt);
+                }
+
                 eventsObjs = rb.parseEventString(evt);
 
                 /* jshint loopfunc: true */
@@ -2051,7 +2150,7 @@
 
         var replaceHTMLSel = rb.memoize(function () {
             var replacer = function replacer(full, f1, f2) {
-                return '[' + rb.attrSel + '="{htmlName}' + f2 + '"]';
+                return '[' + rb.attrSel + '~="{htmlName}' + f2 + '"]';
             };
             return function (str) {
                 return str.replace(regHTMLSel, replacer);
@@ -2175,8 +2274,8 @@
          *
          * @memberof rb
          * @param {Element} element - DOM element
-         * @param {String} [componentName] - optional name of the component (if element has no `data-module="componentName"`).
-         * @param {Object} [initialOpts] - only use if component is not initialized otherwise use `setOption`/`setOptions`
+         * @param {String} [componentName] - optional name of the component (if component isn't created yet and the element has no `data-module="componentName"`).
+         * @param {Object} [initialOpts] - only use if component is not created otherwise use `setOption`/`setOptions`
          * @returns {Object} A component instance
          */
         rb.getComponent = function (element, componentName, initialOpts) {
@@ -2205,7 +2304,7 @@
         live.getComponent = rb.getComponent;
 
         /**
-         * Component Base1 Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
+         * Component Base Class - all UI components should extend this class. This Class adds some neat stuff to parse/change options (is automatically done in constructor), listen and trigger events, react to responsive state changes and establish BEM style classes as also a11y focus management.
          *
          * For the live cycle features see [rb.live.register]{@link rb.live.register}.
          *
@@ -2302,7 +2401,7 @@
             };
 
             Component.prototype.getId = function getId(element, async) {
-                var id;
+                var id = void 0;
 
                 if (typeof element == 'boolean') {
                     async = element;
@@ -2357,6 +2456,15 @@
                 }
 
                 return rb.events.dispatch(this.element, type, opts);
+            };
+
+            Component.prototype.triggerRaf = function triggerRaf() {
+                var _this2 = this,
+                    _arguments2 = arguments;
+
+                rb.rAFQueue(function () {
+                    _this2.trigger.apply(_this2, _arguments2);
+                }, true);
             };
 
             Component.prototype.getElementsByString = function getElementsByString(string, element) {
@@ -2549,8 +2657,6 @@
 
             return Component;
         }();
-
-        ;
 
         Object.assign(Component, {
             /**

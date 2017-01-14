@@ -113,9 +113,9 @@
                 return;
             }
 
-            this.$cells.rbChangeState('selected{-}pagination');
+            this.$cells.rbToggleState('selected{-}pagination', false);
 
-            cell = this.$cells.eq(selectedIndex).rbChangeState('selected{-}pagination', true).get(0);
+            cell = this.$cells.eq(selectedIndex).rbToggleState('selected{-}pagination', true).get(0);
 
             if (this.isCellVisible(cell) !== true) {
                 this.selectCell(selectedIndex);

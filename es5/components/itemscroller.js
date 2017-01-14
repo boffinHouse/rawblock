@@ -274,7 +274,7 @@
 
             var cellCSS = {};
 
-            this.$cells.rbChangeState('active{-}done').rbChangeState('active').rbChangeState('activated{-}done').rbChangeState('activated');
+            this.$cells.rbToggleState('active{-}done', false).rbToggleState('active', false).rbToggleState('activated{-}done', false).rbToggleState('activated', false);
 
             cellCSS[orderProp] = '';
 
@@ -816,9 +816,9 @@
 
                 this.isCarouselChanged = false;
 
-                this.$queryAll('.{htmlName}{e}btn{-}next').prop({ disabled: isEnd }).rbChangeState('disabled', isEnd);
+                this.$queryAll('.{htmlName}{e}btn{-}next').prop({ disabled: isEnd }).rbToggleState('disabled', isEnd);
 
-                this.$queryAll('.{htmlName}{e}btn{-}prev').prop({ disabled: isStart }).rbChangeState('disabled', isStart);
+                this.$queryAll('.{htmlName}{e}btn{-}prev').prop({ disabled: isStart }).rbToggleState('disabled', isStart);
             }
 
             this.element.setAttribute('data-current-index', this._selectedIndex + 1);

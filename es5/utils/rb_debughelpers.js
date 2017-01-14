@@ -41,6 +41,20 @@
                 }
             };
 
+            helpers.onRegisterComponent = function (name, Class) {
+                var proto = Class.prototype;
+                var attached = proto.attached;
+                var detached = proto.detached;
+                var isEmptyAttached = attached ? !attached.toString().trim() : false;
+                var isEmptyDetached = detached ? !detached.toString().trim() : false;
+
+                if (isEmptyAttached && (!detached || isEmptyDetached) || isEmptyDetached && (!attached || isEmptyAttached)) {
+                    rb.logWarn('Component ' + name + ' has empty attached/detached method.');
+                }
+
+                rb.devData.componentsCount++;
+            };
+
             var searchElementsStartTime = void 0;
             helpers.onSearchElementsStart = function () {
                 searchElementsStartTime = Date.now();

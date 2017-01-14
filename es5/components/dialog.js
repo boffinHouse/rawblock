@@ -242,7 +242,7 @@
             this.$backdrop.css({ display: '' });
             this.$backdrop.addClass(rb.statePrefix + 'open');
 
-            rb.$root.rbChangeState('open{-}' + this.name + '{-}within', true);
+            rb.$root.rbToggleState('open{-}' + this.name + '{-}within', true);
 
             if (this._setScrollPadding && this.options.scrollPadding) {
                 document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
@@ -313,7 +313,7 @@
             }
 
             this.$backdrop.removeClass(rb.statePrefix + 'open');
-            rb.$root.rbChangeState('open{-}' + this.name + '{-}within');
+            rb.$root.rbToggleState('open{-}' + this.name + '{-}within', false);
 
             if (this.options.setDisplay) {
                 clearTimeout(this._displayTimer);
