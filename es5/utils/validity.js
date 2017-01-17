@@ -47,6 +47,7 @@
      * @property {Object} data Data object of the element. Retrieved by $element.data().
      * @property {Object|null} errorRule Current validation rule that the element lacks of.
      * @property {null|String[]|String} value The value that was used on last validation.
+     * @property {undefined|String} valueStr The value as string that was used on last validation.
      * @property {null|String[]|String} prev The value that the was used on the validation before.
      * @property {false|Promise|Deferred} isPending The value that the was used on the validation before.
      */
