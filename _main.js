@@ -1294,16 +1294,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         return descriptor;
     };
 
-    /**
-     * Returns yes, if condition is true-thy no/empty string otherwise. Can be used inside of [`rb.template`]{@link rb.template}
-     * @param condition
-     * @param {String} yes
-     * @param {String} [no=""]
-     * @returns {string}
-     */
-    rb.if = function (condition, yes, no) {
-        return condition ? yes : (no || '');
-    };
 })(window, document);
 
 (function (window, document) {

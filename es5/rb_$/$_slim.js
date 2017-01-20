@@ -267,14 +267,20 @@
         eq: function eq(number) {
             return new Dom(this.elements[number] ? [this.elements[number]] : []);
         },
-        css: function css(style) {
-            var elem;
+        css: function css(style, value) {
+            var elem = void 0;
             if (typeof style == 'string') {
-                elem = this.elements[0];
-                return elem && Dom.css(elem, style);
+                var _style;
+
+                if (arguments.length == 1) {
+                    elem = this.elements[0];
+                    return elem && Dom.css(elem, style);
+                }
+
+                style = (_style = {}, _style[style] = value, _style);
             }
             this.elements.forEach(function (elem) {
-                var prop;
+                var prop = void 0;
                 var eStyle = elem.style;
 
                 for (prop in style) {
@@ -289,28 +295,45 @@
             });
             return this;
         },
-        prop: function prop(props) {
-            var elem;
+        prop: function prop(props, value) {
+            var elem = void 0;
+
             if (typeof props == 'string') {
-                elem = this.elements[0];
-                return elem && Dom.prop(elem, props);
+                var _props;
+
+                if (arguments.length == 1) {
+                    elem = this.elements[0];
+                    return elem && Dom.prop(elem, props);
+                }
+
+                props = (_props = {}, _props[props] = value, _props);
             }
+
             this.elements.forEach(function (elem) {
-                var prop;
+                var prop = void 0;
+
                 for (prop in props) {
                     Dom.prop(elem, prop, props[prop]);
                 }
             });
             return this;
         },
-        attr: function attr(attrs) {
-            var elem;
+        attr: function attr(attrs, value) {
+            var elem = void 0;
+
             if (typeof attrs == 'string') {
-                elem = this.elements[0];
-                return elem && elem.getAttribute(attrs);
+                var _attrs;
+
+                if (arguments.length == 1) {
+                    elem = this.elements[0];
+                    return elem && elem.getAttribute(attrs);
+                }
+
+                attrs = (_attrs = {}, _attrs[attrs] = value, _attrs);
             }
             this.elements.forEach(function (elem) {
-                var attr;
+                var attr = void 0;
+
                 for (attr in attrs) {
                     elem.setAttribute(attr, attrs[attr]);
                 }
@@ -489,7 +512,9 @@
 
             var ret = void 0;
 
-            if (arguments.length) {
+            var isSetter = (typeof name === 'undefined' ? 'undefined' : _typeof(name)) == 'object' || value != undefined;
+
+            if (isSetter) {
                 (function () {
                     var mergeObject = typeof name != 'string';
 
@@ -686,21 +711,35 @@
 
     [['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function (action) {
         Dom.fn[action[0]] = function (type, sel, fn) {
-            var useFn;
-            if (typeof sel == 'function') {
-                fn = sel;
-                sel = null;
-            }
+            var _this2 = this;
 
-            if (sel) {
-                useFn = rb.events.proxies.delegate(fn, sel);
+            if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
+                this.elements.forEach(function (elem) {
+                    var key = void 0;
+                    for (key in type) {
+                        elem[action[1]](key, type[key], false);
+                    }
+                });
             } else {
-                useFn = fn;
-            }
+                (function () {
+                    var useFn = void 0;
 
-            this.elements.forEach(function (elem) {
-                elem[action[1]](type, useFn, false);
-            });
+                    if (typeof sel == 'function') {
+                        fn = sel;
+                        sel = null;
+                    }
+
+                    if (sel) {
+                        useFn = rb.events.proxies.delegate(fn, sel);
+                    } else {
+                        useFn = fn;
+                    }
+
+                    _this2.elements.forEach(function (elem) {
+                        elem[action[1]](type, useFn, false);
+                    });
+                })();
+            }
 
             return this;
         };
@@ -733,27 +772,6 @@
         }
 
         return data;
-    }
-
-    if (!('onfocusin' in window) || !('onfocusout' in window)) {
-        [['focusin', 'focus'], ['focusout', 'blur']].forEach(function (evts) {
-            specialEvents[evts[0]] = {
-                setup: function setup(data, ns, handler) {
-                    var focusHandler = function focusHandler(e) {
-                        handler({ type: evts[0], target: e.target });
-                    };
-
-                    Dom.data(this, '_handler' + evts[0], focusHandler);
-                    this.addEventListener(evts[1], focusHandler, true);
-                },
-                teardown: function teardown() {
-                    var focusHandler = Dom.data(this, '_handler' + evts[0]);
-                    if (focusHandler) {
-                        this.removeEventListener(evts[1], focusHandler, true);
-                    }
-                }
-            };
-        });
     }
 
     if (document.createElement('a').tabIndex !== 0 || document.createElement('i').tabIndex != -1) {
@@ -817,7 +835,6 @@
 
             ['inner', 'outer', ''].forEach(function (modifier) {
                 var fnName = modifier ? modifier + names[1] : names[0];
-                var innerName = 'inner' + names[1];
 
                 fn[fnName] = function (margin) {
                     var styles, extraStyles, isBorderBox, doc;
@@ -827,7 +844,7 @@
                     if (margin != null && typeof margin == 'number') {
                         this.each(function () {
                             var $elem = new Dom(elem);
-                            var size = $elem[fnName]() - $elem[innerName]();
+                            var size = $elem[fnName]() - $elem[cssName]();
 
                             rb.rAFQueue(function () {
                                 var _$elem$css;
