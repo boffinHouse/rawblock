@@ -61,6 +61,7 @@ class Dialog extends rb.components._focus_component {
             trapKeyboard: true,
             setFocus: 'force',
             contentUrl: '',
+            xhrOptions: null,
         };
     }
 
@@ -224,7 +225,9 @@ class Dialog extends rb.components._focus_component {
         }
 
         if(options.contentUrl){
-            this._xhr = rb.fetch({url: options.contentUrl}).then(this._addContent);
+            this._xhr = rb.fetch(options.contentUrl, 'xhrOptions' in options ? options.xhrOptions : mainOpts.xhrOptions)
+                .then(this._addContent)
+            ;
         }
 
         if(this.options.setDisplay && this._displayTimer){
