@@ -224,7 +224,7 @@ class Dialog extends rb.components._focus_component {
         }
 
         if(options.contentUrl){
-            this._xhr = rb.fetch({url: options.contentUrl}).then(this._addContent);
+            this._xhr = rb.fetch({url: options.contentUrl, headers: options.contentHeaders || {}}).then(this._addContent);
         }
 
         if(this.options.setDisplay && this._displayTimer){
