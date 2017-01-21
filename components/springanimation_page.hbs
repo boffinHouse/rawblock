@@ -5,16 +5,35 @@ layout: docs_tpl.hbs
 
 <article class="rb-docs">
 
-    hello its me
+    <div class="js-rb-live" data-module="springanimationdemogroup">
+        hello its me
 
-    <button>Start</button>
-    <button>Stop</button>
+        <ul>
+            <li>
+                <button type="button">Start/Stop</button>
+            </li>
+            <li>
+                <label>
+                    <input type="checkbox"/> Autostart
+                </label>
+            </li>
+        </ul>
 
-    <hr/>
-    {{> springanimationdemo}}
-    <hr/>
-    {{> springanimationdemo}}
-    <hr/>
-    {{> springanimationdemo}}
+        <hr/>
+        {{> springanimationdemo}}
+        <hr/>
+        {{> springanimationdemo}}
+        <hr/>
+        {{> springanimationdemo}}
+        <hr/>
+        {{> springanimationdemo}}
+        <hr/>
+        {{> springanimationdemo}}
+        <hr/>
+        {{> springanimationdemo}}
+    </div>
+
+    <button type="button">+</button>
+    <button type="button">-</button>
 
 </article><!-- end rb-docs -->

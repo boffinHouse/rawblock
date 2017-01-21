@@ -89,6 +89,8 @@ Object.assign(SpringAnimation.prototype, {
         this.currentValue = this.currentValue + (this.currentVelocity * rate);
         this.lastUpdate = now;
 
+        // detect oscillation by counting passing of target value back and forth, and then if detected increse damping
+
         if(this.averageFrameTime >= 60){
             rb.logWarn('SpringAnimation | frame rate is very low!');
         }
