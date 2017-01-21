@@ -120,7 +120,8 @@
                     scrollPadding: 'paddingRight',
                     trapKeyboard: true,
                     setFocus: 'force',
-                    contentUrl: ''
+                    contentUrl: '',
+                    xhrOptions: null
                 };
             }
         }, {
@@ -281,7 +282,7 @@
             }
 
             if (options.contentUrl) {
-                this._xhr = rb.fetch({ url: options.contentUrl }).then(this._addContent);
+                this._xhr = rb.fetch(options.contentUrl, 'xhrOptions' in options ? options.xhrOptions : mainOpts.xhrOptions).then(this._addContent);
             }
 
             if (this.options.setDisplay && this._displayTimer) {

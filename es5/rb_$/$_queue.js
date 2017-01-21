@@ -1,17 +1,25 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define([], factory);
+        define(['../utils/deferred-delay'], factory);
     } else if (typeof exports !== "undefined") {
-        factory();
+        factory(require('../utils/deferred-delay'));
     } else {
         var mod = {
             exports: {}
         };
-        factory();
+        factory(global.deferredDelay);
         global.$_queue = mod.exports;
     }
-})(this, function () {
+})(this, function (_deferredDelay) {
     'use strict';
+
+    var _deferredDelay2 = _interopRequireDefault(_deferredDelay);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     var queueExpando = void 0;
     var defaultQueue = 'fx';
@@ -19,7 +27,7 @@
     var $ = rb.$;
 
     $.queue = function (element, queue, cb) {
-        var queues;
+        var queues = void 0;
 
         if (typeof queue == 'function') {
             cb = queue;
@@ -51,7 +59,8 @@
     };
 
     $.dequeue = function (element, queue) {
-        var queues, fn;
+        var queues = void 0,
+            fn = void 0;
 
         if (!queue || queue === true) {
             queue = defaultQueue;
@@ -67,7 +76,10 @@
     };
 
     $.fn.promise = function (queue) {
-        var _run, queues, _queueToEnd;
+        var _run = void 0,
+            queues = void 0,
+            _queueToEnd = void 0;
+
         var deferred = {
             resolve: function resolve() {
                 if (!_run) {
@@ -76,9 +88,11 @@
                 }
             }
         };
+
         var promise = new Promise(function (resolve) {
             deferred.resolve = resolve;
         });
+
         var element = this.get(0);
 
         if (element) {
@@ -119,26 +133,13 @@
 
         this.queue(queue, function () {
             var elem = this;
-            var start = Date.now();
-            var startRaf = function startRaf() {
-                rb.rAFQueue(check, false, true);
-            };
-            var check = function check() {
-                if (Date.now() - start >= duration) {
-                    if (cb) {
-                        cb.call(elem);
-                    }
-                    $.dequeue(elem, queue);
-                } else {
-                    rb.rAFQueue(check, false, true);
+
+            (0, _deferredDelay2.default)(duration).then(function () {
+                if (cb) {
+                    cb.call(elem);
                 }
-            };
-            if (duration > 66) {
-                setTimeout(startRaf, duration - 66);
-            } else {
-                rb.rAFQueue(check, false, true);
-            }
-            duration -= 5;
+                $.dequeue(elem, queue);
+            });
         });
         return this;
     };
@@ -146,6 +147,7 @@
     $.fn.clearQueue = function (queue) {
         this.elements.forEach(function (element) {
             var queues = $.queue(element, queue);
+
             if (queues.length) {
                 queues.splice(0, queues.length);
             }

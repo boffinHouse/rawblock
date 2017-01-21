@@ -1,10 +1,12 @@
+import deferredDelay from '../utils/deferred-delay';
+
 let queueExpando;
 const defaultQueue = 'fx';
 const rb = window.rb;
 const $ = rb.$;
 
 $.queue = function(element, queue, cb) {
-    var queues;
+    let queues;
 
     if (typeof queue == 'function') {
         cb = queue;
@@ -36,7 +38,7 @@ $.queue = function(element, queue, cb) {
 };
 
 $.dequeue = function(element, queue) {
-    var queues, fn;
+    let queues, fn;
 
     if(!queue || queue === true){
         queue = defaultQueue;
@@ -52,8 +54,9 @@ $.dequeue = function(element, queue) {
 };
 
 $.fn.promise = function(queue){
-    var _run, queues, queueToEnd;
-    var deferred = {
+    let _run, queues, queueToEnd;
+
+    const deferred = {
         resolve: function(){
             if(!_run){
                 _run = true;
@@ -61,10 +64,12 @@ $.fn.promise = function(queue){
             }
         }
     };
-    var promise = new Promise(function(resolve){
+
+    const promise = new Promise(function(resolve){
         deferred.resolve = resolve;
     });
-    var element = this.get(0);
+
+    const element = this.get(0);
 
     if(element){
         queueToEnd = function(){
@@ -103,34 +108,22 @@ $.fn.delay = function(queue, duration, cb) {
     }
 
     this.queue(queue, function(){
-        var elem = this;
-        var start = Date.now();
-        var startRaf = function(){
-            rb.rAFQueue(check, false, true);
-        };
-        var check = function(){
-            if(Date.now() - start >= duration){
-                if(cb){
-                    cb.call(elem);
-                }
-                $.dequeue(elem, queue);
-            } else {
-                rb.rAFQueue(check, false, true);
+        const elem = this;
+
+        deferredDelay(duration).then(()=> {
+            if(cb){
+                cb.call(elem);
             }
-        };
-        if(duration > 66){
-            setTimeout(startRaf, duration - 66);
-        } else {
-            rb.rAFQueue(check, false, true);
-        }
-        duration -= 5;
+            $.dequeue(elem, queue);
+        });
     });
     return this;
 };
 
 $.fn.clearQueue = function(queue){
     this.elements.forEach(function(element){
-        var queues = $.queue(element, queue);
+        const queues = $.queue(element, queue);
+
         if(queues.length){
             queues.splice(0, queues.length);
         }
