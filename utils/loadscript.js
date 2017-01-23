@@ -43,6 +43,7 @@ rb.loadScript = function (src, options = {}) {
             inject();
         }
     }
+
     return promises[src];
 };
 

@@ -26,25 +26,30 @@
         };
     }
 
-    function deferredDelay(delay) {
+    function deferredDelay(delay, readOptimized) {
         var promise = (0, _deferred2.default)();
         var start = Date.now();
+        var rAF = readOptimized ? function (fn) {
+            setTimeout(fn, 30);
+        } : function (fn) {
+            rb.rAFQueue(fn, false, true);
+        };
         var startRaf = function startRaf() {
-            rb.rAFQueue(check, false, true);
+            rAF(check);
         };
 
         var check = function check() {
             if (Date.now() - start >= delay) {
                 promise.resolve();
             } else {
-                rb.rAFQueue(check, false, true);
+                rAF(check);
             }
         };
 
-        if (delay > 35) {
-            setTimeout(startRaf, delay - 35);
+        if (delay > 31) {
+            setTimeout(startRaf, delay - 30);
         } else {
-            rb.rAFQueue(check, false, true);
+            rAF(check);
         }
 
         return promise;

@@ -661,8 +661,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /* End: rbComponent */
 
     /* Begin: addEasing */
-    var BezierEasing;
-    var easingMap = {
+    let BezierEasing;
+    const easingMap = {
         ease: '0.25,0.1,0.25,1',
         linear: '0,0,1,1',
         'ease-in': '0.42,0,1,1',
@@ -676,9 +676,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @param {String} [name] Human readable name of the easing.
      * @returns {Function} Easing a function
      */
-    var regEasingNumber = /([0-9.]+)/g;
+    const regEasingNumber = /([0-9.]+)/g;
     rb.addEasing = function (easing, name) {
-        var bezierArgs;
+        let bezierArgs;
+
         if (typeof easing != 'string') {
             return;
         }
@@ -841,14 +842,14 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 return proxy;
             },
             once: function(handler, once, opts, type){
-                var proxy = rb.events.proxy(handler, 'conce', '');
+                var proxy = rb.events.proxy(handler, 'once', '');
                 if(!proxy){
                     proxy = function(e){
                         var ret = handler.apply(this, arguments);
                         rb.events.remove(e && e.target || this, type, handler, opts);
                         return ret;
                     };
-                    rb.events.proxy(handler, 'conce', '', proxy);
+                    rb.events.proxy(handler, 'once', '', proxy);
                 }
                 return proxy;
             },
