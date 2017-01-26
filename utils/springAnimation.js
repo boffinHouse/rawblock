@@ -4,66 +4,83 @@ const $ = rb.$;
 // const rAF = window.requestAnimationFrame;
 // const cAF = window.cancelAnimationFrame;
 
-// default options
-const defaults = {
-    // spring and obj mass
-    stiffness: 30,
-    damping: 5,
-    mass: 1,
+class SpringAnimation {
 
-    // start and end values
-    from: null, // [number, object] { value, velocity }
-    target: null,
+    static get defaults() {
+        return {
+            // spring and obj mass
+            stiffness: 30,
+            damping: 5,
+            mass: 1,
 
-    // keep alive thresholds
-    accelerationThreshold: 25,
+            // start and end values
+            from: null, // [number, object] { value, velocity }
+            target: null,
 
-    // callbacks
-    progress: $.noop,
-    complete: $.noop,
-    stop: $.noop
-};
+            // keep alive thresholds
+            accelerationThreshold: 25,
 
-const SpringAnimation = function(options){
-    if (!(this instanceof SpringAnimation)) {
-        return new SpringAnimation(options);
+            // callbacks
+            progress: $.noop,
+            complete: $.noop,
+            stop: $.noop
+        };
     }
 
-    const o = this.options = Object.assign({}, defaults, options);
+    constructor(options) {
+        const o = this.options = Object.assign({}, SpringAnimation.defaults, options);
 
-    /* spring stiffness, in kg/s^2 */
-    this.springStiffness = o.stiffness * -1; //k
+        /* spring stiffness, in kg/s^2 */
+        this.stiffness = o.stiffness;
 
-    /* damping in kg/s */
-    this.damping = o.damping * -1;
+        /* damping in kg/s */
+        this.damping = o.damping;
 
-    this._update = this._update.bind(this);
+        this._update = this._update.bind(this);
 
-    if(o.from === null){
-        rb.logError('Can not create springAnimation without start and end values');
-        return;
+        if (o.from === null) {
+            rb.logError('Can not create springAnimation without start and end values');
+            return;
+        }
+
+        this.currentValue = o.from.value || parseInt(o.from, 10) || 0;
+        this.currentVelocity = o.from.velocity || 0;
+        this.currentMass = o.mass || 1;
+
+        this.targetValue = o.target || 0;
+
+        this.averageFrameTime = 10;
+        this.lastUpdate = Date.now();
+        this.ended = false;
+
+        // initial calls
+        this.update();
     }
 
-    this.currentValue = o.from.value || parseInt(o.from, 10) || 0;
-    this.currentVelocity = o.from.velocity || 0;
-    this.currentMass = o.mass || 1;
+    get damping(){
+        return this._damping * -1;
+    }
 
-    this.targetValue = o.target || 0;
+    set damping(newValue){
+        this._damping = Math.max(0.01, newValue) * -1;
+    }
 
-    this.averageFrameTime = 10;
-    this.lastUpdate = Date.now();
-    this.ended = false;
+    set stiffness(newValue){
+        this._stiffness = Math.max(0.1, newValue) * -1;
+    }
 
-    // initial calls
-    this.update();
-};
+    get stiffness(){
+        return this._stiffness * -1;
+    }
 
-Object.assign(SpringAnimation.prototype, {
-    update: function(){
+    update() {
         rb.rAFQueue(this._update, false, true);
-    },
-    _update: function(){
-        if(this.ended){ return; }
+    }
+
+    _update() {
+        if (this.ended) {
+            return;
+        }
 
         const now = Date.now();
 
@@ -73,12 +90,12 @@ Object.assign(SpringAnimation.prototype, {
         // average frame time out, to get a smoother transition
         this.averageFrameTime = Math.round((2 * this.averageFrameTime + timeElapsed) / 3);
 
-        const rate = (1/1000) * this.averageFrameTime;
+        const rate = (1 / 1000) * this.averageFrameTime;
 
         // calc spring and damper forces
         const displacement = this.currentValue - this.targetValue;
-        const forceSpring = this.springStiffness * displacement; // / 1000 / 1000
-        const forceDamper = this.damping * ( this.currentVelocity ); // / 1000
+        const forceSpring = this._stiffness * displacement; // / 1000 / 1000
+        const forceDamper = this._damping * ( this.currentVelocity ); // / 1000
 
         // calc acceleration
         const acceleration = ( forceSpring + forceDamper ) / this.currentMass;
@@ -91,43 +108,46 @@ Object.assign(SpringAnimation.prototype, {
 
         // detect oscillation by counting passing of target value back and forth, and then if detected increse damping
 
-        if(this.averageFrameTime >= 60){
+        if (this.averageFrameTime >= 60) {
             rb.logWarn('SpringAnimation | frame rate is very low!');
         }
 
         this.options.progress(this.getProgressState());
 
         // rewrite keep alive, to forceSpring && acc
-        if( Math.abs(acceleration) < this.options.accelerationThreshold && Math.abs(forceSpring) < 25 ){
+        if (Math.abs(acceleration) < this.options.accelerationThreshold && Math.abs(forceSpring) < 25) {
             this.finish();
         } else {
             this.update();
         }
-    },
-    getProgressState: function(){
+    }
+
+    getProgressState() {
         return {
             currentValue: this.currentValue,
             currentVelocity: this.currentVelocity
         };
-    },
-    stop: function(){
-        if(!this.ended){
+    }
+
+    stop() {
+        if (!this.ended) {
             this.options.stop(this.getProgressState());
         }
         this.ended = true;
 
         // logAverageElapsedTime();
-    },
-    finish: function(){
+    }
+
+    finish() {
         this.ended = true;
         this.currentValue = this.targetValue;
 
-        rb.rAFQueue(()=>{
+        rb.rAFQueue(() => {
             this.options.progress(this.getProgressState());
             this.options.complete(this.getProgressState());
         }, false, true);
     }
-});
+}
 
 // Chrome: ~17-18
 // Safari: ~17

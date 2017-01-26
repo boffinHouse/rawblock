@@ -6,8 +6,6 @@ layout: docs_tpl.hbs
 <article class="rb-docs">
 
     <div class="js-rb-live" data-module="springanimationdemogroup">
-        hello its me
-
         <ul>
             <li>
                 <button type="button">Start/Stop</button>
@@ -19,18 +17,36 @@ layout: docs_tpl.hbs
             </li>
         </ul>
 
-        <hr/>
-        {{> springanimationdemo}}
-        <hr/>
-        {{> springanimationdemo}}
-        <hr/>
-        {{> springanimationdemo}}
-        <hr/>
-        {{> springanimationdemo}}
-        <hr/>
-        {{> springanimationdemo}}
-        <hr/>
-        {{> springanimationdemo}}
+        <div class="springanimationdemogroup-childwrapper"></div>
+
+        <script class="springanimationdemogroup-child-template" type="text/template">
+            <div class="springanimationdemo js-rb-live"
+                 data-module="springanimationdemo"
+                 data-springanimationdemo-stiffness="<%= stiffness %>"
+                 data-springanimationdemo-damping="<%= damping %>"
+            >
+                <ul class="springanimationdemo-controls">
+                    <li>
+                        <label>
+                            Stiffness
+                            <input type="range" min="0" max="300" value="<%= stiffness %>" data-springanimationdemo-controls="stiffness"/>
+                            <input type="number" min="0" max="300" value="<%= stiffness %>" data-springanimationdemo-controls="stiffness">
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Damping
+                            <input type="range" min="0" max="100" value="<%= damping %>" data-springanimationdemo-controls="damping"/>
+                            <input type="number" min="0" max="100" value="<%= damping %>" data-springanimationdemo-controls="damping"/>
+                        </label>
+                    </li>
+                </ul>
+                <div class="springanimationdemo-stage">
+                    <div class="springanimationdemo-element"></div>
+                </div>
+            </div>
+        </script>
+
     </div>
 
     <button type="button">+</button>

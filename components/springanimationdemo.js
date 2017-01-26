@@ -11,6 +11,13 @@ class SpringAnimationDemoGroup extends rb.Component {
 
     static get defaults() {
         return {
+            stiffnessBase: 80,
+            stiffnessInc: 15,
+
+            dampingBase: 5,
+            dampingInc: 5,
+
+            initialExampleCount: 4,
             waitBetweenAnimations: 1000
         };
     }
@@ -24,7 +31,27 @@ class SpringAnimationDemoGroup extends rb.Component {
     constructor(element, initialDefaults) {
         super(element, initialDefaults);
 
+        this.log(this);
+
+        this.childWrapper = this.query('.{name}-childwrapper');
+        this.templates = Object.assign({}, this.templates, {
+            childTemplate: rb.template(this.query('.{name}-child-template').innerHTML)
+        });
+
         this.onChildDemoEnded = rb.debounce(this.onChildDemoEnded, { delay: 100 });
+        this.createChildComponents(this.options.initialExampleCount);
+    }
+
+    createChildComponents(count){
+        const o = this.options;
+
+        for(let i = 0; i < count; i++){
+            this.childWrapper.insertAdjacentHTML('beforeend', this.render('childTemplate', {
+                stiffness: o.stiffnessBase + (o.stiffnessInc * i),
+                damping: o.dampingBase + (o.dampingInc * i),
+            }));
+        }
+
         this.getChildComponents();
     }
 
@@ -58,17 +85,26 @@ class SpringAnimationDemo extends rb.Component {
     static get events(){
         return {
             'rb_layoutchange': 'readLayout',
-            'input:matches([data-{name}-controls)]': 'onRangeInput'
+            'input:matches([data-{name}-controls)]': 'onControlInput'
         };
     }
 
     constructor(element, initialDefaults) {
         super(element, initialDefaults);
 
-        this.animateElement = this.query('.{name}-element');
+        this.springAnimation = null;
         this.latestValue = 0;
         this.isAtEnd = false;
         this.hasEnded = true;
+
+        // elements
+        this.animateElement = this.query('.{name}-element');
+        this.inputsForOptions = this.queryAll('[data-{name}-controls]').reduce((inputsForOptions, el)=>{
+            const optionName = el.getAttribute(this.interpolateName('data-{name}-controls'));
+            inputsForOptions[optionName] = inputsForOptions[optionName] || [];
+            inputsForOptions[optionName].push(el);
+            return inputsForOptions;
+        }, {});
 
         this.readLayout();
         this.createSpring();
@@ -76,14 +112,25 @@ class SpringAnimationDemo extends rb.Component {
 
     setOption(name, value, isSticky) {
         super.setOption(name, value, isSticky);
-        this.log(arguments);
+        if(this.springAnimation && name in this.springAnimation){
+            this.springAnimation[name] = value;
+        }
     }
 
-    onRangeInput(event){
+    onControlInput(event){
         const optionUpdated = event.target.getAttribute(this.interpolateName('data-{name}-controls'));
+
         if(!optionUpdated || !(optionUpdated in this.options)){
             return;
         }
+        const inputsForOption = this.inputsForOptions[optionUpdated] || [];
+
+        inputsForOption.forEach((input)=>{
+            if(input !== event.target){
+                input.value = event.target.value;
+            }
+        });
+
         this.setOption(optionUpdated, event.target.value);
     }
 
@@ -128,6 +175,7 @@ class SpringAnimationDemo extends rb.Component {
 
     setElPos(data){
         // console.log(this.);
+        // instead... draw canvas!
         this.animateElement.style.transform = `translateX(${data.currentValue}px)`;
         this.latestValue = data.currentValue;
     }
