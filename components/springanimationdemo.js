@@ -11,7 +11,7 @@ class SpringAnimationDemoGroup extends rb.Component {
 
     static get defaults() {
         return {
-            stiffnessBase: 80,
+            stiffnessBase: 3,
             stiffnessInc: 15,
 
             dampingBase: 5,
@@ -60,7 +60,7 @@ class SpringAnimationDemoGroup extends rb.Component {
     }
 
     onChildDemoEnded(){
-        const allEnded = this.childCompontents.reduce((previousValue, childComp) => previousValue && childComp.hasEnded, true);
+        const allEnded = this.childCompontents.reduce((previousValue, childComp) => previousValue && childComp.ended, true);
         if(allEnded){
             setTimeout(()=>{
                 this.startChildComponents();
@@ -92,10 +92,11 @@ class SpringAnimationDemo extends rb.Component {
     constructor(element, initialDefaults) {
         super(element, initialDefaults);
 
+        this.maxPos = null;
         this.springAnimation = null;
         this.latestValue = 0;
         this.isAtEnd = false;
-        this.hasEnded = true;
+        this._hasEnded = true;
 
         // elements
         this.animateElement = this.query('.{name}-element');
@@ -135,15 +136,25 @@ class SpringAnimationDemo extends rb.Component {
     }
 
     readLayout(){
-        this.maxPos = this.element.clientWidth - this.animateElement.clientWidth;
+        const newMaxPos = this.element.clientWidth - this.animateElement.clientWidth;
+
+        if(newMaxPos === this.maxPos){
+            return;
+        }
+
+        this.maxPos = newMaxPos;
+
+        if(this.springAnimation){
+            this.springAnimation.target = this.isAtEnd && this.springAnimation.currentValue === this.maxPos ? 0 : this.maxPos;
+        }
     }
 
     get ended(){
-        return this.hasEnded;
+        return this._hasEnded;
     }
 
     createSpring(opts){
-        if(!this.hasEnded){
+        if(!this._hasEnded){
             return;
         }
 
@@ -152,25 +163,30 @@ class SpringAnimationDemo extends rb.Component {
             target: this.isAtEnd ? 0 : this.maxPos,
             stiffness: this.options.stiffness,
             damping: this.options.damping,
+            start: ()=>{
+                // add callback for start
+            },
             progress: (data)=>{
                 // this.log(this.animateElement, data);
                 this.setElPos(data);
             },
             complete: ()=>{
                 this.isAtEnd = !this.isAtEnd;
-                this.hasEnded = true;
+                this._hasEnded = true;
                 this.trigger('ended');
                 this.updateStateClass();
             }
         }, opts);
 
         this.springAnimation = new rb.SpringAnimation(springOpts);
-        this.hasEnded = false;
+        this._hasEnded = false;
         this.updateStateClass();
+
+        this.log(this.springAnimation);
     }
 
     updateStateClass(){
-        $(this.animateElement).rbToggleState('spring{-}animated', !this.hasEnded);
+        $(this.animateElement).rbToggleState('spring{-}animated', !this._hasEnded);
     }
 
     setElPos(data){
@@ -180,8 +196,14 @@ class SpringAnimationDemo extends rb.Component {
         this.latestValue = data.currentValue;
     }
 
-    // shift -> make slow
-    // alt -> show ghosts
+    detached(){
+        // TODO: implement this
+        this.log('removed', this);
+        this.trigger('removed');
+    }
+
+    // shift key -> make slow
+    // alt key -> show ghosts (would be better with canvas)
 }
 
 

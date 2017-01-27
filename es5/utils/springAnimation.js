@@ -66,7 +66,7 @@
         this.currentVelocity = o.from.velocity || 0;
         this.currentMass = o.mass || 1;
 
-        this.targetValue = o.target || 0;
+        this._targetValue = o.target || 0;
 
         this.averageFrameTime = 10;
         this.lastUpdate = Date.now();
@@ -96,7 +96,7 @@
             var rate = 1 / 1000 * this.averageFrameTime;
 
             // calc spring and damper forces
-            var displacement = this.currentValue - this.targetValue;
+            var displacement = this.currentValue - this._targetValue;
             var forceSpring = this.springStiffness * displacement; // / 1000 / 1000
             var forceDamper = this.damping * this.currentVelocity; // / 1000
 
@@ -140,7 +140,7 @@
             var _this = this;
 
             this.ended = true;
-            this.currentValue = this.targetValue;
+            this.currentValue = this._targetValue;
 
             rb.rAFQueue(function () {
                 _this.options.progress(_this.getProgressState());
