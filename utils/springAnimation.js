@@ -79,7 +79,6 @@ class SpringAnimation {
     }
 
     set target(newValue){
-        // TODO: recheck if still finished, when target changed
         this._targetValue = newValue || 0;
 
         if(this.ended && !this.shouldFinish()){
@@ -142,7 +141,6 @@ class SpringAnimation {
     // TODO: rewrite keep alive, to forceSpring && acc && currentDisplacement, calc preci
     shouldFinish(){
         const shouldFinish = Math.abs(this.currentDisplacement) < 0.5 && Math.abs(this.currentVelocity) < 1;
-        // console.log(this.currentDisplacement, this.currentVelocity, shouldFinish);
         return shouldFinish;
     }
 
@@ -158,8 +156,6 @@ class SpringAnimation {
             this.options.stop(this.getProgressState());
         }
         this.ended = true;
-
-        // logAverageElapsedTime();
     }
 
     finish() {

@@ -3,6 +3,10 @@
 
     &-controls {
         display: flex;
+
+        li {
+            margin-right: 10px;
+        }
     }
 
     &-stage {
@@ -17,7 +21,7 @@
     height: 50px;
     border-radius: 500px;
     background: indianred;
-    transition: background 100ms;
+    transition: background 200ms;
 
     &.is-spring-animated {
         background: coral;

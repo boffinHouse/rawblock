@@ -11,20 +11,22 @@ class SpringAnimationDemoGroup extends rb.Component {
 
     static get defaults() {
         return {
-            stiffnessBase: 3,
-            stiffnessInc: 15,
+            stiffnessBase: 60,
+            stiffnessInc: 20,
 
             dampingBase: 5,
             dampingInc: 5,
 
-            initialExampleCount: 4,
-            waitBetweenAnimations: 1000
+            initialExampleCount: 3,
+            waitBetweenAnimations: 1000,
+
         };
     }
 
     static get events(){
         return {
-            'springanimationdemoended': 'onChildDemoEnded'
+            'springanimationdemoended': 'onChildDemoEnded',
+            'click:closest(.{name}-ctrl-btn)': 'onControlButtonClick'
         };
     }
 
@@ -33,10 +35,13 @@ class SpringAnimationDemoGroup extends rb.Component {
 
         this.log(this);
 
+        this.childsWereAtEnd = false;
         this.childWrapper = this.query('.{name}-childwrapper');
         this.templates = Object.assign({}, this.templates, {
             childTemplate: rb.template(this.query('.{name}-child-template').innerHTML)
         });
+
+        this.rAFs('createChildComponents', 'removeChildComponent');
 
         this.onChildDemoEnded = rb.debounce(this.onChildDemoEnded, { delay: 100 });
         this.createChildComponents(this.options.initialExampleCount);
@@ -53,23 +58,62 @@ class SpringAnimationDemoGroup extends rb.Component {
         }
 
         this.getChildComponents();
+        this.restartChildComponents();
+    }
+
+    addChildComponent(){
+        const o = this.options;
+        const latestChild = this.childCompontents[this.childCompontents.length - 1];
+        const stiffness = (latestChild ? latestChild.options.stiffness : o.stiffnessBase) + o.stiffnessInc;
+        const damping = (latestChild ? latestChild.options.damping : o.dampingBase) + o.dampingInc;
+
+        this.childWrapper.insertAdjacentHTML('beforeend', this.render('childTemplate', { stiffness, damping }));
+        this.getChildComponents();
+
+        // start added springdemo
+        this.childCompontents[this.childCompontents.length - 1].createSpring(this.childsWereAtEnd);
+    }
+
+    removeChildComponent(childComp){
+        const childCompToRemove = childComp || this.childCompontents[this.childCompontents.length - 1];
+        childCompToRemove.element.remove();
+        this.getChildComponents();
     }
 
     getChildComponents(){
-        this.childCompontents = this.queryAll('[data-module="springanimationdemo"]').map(element => rb.getComponent(element));
+        return this.childCompontents = this.queryAll('[data-module="springanimationdemo"]').map(element => rb.getComponent(element));
     }
 
     onChildDemoEnded(){
-        const allEnded = this.childCompontents.reduce((previousValue, childComp) => previousValue && childComp.ended, true);
-        if(allEnded){
+        this.allEnded = this.childCompontents.reduce((previousValue, childComp) => previousValue && childComp.ended, true);
+
+        if(this.allEnded){
+            this.childsWereAtEnd = !this.childsWereAtEnd;
+
             setTimeout(()=>{
-                this.startChildComponents();
+                this.restartChildComponents(this.childsWereAtEnd);
             }, this.options.waitBetweenAnimations);
         }
     }
 
-    startChildComponents(){
-        this.childCompontents.forEach(childComp => childComp.createSpring());
+    onControlButtonClick(event){
+        const type = event.target.getAttribute(this.interpolateName('data-{name}-button-type'));
+
+        switch (type) {
+            case 'add':
+                this.addChildComponent();
+                break;
+            case 'remove':
+                this.removeChildComponent();
+                break;
+            default:
+                this.logWarn('unknown control button type');
+        }
+    }
+
+    restartChildComponents(){
+        this.childCompontents.forEach(childComp => childComp.createSpring(this.childsWereAtEnd));
+        this.allEnded = false;
     }
 }
 
@@ -95,7 +139,7 @@ class SpringAnimationDemo extends rb.Component {
         this.maxPos = null;
         this.springAnimation = null;
         this.latestValue = 0;
-        this.isAtEnd = false;
+        this.wasAtEnd = false;
         this._hasEnded = true;
 
         // elements
@@ -108,7 +152,6 @@ class SpringAnimationDemo extends rb.Component {
         }, {});
 
         this.readLayout();
-        this.createSpring();
     }
 
     setOption(name, value, isSticky) {
@@ -145,7 +188,7 @@ class SpringAnimationDemo extends rb.Component {
         this.maxPos = newMaxPos;
 
         if(this.springAnimation){
-            this.springAnimation.target = this.isAtEnd && this.springAnimation.currentValue === this.maxPos ? 0 : this.maxPos;
+            this.springAnimation.target = (this.wasAtEnd && this.springAnimation.currentValue === this.maxPos) ? 0 : this.maxPos;
         }
     }
 
@@ -153,14 +196,16 @@ class SpringAnimationDemo extends rb.Component {
         return this._hasEnded;
     }
 
-    createSpring(opts){
+    createSpring(wasAtEnd, opts){
         if(!this._hasEnded){
             return;
         }
 
+        this.wasAtEnd = !!wasAtEnd;
+
         const springOpts = Object.assign({
-            from: this.latestValue,
-            target: this.isAtEnd ? 0 : this.maxPos,
+            from: this.latestValue || (!this.wasAtEnd ? 0 : this.maxPos),
+            target: this.wasAtEnd ? 0 : this.maxPos,
             stiffness: this.options.stiffness,
             damping: this.options.damping,
             start: ()=>{
@@ -171,7 +216,6 @@ class SpringAnimationDemo extends rb.Component {
                 this.setElPos(data);
             },
             complete: ()=>{
-                this.isAtEnd = !this.isAtEnd;
                 this._hasEnded = true;
                 this.trigger('ended');
                 this.updateStateClass();
@@ -181,8 +225,6 @@ class SpringAnimationDemo extends rb.Component {
         this.springAnimation = new rb.SpringAnimation(springOpts);
         this._hasEnded = false;
         this.updateStateClass();
-
-        this.log(this.springAnimation);
     }
 
     updateStateClass(){
@@ -190,15 +232,16 @@ class SpringAnimationDemo extends rb.Component {
     }
 
     setElPos(data){
-        // console.log(this.);
         // instead... draw canvas!
         this.animateElement.style.transform = `translateX(${data.currentValue}px)`;
         this.latestValue = data.currentValue;
     }
 
     detached(){
-        // TODO: implement this
-        this.log('removed', this);
+        if(this.springAnimation){
+            this.springAnimation.stop();
+            this.springAnimation = null;
+        }
         this.trigger('removed');
     }
 
