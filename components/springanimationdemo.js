@@ -11,13 +11,14 @@ class SpringAnimationDemoGroup extends rb.Component {
 
     static get defaults() {
         return {
-            stiffnessBase: 60,
+            stiffnessBase: 30,
             stiffnessInc: 20,
 
-            dampingBase: 5,
-            dampingInc: 5,
+            dampingBase: 4,
+            dampingInc: 2,
 
-            initialExampleCount: 3,
+            autostart: true,
+            initialExampleCount: 4,
             waitBetweenAnimations: 1000,
 
         };
@@ -33,18 +34,44 @@ class SpringAnimationDemoGroup extends rb.Component {
     constructor(element, initialDefaults) {
         super(element, initialDefaults);
 
-        this.log(this);
-
+        this.allEnded = true;
         this.childsWereAtEnd = false;
-        this.childWrapper = this.query('.{name}-childwrapper');
+
         this.templates = Object.assign({}, this.templates, {
             childTemplate: rb.template(this.query('.{name}-child-template').innerHTML)
         });
 
-        this.rAFs('createChildComponents', 'removeChildComponent');
+        this.rAFs({that: this}, 'createChildComponents', 'removeChildComponent');
 
+        this.getElements();
+        this.updateControlStates();
         this.onChildDemoEnded = rb.debounce(this.onChildDemoEnded, { delay: 100 });
         this.createChildComponents(this.options.initialExampleCount);
+    }
+
+    setOption(name, value, isSticky) {
+        super.setOption(name, value, isSticky);
+
+        switch (name){
+            case 'autostart':
+                this.updateControlStates();
+                if(this.allEnded && value){ this.restartChildComponents(); }
+                break;
+            default:
+                this.log('unknown option was set');
+                break;
+        }
+
+        // this.log(name, value, isSticky);
+    }
+
+    getElements(){
+        this.childWrapper = this.query('.{name}-childwrapper');
+        this.inputAutostart = this.query('input[data-{name}-button-type="autostart"]');
+    }
+
+    updateControlStates(){
+        this.inputAutostart.checked = this.options.autostart;
     }
 
     createChildComponents(count){
@@ -58,7 +85,10 @@ class SpringAnimationDemoGroup extends rb.Component {
         }
 
         this.getChildComponents();
-        this.restartChildComponents();
+
+        if(o.autostart){
+            this.restartChildComponents();
+        }
     }
 
     addChildComponent(){
@@ -90,9 +120,12 @@ class SpringAnimationDemoGroup extends rb.Component {
         if(this.allEnded){
             this.childsWereAtEnd = !this.childsWereAtEnd;
 
-            setTimeout(()=>{
-                this.restartChildComponents(this.childsWereAtEnd);
-            }, this.options.waitBetweenAnimations);
+            if(this.options.autostart){
+                this.allEnded = false;
+                setTimeout(()=>{
+                    this.restartChildComponents();
+                }, this.options.waitBetweenAnimations);
+            }
         }
     }
 
@@ -106,12 +139,34 @@ class SpringAnimationDemoGroup extends rb.Component {
             case 'remove':
                 this.removeChildComponent();
                 break;
+            case 'autostart':
+                this.setOption('autostart', !!event.target.checked);
+                break;
+            case 'toggle':
+                this.startStop();
+                break;
             default:
-                this.logWarn('unknown control button type');
+                this.logWarn('unknown control button type:', type);
+        }
+    }
+
+    startStop(){
+        if(!this.childCompontents){
+            this.getChildComponents();
+        }
+
+        if(this.allEnded){
+            this.restartChildComponents();
+        } else {
+            this.allEnded = true;
+            this.childCompontents.forEach(childComp => childComp.stopSpring());
         }
     }
 
     restartChildComponents(){
+        if(!this.childCompontents){
+            this.getChildComponents();
+        }
         this.childCompontents.forEach(childComp => childComp.createSpring(this.childsWereAtEnd));
         this.allEnded = false;
     }
@@ -167,15 +222,16 @@ class SpringAnimationDemo extends rb.Component {
         if(!optionUpdated || !(optionUpdated in this.options)){
             return;
         }
+        const newValue = parseFloat(event.target.value) || 0;
         const inputsForOption = this.inputsForOptions[optionUpdated] || [];
 
         inputsForOption.forEach((input)=>{
-            if(input !== event.target){
-                input.value = event.target.value;
-            }
+            // if(input !== event.target){
+                input.value = newValue;
+            // }
         });
 
-        this.setOption(optionUpdated, event.target.value);
+        this.setOption(optionUpdated, newValue);
     }
 
     readLayout(){
@@ -211,6 +267,9 @@ class SpringAnimationDemo extends rb.Component {
             start: ()=>{
                 // add callback for start
             },
+            stop: ()=>{
+                this._hasEnded = true;
+            },
             progress: (data)=>{
                 // this.log(this.animateElement, data);
                 this.setElPos(data);
@@ -225,6 +284,12 @@ class SpringAnimationDemo extends rb.Component {
         this.springAnimation = new rb.SpringAnimation(springOpts);
         this._hasEnded = false;
         this.updateStateClass();
+    }
+
+    stopSpring(){
+        if(this.springAnimation){
+            this.springAnimation.stop();
+        }
     }
 
     updateStateClass(){
@@ -248,8 +313,6 @@ class SpringAnimationDemo extends rb.Component {
     // shift key -> make slow
     // alt key -> show ghosts (would be better with canvas)
 }
-
-
 
 rb.live.register('springanimationdemogroup', SpringAnimationDemoGroup);
 

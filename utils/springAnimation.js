@@ -1,9 +1,20 @@
 // aliases
 const rb = window.rb;
 const $ = rb.$;
-// const rAF = window.requestAnimationFrame;
-// const cAF = window.cancelAnimationFrame;
+const min = Math.min;
+const max = Math.max;
 
+const AFTER_OSCILLATION_STIFFNESS = 170;
+const AFTER_OSCILLATION_DAMPING = 5;
+
+/**
+ * SpringAnimation Class
+ * for more realistic animations
+ *
+ * - takes value + velocity (optional) as from value
+ * - configure stiffness, damping (and mass)
+ * - use progress callback
+ */
 class SpringAnimation {
 
     static get defaults() {
@@ -18,24 +29,34 @@ class SpringAnimation {
             target: null,
 
             // keep alive thresholds
-            autostart: true, // TODO: implement this + start() callback
-            accelerationThreshold: 25,
+            keepAlivePrecision: SpringAnimation.PRECISION.LOW,
 
             // callbacks
             progress: $.noop,
             complete: $.noop,
-            stop: $.noop
+            stop: $.noop,
+
+            // debug
+            debug: 'inherit',
+        };
+    }
+
+    static get PRECISION() {
+        return {
+            HIGH: 0.001, // use for calculations that require more precisions (0..1)
+            LOW: 0.4, // used for normal animations (pixel precision)
         };
     }
 
     constructor(options) {
         const o = this.options = Object.assign({}, SpringAnimation.defaults, options);
 
-        /* spring stiffness, in kg/s^2 */
-        this.stiffness = o.stiffness;
+        rb.addLog(this, this.options.debug === 'inherit' ? rb.isDebug : this.options.debug);
 
-        /* damping in kg/s */
-        this.damping = o.damping;
+        // spring stiffness, in kg/s^2
+        this.stiffness = o.stiffness;
+        this.damping = o.damping; // damping in kg/s
+        this.mass = o.mass; // in kg
 
         this._update = this._update.bind(this);
 
@@ -44,9 +65,10 @@ class SpringAnimation {
             return;
         }
 
+        this.oscillationCount = 0;
+        this.oscillationDetected = false;
         this.currentValue = o.from.value || parseInt(o.from, 10) || 0;
         this.currentVelocity = o.from.velocity || 0;
-        this.currentMass = o.mass || 1;
 
         this.target = o.target;
 
@@ -63,15 +85,23 @@ class SpringAnimation {
     }
 
     set damping(newValue){
-        this._damping = Math.max(0.01, newValue) * -1;
+        this._damping = Math.abs(newValue) * -1;
     }
 
     set stiffness(newValue){
-        this._stiffness = Math.max(0.1, newValue) * -1;
+        this._stiffness = Math.abs(newValue) * -1;
     }
 
     get stiffness(){
         return this._stiffness * -1;
+    }
+
+    get mass(){
+        return this._mass;
+    }
+
+    set mass(newValue){
+        this._mass = Math.abs(newValue) || 1;
     }
 
     get target(){
@@ -111,22 +141,44 @@ class SpringAnimation {
         const rate = (1 / 1000) * this.averageFrameTime;
 
         // calc spring and damper forces
-        const _forceSpring = this._stiffness * this.currentDisplacement; // / 1000 / 1000
+        const currentDisplacement = this.currentDisplacement;
+        const _forceSpring = this._stiffness * currentDisplacement; // / 1000 / 1000
         const _forceDamper = this._damping * ( this.currentVelocity ); // / 1000
 
         // calc acceleration
-        const acceleration = ( _forceSpring + _forceDamper ) / this.currentMass;
+        const acceleration = ( _forceSpring + _forceDamper ) / this.mass;
 
         // apply acceleration for passed time an update values
         // velocity in change per second
         this.currentVelocity = this.currentVelocity + (acceleration * rate);
+        this.currentVelocity = min(Number.MAX_SAFE_INTEGER, max(Number.MIN_SAFE_INTEGER, this.currentVelocity));
+
         this.currentValue = this.currentValue + (this.currentVelocity * rate);
+        this.currentValue = min(Number.MAX_SAFE_INTEGER, max(Number.MIN_SAFE_INTEGER, this.currentValue));
         this.lastUpdate = now;
 
-        // detect oscillation by counting passing of target value back and forth, and then if detected increse damping
+        // detect oscillation by counting passing of target value back and forth
+        if(!this.oscillationDetected && (currentDisplacement > 0) !== (this.currentDisplacement > 0)){
+            this.oscillationCount += 1;
+
+            if(this.oscillationCount === 30){
+                this.oscillationDetected = true;
+                this.logWarn(
+                    'SpringAnimation | oscillation detected, adjust your stiffness and damping',
+                    { stiffness: this.stiffness, damping: this.damping },
+                    'or turn oscillationDetection off')
+                ;
+            }
+        }
+
+        // adjust spring on oscillationDetected
+        if(this.oscillationDetected){
+            this.stiffness = this.stiffness - ((this.stiffness - AFTER_OSCILLATION_STIFFNESS) / 1000);
+            this.damping = this.damping - ((this.damping - AFTER_OSCILLATION_DAMPING) / 1000);
+        }
 
         if (this.averageFrameTime >= 60) {
-            rb.logWarn('SpringAnimation | frame rate is very low!');
+            this.logWarn('SpringAnimation | frame rate is very low!');
         }
 
         this.options.progress(this.getProgressState());
@@ -138,10 +190,9 @@ class SpringAnimation {
         }
     }
 
-    // TODO: rewrite keep alive, to forceSpring && acc && currentDisplacement, calc preci
     shouldFinish(){
-        const shouldFinish = Math.abs(this.currentDisplacement) < 0.5 && Math.abs(this.currentVelocity) < 1;
-        return shouldFinish;
+        const keepAlivePrecision = this.options.keepAlivePrecision;
+        return Math.abs(this.currentDisplacement) <= keepAlivePrecision && Math.abs(this.currentVelocity) <= keepAlivePrecision;
     }
 
     getProgressState() {
@@ -168,16 +219,6 @@ class SpringAnimation {
         }, false, true);
     }
 }
-
-// Chrome: ~17-18
-// Safari: ~17
-// FF: ~21
-// IE10: 32-75 (errorlike sometimes > 100)
-// IE11: 34-55  (errorlike sometimes 60 and > 150)
-// Edge: 21-47 (jumpy 60 alsmost errorlike also 80)
-// function logAverageElapsedTime(){
-// 	console.warn('... AVERAGE ELAPSED TIME:', timeElapsedTotal/timeElapsedUpdates, timeElapsedUpdates, timeElapsedTotal);
-// }
 
 rb.SpringAnimation = SpringAnimation;
 
