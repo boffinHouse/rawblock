@@ -35,7 +35,7 @@ function buildParams( prefix, obj, add ) {
  * @param a
  * @returns {string}
  */
-const param = $.param || function( a ) {
+const param = ($ && $.param) || function( a ) {
     let prefix;
     const s = [];
     const add = function( key, value ) {
@@ -57,6 +57,8 @@ const param = $.param || function( a ) {
     // Return the resulting serialization
     return s.join('&').replace(r20, '+');
 };
+
+rb.param = param;
 
 if($ && !$.param){
     $.param = param;

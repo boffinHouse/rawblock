@@ -4,7 +4,7 @@ rb.storage = {};
 
 ['session', 'local'].forEach(function(type){
     let storage;
-    const testStr = rb.getID();
+    const testStr = rb.getID && rb.getID() || `test${Date.now().toString(36)}`;
 
     try {
         storage = window[type + 'Storage'];

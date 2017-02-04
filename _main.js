@@ -6,6 +6,68 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     require('./utils/debughelpers');
 }
 
+(function(){
+    const console = window.console || {};
+    const log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
+    const logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
+        const fnName = (errorName == 'log') ?
+                'log' :
+                'log' + (errorName.charAt(0).toUpperCase()) + (errorName.substr(1))
+            ;
+        return {
+            name: fnName,
+            errorLevel: errorLevel,
+            fn: (console[errorName] && console[errorName].bind ? console[errorName] : rb.$.noop).bind(console)
+        };
+    });
+
+
+    /**
+     * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
+     * @memberof rb
+     * @param obj    {Object}
+     * @param [initial] {Boolean}
+     */
+    rb.addLog = function (obj, initial) {
+        const fakeLog = rb.$.noop;
+
+        const setValue = function(){
+            const level = obj.__isDebug;
+
+            logs.forEach(function(log){
+                const fn = (level !== false && (level === true || level >= log.errorLevel)) ?
+                    log.fn :
+                    fakeLog;
+
+                obj[log.name] = fn;
+            });
+        };
+
+        obj.__isDebug = initial;
+        setValue();
+
+        Object.defineProperty(obj, 'isDebug', {
+            configurable: true,
+            enumerable: true,
+            get: function () {
+                return obj.__isDebug;
+            },
+            set: function (value) {
+                if(obj.__isDebug !== value){
+                    obj.__isDebug = value;
+                    setValue();
+                }
+            },
+        });
+    };
+})();
+
+rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
+
+if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+    rb.logWarn('rawblock dev mode active. Do not use in production');
+}
+
 (function (window, document, _undefined) {
     'use strict';
 
@@ -756,7 +818,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             return event;
         },
         dispatch: function(element, type, options){
-            var event = this.Event(type, options);
+            const event = this.Event(type, options);
             element.dispatchEvent(event);
             return event;
         },
@@ -1019,67 +1081,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
         };
     })();
-
-    (function(){
-        var console = window.console || {};
-        var log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
-        var logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
-            var fnName = (errorName == 'log') ?
-                'log' :
-                'log' + (errorName.charAt(0).toUpperCase()) + (errorName.substr(1))
-            ;
-            return {
-                name: fnName,
-                errorLevel: errorLevel,
-                fn: (console[errorName] && console[errorName].bind ? console[errorName] : rb.$.noop).bind(console)
-            };
-        });
-
-
-        /**
-         * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
-         * @memberof rb
-         * @param obj    {Object}
-         * @param [initial] {Boolean}
-         */
-        rb.addLog = function (obj, initial) {
-            var fakeLog = rb.$.noop;
-
-            var setValue = function(){
-                var level = obj.__isDebug;
-                logs.forEach(function(log){
-                    var fn = (level !== false && (level === true || level >= log.errorLevel)) ?
-                        log.fn :
-                        fakeLog;
-
-                    obj[log.name] = fn;
-                });
-            };
-
-            obj.__isDebug = initial;
-            setValue();
-
-            Object.defineProperty(obj, 'isDebug', {
-                configurable: true,
-                enumerable: true,
-                get: function () {
-                    return obj.__isDebug;
-                },
-                set: function (value) {
-                    if(obj.__isDebug !== value){
-                        obj.__isDebug = value;
-                        setValue();
-                    }
-                },
-            });
-        };
-    })();
-
-    rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
-
-    if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-        rb.logWarn('rawblock dev mode active. Do not use in production');
-    }
 
     var cbs = [];
     var setupClick = function () {
@@ -1415,12 +1416,14 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
 
     const initObserver = function () {
-        var removeComponents = (function () {
-            var runs, timer;
-            var i = 0;
-            var main = function () {
-                var len, instance, element;
-                var start = Date.now();
+        const removeComponents = (function () {
+            let runs, timer;
+            let i = 0;
+
+            const main = function () {
+                let len, instance, element;
+                const start = Date.now();
+
                 for (len = live._attached.length; i < len && Date.now() - start < 3; i++) {
                     element = live._attached[i];
 
@@ -1452,9 +1455,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             };
         })();
 
-        var onMutation = function (mutations) {
-            var i, mutation;
-            var len = mutations.length;
+        const onMutation = function (mutations) {
+            let i, mutation;
+            const len = mutations.length;
 
             for (i = 0; i < len; i++) {
                 mutation = mutations[i];
@@ -1475,13 +1478,13 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             docElem.addEventListener('DOMNodeInserted', live.searchModules);
             document.addEventListener('DOMContentLoaded', live.searchModules);
             docElem.addEventListener('DOMNodeRemoved', (function () {
-                var mutation = {
+                const mutation = {
                     addedNodes: [],
                 };
-                var mutations = [
+                const mutations = [
                     mutation,
                 ];
-                var run = function () {
+                const run = function () {
                     onMutation(mutations);
                     mutation.removedNodes = false;
                 };
@@ -1499,9 +1502,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
 
     const createBatch = function () {
-        var runs;
-        var batch = [];
-        var run = function () {
+        let runs;
+        const batch = [];
+        const run = function () {
             while (batch.length) {
                 batch.shift()();
             }
@@ -1643,10 +1646,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      *
      */
     live.register = function (name, Class, extend) {
-        var proto = Class.prototype;
-        var superProto = Object.getPrototypeOf(proto);
-        var superClass = superProto.constructor;
-        var isRbComponent = proto instanceof rb.Component;
+        const proto = Class.prototype;
+        const superProto = Object.getPrototypeOf(proto);
+        const superClass = superProto.constructor;
+        const isRbComponent = proto instanceof rb.Component;
 
         if (isRbComponent) {
             extendStatics(Class, proto, superClass, 'defaults');
@@ -1721,7 +1724,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 	 * });
      */
     live.addImportHook = function (names, importCallback) {
-        var add = function (name) {
+        const add = function (name) {
             if (unregisteredFoundHook[name]) {
                 rb.log('overrides ' + name + ' import hook', names, importCallback);
             }
@@ -1786,7 +1789,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @returns {Object}
      */
     live.create = function (element, liveClass, initialOpts) {
-        var instance;
+        let instance;
 
         if (mainInit) {
             mainInit();

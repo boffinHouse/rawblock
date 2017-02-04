@@ -42,7 +42,8 @@
      * @returns {*}
      */
     _globalRb2.default.jsonParse = function (str) {
-        var ret;
+        var ret = void 0;
+
         if (str) {
             try {
                 ret = JSON.parse(str);
@@ -61,7 +62,7 @@
      * @returns {Object|undefined}
      */
     _globalRb2.default.parsePseudo = function (element, privateExpando) {
-        var ret;
+        var ret = void 0;
         var isString = typeof element == 'string';
         var value = isString ? element : getPseudoToParse(element);
 
@@ -139,7 +140,7 @@
      */
     var cssConfig = { mqs: {}, currentMQ: '', beforeMQ: '' };
     var parseCSS = function parseCSS() {
-        var mqCallbacks;
+        var mqCallbacks = void 0;
         var root = document.documentElement;
         var styles = _globalRb2.default.parsePseudo(root) || {};
         var currentMQStyle = _globalRb2.default.getStyles(root, '::after');
@@ -147,6 +148,7 @@
 
         var detectMQChange = function detectMQChange() {
             var nowStyle = currentMQStyle.content;
+
             if (currentStyle != nowStyle) {
                 currentStyle = nowStyle;
                 _globalRb2.default.cssConfig.beforeMQ = _globalRb2.default.cssConfig.currentMQ;
@@ -163,6 +165,7 @@
                 detectMQChange();
                 _run = false;
             };
+
             return function () {
                 if (!running) {
                     running = true;

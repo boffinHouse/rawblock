@@ -41,6 +41,62 @@
 
     if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {}
 
+    (function () {
+        var console = window.console || {};
+        var log = console.log && console.log.bind ? console.log : _globalRb2.default.$.noop; //eslint-disable-line no-unused-vars
+        var logs = ['error', 'warn', 'info', 'log'].map(function (errorName, errorLevel) {
+            var fnName = errorName == 'log' ? 'log' : 'log' + errorName.charAt(0).toUpperCase() + errorName.substr(1);
+            return {
+                name: fnName,
+                errorLevel: errorLevel,
+                fn: (console[errorName] && console[errorName].bind ? console[errorName] : _globalRb2.default.$.noop).bind(console)
+            };
+        });
+
+        /**
+         * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
+         * @memberof rb
+         * @param obj    {Object}
+         * @param [initial] {Boolean}
+         */
+        _globalRb2.default.addLog = function (obj, initial) {
+            var fakeLog = _globalRb2.default.$.noop;
+
+            var setValue = function setValue() {
+                var level = obj.__isDebug;
+
+                logs.forEach(function (log) {
+                    var fn = level !== false && (level === true || level >= log.errorLevel) ? log.fn : fakeLog;
+
+                    obj[log.name] = fn;
+                });
+            };
+
+            obj.__isDebug = initial;
+            setValue();
+
+            Object.defineProperty(obj, 'isDebug', {
+                configurable: true,
+                enumerable: true,
+                get: function get() {
+                    return obj.__isDebug;
+                },
+                set: function set(value) {
+                    if (obj.__isDebug !== value) {
+                        obj.__isDebug = value;
+                        setValue();
+                    }
+                }
+            });
+        };
+    })();
+
+    _globalRb2.default.addLog(_globalRb2.default, typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production' ? true : 1);
+
+    if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
+        _globalRb2.default.logWarn('rawblock dev mode active. Do not use in production');
+    }
+
     (function (window, document, _undefined) {
         'use strict';
 
@@ -690,7 +746,7 @@
         /* End: rbComponent */
 
         /* Begin: addEasing */
-        var BezierEasing;
+        var BezierEasing = void 0;
         var easingMap = {
             ease: '0.25,0.1,0.25,1',
             linear: '0,0,1,1',
@@ -707,7 +763,8 @@
          */
         var regEasingNumber = /([0-9.]+)/g;
         _globalRb2.default.addEasing = function (easing, name) {
-            var bezierArgs;
+            var bezierArgs = void 0;
+
             if (typeof easing != 'string') {
                 return;
             }
@@ -869,14 +926,14 @@
                     return proxy;
                 },
                 once: function once(handler, _once, opts, type) {
-                    var proxy = _globalRb2.default.events.proxy(handler, 'conce', '');
+                    var proxy = _globalRb2.default.events.proxy(handler, 'once', '');
                     if (!proxy) {
                         proxy = function proxy(e) {
                             var ret = handler.apply(this, arguments);
                             _globalRb2.default.events.remove(e && e.target || this, type, handler, opts);
                             return ret;
                         };
-                        _globalRb2.default.events.proxy(handler, 'conce', '', proxy);
+                        _globalRb2.default.events.proxy(handler, 'once', '', proxy);
                     }
                     return proxy;
                 }
@@ -1043,61 +1100,6 @@
                 }
             };
         }();
-
-        (function () {
-            var console = window.console || {};
-            var log = console.log && console.log.bind ? console.log : _globalRb2.default.$.noop; //eslint-disable-line no-unused-vars
-            var logs = ['error', 'warn', 'info', 'log'].map(function (errorName, errorLevel) {
-                var fnName = errorName == 'log' ? 'log' : 'log' + errorName.charAt(0).toUpperCase() + errorName.substr(1);
-                return {
-                    name: fnName,
-                    errorLevel: errorLevel,
-                    fn: (console[errorName] && console[errorName].bind ? console[errorName] : _globalRb2.default.$.noop).bind(console)
-                };
-            });
-
-            /**
-             * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
-             * @memberof rb
-             * @param obj    {Object}
-             * @param [initial] {Boolean}
-             */
-            _globalRb2.default.addLog = function (obj, initial) {
-                var fakeLog = _globalRb2.default.$.noop;
-
-                var setValue = function setValue() {
-                    var level = obj.__isDebug;
-                    logs.forEach(function (log) {
-                        var fn = level !== false && (level === true || level >= log.errorLevel) ? log.fn : fakeLog;
-
-                        obj[log.name] = fn;
-                    });
-                };
-
-                obj.__isDebug = initial;
-                setValue();
-
-                Object.defineProperty(obj, 'isDebug', {
-                    configurable: true,
-                    enumerable: true,
-                    get: function get() {
-                        return obj.__isDebug;
-                    },
-                    set: function set(value) {
-                        if (obj.__isDebug !== value) {
-                            obj.__isDebug = value;
-                            setValue();
-                        }
-                    }
-                });
-            };
-        })();
-
-        _globalRb2.default.addLog(_globalRb2.default, typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production' ? true : 1);
-
-        if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
-            _globalRb2.default.logWarn('rawblock dev mode active. Do not use in production');
-        }
 
         var cbs = [];
         var _setupClick = function setupClick() {
@@ -1443,11 +1445,16 @@
 
         var initObserver = function initObserver() {
             var removeComponents = function () {
-                var runs, timer;
+                var runs = void 0,
+                    timer = void 0;
                 var i = 0;
+
                 var main = function main() {
-                    var len, instance, element;
+                    var len = void 0,
+                        instance = void 0,
+                        element = void 0;
                     var start = Date.now();
+
                     for (len = live._attached.length; i < len && Date.now() - start < 3; i++) {
                         element = live._attached[i];
 
@@ -1480,7 +1487,8 @@
             }();
 
             var onMutation = function onMutation(mutations) {
-                var i, mutation;
+                var i = void 0,
+                    mutation = void 0;
                 var len = mutations.length;
 
                 for (i = 0; i < len; i++) {
@@ -1522,7 +1530,7 @@
         };
 
         var createBatch = function createBatch() {
-            var runs;
+            var runs = void 0;
             var batch = [];
             var run = function run() {
                 while (batch.length) {
@@ -1804,7 +1812,7 @@
          * @returns {Object}
          */
         live.create = function (element, liveClass, initialOpts) {
-            var instance;
+            var instance = void 0;
 
             if (_mainInit) {
                 _mainInit();

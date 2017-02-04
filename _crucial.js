@@ -17,7 +17,8 @@ const removeLeadingQuotes = function (str) {
  * @returns {*}
  */
 rb.jsonParse = function (str) {
-    var ret;
+    let ret;
+
     if(str){
         try {
             ret = JSON.parse(str);
@@ -36,9 +37,9 @@ rb.jsonParse = function (str) {
  * @returns {Object|undefined}
  */
 rb.parsePseudo = function (element, privateExpando) {
-    var ret;
-    var isString = typeof element == 'string';
-    var value = isString ?
+    let ret;
+    const isString = typeof element == 'string';
+    const value = isString ?
             element :
             getPseudoToParse(element)
         ;
@@ -60,9 +61,9 @@ rb.getPseudo = function(element){
     // Get data from hidden elements can be tricky:
     // IE11 on Win7 does return content: 'none' for before. But can return fontFamily for the before element. (Safari 10 does not return the right fontFamily!.)
     // Safari 8 does return content: ''|null for before. But can only read content for the element itself.
-    var beforeStyles = rb.getStyles(element, '::before');
-    var value = beforeStyles.content;
-    var isValueNone = value == 'none';
+    const beforeStyles = rb.getStyles(element, '::before');
+    let value = beforeStyles.content;
+    const isValueNone = value == 'none';
 
     if((isValueNone || !value) && element){
         if(isValueNone){
@@ -82,7 +83,7 @@ rb.getPseudo = function(element){
  * @returns {boolean}
  */
 rb.hasPseudoChanged = function(element, privateExpando){
-    var value = element[privateExpando];
+    const value = element[privateExpando];
     return getPseudoToParse(element) != value;
 };
 
@@ -97,7 +98,7 @@ rb.hasPseudoChanged = function(element, privateExpando){
  * rb.getStyles(element).position // returns 'absolute', 'relative' ...
  */
 rb.getStyles = function (element, pseudo) {
-    var view = element.ownerDocument.defaultView;
+    let view = element.ownerDocument.defaultView;
 
     if (!view.opener) {
         view = window;
@@ -115,16 +116,17 @@ rb.getStyles = function (element, pseudo) {
  * @property cssConfig.mqChange {Object} jQuery Callback object to listen for media query changes.
  *
  */
-var cssConfig = {mqs: {}, currentMQ: '', beforeMQ: ''};
-var parseCSS = function () {
-    var mqCallbacks;
-    var root = document.documentElement;
-    var styles = rb.parsePseudo(root) || {};
-    var currentMQStyle = rb.getStyles(root, '::after');
-    var currentStyle = '';
+const cssConfig = {mqs: {}, currentMQ: '', beforeMQ: ''};
+const parseCSS = function () {
+    let mqCallbacks;
+    const root = document.documentElement;
+    const styles = rb.parsePseudo(root) || {};
+    const currentMQStyle = rb.getStyles(root, '::after');
+    let currentStyle = '';
 
-    var detectMQChange = function () {
-        var nowStyle = currentMQStyle.content;
+    const detectMQChange = function () {
+        const nowStyle = currentMQStyle.content;
+
         if (currentStyle != nowStyle) {
             currentStyle = nowStyle;
             rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
@@ -135,12 +137,13 @@ var parseCSS = function () {
         }
     };
 
-    var timedDetectMQChange = (function(){
-        var running = false;
-        var run = function(){
+    const timedDetectMQChange = (function(){
+        let running = false;
+        let run = function(){
             detectMQChange();
             run = false;
         };
+
         return function(){
             if(!running){
                 running = true;

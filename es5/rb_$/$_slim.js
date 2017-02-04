@@ -25,6 +25,7 @@
 
     var dataSymbol = void 0,
         regFocusable = void 0;
+    var rb = window.rb;
     var specialEvents = {};
 
     var Dom = function Dom(elements, context) {
@@ -78,7 +79,8 @@
 
     Object.assign(Dom, {
         isPlainObject: function isPlainObject(obj) {
-            var proto, Ctor;
+            var proto = void 0,
+                Ctor = void 0;
 
             if (!obj || toString.call(obj) !== '[object Object]') {
                 return false;
@@ -94,11 +96,17 @@
             return typeof Ctor === 'function' && fnToString.call(Ctor) === ObjectFunctionString;
         },
         extend: function extend() {
-            var options, name, src, copy, copyIsArray, clone;
+            var options = void 0,
+                name = void 0,
+                src = void 0,
+                copy = void 0,
+                copyIsArray = void 0,
+                clone = void 0;
+
             var target = arguments[0] || {};
             var i = 1;
-            var length = arguments.length;
             var deep = false;
+            var length = arguments.length;
 
             if (typeof target === 'boolean') {
                 deep = target;
@@ -199,7 +207,9 @@
                     this.fireWith(this, arguments);
                 },
                 fireWith: function fireWith(that, args) {
-                    var i, len;
+                    var i = void 0,
+                        len = void 0;
+
                     for (i = 0, len = list.length; i < len; i++) {
                         if (list[i]) {
                             list[i].apply(that, [].concat(args));
@@ -212,7 +222,9 @@
             };
         },
         css: function css(elem, name, extra, styles) {
-            var ret, num;
+            var ret = void 0,
+                num = void 0;
+
             if (Dom.cssHooks[name] && Dom.cssHooks[name].get) {
                 ret = Dom.cssHooks[name].get(elem);
             } else {
@@ -269,6 +281,7 @@
         },
         css: function css(style, value) {
             var elem = void 0;
+
             if (typeof style == 'string') {
                 var _style;
 
@@ -352,7 +365,7 @@
             });
         },
         html: function html(htmlstringOrDom) {
-            var elem;
+            var elem = void 0;
 
             if (!arguments.length) {
                 elem = this.elements[0];
@@ -368,7 +381,7 @@
             return this;
         },
         text: function text(htmlstring) {
-            var elem;
+            var elem = void 0;
 
             if (!arguments.length) {
                 elem = this.elements[0];
@@ -386,7 +399,8 @@
             var target = !isHTMLString ? this.first() : this;
 
             target.elements.forEach(function (elem) {
-                var parentElement;
+                var parentElement = void 0;
+
                 if (isHTMLString) {
                     elem.insertAdjacentHTML('beforebegin', htmlstringOrDom);
                 } else {
@@ -438,7 +452,8 @@
             var target = !isHTMLString ? this.last() : this;
 
             target.elements.forEach(function (elem) {
-                var parentElement;
+                var parentElement = void 0;
+
                 if (isHTMLString) {
                     elem.insertAdjacentHTML('afterend', htmlstringOrDom);
                 } else {
@@ -459,6 +474,7 @@
         remove: function remove() {
             this.elements.forEach(function (elem) {
                 var parent = elem.parentNode;
+
                 if (parent && parent.removeChild) {
                     parent.removeChild(elem);
                 }
@@ -466,7 +482,7 @@
             return this;
         },
         trigger: function trigger(type, options) {
-            var firstEvent;
+            var firstEvent = void 0;
 
             if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
                 firstEvent = type;
@@ -483,6 +499,7 @@
 
             this.elements.forEach(function (elem) {
                 var event = firstEvent || new CustomEvent(type, options);
+
                 firstEvent = null;
                 elem.dispatchEvent(event);
             });
@@ -524,7 +541,7 @@
                         var data = getData(element, true)._;
 
                         if (mergeObject) {
-                            Dom.extend(data, name);
+                            Object.assign(data, name);
                         } else {
                             data[name] = value;
                         }
@@ -563,8 +580,9 @@
 
     ['scrollTop', 'scrollLeft'].forEach(function (name) {
         fn[name] = function (value) {
-            var elem;
+            var elem = void 0;
             var ret = this;
+
             if (value == null) {
                 ret = 0;
                 elem = this[0];
@@ -587,11 +605,14 @@
     [['find', 'querySelectorAll', true], ['children', 'children']].forEach(function (action) {
         var isMatched = !!action[2];
         var isMethod = !!action[2];
+
         fn[action[0]] = function (sel) {
             var array = [];
             this.elements.forEach(function (elem, index) {
-                var i, len;
+                var i = void 0,
+                    len = void 0;
                 var elements = isMethod ? elem[action[1]](sel) : elem[action[1]];
+
                 for (i = 0, len = elements.length; i < len; i++) {
                     if ((isMatched || !sel || elements[i].matches(sel)) && (!index || array.indexOf(elements[i]) == -1)) {
                         array.push(elements[i]);
@@ -610,12 +631,15 @@
 
         fn[action[0]] = function (sel) {
             var array = [];
+
             this.elements.forEach(function (elem, index) {
                 var element = isMethod ? elem[action[1]](sel) : elem[action[1]];
+
                 if (element && (isMatched || !sel || element.matches(sel)) && (isUnique || !index || array.indexOf(element) == -1)) {
                     array.push(element);
                 }
             });
+
             return new Dom(array);
         };
     });
@@ -623,6 +647,7 @@
     [['prevAll', 'previousElementSibling'], ['nextAll', 'nextElementSibling'], ['parents', 'parentNode']].forEach(function (action) {
         fn[action[0]] = function (sel) {
             var array = [];
+
             this.elements.forEach(function (elem, index) {
                 var element = elem[action[1]];
 
@@ -642,19 +667,22 @@
 
     ['add', 'remove', 'toggle'].forEach(function (action) {
         var isToggle = action == 'toggle';
+
         fn[action + 'Class'] = function (cl) {
             var args = isToggle ? arguments : cl.split(regWhite);
+
             this.elements.forEach(function (elem) {
                 var list = elem.classList;
                 list[action].apply(list, args);
             });
+
             return this;
         };
     });
 
     //new array or returns array
     ['map', 'filter', 'not'].forEach(function (name) {
-        var isNot;
+        var isNot = void 0;
         var arrayFn = name;
 
         if (isNot = name == 'not') {
@@ -662,7 +690,7 @@
         }
 
         fn[name] = function (fn) {
-            var needle;
+            var needle = void 0;
             var type = typeof fn === 'undefined' ? 'undefined' : _typeof(fn);
 
             if (type != 'function') {
@@ -692,6 +720,7 @@
 
             return new Dom(this.elements[arrayFn](function (elem, index) {
                 var ret = fn.call(elem, index, elem);
+
                 return isNot ? !ret : ret;
             }));
         };
@@ -747,12 +776,15 @@
 
     Dom.data = function (element, name, value) {
         var data = getData(element);
+        var isObject = (typeof name === 'undefined' ? 'undefined' : _typeof(name)) == 'object';
 
-        if (value !== undefined) {
+        if (isObject) {
+            Object.assign(data._, name);
+        } else if (value !== undefined) {
             data._[name] = value;
         }
 
-        return name ? data._[name] : data._;
+        return name && !isObject ? data._[name] : data._;
     };
 
     function getData(element, getAttrs) {
@@ -768,7 +800,7 @@
         }
 
         if (!data.isAttr && getAttrs) {
-            Dom.extend(data._, Dom.extend(rb.parseDataAttrs(element), data._));
+            Object.assign(data._, Object.assign(rb.parseDataAttrs(element), data._));
         }
 
         return data;
@@ -786,11 +818,13 @@
     }
 
     (function () {
-        var added, isBorderBoxRelieable;
+        var added = void 0,
+            isBorderBoxRelieable = void 0;
         var div = document.createElement('div');
 
         var read = function read() {
-            var width;
+            var width = void 0;
+
             if (isBorderBoxRelieable == null && div) {
                 width = parseFloat(rb.getStyles(div).width);
                 isBorderBoxRelieable = width < 4.02 && width > 3.98;
@@ -802,6 +836,7 @@
                 });
             }
         };
+
         var add = function add() {
             if (!added) {
                 added = true;
@@ -837,7 +872,10 @@
                 var fnName = modifier ? modifier + names[1] : names[0];
 
                 fn[fnName] = function (margin) {
-                    var styles, extraStyles, isBorderBox, doc;
+                    var styles = void 0,
+                        extraStyles = void 0,
+                        isBorderBox = void 0,
+                        doc = void 0;
                     var ret = 0;
                     var elem = this.elements[0];
 
@@ -911,7 +949,11 @@
         });
     }
 
-    if (window.rb && !window.rb.$) {
+    if (rb) {
+        if (rb.param) {
+            Dom.param = rb.param;
+        }
+
         /**
          * @memberOf rb
          * @type Function
@@ -920,7 +962,9 @@
          *
          * @returns {jQueryfiedDOMList}
          */
-        window.rb.$ = Dom;
+        if (!rb.$) {
+            rb.$ = Dom;
+        }
     }
 
     exports.default = Dom;

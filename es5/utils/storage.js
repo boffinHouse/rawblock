@@ -22,7 +22,7 @@
 
     ['session', 'local'].forEach(function (type) {
         var storage = void 0;
-        var testStr = rb.getID();
+        var testStr = rb.getID && rb.getID() || 'test' + Date.now().toString(36);
 
         try {
             storage = window[type + 'Storage'];

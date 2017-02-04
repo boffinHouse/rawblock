@@ -72,6 +72,7 @@
                 }
             })();
         }
+
         return promises[src];
     };
 
