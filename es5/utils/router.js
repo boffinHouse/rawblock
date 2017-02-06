@@ -223,11 +223,9 @@
 
             return false;
         },
-        applyRoutes: function applyRoutes(fragment) {
-
+        _saveState: function _saveState(fragment) {
             var data = { fragment: fragment == null ? this.getFragment() : fragment };
             var fragmentParts = data.fragment.split('?');
-            var options = (0, _deserialize2.default)(fragmentParts[1]);
 
             fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.regIndex, ''));
 
@@ -239,12 +237,19 @@
             this.currentRoute = fragment;
             this.currentOptions = fragmentParts[1] || '';
 
+            data.fragment = fragment;
+
+            return data;
+        },
+        applyRoutes: function applyRoutes(fragment) {
+
+            var data = this._saveState(fragment);
+            var options = (0, _deserialize2.default)(this.currentOptions);
+
             data.changedRoute = this.beforeRoute != this.currentRoute;
             data.changedOptions = this.beforeOptions != this.currentOptions;
 
-            data.fragment = fragment;
-
-            fragment = fragment.split('/');
+            fragment = data.fragment.split('/');
 
             this.findMatchingRoutes(this.routes, fragment, data, options);
 
@@ -289,7 +294,7 @@
 
             return this;
         },
-        navigate: function navigate(path, replace) {
+        navigate: function navigate(path, silent, replace) {
             path = path || '';
 
             if (this.mode === 'history') {
@@ -304,12 +309,16 @@
                 }
             }
 
-            this.applyRoutesIfNeeded();
+            if (silent) {
+                this._saveState();
+            } else {
+                this.applyRoutesIfNeeded();
+            }
 
             return this;
         },
-        replace: function replace(path) {
-            return this.navigate(path, true);
+        replace: function replace(path, silent) {
+            return this.navigate(path, silent, true);
         }
     };
 

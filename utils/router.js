@@ -225,11 +225,9 @@ rb.Router = {
 
         return false;
     },
-    applyRoutes(fragment) {
-
+    _saveState(fragment){
         const data = {fragment: fragment == null ? this.getFragment() : fragment};
         const fragmentParts = data.fragment.split('?');
-        const options = deserialize(fragmentParts[1]);
 
         fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.regIndex, ''));
 
@@ -241,12 +239,19 @@ rb.Router = {
         this.currentRoute = fragment;
         this.currentOptions = fragmentParts[1] || '';
 
+        data.fragment = fragment;
+
+        return data;
+    },
+    applyRoutes(fragment) {
+
+        const data = this._saveState(fragment);
+        const options = deserialize(this.currentOptions);
+
         data.changedRoute = this.beforeRoute != this.currentRoute;
         data.changedOptions = this.beforeOptions != this.currentOptions;
 
-        data.fragment = fragment;
-
-        fragment = fragment.split('/');
+        fragment = data.fragment.split('/');
 
         this.findMatchingRoutes(this.routes, fragment, data, options);
 
@@ -291,7 +296,7 @@ rb.Router = {
 
         return this;
     },
-    navigate(path, replace) {
+    navigate(path, silent, replace) {
         path = path || '';
 
         if (this.mode === 'history') {
@@ -306,14 +311,18 @@ rb.Router = {
             }
         }
 
-        this.applyRoutesIfNeeded();
+        if(silent){
+            this._saveState();
+        } else {
+            this.applyRoutesIfNeeded();
+        }
 
         return this;
     },
 
-    replace(path) {
-        return this.navigate(path, true);
-    }
+    replace(path, silent) {
+        return this.navigate(path, silent, true);
+    },
 };
 
 export default rb.Router;
