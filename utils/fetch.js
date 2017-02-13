@@ -12,7 +12,11 @@ const getData = function (oReq, obj) {
 
     if (typeof obj.data != 'object' &&
         (oReq.getResponseHeader('Content-Type') || '').split(';')[0].endsWith('json')) {
-        obj.data = rb.jsonParse(oReq.responseText) || obj.data;
+        try {
+            obj.data = JSON.parse(oReq.responseText) || obj.data;
+        } catch(er){
+            //continue
+        }
     }
 };
 
@@ -122,7 +126,7 @@ rb.fetch = function (url, options) {
         options.type = options.type.toUpperCase();
 
         if(options.processData && data && typeof data == 'object' && !(data instanceof window.FormData)){
-            const param = $.param || rb.param;
+            const param = $ && $.param || rb.param;
 
             if(param){
                 data = param(data);

@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './utils/global-rb', './utils/deferred', './utils/debughelpers'], factory);
+        define(['exports', './utils/global-rb', './utils/deferred', './utils/request-idle-callback', './utils/rafqueue', './utils/throttle', './utils/get-id', './utils/debughelpers'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./utils/global-rb'), require('./utils/deferred'), require('./utils/debughelpers'));
+        factory(exports, require('./utils/global-rb'), require('./utils/deferred'), require('./utils/request-idle-callback'), require('./utils/rafqueue'), require('./utils/throttle'), require('./utils/get-id'), require('./utils/debughelpers'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.globalRb, global.deferred, global.debughelpers);
+        factory(mod.exports, global.globalRb, global.deferred, global.requestIdleCallback, global.rafqueue, global.throttle, global.getId, global.debughelpers);
         global._main = mod.exports;
     }
-})(this, function (exports, _globalRb, _deferred) {
+})(this, function (exports, _globalRb, _deferred, _requestIdleCallback, _rafqueue, _throttle, _getId2) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -20,6 +20,14 @@
     var _globalRb2 = _interopRequireDefault(_globalRb);
 
     var _deferred2 = _interopRequireDefault(_deferred);
+
+    var _requestIdleCallback2 = _interopRequireDefault(_requestIdleCallback);
+
+    var _rafqueue2 = _interopRequireDefault(_rafqueue);
+
+    var _throttle2 = _interopRequireDefault(_throttle);
+
+    var _getId3 = _interopRequireDefault(_getId2);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -106,8 +114,6 @@
         var regSplit = /\s*?,\s*?|\s+?/g;
         var slice = Array.prototype.slice;
 
-        _globalRb2.default.deferred = _deferred2.default;
-
         /**
          * The jQuery or dom.js (rb.$) plugin namespace.
          * @external "jQuery.fn"
@@ -176,22 +182,11 @@
          * @returns {String|Symbol}
          */
         _globalRb2.default.Symbol = window.Symbol;
-        var id = Math.round(Date.now() * Math.random());
-
-        /**
-         * Returns a unique id based on Math.random and Date.now().
-         * @memberof rb
-         * @returns {string}
-         */
-        _globalRb2.default.getID = function () {
-            id += Math.round(Math.random() * 1000);
-            return id.toString(36);
-        };
 
         if (!_globalRb2.default.Symbol) {
             _globalRb2.default.Symbol = function (name) {
                 name = name || '_';
-                return name + _globalRb2.default.getID();
+                return name + (0, _getId3.default)();
             };
         }
 
@@ -304,7 +299,7 @@
                     _arguments = arguments;
 
                 if (this.length) {
-                    _globalRb2.default.rAFQueue(function () {
+                    (0, _rafqueue2.default)(function () {
                         _this[$name].apply(_this, _arguments);
                     }, true);
                 }
@@ -348,90 +343,6 @@
         };
         /* End: getScrollingElement */
 
-        /* Begin: throttle */
-        /**
-         * Throttles a given function
-         * @memberof rb
-         * @param {function} fn - The function to be throttled.
-         * @param {object} [options] - options for the throttle.
-         *  @param {object} options.that=null -  the context in which fn should be called.
-         *  @param {boolean} options.write=false -  wether fn is used to write layout.
-         *  @param {boolean} options.read=false -  wether fn is used to read layout.
-         *  @param {number} options.delay=200 -  the throttle delay.
-         *  @param {boolean} options.unthrottle=false -  Wether function should be invoked directly.
-         * @returns {function} the throttled function.
-         */
-        _globalRb2.default.throttle = function (fn, options) {
-            var running = void 0,
-                that = void 0,
-                args = void 0;
-
-            var lastTime = 0;
-            var Date = window.Date;
-
-            var _run = function _run() {
-                running = false;
-                lastTime = Date.now();
-                fn.apply(that, args);
-            };
-
-            var afterAF = function afterAF() {
-                _globalRb2.default.rIC(_run);
-            };
-
-            var throttel = function throttel() {
-                if (running) {
-                    return;
-                }
-
-                var delay = options.delay;
-
-                running = true;
-
-                that = options.that || this;
-                args = arguments;
-
-                if (options.unthrottle) {
-                    _run();
-                } else {
-                    if (delay && !options.simple) {
-                        delay -= Date.now() - lastTime;
-                    }
-                    if (delay < 0) {
-                        delay = 0;
-                    }
-                    if (!delay && (options.read || options.write)) {
-                        getAF();
-                    } else {
-                        setTimeout(getAF, delay);
-                    }
-                }
-            };
-
-            var getAF = function getAF() {
-                _globalRb2.default.rAFQueue(afterAF);
-            };
-
-            if (!options) {
-                options = {};
-            }
-
-            if (!options.delay) {
-                options.delay = 200;
-            }
-
-            if (options.write) {
-                afterAF = _run;
-            } else if (!options.read) {
-                getAF = _run;
-            }
-
-            throttel._rbUnthrotteled = fn;
-
-            return throttel;
-        };
-        /* End: throttle */
-
         /* Begin: resize */
         var iWidth, cHeight, installed;
         var docElem = _globalRb2.default.root;
@@ -449,7 +360,7 @@
             _setup: function _setup() {
                 if (!installed) {
                     installed = true;
-                    _globalRb2.default.rIC(function () {
+                    (0, _requestIdleCallback2.default)(function () {
                         iWidth = innerWidth;
                         cHeight = docElem.clientHeight;
                     });
@@ -473,7 +384,7 @@
             }
         });
 
-        _globalRb2.default.resize._run = _globalRb2.default.throttle(function () {
+        _globalRb2.default.resize._run = (0, _throttle2.default)(function () {
             if (iWidth != innerWidth || cHeight != docElem.clientHeight) {
                 iWidth = innerWidth;
                 cHeight = docElem.clientHeight;
@@ -575,54 +486,6 @@
         }();
         /* End: parseValue */
 
-        /* Begin: idleCallback */
-        _globalRb2.default.rIC = window.requestIdleCallback ? function (fn) {
-            return requestIdleCallback(fn, { timeout: 99 });
-        } : function (fn) {
-            return setTimeout(fn);
-        };
-        /* End: idleCallback */
-
-        /* Begin: rAF helpers */
-
-        _globalRb2.default.rAFQueue = function () {
-            var isInProgress, inProgressStack;
-            var fns1 = [];
-            var fns2 = [];
-            var curFns = fns1;
-
-            var run = function run() {
-                inProgressStack = curFns;
-                curFns = fns1.length ? fns2 : fns1;
-
-                isInProgress = true;
-                while (inProgressStack.length) {
-                    inProgressStack.shift()();
-                }
-                isInProgress = false;
-            };
-
-            /**
-             * Invokes a function inside a rAF call
-             * @memberof rb
-             * @alias rb#rAFQueue
-             * @param fn {Function} the function that should be invoked
-             * @param inProgress {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
-             * @param hiddenRaf {boolean} Whether the rAF should also be used if document is hidden.
-             */
-            return function (fn, inProgress, hiddenRaf) {
-
-                if (inProgress && isInProgress) {
-                    fn();
-                } else {
-                    curFns.push(fn);
-                    if (curFns.length == 1) {
-                        (hiddenRaf || !document.hidden ? requestAnimationFrame : setTimeout)(run);
-                    }
-                }
-            };
-        }();
-
         /**
          * Generates and returns a new, rAFed version of the passed function, so that the passed function is always called using requestAnimationFrame. Normally all methods/functions, that mutate the DOM/CSSOM, should be wrapped using `rb.rAF` to avoid layout thrashing.
          * @memberof rb
@@ -671,7 +534,7 @@
                 }
                 if (!running) {
                     running = true;
-                    _globalRb2.default.rAFQueue(run, inProgress);
+                    (0, _rafqueue2.default)(run, inProgress);
                 }
             };
 
@@ -1397,7 +1260,7 @@
             _initClickCreate = $.noop;
             rb.click.add('module', function (elem) {
                 rb.getComponent(elem);
-                rb.rAFQueue(function () {
+                (0, _rafqueue2.default)(function () {
                     elem.classList.remove(rb.click.clickClass);
 
                     if (!elem.classList.contains(attachedClass)) {
@@ -1586,7 +1449,7 @@
 
         rb._extendEvts = extendEvents;
 
-        rb.ready = rb.deferred();
+        rb.ready = (0, _deferred2.default)();
 
         rb.live = live;
 
@@ -1770,7 +1633,7 @@
             var hook = unregisteredFoundHook[moduleId] || unregisteredFoundHook['*'];
 
             if (!componentPromises[moduleId] && (hook || rb.components[moduleId])) {
-                componentPromises[moduleId] = rb.deferred();
+                componentPromises[moduleId] = (0, _deferred2.default)();
 
                 if (rb.components[moduleId]) {
                     componentPromises[moduleId].resolve();
@@ -1783,7 +1646,7 @@
 
                     if (cssConfig && cssConfig.switchedOff) {
                         if (!element.classList.contains(watchCssClass)) {
-                            rb.rAFQueue(function () {
+                            (0, _rafqueue2.default)(function () {
                                 element.classList.add(watchCssClass);
                             }, true);
                         }
@@ -1823,7 +1686,7 @@
                 element[componentExpando] = instance;
             }
 
-            rb.rAFQueue(function () {
+            (0, _rafqueue2.default)(function () {
                 element.classList.add(attachedClass);
                 element.classList.remove(watchCssClass);
             }, true);
@@ -1859,7 +1722,7 @@
                 rb.logError('failed', id, element);
             };
 
-            var findElements = rb.throttle(function () {
+            var findElements = (0, _throttle2.default)(function () {
                 var element = void 0,
                     moduleId = void 0,
                     i = void 0,
@@ -2338,9 +2201,9 @@
                 }
 
                 if (!(id = element.id)) {
-                    id = 'js' + rb.nameSeparator + rb.getID();
+                    id = 'js' + rb.nameSeparator + (0, _getId3.default)();
                     if (async) {
-                        rb.rAFQueue(function () {
+                        (0, _rafqueue2.default)(function () {
                             element.id = id;
                         }, true);
                     } else {
@@ -2383,7 +2246,7 @@
                 var _this2 = this,
                     _arguments2 = arguments;
 
-                rb.rAFQueue(function () {
+                (0, _rafqueue2.default)(function () {
                     _this2.trigger.apply(_this2, _arguments2);
                 }, true);
             };

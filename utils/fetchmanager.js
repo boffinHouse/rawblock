@@ -1,10 +1,10 @@
-import './fetch';
-import '../rb_$/$_param';
+import fetch from './fetch';
+import deferred from './deferred';
+import param from '../rb_$/$_param';
+import callbacks from '../rb_$/$_callbacks';
+import extend from '../rb_$/$_extend';
 
 const rb = window.rb;
-const $ = rb.$;
-const param = $.param;
-const fetch = rb.fetch;
 
 const FetchManager = function(managerId, options){
 
@@ -88,7 +88,7 @@ Object.assign(FetchManager.prototype, {
     },
     generateFetchPromise: function(id, options){
         const that = this;
-        const promise = rb.deferred();
+        const promise = deferred();
 
         const onComplete = function(){
             that.onComplete(id);
@@ -97,7 +97,7 @@ Object.assign(FetchManager.prototype, {
         Object.assign(promise, {
             id: id,
             options: options,
-            abortCb: $.Callbacks(),
+            abortCb: callbacks(),
             abort: function(){
                 that.abort(id);
             },
@@ -187,7 +187,7 @@ Object.assign(FetchManager.prototype, {
         this._onOptionChange();
     },
     setOptions: function(options){
-        $.extend(true, this.options, options);
+        extend(true, this.options, options);
         this._onOptionChange();
     },
     abort: function(id){

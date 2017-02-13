@@ -1,21 +1,33 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports'], factory);
+        define(['exports', './$_is-plain-object', './$_extend', './$_callbacks'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports);
+        factory(exports, require('./$_is-plain-object'), require('./$_extend'), require('./$_callbacks'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports);
+        factory(mod.exports, global.$_isPlainObject, global.$_extend, global.$_callbacks);
         global.$_slim = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _$_isPlainObject, _$_extend, _$_callbacks) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _$_isPlainObject2 = _interopRequireDefault(_$_isPlainObject);
+
+    var _$_extend2 = _interopRequireDefault(_$_extend);
+
+    var _$_callbacks2 = _interopRequireDefault(_$_callbacks);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
         return typeof obj;
@@ -70,90 +82,10 @@
     var regWhite = /\s+/g;
     var regHTML = /^\s*</;
     var fn = Dom.prototype;
-    var class2type = {};
-    var toString = class2type.toString;
-    var hasOwn = class2type.hasOwnProperty;
-    var fnToString = hasOwn.toString;
-    var getProto = Object.getPrototypeOf;
-    var ObjectFunctionString = fnToString.call(Object);
 
     Object.assign(Dom, {
-        isPlainObject: function isPlainObject(obj) {
-            var proto = void 0,
-                Ctor = void 0;
-
-            if (!obj || toString.call(obj) !== '[object Object]') {
-                return false;
-            }
-
-            proto = getProto(obj);
-
-            if (!proto) {
-                return true;
-            }
-
-            Ctor = hasOwn.call(proto, 'constructor') && proto.constructor;
-            return typeof Ctor === 'function' && fnToString.call(Ctor) === ObjectFunctionString;
-        },
-        extend: function extend() {
-            var options = void 0,
-                name = void 0,
-                src = void 0,
-                copy = void 0,
-                copyIsArray = void 0,
-                clone = void 0;
-
-            var target = arguments[0] || {};
-            var i = 1;
-            var deep = false;
-            var length = arguments.length;
-
-            if (typeof target === 'boolean') {
-                deep = target;
-                target = arguments[i] || {};
-                i++;
-            }
-
-            if ((typeof target === 'undefined' ? 'undefined' : _typeof(target)) !== 'object' && typeof target != 'function') {
-                target = {};
-            }
-
-            if (i === length) {
-                target = this;
-                i--;
-            }
-
-            for (; i < length; i++) {
-
-                if ((options = arguments[i]) != null) {
-
-                    for (name in options) {
-                        src = target[name];
-                        copy = options[name];
-
-                        if (target === copy) {
-                            continue;
-                        }
-
-                        if (deep && copy && (Dom.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
-
-                            if (copyIsArray) {
-                                copyIsArray = false;
-                                clone = src && Array.isArray(src) ? src : [];
-                            } else {
-                                clone = src && Dom.isPlainObject(src) ? src : {};
-                            }
-
-                            target[name] = Dom.extend(deep, clone, copy);
-                        } else if (copy !== undefined) {
-                            target[name] = copy;
-                        }
-                    }
-                }
-            }
-
-            return target;
-        },
+        isPlainObject: _$_isPlainObject2.default,
+        extend: _$_extend2.default,
         event: {
             special: specialEvents
         },
@@ -186,41 +118,7 @@
 
             return event;
         },
-        Callbacks: function Callbacks(flags) {
-            if (flags) {
-                rb.log('not supported: ' + flags);
-            }
-            var list = [];
-
-            return {
-                add: function add(fn) {
-                    list.push(fn);
-                },
-                remove: function remove(fn) {
-                    var index = list.indexOf(fn);
-
-                    if (index != -1) {
-                        list.splice(index, 1);
-                    }
-                },
-                fire: function fire() {
-                    this.fireWith(this, arguments);
-                },
-                fireWith: function fireWith(that, args) {
-                    var i = void 0,
-                        len = void 0;
-
-                    for (i = 0, len = list.length; i < len; i++) {
-                        if (list[i]) {
-                            list[i].apply(that, [].concat(args));
-                        }
-                    }
-                },
-                has: function has() {
-                    return !!list.length;
-                }
-            };
-        },
+        Callbacks: _$_callbacks2.default,
         css: function css(elem, name, extra, styles) {
             var ret = void 0,
                 num = void 0;

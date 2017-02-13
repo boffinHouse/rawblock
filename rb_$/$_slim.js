@@ -1,3 +1,7 @@
+import isPlainObject from './$_is-plain-object';
+import extend from './$_extend';
+import Callbacks from './$_callbacks';
+
 let dataSymbol, regFocusable;
 const rb = window.rb;
 const specialEvents = {};
@@ -44,87 +48,10 @@ const regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
 const regWhite = /\s+/g;
 const regHTML = /^\s*</;
 const fn = Dom.prototype;
-const class2type = {};
-const toString = class2type.toString;
-const hasOwn = class2type.hasOwnProperty;
-const fnToString = hasOwn.toString;
-const getProto = Object.getPrototypeOf;
-const ObjectFunctionString = fnToString.call( Object );
 
 Object.assign(Dom, {
-    isPlainObject: function( obj ) {
-        let proto, Ctor;
-
-        if ( !obj || toString.call( obj ) !== '[object Object]' ) {
-            return false;
-        }
-
-        proto = getProto( obj );
-
-        if ( !proto ) {
-            return true;
-        }
-
-        Ctor = hasOwn.call( proto, 'constructor' ) && proto.constructor;
-        return typeof Ctor === 'function' && fnToString.call( Ctor ) === ObjectFunctionString;
-    },
-    extend: function() {
-        let options, name, src, copy, copyIsArray, clone;
-
-        let target = arguments[ 0 ] || {};
-        let i = 1;
-        let deep = false;
-        const length = arguments.length;
-
-        if ( typeof target === 'boolean' ) {
-            deep = target;
-            target = arguments[ i ] || {};
-            i++;
-        }
-
-        if ( typeof target !== 'object' && typeof target != 'function' ) {
-            target = {};
-        }
-
-        if (i === length) {
-            target = this;
-            i--;
-        }
-
-        for ( ; i < length; i++ ) {
-
-            if ( (options = arguments[i]) != null ) {
-
-                for (name in options) {
-                    src = target[name];
-                    copy = options[name];
-
-                    if (target === copy) {
-                        continue;
-                    }
-
-                    if ( deep && copy && (Dom.isPlainObject(copy) ||
-                        ( copyIsArray = Array.isArray(copy) ) ) ) {
-
-                        if ( copyIsArray ) {
-                            copyIsArray = false;
-                            clone = src && Array.isArray( src ) ? src : [];
-
-                        } else {
-                            clone = src && Dom.isPlainObject( src ) ? src : {};
-                        }
-
-                        target[name] = Dom.extend( deep, clone, copy );
-
-                    } else if (copy !== undefined) {
-                        target[name] = copy;
-                    }
-                }
-            }
-        }
-
-        return target;
-    },
+    isPlainObject: isPlainObject,
+    extend: extend,
     event: {
         special: specialEvents,
     },
@@ -156,40 +83,7 @@ Object.assign(Dom, {
 
         return event;
     },
-    Callbacks: function (flags) {
-        if (flags) {
-            rb.log('not supported: ' + flags);
-        }
-        const list = [];
-
-        return {
-            add: function (fn) {
-                list.push(fn);
-            },
-            remove: function (fn) {
-                const index = list.indexOf(fn);
-
-                if (index != -1) {
-                    list.splice(index, 1);
-                }
-            },
-            fire: function () {
-                this.fireWith(this, arguments);
-            },
-            fireWith: function (that, args) {
-                let i, len;
-
-                for (i = 0, len = list.length; i < len; i++) {
-                    if(list[i]){
-                        list[i].apply(that, [].concat(args));
-                    }
-                }
-            },
-            has: function () {
-                return !!list.length;
-            }
-        };
-    },
+    Callbacks: Callbacks,
     css: function (elem, name, extra, styles) {
         let ret, num;
 

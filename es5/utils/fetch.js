@@ -34,7 +34,11 @@
         obj.status = oReq.status;
 
         if (_typeof(obj.data) != 'object' && (oReq.getResponseHeader('Content-Type') || '').split(';')[0].endsWith('json')) {
-            obj.data = rb.jsonParse(oReq.responseText) || obj.data;
+            try {
+                obj.data = JSON.parse(oReq.responseText) || obj.data;
+            } catch (er) {
+                //continue
+            }
         }
     };
 
@@ -148,7 +152,7 @@
             options.type = options.type.toUpperCase();
 
             if (options.processData && data && (typeof data === 'undefined' ? 'undefined' : _typeof(data)) == 'object' && !(data instanceof window.FormData)) {
-                var param = $.param || rb.param;
+                var param = $ && $.param || rb.param;
 
                 if (param) {
                     data = param(data);
