@@ -32,7 +32,6 @@
         loadJs(ASSETBASEPATH + 'js/_main-behavior.js', true);
     });
 
-
     //uncomment if you have crucial fonts placed above inline script
     //if (document.fonts && document.fonts.forEach) {
     //    (function(fonts){

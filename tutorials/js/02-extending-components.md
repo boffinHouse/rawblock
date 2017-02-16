@@ -62,7 +62,7 @@ Of course you are not forced to use this in your components, but we highly recom
 Our component markup will now look like this. There are 3 different inerhited behavior elements in our component. (`checklist-btn`, `checklist-panel` and `checklist-panel-close`). 
 
 ```html
-<div class="rb-checklist js-rb-live" data-module="checklist" role="group" aria-label="Auswahlliste">
+<div class="rb-checklist js-rb-click" data-module="checklist" role="group" aria-label="Auswahlliste">
     <button class="checklist-btn" type="button">
         <span class="checklist-value">Auswählen</span>
     </button>
@@ -78,7 +78,7 @@ Our component markup will now look like this. There are 3 different inerhited be
 </div>
 
 
-<div class="rb-checklist js-rb-live" data-module="checklist" role="group" aria-label="Auswahlliste">
+<div class="rb-checklist js-rb-click" data-module="checklist" role="group" aria-label="Auswahlliste">
     <button class="checklist-btn" type="button">
         <span class="checklist-value">Auswählen</span>
     </button>

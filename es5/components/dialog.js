@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', '../utils/rb_scrollbarwidth'], factory);
+        define(['exports', '../utils/scrollbarwidth', './_focus-component'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('../utils/rb_scrollbarwidth'));
+        factory(exports, require('../utils/scrollbarwidth'), require('./_focus-component'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.rb_scrollbarwidth);
+        factory(mod.exports, global.scrollbarwidth, global._focusComponent);
         global.dialog = mod.exports;
     }
 })(this, function (exports) {
@@ -80,7 +80,7 @@
      *
      * @alias rb.components.dialog
      *
-     * @extends rb.Component
+     * @extends rb.components._focus_component
      *
      * @param element {Element}
      * @param [initialDefaults] {OptionsObject}
@@ -103,8 +103,8 @@
      * });
      */
 
-    var Dialog = function (_rb$Component) {
-        _inherits(Dialog, _rb$Component);
+    var Dialog = function (_rb$components$_focus) {
+        _inherits(Dialog, _rb$components$_focus);
 
         _createClass(Dialog, null, [{
             key: 'defaults',
@@ -120,7 +120,8 @@
                     scrollPadding: 'paddingRight',
                     trapKeyboard: true,
                     setFocus: 'force',
-                    contentUrl: ''
+                    contentUrl: '',
+                    xhrOptions: null
                 };
             }
         }, {
@@ -139,7 +140,7 @@
         function Dialog(element, initialDefaults) {
             _classCallCheck(this, Dialog);
 
-            var _this = _possibleConstructorReturn(this, _rb$Component.call(this, element, initialDefaults));
+            var _this = _possibleConstructorReturn(this, _rb$components$_focus.call(this, element, initialDefaults));
 
             /**
              * @name rb.components.dialog.prototype.isOpen
@@ -227,6 +228,8 @@
         };
 
         Dialog.prototype._open = function _open(options) {
+            var _this2 = this;
+
             var content = void 0;
 
             if (this.contentElement && options && options.contentId && this._curContentId != options.contentId && (content = document.getElementById(options.contentId))) {
@@ -240,9 +243,9 @@
             }
 
             this.$backdrop.css({ display: '' });
-            this.$backdrop.addClass(rb.statePrefix + 'open');
+            this.$backdrop.rbToggleState('open', true);
 
-            rb.$root.rbChangeState('open{-}' + this.name + '{-}within', true);
+            rb.$root.rbToggleState('open{-}' + this.name + '{-}within', true).rbToggleState('open{-}dialog{-}within', true);
 
             if (this._setScrollPadding && this.options.scrollPadding) {
                 document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
@@ -253,6 +256,10 @@
             } else {
                 this.storeActiveElement();
             }
+
+            rb.rAFQueue(function () {
+                _this2.$backdrop.rbToggleState('opened', _this2.isOpen);
+            });
 
             this.trigger(options);
         };
@@ -281,7 +288,7 @@
             }
 
             if (options.contentUrl) {
-                this._xhr = rb.fetch({ url: options.contentUrl }).then(this._addContent);
+                this._xhr = rb.fetch(options.contentUrl, 'xhrOptions' in options ? options.xhrOptions : mainOpts.xhrOptions).then(this._addContent);
             }
 
             if (this.options.setDisplay && this._displayTimer) {
@@ -312,8 +319,9 @@
                 this._oldPaddingValue = null;
             }
 
-            this.$backdrop.removeClass(rb.statePrefix + 'open');
-            rb.$root.rbChangeState('open{-}' + this.name + '{-}within');
+            this.$backdrop.rbToggleState('open', false).rbToggleState('opened', this.isOpen);
+
+            rb.$root.rbToggleState('open{-}' + this.name + '{-}within', false).rbToggleState('open{-}dialog{-}within', false);
 
             if (this.options.setDisplay) {
                 clearTimeout(this._displayTimer);
@@ -351,20 +359,20 @@
         };
 
         Dialog.prototype._setUpEvents = function _setUpEvents() {
-            var _this2 = this;
+            var _this3 = this;
 
             var options = this.options;
 
             this.$backdrop.on('click', function (e) {
-                if (options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == _this2.backdropDocument)) {
-                    _this2.close();
+                if (options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == _this3.backdropDocument)) {
+                    _this3.close();
                     e.preventDefault();
                     e.stopPropagation();
                 }
             });
             this.$backdrop.on('keydown', function (e) {
                 if (e.keyCode == 27 && options.closeOnEsc && !e.defaultPrevented) {
-                    _this2.close();
+                    _this3.close();
                     e.preventDefault();
                     e.stopPropagation();
                 }
@@ -372,7 +380,7 @@
 
             this.trapKeyboardElemBefore.addEventListener('focus', function (e) {
                 if (options.trapKeyboard) {
-                    var focusElem = _this2.queryAll('.{name}{e}close');
+                    var focusElem = _this3.queryAll('.{name}{e}close');
 
                     e.preventDefault();
                     try {
@@ -388,7 +396,7 @@
                 if (options.trapKeyboard) {
                     e.preventDefault();
                     try {
-                        _this2.element.focus();
+                        _this3.element.focus();
                     } catch (er) {
                         rb.logInfo('Focus error', er);
                     }
@@ -397,11 +405,11 @@
         };
 
         return Dialog;
-    }(rb.Component);
+    }(rb.components._focus_component);
 
     rb.ready.then(function () {
         rb.click.add('dialog', function (element, event, attr) {
-            var dialog;
+            var dialog = void 0;
             var opts = rb.jsonParse(attr);
 
             if (typeof opts == 'string') {

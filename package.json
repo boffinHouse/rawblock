@@ -1,7 +1,7 @@
 {
   "name": "rawblock",
   "description": "The world most flexible and efficient responsive system to build maintainable modular HTML5 web interfaces. ",
-  "version": "2.0.0",
+  "version": "2.2.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/boffinhouse/rawblock.git"
@@ -22,7 +22,7 @@
   "main": "_main",
   "style": "_helpers.scss",
   "engines": {
-    "node": ">=4.2"
+    "node": ">=4.6"
   },
   "scripts": {
     "test": "grunt test",
@@ -65,6 +65,7 @@
     "css-loader": "~0.24.0",
     "dmd": "~1.4.2",
     "fs-extra": "~0.30.0",
+    "glob-expand": "^0.2.1",
     "grunt": "~1.0.1",
     "grunt-assemble": "~0.4.0",
     "grunt-babel": "~6.0.0",

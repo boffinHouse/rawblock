@@ -1,4 +1,4 @@
-import '../utils/rb_draggy';
+import '../utils/draggy';
 
 const rb = window.rb;
 const $ = rb.$;

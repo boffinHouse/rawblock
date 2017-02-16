@@ -1,7 +1,7 @@
 import './panelbutton';
 import './_focus-component';
-import '../utils/rb$_slide-up-down';
-import '../utils/rb_contains';
+import '../utils/$_slide-up-down';
+import '../utils/contains';
 
 const rb = window.rb;
 const $ = rb.$;

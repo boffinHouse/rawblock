@@ -1,4 +1,4 @@
-import '../utils/rb_resize';
+import '../utils/resize';
 
 const regPoint = /^./;
 const rb = window.rb;

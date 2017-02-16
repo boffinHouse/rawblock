@@ -8,7 +8,7 @@ A component markup always has to have a `data-module` attribute with the name of
 
 ### Excusrion: Initializing components
 
-In general rawblock components have the class `js-rb-live` to be automatically created, if they are first seen in the document. In case a component only reacts to a `click` event and only needs to be created at this time, the author can a `js-rb-click` class instead.
+In general rawblock components have the class `js-rb-live` to be automatically created, if they are first seen in the document. In case a component only reacts to a `click` event and only needs to be created at this time, the author can add a `js-rb-click` class instead.
 
 There is also the possibility to use the rb_lazymodules module to lazily create modules as soon as they become visible in the viewport using the `js-rb-lazylive` class. 
 

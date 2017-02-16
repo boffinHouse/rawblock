@@ -11,6 +11,7 @@
         "jasmine": true
     },
     "globals": {
+        "global": false,
         "module": false,
         "require": false,
         "rb": true,

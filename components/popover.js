@@ -1,5 +1,5 @@
 import './panel';
-import '../utils/rb_position';
+import '../utils/position';
 
 const rb = window.rb;
 const $ = rb.$;

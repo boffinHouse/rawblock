@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './panel', '../utils/rb_position'], factory);
+        define(['exports', './panel', '../utils/position'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./panel'), require('../utils/rb_position'));
+        factory(exports, require('./panel'), require('../utils/position'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.panel, global.rb_position);
+        factory(mod.exports, global.panel, global.position);
         global.popover = mod.exports;
     }
 })(this, function (exports) {

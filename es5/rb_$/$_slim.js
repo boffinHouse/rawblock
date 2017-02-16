@@ -1,21 +1,33 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports'], factory);
+        define(['exports', './$_is-plain-object', './$_extend', './$_callbacks'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports);
+        factory(exports, require('./$_is-plain-object'), require('./$_extend'), require('./$_callbacks'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports);
+        factory(mod.exports, global.$_isPlainObject, global.$_extend, global.$_callbacks);
         global.$_slim = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _$_isPlainObject, _$_extend, _$_callbacks) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _$_isPlainObject2 = _interopRequireDefault(_$_isPlainObject);
+
+    var _$_extend2 = _interopRequireDefault(_$_extend);
+
+    var _$_callbacks2 = _interopRequireDefault(_$_callbacks);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
         return typeof obj;
@@ -25,6 +37,7 @@
 
     var dataSymbol = void 0,
         regFocusable = void 0;
+    var rb = window.rb;
     var specialEvents = {};
 
     var Dom = function Dom(elements, context) {
@@ -32,8 +45,15 @@
         if (!(this instanceof Dom)) {
             return new Dom(elements, context);
         }
+
         if (typeof elements == 'string') {
-            elements = Array.from((context || document).querySelectorAll(elements));
+            if (regHTML.test(elements)) {
+                elements = Dom.parseHTML(elements, context);
+            } else if (context && context.length > 1 && context instanceof Dom) {
+                return context.find(elements);
+            } else {
+                elements = Array.from((context || document).querySelectorAll(elements));
+            }
         } else if (typeof elements == 'function') {
             if (Dom.isReady) {
                 elements(Dom);
@@ -60,84 +80,12 @@
     };
     var regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
     var regWhite = /\s+/g;
+    var regHTML = /^\s*</;
     var fn = Dom.prototype;
-    var class2type = {};
-    var toString = class2type.toString;
-    var hasOwn = class2type.hasOwnProperty;
-    var fnToString = hasOwn.toString;
-    var getProto = Object.getPrototypeOf;
-    var ObjectFunctionString = fnToString.call(Object);
 
     Object.assign(Dom, {
-        isPlainObject: function isPlainObject(obj) {
-            var proto, Ctor;
-
-            if (!obj || toString.call(obj) !== '[object Object]') {
-                return false;
-            }
-
-            proto = getProto(obj);
-
-            if (!proto) {
-                return true;
-            }
-
-            Ctor = hasOwn.call(proto, 'constructor') && proto.constructor;
-            return typeof Ctor === 'function' && fnToString.call(Ctor) === ObjectFunctionString;
-        },
-        extend: function extend() {
-            var options, name, src, copy, copyIsArray, clone;
-            var target = arguments[0] || {};
-            var i = 1;
-            var length = arguments.length;
-            var deep = false;
-
-            if (typeof target === 'boolean') {
-                deep = target;
-                target = arguments[i] || {};
-                i++;
-            }
-
-            if ((typeof target === 'undefined' ? 'undefined' : _typeof(target)) !== 'object' && typeof target != 'function') {
-                target = {};
-            }
-
-            if (i === length) {
-                target = this;
-                i--;
-            }
-
-            for (; i < length; i++) {
-
-                if ((options = arguments[i]) != null) {
-
-                    for (name in options) {
-                        src = target[name];
-                        copy = options[name];
-
-                        if (target === copy) {
-                            continue;
-                        }
-
-                        if (deep && copy && (Dom.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
-
-                            if (copyIsArray) {
-                                copyIsArray = false;
-                                clone = src && Array.isArray(src) ? src : [];
-                            } else {
-                                clone = src && Dom.isPlainObject(src) ? src : {};
-                            }
-
-                            target[name] = Dom.extend(deep, clone, copy);
-                        } else if (copy !== undefined) {
-                            target[name] = copy;
-                        }
-                    }
-                }
-            }
-
-            return target;
-        },
+        isPlainObject: _$_isPlainObject2.default,
+        extend: _$_extend2.default,
         event: {
             special: specialEvents
         },
@@ -148,6 +96,13 @@
         cssHooks: {},
         support: {},
         isReady: document.readyState != 'loading',
+        parseHTML: function parseHTML(string) {
+            var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
+
+            var div = context.createElement('div');
+            div.innerHTML = string;
+            return new Dom(div.childNodes).remove().get();
+        },
         noop: function noop() {},
         q: function q(sel, context) {
             return new Dom((context || document).querySelectorAll(sel));
@@ -163,41 +118,11 @@
 
             return event;
         },
-        Callbacks: function Callbacks(flags) {
-            if (flags) {
-                rb.log('not supported: ' + flags);
-            }
-            var list = [];
-
-            return {
-                add: function add(fn) {
-                    list.push(fn);
-                },
-                remove: function remove(fn) {
-                    var index = list.indexOf(fn);
-
-                    if (index != -1) {
-                        list.splice(index, 1);
-                    }
-                },
-                fire: function fire() {
-                    this.fireWith(this, arguments);
-                },
-                fireWith: function fireWith(that, args) {
-                    var i, len;
-                    for (i = 0, len = list.length; i < len; i++) {
-                        if (list[i]) {
-                            list[i].apply(that, [].concat(args));
-                        }
-                    }
-                },
-                has: function has() {
-                    return !!list.length;
-                }
-            };
-        },
+        Callbacks: _$_callbacks2.default,
         css: function css(elem, name, extra, styles) {
-            var ret, num;
+            var ret = void 0,
+                num = void 0;
+
             if (Dom.cssHooks[name] && Dom.cssHooks[name].get) {
                 ret = Dom.cssHooks[name].get(elem);
             } else {
@@ -252,47 +177,74 @@
         eq: function eq(number) {
             return new Dom(this.elements[number] ? [this.elements[number]] : []);
         },
-        css: function css(style) {
-            var elem;
+        css: function css(style, value) {
+            var elem = void 0;
+
             if (typeof style == 'string') {
-                elem = this.elements[0];
-                return elem && Dom.css(elem, style);
+                var _style;
+
+                if (arguments.length == 1) {
+                    elem = this.elements[0];
+                    return elem && Dom.css(elem, style);
+                }
+
+                style = (_style = {}, _style[style] = value, _style);
             }
             this.elements.forEach(function (elem) {
-                var prop;
+                var prop = void 0;
                 var eStyle = elem.style;
+
                 for (prop in style) {
                     if (Dom.cssHooks[prop] && Dom.cssHooks[prop].set) {
                         Dom.cssHooks[prop].set(elem, style[prop]);
                     } else {
-                        eStyle[prop] = style[prop];
+                        var propValue = !Dom.cssNumber[prop] && typeof style[prop] == 'number' ? style[prop] + 'px' : style[prop];
+
+                        eStyle[prop] = propValue;
                     }
                 }
             });
             return this;
         },
-        prop: function prop(props) {
-            var elem;
+        prop: function prop(props, value) {
+            var elem = void 0;
+
             if (typeof props == 'string') {
-                elem = this.elements[0];
-                return elem && Dom.prop(elem, props);
+                var _props;
+
+                if (arguments.length == 1) {
+                    elem = this.elements[0];
+                    return elem && Dom.prop(elem, props);
+                }
+
+                props = (_props = {}, _props[props] = value, _props);
             }
+
             this.elements.forEach(function (elem) {
-                var prop;
+                var prop = void 0;
+
                 for (prop in props) {
                     Dom.prop(elem, prop, props[prop]);
                 }
             });
             return this;
         },
-        attr: function attr(attrs) {
-            var elem;
+        attr: function attr(attrs, value) {
+            var elem = void 0;
+
             if (typeof attrs == 'string') {
-                elem = this.elements[0];
-                return elem && elem.getAttribute(attrs);
+                var _attrs;
+
+                if (arguments.length == 1) {
+                    elem = this.elements[0];
+                    return elem && elem.getAttribute(attrs);
+                }
+
+                attrs = (_attrs = {}, _attrs[attrs] = value, _attrs);
             }
             this.elements.forEach(function (elem) {
-                var attr;
+                var attr = void 0;
+
                 for (attr in attrs) {
                     elem.setAttribute(attr, attrs[attr]);
                 }
@@ -311,7 +263,7 @@
             });
         },
         html: function html(htmlstringOrDom) {
-            var elem;
+            var elem = void 0;
 
             if (!arguments.length) {
                 elem = this.elements[0];
@@ -326,12 +278,27 @@
 
             return this;
         },
+        text: function text(htmlstring) {
+            var elem = void 0;
+
+            if (!arguments.length) {
+                elem = this.elements[0];
+                return elem && elem.textContent || '';
+            }
+
+            this.elements.forEach(function (elem) {
+                elem.textContent = htmlstring;
+            });
+
+            return this;
+        },
         before: function before(htmlstringOrDom) {
             var isHTMLString = (typeof htmlstringOrDom === 'undefined' ? 'undefined' : _typeof(htmlstringOrDom)) != 'object';
             var target = !isHTMLString ? this.first() : this;
 
             target.elements.forEach(function (elem) {
-                var parentElement;
+                var parentElement = void 0;
+
                 if (isHTMLString) {
                     elem.insertAdjacentHTML('beforebegin', htmlstringOrDom);
                 } else {
@@ -383,7 +350,8 @@
             var target = !isHTMLString ? this.last() : this;
 
             target.elements.forEach(function (elem) {
-                var parentElement;
+                var parentElement = void 0;
+
                 if (isHTMLString) {
                     elem.insertAdjacentHTML('afterend', htmlstringOrDom);
                 } else {
@@ -404,6 +372,7 @@
         remove: function remove() {
             this.elements.forEach(function (elem) {
                 var parent = elem.parentNode;
+
                 if (parent && parent.removeChild) {
                     parent.removeChild(elem);
                 }
@@ -411,7 +380,7 @@
             return this;
         },
         trigger: function trigger(type, options) {
-            var firstEvent;
+            var firstEvent = void 0;
 
             if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
                 firstEvent = type;
@@ -428,6 +397,7 @@
 
             this.elements.forEach(function (elem) {
                 var event = firstEvent || new CustomEvent(type, options);
+
                 firstEvent = null;
                 elem.dispatchEvent(event);
             });
@@ -451,6 +421,37 @@
         },
         last: function last() {
             return Dom(this.elements[this.elements.length - 1]);
+        },
+        data: function data(name, value) {
+            var _this = this;
+
+            var ret = void 0;
+
+            var isSetter = (typeof name === 'undefined' ? 'undefined' : _typeof(name)) == 'object' || value != undefined;
+
+            if (isSetter) {
+                (function () {
+                    var mergeObject = typeof name != 'string';
+
+                    ret = _this;
+
+                    _this.elements.forEach(function (element) {
+                        var data = getData(element, true)._;
+
+                        if (mergeObject) {
+                            Object.assign(data, name);
+                        } else {
+                            data[name] = value;
+                        }
+                    });
+                })();
+            } else if (this.elements[0]) {
+                var data = getData(this.elements[0], true)._;
+
+                ret = name ? data[name] : data;
+            }
+
+            return ret;
         }
     });
 
@@ -477,8 +478,9 @@
 
     ['scrollTop', 'scrollLeft'].forEach(function (name) {
         fn[name] = function (value) {
-            var elem;
+            var elem = void 0;
             var ret = this;
+
             if (value == null) {
                 ret = 0;
                 elem = this[0];
@@ -501,11 +503,14 @@
     [['find', 'querySelectorAll', true], ['children', 'children']].forEach(function (action) {
         var isMatched = !!action[2];
         var isMethod = !!action[2];
+
         fn[action[0]] = function (sel) {
             var array = [];
             this.elements.forEach(function (elem, index) {
-                var i, len;
+                var i = void 0,
+                    len = void 0;
                 var elements = isMethod ? elem[action[1]](sel) : elem[action[1]];
+
                 for (i = 0, len = elements.length; i < len; i++) {
                     if ((isMatched || !sel || elements[i].matches(sel)) && (!index || array.indexOf(elements[i]) == -1)) {
                         array.push(elements[i]);
@@ -521,14 +526,18 @@
         var isMatched = !!action[2];
         var isUnique = !!action[3];
         var isMethod = !!action[4];
+
         fn[action[0]] = function (sel) {
             var array = [];
+
             this.elements.forEach(function (elem, index) {
                 var element = isMethod ? elem[action[1]](sel) : elem[action[1]];
+
                 if (element && (isMatched || !sel || element.matches(sel)) && (isUnique || !index || array.indexOf(element) == -1)) {
                     array.push(element);
                 }
             });
+
             return new Dom(array);
         };
     });
@@ -536,6 +545,7 @@
     [['prevAll', 'previousElementSibling'], ['nextAll', 'nextElementSibling'], ['parents', 'parentNode']].forEach(function (action) {
         fn[action[0]] = function (sel) {
             var array = [];
+
             this.elements.forEach(function (elem, index) {
                 var element = elem[action[1]];
 
@@ -555,25 +565,30 @@
 
     ['add', 'remove', 'toggle'].forEach(function (action) {
         var isToggle = action == 'toggle';
+
         fn[action + 'Class'] = function (cl) {
             var args = isToggle ? arguments : cl.split(regWhite);
+
             this.elements.forEach(function (elem) {
                 var list = elem.classList;
                 list[action].apply(list, args);
             });
+
             return this;
         };
     });
 
     //new array or returns array
     ['map', 'filter', 'not'].forEach(function (name) {
-        var isNot;
+        var isNot = void 0;
         var arrayFn = name;
+
         if (isNot = name == 'not') {
             arrayFn = 'filter';
         }
+
         fn[name] = function (fn) {
-            var needle;
+            var needle = void 0;
             var type = typeof fn === 'undefined' ? 'undefined' : _typeof(fn);
 
             if (type != 'function') {
@@ -603,6 +618,7 @@
 
             return new Dom(this.elements[arrayFn](function (elem, index) {
                 var ret = fn.call(elem, index, elem);
+
                 return isNot ? !ret : ret;
             }));
         };
@@ -622,63 +638,70 @@
 
     [['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function (action) {
         Dom.fn[action[0]] = function (type, sel, fn) {
-            var useFn;
-            if (typeof sel == 'function') {
-                fn = sel;
-                sel = null;
-            }
+            var _this2 = this;
 
-            if (sel) {
-                useFn = rb.events.proxies.delegate(fn, sel);
+            if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
+                this.elements.forEach(function (elem) {
+                    var key = void 0;
+                    for (key in type) {
+                        elem[action[1]](key, type[key], false);
+                    }
+                });
             } else {
-                useFn = fn;
-            }
+                (function () {
+                    var useFn = void 0;
 
-            this.elements.forEach(function (elem) {
-                elem[action[1]](type, useFn, false);
-            });
+                    if (typeof sel == 'function') {
+                        fn = sel;
+                        sel = null;
+                    }
+
+                    if (sel) {
+                        useFn = rb.events.proxies.delegate(fn, sel);
+                    } else {
+                        useFn = fn;
+                    }
+
+                    _this2.elements.forEach(function (elem) {
+                        elem[action[1]](type, useFn, false);
+                    });
+                })();
+            }
 
             return this;
         };
     });
 
     Dom.data = function (element, name, value) {
+        var data = getData(element);
+        var isObject = (typeof name === 'undefined' ? 'undefined' : _typeof(name)) == 'object';
+
+        if (isObject) {
+            Object.assign(data._, name);
+        } else if (value !== undefined) {
+            data._[name] = value;
+        }
+
+        return name && !isObject ? data._[name] : data._;
+    };
+
+    function getData(element, getAttrs) {
         if (!dataSymbol) {
             dataSymbol = rb.Symbol('_rb$data');
         }
+
         var data = element[dataSymbol];
 
         if (!data) {
-            data = {};
+            data = { _: {}, isAttr: false };
             element[dataSymbol] = data;
         }
 
-        if (value !== undefined) {
-            data[name] = value;
+        if (!data.isAttr && getAttrs) {
+            Object.assign(data._, Object.assign(rb.parseDataAttrs(element), data._));
         }
 
-        return name ? data[name] : data;
-    };
-
-    if (!('onfocusin' in window) || !('onfocusout' in window)) {
-        [['focusin', 'focus'], ['focusout', 'blur']].forEach(function (evts) {
-            specialEvents[evts[0]] = {
-                setup: function setup(data, ns, handler) {
-                    var focusHandler = function focusHandler(e) {
-                        handler({ type: evts[0], target: e.target });
-                    };
-
-                    Dom.data(this, '_handler' + evts[0], focusHandler);
-                    this.addEventListener(evts[1], focusHandler, true);
-                },
-                teardown: function teardown() {
-                    var focusHandler = Dom.data(this, '_handler' + evts[0]);
-                    if (focusHandler) {
-                        this.removeEventListener(evts[1], focusHandler, true);
-                    }
-                }
-            };
-        });
+        return data;
     }
 
     if (document.createElement('a').tabIndex !== 0 || document.createElement('i').tabIndex != -1) {
@@ -693,11 +716,13 @@
     }
 
     (function () {
-        var added, isBorderBoxRelieable;
+        var added = void 0,
+            isBorderBoxRelieable = void 0;
         var div = document.createElement('div');
 
         var read = function read() {
-            var width;
+            var width = void 0;
+
             if (isBorderBoxRelieable == null && div) {
                 width = parseFloat(rb.getStyles(div).width);
                 isBorderBoxRelieable = width < 4.02 && width > 3.98;
@@ -709,6 +734,7 @@
                 });
             }
         };
+
         var add = function add() {
             if (!added) {
                 added = true;
@@ -742,12 +768,27 @@
 
             ['inner', 'outer', ''].forEach(function (modifier) {
                 var fnName = modifier ? modifier + names[1] : names[0];
-                fn[fnName] = function (margin, value) {
-                    var styles, extraStyles, isBorderBox, doc;
+
+                fn[fnName] = function (margin) {
+                    var styles = void 0,
+                        extraStyles = void 0,
+                        isBorderBox = void 0,
+                        doc = void 0;
                     var ret = 0;
                     var elem = this.elements[0];
-                    if (margin != null && (typeof margin !== 'boolean' || value)) {
-                        rb.log(modifier + names[1] + ' is only supported as getter');
+
+                    if (margin != null && typeof margin == 'number') {
+                        this.each(function () {
+                            var $elem = new Dom(elem);
+                            var size = $elem[fnName]() - $elem[cssName]();
+
+                            rb.rAFQueue(function () {
+                                var _$elem$css;
+
+                                $elem.css((_$elem$css = {}, _$elem$css[cssName] = margin - size, _$elem$css));
+                            }, true);
+                        });
+                        return this;
                     }
 
                     if (elem) {
@@ -806,11 +847,11 @@
         });
     }
 
-    if (!window.rb) {
-        window.rb = {};
-    }
+    if (rb) {
+        if (rb.param) {
+            Dom.param = rb.param;
+        }
 
-    if (!window.rb.$) {
         /**
          * @memberOf rb
          * @type Function
@@ -819,7 +860,9 @@
          *
          * @returns {jQueryfiedDOMList}
          */
-        window.rb.$ = Dom;
+        if (!rb.$) {
+            rb.$ = Dom;
+        }
     }
 
     exports.default = Dom;

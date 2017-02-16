@@ -1,27 +1,31 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports'], factory);
+        define(['exports', './utils/global-rb'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports);
+        factory(exports, require('./utils/global-rb'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports);
+        factory(mod.exports, global.globalRb);
         global._crucial = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _globalRb) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    if (!window.rb) {
-        window.rb = {};
-    }
-    var getPseudoToParse = void 0;
 
-    var rb = window.rb;
+    var _globalRb2 = _interopRequireDefault(_globalRb);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    var getPseudoToParse = void 0;
 
     var regStartQuote = /^"?'?"?/;
     var regEndQuote = /"?'?"?$/;
@@ -37,8 +41,9 @@
      * @param str
      * @returns {*}
      */
-    rb.jsonParse = function (str) {
-        var ret;
+    _globalRb2.default.jsonParse = function (str) {
+        var ret = void 0;
+
         if (str) {
             try {
                 ret = JSON.parse(str);
@@ -56,8 +61,8 @@
      * @param privateExpando {Symbol|String}
      * @returns {Object|undefined}
      */
-    rb.parsePseudo = function (element, privateExpando) {
-        var ret;
+    _globalRb2.default.parsePseudo = function (element, privateExpando) {
+        var ret = void 0;
         var isString = typeof element == 'string';
         var value = isString ? element : getPseudoToParse(element);
 
@@ -65,7 +70,7 @@
             element[privateExpando] = value;
         }
 
-        ret = rb.jsonParse(removeLeadingQuotes(value));
+        ret = _globalRb2.default.jsonParse(removeLeadingQuotes(value));
         return ret;
     };
 
@@ -74,11 +79,11 @@
      * @param element
      * @returns {*}
      */
-    rb.getPseudo = function (element) {
+    _globalRb2.default.getPseudo = function (element) {
         // Get data from hidden elements can be tricky:
         // IE11 on Win7 does return content: 'none' for before. But can return fontFamily for the before element. (Safari 10 does not return the right fontFamily!.)
         // Safari 8 does return content: ''|null for before. But can only read content for the element itself.
-        var beforeStyles = rb.getStyles(element, '::before');
+        var beforeStyles = _globalRb2.default.getStyles(element, '::before');
         var value = beforeStyles.content;
         var isValueNone = value == 'none';
 
@@ -86,7 +91,7 @@
             if (isValueNone) {
                 value = beforeStyles.fontFamily;
             } else {
-                value = rb.getStyles(element).content;
+                value = _globalRb2.default.getStyles(element).content;
             }
         }
 
@@ -99,7 +104,7 @@
      * @param privateExpando {Symbol|String}
      * @returns {boolean}
      */
-    rb.hasPseudoChanged = function (element, privateExpando) {
+    _globalRb2.default.hasPseudoChanged = function (element, privateExpando) {
         var value = element[privateExpando];
         return getPseudoToParse(element) != value;
     };
@@ -114,13 +119,13 @@
      * @example
      * rb.getStyles(element).position // returns 'absolute', 'relative' ...
      */
-    rb.getStyles = function (element, pseudo) {
+    _globalRb2.default.getStyles = function (element, pseudo) {
         var view = element.ownerDocument.defaultView;
 
         if (!view.opener) {
             view = window;
         }
-        return view.getComputedStyle(element, pseudo || null) || { getPropertyValue: rb.$ && rb.$.noop, isNull: true };
+        return view.getComputedStyle(element, pseudo || null) || { getPropertyValue: _globalRb2.default.$ && _globalRb2.default.$.noop, isNull: true };
     };
 
     /**
@@ -135,20 +140,21 @@
      */
     var cssConfig = { mqs: {}, currentMQ: '', beforeMQ: '' };
     var parseCSS = function parseCSS() {
-        var mqCallbacks;
+        var mqCallbacks = void 0;
         var root = document.documentElement;
-        var styles = rb.parsePseudo(root) || {};
-        var currentMQStyle = rb.getStyles(root, '::after');
+        var styles = _globalRb2.default.parsePseudo(root) || {};
+        var currentMQStyle = _globalRb2.default.getStyles(root, '::after');
         var currentStyle = '';
 
         var detectMQChange = function detectMQChange() {
             var nowStyle = currentMQStyle.content;
+
             if (currentStyle != nowStyle) {
                 currentStyle = nowStyle;
-                rb.cssConfig.beforeMQ = rb.cssConfig.currentMQ;
-                rb.cssConfig.currentMQ = removeLeadingQuotes(currentStyle);
-                if (rb.$ && rb.$.Callbacks) {
-                    rb.cssConfig.mqChange.fireWith(rb.cssConfig);
+                _globalRb2.default.cssConfig.beforeMQ = _globalRb2.default.cssConfig.currentMQ;
+                _globalRb2.default.cssConfig.currentMQ = removeLeadingQuotes(currentStyle);
+                if (_globalRb2.default.$ && _globalRb2.default.$.Callbacks) {
+                    _globalRb2.default.cssConfig.mqChange.fireWith(_globalRb2.default.cssConfig);
                 }
             }
         };
@@ -159,6 +165,7 @@
                 detectMQChange();
                 _run = false;
             };
+
             return function () {
                 if (!running) {
                     running = true;
@@ -167,7 +174,7 @@
             };
         }();
 
-        Object.defineProperty(rb, 'cssConfig', {
+        Object.defineProperty(_globalRb2.default, 'cssConfig', {
             configurable: true,
             enumerable: true,
             writable: true,
@@ -179,8 +186,8 @@
             enumerable: true,
             get: function get() {
                 if (!mqCallbacks) {
-                    rb.resize.on(detectMQChange);
-                    mqCallbacks = rb.$.Callbacks();
+                    _globalRb2.default.resize.on(detectMQChange);
+                    mqCallbacks = _globalRb2.default.$.Callbacks();
                 }
 
                 return mqCallbacks;
@@ -193,7 +200,7 @@
         detectMQChange();
     };
 
-    Object.defineProperty(rb, 'cssConfig', {
+    Object.defineProperty(_globalRb2.default, 'cssConfig', {
         configurable: true,
         enumerable: true,
         get: function get() {
@@ -202,7 +209,7 @@
         }
     });
 
-    getPseudoToParse = rb.getPseudo;
+    getPseudoToParse = _globalRb2.default.getPseudo;
 
-    exports.default = rb;
+    exports.default = _globalRb2.default;
 });

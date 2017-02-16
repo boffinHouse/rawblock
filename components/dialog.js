@@ -1,4 +1,4 @@
-import '../utils/rb_scrollbarwidth';
+import '../utils/scrollbarwidth';
 import './_focus-component';
 
 const rb = window.rb;
@@ -61,6 +61,7 @@ class Dialog extends rb.components._focus_component {
             trapKeyboard: true,
             setFocus: 'force',
             contentUrl: '',
+            xhrOptions: null,
         };
     }
 
@@ -175,9 +176,12 @@ class Dialog extends rb.components._focus_component {
         }
 
         this.$backdrop.css({display: ''});
-        this.$backdrop.addClass(rb.statePrefix + 'open');
+        this.$backdrop.rbToggleState('open', true);
 
-        rb.$root.rbToggleState('open{-}' + this.name +'{-}within', true);
+        rb.$root
+            .rbToggleState('open{-}' + this.name +'{-}within', true)
+            .rbToggleState('open{-}dialog{-}within', true)
+        ;
 
         if(this._setScrollPadding && this.options.scrollPadding){
             document.body.style[this.options.scrollPadding] = this._setScrollPadding + 'px';
@@ -188,6 +192,10 @@ class Dialog extends rb.components._focus_component {
         } else {
             this.storeActiveElement();
         }
+
+        rb.rAFQueue(() => {
+            this.$backdrop.rbToggleState('opened', this.isOpen);
+        });
 
         this.trigger(options);
     }
@@ -221,7 +229,9 @@ class Dialog extends rb.components._focus_component {
         }
 
         if(options.contentUrl){
-            this._xhr = rb.fetch({url: options.contentUrl}).then(this._addContent);
+            this._xhr = rb.fetch(options.contentUrl, 'xhrOptions' in options ? options.xhrOptions : mainOpts.xhrOptions)
+                .then(this._addContent)
+            ;
         }
 
         if(this.options.setDisplay && this._displayTimer){
@@ -255,8 +265,15 @@ class Dialog extends rb.components._focus_component {
             this._oldPaddingValue = null;
         }
 
-        this.$backdrop.removeClass(rb.statePrefix + 'open');
-        rb.$root.rbToggleState('open{-}' + this.name +'{-}within', false);
+        this.$backdrop
+            .rbToggleState('open', false)
+            .rbToggleState('opened', this.isOpen)
+        ;
+
+        rb.$root
+            .rbToggleState('open{-}' + this.name +'{-}within', false)
+            .rbToggleState('open{-}dialog{-}within', false)
+        ;
 
         if(this.options.setDisplay){
             clearTimeout(this._displayTimer);
@@ -353,8 +370,8 @@ class Dialog extends rb.components._focus_component {
 
 rb.ready.then(function(){
     rb.click.add('dialog', function(element, event, attr){
-        var dialog;
-        var opts = rb.jsonParse(attr);
+        let dialog;
+        let opts = rb.jsonParse(attr);
 
         if(typeof opts == 'string'){
             opts = {id: opts};

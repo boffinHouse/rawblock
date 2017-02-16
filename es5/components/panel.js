@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './panelbutton', '../utils/rb$_slide-up-down', '../utils/rb_contains'], factory);
+        define(['exports', './panelbutton', './_focus-component', '../utils/$_slide-up-down', '../utils/contains'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./panelbutton'), require('../utils/rb$_slide-up-down'), require('../utils/rb_contains'));
+        factory(exports, require('./panelbutton'), require('./_focus-component'), require('../utils/$_slide-up-down'), require('../utils/contains'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.panelbutton, global.rb$_slideUpDown, global.rb_contains);
+        factory(mod.exports, global.panelbutton, global._focusComponent, global.$_slideUpDown, global.contains);
         global.panel = mod.exports;
     }
 })(this, function (exports) {
@@ -72,13 +72,13 @@
     /**
      * Class component to create a panel. The visibility should be handled using CSS. The component mainly toggles the class `is-open`.
      * @alias rb.components.panel
-     * @extends rb.Component
+     * @extends rb.components._focus_component
      *
      * @param element
      * @param initialDefaults
      *
-     * @fires moduleName#change Fires before a panel's `isOpen` state changes. The default behavior can be prevented.
-     * @fires moduleName#changed Fires after a panel's `isOpen` state changed.
+     * @fires componentName#change Fires before a panel's `isOpen` state changes. The default behavior can be prevented.
+     * @fires componentName#changed Fires after a panel's `isOpen` state changed.
      *
      * @property {Boolean} isOpen
      *
@@ -94,8 +94,8 @@
      * });
      */
 
-    var Panel = function (_rb$Component) {
-        _inherits(Panel, _rb$Component);
+    var Panel = function (_rb$components$_focus) {
+        _inherits(Panel, _rb$components$_focus);
 
         _createClass(Panel, null, [{
             key: 'defaults',
@@ -122,7 +122,7 @@
         function Panel(element, initialDefaults) {
             _classCallCheck(this, Panel);
 
-            var _this = _possibleConstructorReturn(this, _rb$Component.call(this, element, initialDefaults));
+            var _this = _possibleConstructorReturn(this, _rb$components$_focus.call(this, element, initialDefaults));
 
             _this.isOpen = _this.element.classList.contains(rb.statePrefix + 'open');
 
@@ -251,7 +251,7 @@
         };
 
         Panel.prototype.setOption = function setOption(name, value, isSticky) {
-            _rb$Component.prototype.setOption.call(this, name, value, isSticky);
+            _rb$components$_focus.prototype.setOption.call(this, name, value, isSticky);
 
             if (name == 'easing' && value && typeof value == 'string') {
                 rb.addEasing(value);
@@ -388,7 +388,7 @@
             }
 
             if (this.options.itemWrapper) {
-                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbChangeState('selected{-}within', true);
+                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbToggleState('selected{-}within', true);
             }
 
             if (this.groupComponent) {
@@ -448,7 +448,7 @@
             this.element.setAttribute('aria-hidden', 'true');
 
             if (this.options.itemWrapper) {
-                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbChangeState('selected{-}within');
+                $(this.element.closest(this.interpolateName(this.options.itemWrapper))).rbToggleState('selected{-}within', false);
             }
 
             if (this.groupComponent) {
@@ -559,6 +559,7 @@
                 return {
                     'click .{name}{e}close': function clickNameEClose(e) {
                         this.close();
+
                         if (e) {
                             e.stopPropagation();
                             e.preventDefault();
@@ -576,7 +577,7 @@
         }]);
 
         return Panel;
-    }(rb.Component);
+    }(rb.components._focus_component);
 
     rb.live.register('panel', Panel);
 

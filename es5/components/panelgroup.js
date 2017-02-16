@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './panelbutton', './panel', '../utils/rb_contains'], factory);
+        define(['exports', './panelbutton', './panel', './_composer-component', '../utils/contains'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./panelbutton'), require('./panel'), require('../utils/rb_contains'));
+        factory(exports, require('./panelbutton'), require('./panel'), require('./_composer-component'), require('../utils/contains'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.panelbutton, global.panel, global.rb_contains);
+        factory(mod.exports, global.panelbutton, global.panel, global._composerComponent, global.contains);
         global.panelgroup = mod.exports;
     }
 })(this, function (exports) {
@@ -83,14 +83,14 @@
     };
 
     /**
-     * Class component to create a tab-like or an accordion-like component.
+     * Class component to create a tab-like or an accordion-like component. Associates panelbuttons and panels and manages the `isOpen` state of the panels.
      *
      * @alias rb.components.panelgroup
-     * @extends rb.Component
+     * @extends rb.components._composer_component
      *
      * @param element {Element}
      *
-     * @fires panelgroup#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.
+     * @fires componentName#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.
      *
      * @prop {Number[]} selectedIndexes The index(es) of the open panel(s)
      * @prop {Element[]} selectedItems The dom element(s) of the open panel(s)
@@ -118,8 +118,8 @@
      * rb.$('.rb-tabs').rbComponent().next();
      */
 
-    var PanelGroup = function (_rb$Component) {
-        _inherits(PanelGroup, _rb$Component);
+    var PanelGroup = function (_rb$components$_compo) {
+        _inherits(PanelGroup, _rb$components$_compo);
 
         _createClass(PanelGroup, null, [{
             key: 'defaults',
@@ -137,14 +137,14 @@
                     setFocus: true,
                     switchedOff: false,
                     resetSwitchedOff: true,
-                    panelName: '{name}{e}panel',
                     panelSel: 'find(.{name}{e}panel)',
                     btnSel: 'find(.{name}{e}btn)',
                     groupBtnSel: 'find(.{name}{e}ctrl{-}btn)',
                     panelWrapperSel: 'find(.{name}{e}panel{-}wrapper):0',
                     btnWrapperSel: 'find(.{name}{e}btn{-}wrapper):0',
                     itemWrapper: '',
-                    setDisplay: false
+                    setDisplay: false,
+                    closeOnEsc: false
                 };
             }
         }]);
@@ -152,7 +152,7 @@
         function PanelGroup(element, initialDefaults) {
             _classCallCheck(this, PanelGroup);
 
-            var _this = _possibleConstructorReturn(this, _rb$Component.call(this, element, initialDefaults));
+            var _this = _possibleConstructorReturn(this, _rb$components$_compo.call(this, element, initialDefaults));
 
             if (_this.options.multiple && !_this.options.toggle) {
                 _this.options.toggle = true;
@@ -294,42 +294,39 @@
         };
 
         PanelGroup.prototype._getElements = function _getElements() {
+            var _this2 = this;
+
             var panels = void 0;
             var that = this;
             var options = this.options;
 
             var buttonWrapper = this.getElementsFromString(options.btnWrapperSel)[0];
-            var itemWrapper = this.interpolateName(this.options.itemWrapper || '');
-
-            var panelName = this.interpolateName(this.options.panelName);
-            var jsPanelName = this.interpolateName(this.options.panelName, true);
 
             this.$panelWrapper = $(this.getElementsFromString(options.panelWrapperSel));
 
-            this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0))).each(function () {
-                var panel = live.create(this, rb.components.panel, {
-                    jsName: jsPanelName,
-                    name: panelName,
-                    resetSwitchedOff: options.resetSwitchedOff,
-                    setFocus: options.setFocus,
-                    itemWrapper: itemWrapper,
-                    closeOnEsc: options.closeOnEsc,
-                    adjustScroll: options.adjustScroll,
-                    scrollIntoView: options.scrollIntoView,
-                    setDisplay: options.setDisplay
-                });
+            this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0)));
 
+            this.createChildComponents('panel', this.$panels.get(), [{
+                name: 'itemWrapper',
+                computeValue: function computeValue(value, name, component) {
+                    return component.interpolateName(value || '');
+                }
+            }, 'resetSwitchedOff', 'setFocus', 'closeOnEsc', 'adjustScroll', 'scrollIntoView', 'setDisplay', 'autofocusSel', 'switchedOff']).forEach(function (panel) {
                 panel.group = that.element;
                 panel.groupComponent = that;
             });
 
             panels = this.$panels;
 
-            this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper)).each(function (index) {
-                var btn = live.create(this, components.panelbutton, {
-                    type: options.toggle ? 'toggle' : 'open',
-                    preventDefault: options.preventDefault
-                });
+            this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper));
+
+            this.createChildComponents('panelbutton', this.$buttons.get(), [{
+                name: 'toggle',
+                childName: 'type',
+                computeValue: function computeValue(value) {
+                    return value ? 'toggle' : 'open';
+                }
+            }, 'preventDefault', 'switchedOff']).forEach(function (btn, index) {
                 var panel = panels.get(index);
 
                 if (panel) {
@@ -337,12 +334,14 @@
                 }
             });
 
-            this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel)).each(function () {
-                live.create(this, components.panelgroupbutton, {
-                    preventDefault: options.preventDefault,
-                    target: that.element
-                });
-            });
+            this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel));
+
+            this.createChildComponents('panelgroupbutton', this.$groupButtons.get(), [{
+                name: 'target',
+                computeValue: function computeValue() {
+                    return _this2.element;
+                }
+            }, 'preventDefault', 'switchedOff']);
         };
 
         PanelGroup.prototype.closeAll = function closeAll(except) {
@@ -374,12 +373,12 @@
         };
 
         PanelGroup.prototype._triggerOnce = function _triggerOnce() {
-            var _this2 = this;
+            var _this3 = this;
 
             if (!this._isTriggering) {
                 (function () {
-                    var that = _this2;
-                    _this2._isTriggering = true;
+                    var that = _this3;
+                    _this3._isTriggering = true;
                     setTimeout(function () {
                         that._isTriggering = false;
                         that.trigger();
@@ -464,21 +463,12 @@
         };
 
         PanelGroup.prototype._switchOff = function _switchOff() {
-            if (this.$panels && this.$buttons) {
-                this.setChildOption(this.$groupButtons, 'switchedOff', true);
-                this.setChildOption(this.$buttons, 'switchedOff', true);
-                this.setChildOption(this.$panels, 'switchedOff', true);
-            }
             this.setSwitchedOffClass();
         };
 
         PanelGroup.prototype._switchOn = function _switchOn() {
             if (!this.$panelWrapper || !this.$panels.length) {
                 this._getElements();
-            } else {
-                this.setChildOption(this.$panels, 'switchedOff', false);
-                this.setChildOption(this.$groupButtons, 'switchedOff', false);
-                this.setChildOption(this.$buttons, 'switchedOff', false);
             }
 
             this._updatePanelInformation();
@@ -490,16 +480,14 @@
         };
 
         PanelGroup.prototype.setOption = function setOption(name, value, isSticky) {
-            var _this3 = this;
+            var _this4 = this;
+
+            _rb$components$_compo.prototype.setOption.call(this, name, value, isSticky);
 
             if (name == 'multiple' && value && !this.options.toggle) {
                 this.setOption('toggle', true, isSticky);
-            } else if (name == 'toggle' && value != this.options.toggle) {
-                this.setChildOption(this.$buttons, 'type', value ? 'toggle' : 'open', isSticky);
             } else if (name == 'easing' && value && typeof value == 'string') {
                 rb.addEasing(value);
-            } else if (name == 'setFocus' || name == 'resetSwitchedOff' || name == 'closeOnEsc' || name == 'adjustScroll' || name == 'scrollIntoView' || name == 'setDisplay') {
-                this.setChildOption(this.$panels, name, value);
             } else if (name == 'closeOnFocusout') {
                 this._addRemoveFocusOut();
             } else if (name == 'switchedOff') {
@@ -508,30 +496,19 @@
                 } else {
                     this._switchOn();
                 }
-            } else if (name == 'preventDefault') {
-                this.setChildOption(this.$groupButtons, name, value, isSticky);
-                this.setChildOption(this.$buttons, name, value, isSticky);
-            } else if (name == 'itemWrapper') {
-                value = this.interpolateName(value);
-                this.setChildOption(this.$panels, name, value, isSticky);
             }
 
-            _rb$Component.prototype.setOption.call(this, name, value, isSticky);
-
             if ((name == 'toggle' || name == 'multiple') && this.options.multiple && !this.options.toggle) {
-                (function () {
-                    var that = _this3;
-                    setTimeout(function () {
-                        if (that.options.multiple && !that.options.toggle) {
-                            that.setOption('toggle', true, isSticky);
-                        }
-                    });
-                })();
+                setTimeout(function () {
+                    if (_this4.options.multiple && !_this4.options.toggle) {
+                        _this4.setOption('toggle', true, isSticky);
+                    }
+                });
             }
         };
 
         return PanelGroup;
-    }(rb.Component);
+    }(rb.components._composer_component);
 
     rb.live.register('panelgroup', PanelGroup);
 

@@ -11,6 +11,7 @@ const rb = window.rb;
  * @param [initialDefaults] {OptionsObject}
  *
  * @fires componentName#changed
+ * @fires componentName#selectedchanged
  *
  * @example
  * <div class="js-rb-live" data-module="listbox">
@@ -29,7 +30,7 @@ class Listbox extends rb.Component {
         return {
             focusElement: '',
             defaultSelected: 0,
-            checkWithSpace: false,
+            checkWithSpace: true,
             disconnected: false,
         };
     }
