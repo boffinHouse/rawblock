@@ -121,6 +121,8 @@
             });
         },
         generateFetchPromise: function generateFetchPromise(id, options) {
+            var _this = this;
+
             var that = this;
             var promise = (0, _deferred2.default)();
 
@@ -141,21 +143,31 @@
             promise.offAbort = promise.abortCb.remove;
 
             this.waitingPromises.push(promise);
-            promise.then(onComplete, onComplete);
+            promise.then(function () {
+                _this.onComplete(id, true);
+            }, onComplete);
 
             this.promises[id] = promise;
         },
-        onComplete: function onComplete(id) {
-            this.removePromise(id);
+        onComplete: function onComplete(id, cacheable) {
+            this.removePromise(id, cacheable);
 
             this.startFetch();
         },
-        removePromise: function removePromise(id) {
+        removePromise: function removePromise(id, cacheable) {
+            var _this2 = this;
+
             var requestingPromisesIndex = this.requestingPromises.findIndex(findById, id);
             var waitingPromisesIndex = this.waitingPromises.findIndex(findById, id);
 
             if (this.promises[id]) {
-                this.promises[id] = null;
+                if (!cacheable || !this.options.cache) {
+                    this.promises[id] = null;
+                } else if (typeof this.options.cache == 'number') {
+                    setTimeout(function () {
+                        _this2.promises[id] = null;
+                    }, _typeof(this.options.cache) * 1000);
+                }
             }
 
             if (requestingPromisesIndex != -1) {

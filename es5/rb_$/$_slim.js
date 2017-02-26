@@ -423,28 +423,24 @@
             return Dom(this.elements[this.elements.length - 1]);
         },
         data: function data(name, value) {
-            var _this = this;
-
             var ret = void 0;
 
             var isSetter = (typeof name === 'undefined' ? 'undefined' : _typeof(name)) == 'object' || value != undefined;
 
             if (isSetter) {
-                (function () {
-                    var mergeObject = typeof name != 'string';
+                var mergeObject = typeof name != 'string';
 
-                    ret = _this;
+                ret = this;
 
-                    _this.elements.forEach(function (element) {
-                        var data = getData(element, true)._;
+                this.elements.forEach(function (element) {
+                    var data = getData(element, true)._;
 
-                        if (mergeObject) {
-                            Object.assign(data, name);
-                        } else {
-                            data[name] = value;
-                        }
-                    });
-                })();
+                    if (mergeObject) {
+                        Object.assign(data, name);
+                    } else {
+                        data[name] = value;
+                    }
+                });
             } else if (this.elements[0]) {
                 var data = getData(this.elements[0], true)._;
 
@@ -638,8 +634,6 @@
 
     [['on', 'addEventListener'], ['off', 'removeEventListener']].forEach(function (action) {
         Dom.fn[action[0]] = function (type, sel, fn) {
-            var _this2 = this;
-
             if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
                 this.elements.forEach(function (elem) {
                     var key = void 0;
@@ -648,24 +642,22 @@
                     }
                 });
             } else {
-                (function () {
-                    var useFn = void 0;
+                var useFn = void 0;
 
-                    if (typeof sel == 'function') {
-                        fn = sel;
-                        sel = null;
-                    }
+                if (typeof sel == 'function') {
+                    fn = sel;
+                    sel = null;
+                }
 
-                    if (sel) {
-                        useFn = rb.events.proxies.delegate(fn, sel);
-                    } else {
-                        useFn = fn;
-                    }
+                if (sel) {
+                    useFn = rb.events.proxies.delegate(fn, sel);
+                } else {
+                    useFn = fn;
+                }
 
-                    _this2.elements.forEach(function (elem) {
-                        elem[action[1]](type, useFn, false);
-                    });
-                })();
+                this.elements.forEach(function (elem) {
+                    elem[action[1]](type, useFn, false);
+                });
             }
 
             return this;
