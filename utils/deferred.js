@@ -21,6 +21,7 @@ export default function deferred(){
             promise.isRejected = true;
             promise.isDone = true;
             promise.value = data;
+            promise.catch(value => value);
             return reject(data);
         };
     });

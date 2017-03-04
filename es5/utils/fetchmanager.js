@@ -166,7 +166,7 @@
                 } else if (typeof this.options.cache == 'number') {
                     setTimeout(function () {
                         _this2.promises[id] = null;
-                    }, _typeof(this.options.cache) * 1000);
+                    }, this.options.cache * 1000);
                 }
             }
 

@@ -128,7 +128,7 @@ Object.assign(FetchManager.prototype, {
             } else if(typeof this.options.cache == 'number') {
                 setTimeout(()=>{
                     this.promises[id] = null;
-                }, typeof this.options.cache * 1000);
+                }, this.options.cache * 1000);
             }
         }
 
