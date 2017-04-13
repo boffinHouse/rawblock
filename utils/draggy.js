@@ -11,15 +11,20 @@ const btnsMap = {
 const regInputs = /^(?:input|textarea)$/i;
 const usePointer = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
 const usePassiveListener = !usePointer && rb.cssSupports('(touch-action: pan-y)') && rb.cssSupports('(touch-action: none)') && (function(){
-        var supportsPassiveOption = false;
+        let supportsPassiveOption = false;
+        const id = 'test' + rb.getID();
+
         try {
-            var opts = Object.defineProperty({}, 'passive', {
+            const opts = Object.defineProperty({}, 'passive', {
                 get: function() {
                     supportsPassiveOption = true;
                 },
             });
-            window.addEventListener('test' + rb.getID(), null, opts);
+
+            window.addEventListener(id, $.noop, opts);
+            window.removeEventListener(id, $.noop, opts);
         } catch (e) {} // eslint-disable-line no-empty
+
         return supportsPassiveOption;
     })();
 const useTouchAction = usePassiveListener || usePointer;
