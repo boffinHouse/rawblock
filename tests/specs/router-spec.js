@@ -107,7 +107,7 @@ describe('router', function () {
                 },
                 //'*': jasmine.createSpy('matchAllLang')
             },
-            '*': jasmine.createSpy('matchAll')
+            '*': jasmine.createSpy('matchAll'),
         };
 
         spyOn(routes['/:lang'], 'handler').and.callThrough();
