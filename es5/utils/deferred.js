@@ -40,6 +40,9 @@
                 promise.isRejected = true;
                 promise.isDone = true;
                 promise.value = data;
+                promise.catch(function (value) {
+                    return value;
+                });
                 return reject(data);
             };
         });
