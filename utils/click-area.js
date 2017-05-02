@@ -37,6 +37,10 @@ window.rb.ready.then(()=>{
                     metaKey: e.metaKey,
                     button: e.button,
                     which: e.which,
+                    clientX: e.clientX,
+                    clientY: e.clientY,
+                    pageX: e.pageX,
+                    pageY: e.pageY,
                 });
 
                 link.dispatchEvent(event);

@@ -1,10 +1,10 @@
-import './fetch';
-import '../rb_$/$_param';
+import fetch from './fetch';
+import deferred from './deferred';
+import param from '../rb_$/$_param';
+import callbacks from '../rb_$/$_callbacks';
+import extend from '../rb_$/$_extend';
 
 const rb = window.rb;
-const $ = rb.$;
-const param = $.param;
-const fetch = rb.fetch;
 
 const FetchManager = function(managerId, options){
 
@@ -88,7 +88,7 @@ Object.assign(FetchManager.prototype, {
     },
     generateFetchPromise: function(id, options){
         const that = this;
-        const promise = rb.deferred();
+        const promise = deferred();
 
         const onComplete = function(){
             that.onComplete(id);
@@ -97,7 +97,7 @@ Object.assign(FetchManager.prototype, {
         Object.assign(promise, {
             id: id,
             options: options,
-            abortCb: $.Callbacks(),
+            abortCb: callbacks(),
             abort: function(){
                 that.abort(id);
             },
@@ -107,21 +107,29 @@ Object.assign(FetchManager.prototype, {
         promise.offAbort = promise.abortCb.remove;
 
         this.waitingPromises.push(promise);
-        promise.then(onComplete, onComplete);
+        promise.then(()=>{
+            this.onComplete(id, true);
+        }, onComplete);
 
         this.promises[id] = promise;
     },
-    onComplete: function(id){
-        this.removePromise(id);
+    onComplete: function(id, cacheable){
+        this.removePromise(id, cacheable);
 
         this.startFetch();
     },
-    removePromise: function(id){
+    removePromise: function(id, cacheable){
         const requestingPromisesIndex = this.requestingPromises.findIndex(findById, id);
         const waitingPromisesIndex = this.waitingPromises.findIndex(findById, id);
 
         if(this.promises[id]){
-            this.promises[id] = null;
+            if((!cacheable || !this.options.cache)){
+                this.promises[id] = null;
+            } else if(typeof this.options.cache == 'number') {
+                setTimeout(()=>{
+                    this.promises[id] = null;
+                }, this.options.cache * 1000);
+            }
         }
 
         if(requestingPromisesIndex != -1){
@@ -187,7 +195,7 @@ Object.assign(FetchManager.prototype, {
         this._onOptionChange();
     },
     setOptions: function(options){
-        $.extend(true, this.options, options);
+        extend(true, this.options, options);
         this._onOptionChange();
     },
     abort: function(id){

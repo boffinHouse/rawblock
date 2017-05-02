@@ -2,10 +2,9 @@
  * @module ajaxform
  */
 
-import '../rb_$/$_serialize';
+import serialize from './serialize';
+import param from '../rb_$/$_param';
 import fetch from './fetch';
-
-const $ = window.rb.$ || window.jQuery;
 
 /**
  * Returns option to fetch a form using rb.fetch.
@@ -25,7 +24,7 @@ export function getFormFetchOptions(element){
             processData: false,
         });
     } else {
-        fetchOpts.url += '?' + $(element).serialize();
+        fetchOpts.url += '?' + param(serialize(element));
     }
 
     return fetchOpts;

@@ -210,11 +210,9 @@
         if (validity.valid || validity.customError && errorRule) {
             var asyncRule = void 0;
 
-            var _getValue = getValue(element);
-
-            var value = _getValue[0];
-            var valueStr = _getValue[1];
-
+            var _getValue = getValue(element),
+                value = _getValue[0],
+                valueStr = _getValue[1];
 
             validityInfo.value = value;
             validityInfo.valueStr = valueStr;

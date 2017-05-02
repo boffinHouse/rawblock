@@ -351,16 +351,14 @@
             });
 
             if (!this.$submenu.is('ul, ol') && this.allItems[0] && this.allItems[0].$item.is('li')) {
-                (function () {
-                    var $menuWrapper = _this4.$submenu;
-                    _this4.$submenu = $(document.createElement('ul'));
+                var $menuWrapper = this.$submenu;
+                this.$submenu = $(document.createElement('ul'));
 
-                    _this4.$submenu.prop({ className: _this4.interpolateName(togglePanel.replace(regPoint, '') + '{-}list') });
+                this.$submenu.prop({ className: this.interpolateName(togglePanel.replace(regPoint, '') + '{-}list') });
 
-                    rb.rAFQueue(function () {
-                        $menuWrapper.append(_this4.$submenu);
-                    });
-                })();
+                rb.rAFQueue(function () {
+                    $menuWrapper.append(_this4.$submenu);
+                });
             }
 
             this.mainbarItems = [].concat(this.allItems);

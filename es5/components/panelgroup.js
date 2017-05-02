@@ -373,17 +373,14 @@
         };
 
         PanelGroup.prototype._triggerOnce = function _triggerOnce() {
-            var _this3 = this;
 
             if (!this._isTriggering) {
-                (function () {
-                    var that = _this3;
-                    _this3._isTriggering = true;
-                    setTimeout(function () {
-                        that._isTriggering = false;
-                        that.trigger();
-                    });
-                })();
+                var that = this;
+                this._isTriggering = true;
+                setTimeout(function () {
+                    that._isTriggering = false;
+                    that.trigger();
+                });
             }
         };
 
@@ -480,7 +477,7 @@
         };
 
         PanelGroup.prototype.setOption = function setOption(name, value, isSticky) {
-            var _this4 = this;
+            var _this3 = this;
 
             _rb$components$_compo.prototype.setOption.call(this, name, value, isSticky);
 
@@ -500,8 +497,8 @@
 
             if ((name == 'toggle' || name == 'multiple') && this.options.multiple && !this.options.toggle) {
                 setTimeout(function () {
-                    if (_this4.options.multiple && !_this4.options.toggle) {
-                        _this4.setOption('toggle', true, isSticky);
+                    if (_this3.options.multiple && !_this3.options.toggle) {
+                        _this3.setOption('toggle', true, isSticky);
                     }
                 });
             }

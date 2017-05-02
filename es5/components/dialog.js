@@ -120,7 +120,8 @@
                     scrollPadding: 'paddingRight',
                     trapKeyboard: true,
                     setFocus: 'force',
-                    contentUrl: ''
+                    contentUrl: '',
+                    xhrOptions: null
                 };
             }
         }, {
@@ -227,6 +228,8 @@
         };
 
         Dialog.prototype._open = function _open(options) {
+            var _this2 = this;
+
             var content = void 0;
 
             if (this.contentElement && options && options.contentId && this._curContentId != options.contentId && (content = document.getElementById(options.contentId))) {
@@ -240,7 +243,7 @@
             }
 
             this.$backdrop.css({ display: '' });
-            this.$backdrop.addClass(rb.statePrefix + 'open');
+            this.$backdrop.rbToggleState('open', true);
 
             rb.$root.rbToggleState('open{-}' + this.name + '{-}within', true).rbToggleState('open{-}dialog{-}within', true);
 
@@ -253,6 +256,10 @@
             } else {
                 this.storeActiveElement();
             }
+
+            rb.rAFQueue(function () {
+                _this2.$backdrop.rbToggleState('opened', _this2.isOpen);
+            });
 
             this.trigger(options);
         };
@@ -281,7 +288,7 @@
             }
 
             if (options.contentUrl) {
-                this._xhr = rb.fetch({ url: options.contentUrl }).then(this._addContent);
+                this._xhr = rb.fetch(options.contentUrl, 'xhrOptions' in options ? options.xhrOptions : mainOpts.xhrOptions).then(this._addContent);
             }
 
             if (this.options.setDisplay && this._displayTimer) {
@@ -312,7 +319,8 @@
                 this._oldPaddingValue = null;
             }
 
-            this.$backdrop.removeClass(rb.statePrefix + 'open');
+            this.$backdrop.rbToggleState('open', false).rbToggleState('opened', this.isOpen);
+
             rb.$root.rbToggleState('open{-}' + this.name + '{-}within', false).rbToggleState('open{-}dialog{-}within', false);
 
             if (this.options.setDisplay) {
@@ -351,20 +359,20 @@
         };
 
         Dialog.prototype._setUpEvents = function _setUpEvents() {
-            var _this2 = this;
+            var _this3 = this;
 
             var options = this.options;
 
             this.$backdrop.on('click', function (e) {
-                if (options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == _this2.backdropDocument)) {
-                    _this2.close();
+                if (options.closeOnBackdropClick && (e.target == e.currentTarget || e.target == _this3.backdropDocument)) {
+                    _this3.close();
                     e.preventDefault();
                     e.stopPropagation();
                 }
             });
             this.$backdrop.on('keydown', function (e) {
                 if (e.keyCode == 27 && options.closeOnEsc && !e.defaultPrevented) {
-                    _this2.close();
+                    _this3.close();
                     e.preventDefault();
                     e.stopPropagation();
                 }
@@ -372,7 +380,7 @@
 
             this.trapKeyboardElemBefore.addEventListener('focus', function (e) {
                 if (options.trapKeyboard) {
-                    var focusElem = _this2.queryAll('.{name}{e}close');
+                    var focusElem = _this3.queryAll('.{name}{e}close');
 
                     e.preventDefault();
                     try {
@@ -388,7 +396,7 @@
                 if (options.trapKeyboard) {
                     e.preventDefault();
                     try {
-                        _this2.element.focus();
+                        _this3.element.focus();
                     } catch (er) {
                         rb.logInfo('Focus error', er);
                     }
@@ -401,7 +409,7 @@
 
     rb.ready.then(function () {
         rb.click.add('dialog', function (element, event, attr) {
-            var dialog;
+            var dialog = void 0;
             var opts = rb.jsonParse(attr);
 
             if (typeof opts == 'string') {

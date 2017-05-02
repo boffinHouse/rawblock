@@ -53,7 +53,7 @@
      * @param a
      * @returns {string}
      */
-    var param = $.param || function (a) {
+    var param = $ && $.param || function (a) {
         var prefix = void 0;
         var s = [];
         var add = function add(key, value) {
@@ -74,6 +74,8 @@
         // Return the resulting serialization
         return s.join('&').replace(r20, '+');
     };
+
+    rb.param = param;
 
     if ($ && !$.param) {
         $.param = param;

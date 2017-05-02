@@ -1,21 +1,37 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './fetch', '../rb_$/$_param'], factory);
+        define(['exports', './fetch', './deferred', '../rb_$/$_param', '../rb_$/$_callbacks', '../rb_$/$_extend'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./fetch'), require('../rb_$/$_param'));
+        factory(exports, require('./fetch'), require('./deferred'), require('../rb_$/$_param'), require('../rb_$/$_callbacks'), require('../rb_$/$_extend'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.fetch, global.$_param);
+        factory(mod.exports, global.fetch, global.deferred, global.$_param, global.$_callbacks, global.$_extend);
         global.fetchmanager = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _fetch, _deferred, _$_param, _$_callbacks, _$_extend) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _fetch2 = _interopRequireDefault(_fetch);
+
+    var _deferred2 = _interopRequireDefault(_deferred);
+
+    var _$_param2 = _interopRequireDefault(_$_param);
+
+    var _$_callbacks2 = _interopRequireDefault(_$_callbacks);
+
+    var _$_extend2 = _interopRequireDefault(_$_extend);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
         return typeof obj;
@@ -24,9 +40,6 @@
     };
 
     var rb = window.rb;
-    var $ = rb.$;
-    var param = $.param;
-    var fetch = rb.fetch;
 
     var FetchManager = function FetchManager(managerId, options) {
 
@@ -108,8 +121,10 @@
             });
         },
         generateFetchPromise: function generateFetchPromise(id, options) {
+            var _this = this;
+
             var that = this;
-            var promise = rb.deferred();
+            var promise = (0, _deferred2.default)();
 
             var onComplete = function onComplete() {
                 that.onComplete(id);
@@ -118,7 +133,7 @@
             Object.assign(promise, {
                 id: id,
                 options: options,
-                abortCb: $.Callbacks(),
+                abortCb: (0, _$_callbacks2.default)(),
                 abort: function abort() {
                     that.abort(id);
                 }
@@ -128,21 +143,31 @@
             promise.offAbort = promise.abortCb.remove;
 
             this.waitingPromises.push(promise);
-            promise.then(onComplete, onComplete);
+            promise.then(function () {
+                _this.onComplete(id, true);
+            }, onComplete);
 
             this.promises[id] = promise;
         },
-        onComplete: function onComplete(id) {
-            this.removePromise(id);
+        onComplete: function onComplete(id, cacheable) {
+            this.removePromise(id, cacheable);
 
             this.startFetch();
         },
-        removePromise: function removePromise(id) {
+        removePromise: function removePromise(id, cacheable) {
+            var _this2 = this;
+
             var requestingPromisesIndex = this.requestingPromises.findIndex(findById, id);
             var waitingPromisesIndex = this.waitingPromises.findIndex(findById, id);
 
             if (this.promises[id]) {
-                this.promises[id] = null;
+                if (!cacheable || !this.options.cache) {
+                    this.promises[id] = null;
+                } else if (typeof this.options.cache == 'number') {
+                    setTimeout(function () {
+                        _this2.promises[id] = null;
+                    }, this.options.cache * 1000);
+                }
             }
 
             if (requestingPromisesIndex != -1) {
@@ -166,7 +191,7 @@
                 promise = this.waitingPromises.shift();
 
                 this.requestingPromises.push(promise);
-                promise.fetch = fetch(promise.options);
+                promise.fetch = (0, _fetch2.default)(promise.options);
 
                 promise.onAbort(function () {
                     that.onComplete(promise.id);
@@ -207,7 +232,7 @@
             this._onOptionChange();
         },
         setOptions: function setOptions(options) {
-            $.extend(true, this.options, options);
+            (0, _$_extend2.default)(true, this.options, options);
             this._onOptionChange();
         },
         abort: function abort(id) {
@@ -225,11 +250,11 @@
             var id = [options.url];
 
             if (options.data) {
-                id.push(param(options.data));
+                id.push((0, _$_param2.default)(options.data));
             }
 
             if (options.headers) {
-                id.push(param(options.headers));
+                id.push((0, _$_param2.default)(options.headers));
             }
 
             return id.join(',');

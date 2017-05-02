@@ -1,9 +1,75 @@
 import rb from './utils/global-rb';
 import deferred from './utils/deferred';
+import rIC from './utils/request-idle-callback';
+import rAFQueue from './utils/rafqueue';
+import throttle from './utils/throttle';
+import getId from './utils/get-id';
 
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
     require('./utils/debughelpers');
+}
+
+(function(){
+    const console = window.console || {};
+    const log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
+    const logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
+        const fnName = (errorName == 'log') ?
+                'log' :
+                'log' + (errorName.charAt(0).toUpperCase()) + (errorName.substr(1))
+            ;
+        return {
+            name: fnName,
+            errorLevel: errorLevel,
+            fn: (console[errorName] && console[errorName].bind ? console[errorName] : rb.$.noop).bind(console)
+        };
+    });
+
+
+    /**
+     * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
+     * @memberof rb
+     * @param obj    {Object}
+     * @param [initial] {Boolean}
+     */
+    rb.addLog = function (obj, initial) {
+        const fakeLog = rb.$.noop;
+
+        const setValue = function(){
+            const level = obj.__isDebug;
+
+            logs.forEach(function(log){
+                const fn = (level !== false && (level === true || level >= log.errorLevel)) ?
+                    log.fn :
+                    fakeLog;
+
+                obj[log.name] = fn;
+            });
+        };
+
+        obj.__isDebug = initial;
+        setValue();
+
+        Object.defineProperty(obj, 'isDebug', {
+            configurable: true,
+            enumerable: true,
+            get: function () {
+                return obj.__isDebug;
+            },
+            set: function (value) {
+                if(obj.__isDebug !== value){
+                    obj.__isDebug = value;
+                    setValue();
+                }
+            },
+        });
+    };
+})();
+
+rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
+
+if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
+    rb.logWarn('rawblock dev mode active. Do not use in production');
 }
 
 (function (window, document, _undefined) {
@@ -13,8 +79,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     const regnameSeparator = /\{-}/g;
     const regSplit = /\s*?,\s*?|\s+?/g;
     const slice = Array.prototype.slice;
-
-    rb.deferred = deferred;
 
     /**
      * The jQuery or dom.js (rb.$) plugin namespace.
@@ -84,22 +148,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @returns {String|Symbol}
      */
     rb.Symbol = window.Symbol;
-    let id = Math.round(Date.now() * Math.random());
-
-    /**
-     * Returns a unique id based on Math.random and Date.now().
-     * @memberof rb
-     * @returns {string}
-     */
-    rb.getID = function () {
-        id += Math.round(Math.random() * 1000);
-        return id.toString(36);
-    };
 
     if (!rb.Symbol) {
         rb.Symbol = function (name) {
             name = name || '_';
-            return name + rb.getID();
+            return name + getId();
         };
     }
 
@@ -210,7 +263,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         'insertAfter', 'insertBefore', 'html', 'text', 'remove', 'removeAttr', 'attr', 'prop', 'css', 'rbToggleState'].forEach(($name) => {
         $.fn[`${$name}Raf`] = function(){
             if(this.length){
-                rb.rAFQueue(()=>{
+                rAFQueue(()=>{
                     this[$name](...arguments);
                 }, true);
             }
@@ -254,88 +307,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
     /* End: getScrollingElement */
 
-    /* Begin: throttle */
-    /**
-     * Throttles a given function
-     * @memberof rb
-     * @param {function} fn - The function to be throttled.
-     * @param {object} [options] - options for the throttle.
-     *  @param {object} options.that=null -  the context in which fn should be called.
-     *  @param {boolean} options.write=false -  wether fn is used to write layout.
-     *  @param {boolean} options.read=false -  wether fn is used to read layout.
-     *  @param {number} options.delay=200 -  the throttle delay.
-     *  @param {boolean} options.unthrottle=false -  Wether function should be invoked directly.
-     * @returns {function} the throttled function.
-     */
-    rb.throttle = function (fn, options) {
-        let running, that, args;
-
-        let lastTime = 0;
-        let Date = window.Date;
-
-        const _run = function () {
-            running = false;
-            lastTime = Date.now();
-            fn.apply(that, args);
-        };
-
-        let afterAF = function () {
-            rb.rIC(_run);
-        };
-
-        const throttel = function () {
-            if (running) {
-                return;
-            }
-
-            let delay = options.delay;
-
-            running = true;
-
-            that = options.that || this;
-            args = arguments;
-
-            if (options.unthrottle) {
-                _run();
-            } else {
-                if (delay && !options.simple) {
-                    delay -= (Date.now() - lastTime);
-                }
-                if (delay < 0) {
-                    delay = 0;
-                }
-                if(!delay && (options.read || options.write)){
-                    getAF();
-                } else {
-                    setTimeout(getAF, delay);
-                }
-            }
-        };
-
-        let getAF = function () {
-            rb.rAFQueue(afterAF);
-        };
-
-        if (!options) {
-            options = {};
-        }
-
-        if (!options.delay) {
-            options.delay = 200;
-        }
-
-        if (options.write) {
-            afterAF = _run;
-        } else if (!options.read) {
-            getAF = _run;
-        }
-
-        throttel._rbUnthrotteled = fn;
-
-        return throttel;
-    };
-    /* End: throttle */
-
     /* Begin: resize */
     var iWidth, cHeight, installed;
     var docElem = rb.root;
@@ -354,7 +325,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             _setup: function () {
                 if (!installed) {
                     installed = true;
-                    rb.rIC(function () {
+                    rIC(function () {
                         iWidth = innerWidth;
                         cHeight = docElem.clientHeight;
                     });
@@ -379,7 +350,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
     );
 
-    rb.resize._run = rb.throttle(function () {
+    rb.resize._run = throttle(function () {
         if (iWidth != innerWidth || cHeight != docElem.clientHeight) {
             iWidth = innerWidth;
             cHeight = docElem.clientHeight;
@@ -487,57 +458,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     })();
     /* End: parseValue */
 
-    /* Begin: idleCallback */
-    rb.rIC = window.requestIdleCallback ?
-        function(fn){
-            return requestIdleCallback(fn, {timeout: 99});
-        } :
-        function(fn){
-            return setTimeout(fn);
-        }
-    ;
-    /* End: idleCallback */
-
-    /* Begin: rAF helpers */
-
-    rb.rAFQueue = (function () {
-        var isInProgress, inProgressStack;
-        var fns1 = [];
-        var fns2 = [];
-        var curFns = fns1;
-
-        var run = function () {
-            inProgressStack = curFns;
-            curFns = fns1.length ? fns2 : fns1;
-
-            isInProgress = true;
-            while (inProgressStack.length) {
-                inProgressStack.shift()();
-            }
-            isInProgress = false;
-        };
-
-        /**
-         * Invokes a function inside a rAF call
-         * @memberof rb
-         * @alias rb#rAFQueue
-         * @param fn {Function} the function that should be invoked
-         * @param inProgress {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
-         * @param hiddenRaf {boolean} Whether the rAF should also be used if document is hidden.
-         */
-        return function (fn, inProgress, hiddenRaf) {
-
-            if (inProgress && isInProgress) {
-                fn();
-            } else {
-                curFns.push(fn);
-                if (curFns.length == 1) {
-                    ((hiddenRaf || !document.hidden) ? requestAnimationFrame : setTimeout)(run);
-                }
-            }
-        };
-    })();
-
     /**
      * Generates and returns a new, rAFed version of the passed function, so that the passed function is always called using requestAnimationFrame. Normally all methods/functions, that mutate the DOM/CSSOM, should be wrapped using `rb.rAF` to avoid layout thrashing.
      * @memberof rb
@@ -586,7 +506,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
             if (!running) {
                 running = true;
-                rb.rAFQueue(run, inProgress);
+                rAFQueue(run, inProgress);
             }
         };
 
@@ -661,8 +581,8 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     /* End: rbComponent */
 
     /* Begin: addEasing */
-    var BezierEasing;
-    var easingMap = {
+    let BezierEasing;
+    const easingMap = {
         ease: '0.25,0.1,0.25,1',
         linear: '0,0,1,1',
         'ease-in': '0.42,0,1,1',
@@ -676,9 +596,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @param {String} [name] Human readable name of the easing.
      * @returns {Function} Easing a function
      */
-    var regEasingNumber = /([0-9.]+)/g;
+    const regEasingNumber = /([0-9.]+)/g;
     rb.addEasing = function (easing, name) {
-        var bezierArgs;
+        let bezierArgs;
+
         if (typeof easing != 'string') {
             return;
         }
@@ -755,7 +676,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             return event;
         },
         dispatch: function(element, type, options){
-            var event = this.Event(type, options);
+            const event = this.Event(type, options);
             element.dispatchEvent(event);
             return event;
         },
@@ -841,14 +762,14 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 return proxy;
             },
             once: function(handler, once, opts, type){
-                var proxy = rb.events.proxy(handler, 'conce', '');
+                var proxy = rb.events.proxy(handler, 'once', '');
                 if(!proxy){
                     proxy = function(e){
                         var ret = handler.apply(this, arguments);
                         rb.events.remove(e && e.target || this, type, handler, opts);
                         return ret;
                     };
-                    rb.events.proxy(handler, 'conce', '', proxy);
+                    rb.events.proxy(handler, 'once', '', proxy);
                 }
                 return proxy;
             },
@@ -1018,67 +939,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
         };
     })();
-
-    (function(){
-        var console = window.console || {};
-        var log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
-        var logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
-            var fnName = (errorName == 'log') ?
-                'log' :
-                'log' + (errorName.charAt(0).toUpperCase()) + (errorName.substr(1))
-            ;
-            return {
-                name: fnName,
-                errorLevel: errorLevel,
-                fn: (console[errorName] && console[errorName].bind ? console[errorName] : rb.$.noop).bind(console)
-            };
-        });
-
-
-        /**
-         * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
-         * @memberof rb
-         * @param obj    {Object}
-         * @param [initial] {Boolean}
-         */
-        rb.addLog = function (obj, initial) {
-            var fakeLog = rb.$.noop;
-
-            var setValue = function(){
-                var level = obj.__isDebug;
-                logs.forEach(function(log){
-                    var fn = (level !== false && (level === true || level >= log.errorLevel)) ?
-                        log.fn :
-                        fakeLog;
-
-                    obj[log.name] = fn;
-                });
-            };
-
-            obj.__isDebug = initial;
-            setValue();
-
-            Object.defineProperty(obj, 'isDebug', {
-                configurable: true,
-                enumerable: true,
-                get: function () {
-                    return obj.__isDebug;
-                },
-                set: function (value) {
-                    if(obj.__isDebug !== value){
-                        obj.__isDebug = value;
-                        setValue();
-                    }
-                },
-            });
-        };
-    })();
-
-    rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
-
-    if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-        rb.logWarn('rawblock dev mode active. Do not use in production');
-    }
 
     var cbs = [];
     var setupClick = function () {
@@ -1369,7 +1229,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         initClickCreate = $.noop;
         rb.click.add('module', function (elem) {
             rb.getComponent(elem);
-            rb.rAFQueue(function () {
+            rAFQueue(function () {
                 elem.classList.remove(rb.click.clickClass);
 
                 if(!elem.classList.contains(attachedClass)){
@@ -1414,12 +1274,14 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
 
     const initObserver = function () {
-        var removeComponents = (function () {
-            var runs, timer;
-            var i = 0;
-            var main = function () {
-                var len, instance, element;
-                var start = Date.now();
+        const removeComponents = (function () {
+            let runs, timer;
+            let i = 0;
+
+            const main = function () {
+                let len, instance, element;
+                const start = Date.now();
+
                 for (len = live._attached.length; i < len && Date.now() - start < 3; i++) {
                     element = live._attached[i];
 
@@ -1451,9 +1313,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             };
         })();
 
-        var onMutation = function (mutations) {
-            var i, mutation;
-            var len = mutations.length;
+        const onMutation = function (mutations) {
+            let i, mutation;
+            const len = mutations.length;
 
             for (i = 0; i < len; i++) {
                 mutation = mutations[i];
@@ -1474,13 +1336,13 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             docElem.addEventListener('DOMNodeInserted', live.searchModules);
             document.addEventListener('DOMContentLoaded', live.searchModules);
             docElem.addEventListener('DOMNodeRemoved', (function () {
-                var mutation = {
+                const mutation = {
                     addedNodes: [],
                 };
-                var mutations = [
+                const mutations = [
                     mutation,
                 ];
-                var run = function () {
+                const run = function () {
                     onMutation(mutations);
                     mutation.removedNodes = false;
                 };
@@ -1498,9 +1360,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
 
     const createBatch = function () {
-        var runs;
-        var batch = [];
-        var run = function () {
+        let runs;
+        const batch = [];
+        const run = function () {
             while (batch.length) {
                 batch.shift()();
             }
@@ -1554,7 +1416,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
     rb._extendEvts = extendEvents;
 
-    rb.ready = rb.deferred();
+    rb.ready = deferred();
 
     rb.live = live;
 
@@ -1642,10 +1504,10 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      *
      */
     live.register = function (name, Class, extend) {
-        var proto = Class.prototype;
-        var superProto = Object.getPrototypeOf(proto);
-        var superClass = superProto.constructor;
-        var isRbComponent = proto instanceof rb.Component;
+        const proto = Class.prototype;
+        const superProto = Object.getPrototypeOf(proto);
+        const superClass = superProto.constructor;
+        const isRbComponent = proto instanceof rb.Component;
 
         if (isRbComponent) {
             extendStatics(Class, proto, superClass, 'defaults');
@@ -1720,7 +1582,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 	 * });
      */
     live.addImportHook = function (names, importCallback) {
-        var add = function (name) {
+        const add = function (name) {
             if (unregisteredFoundHook[name]) {
                 rb.log('overrides ' + name + ' import hook', names, importCallback);
             }
@@ -1743,7 +1605,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
 
         if(!componentPromises[moduleId] && (hook || rb.components[moduleId])){
-            componentPromises[moduleId] = rb.deferred();
+            componentPromises[moduleId] = deferred();
 
             if(rb.components[moduleId]){
                 componentPromises[moduleId].resolve();
@@ -1756,7 +1618,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
 
                 if(cssConfig && cssConfig.switchedOff){
                     if(!element.classList.contains(watchCssClass)){
-                        rb.rAFQueue(function () {
+                        rAFQueue(function () {
                             element.classList.add(watchCssClass);
                         }, true);
                     }
@@ -1785,7 +1647,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @returns {Object}
      */
     live.create = function (element, liveClass, initialOpts) {
-        var instance;
+        let instance;
 
         if (mainInit) {
             mainInit();
@@ -1796,7 +1658,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             element[componentExpando] = instance;
         }
 
-        rb.rAFQueue(function () {
+        rAFQueue(function () {
             element.classList.add(attachedClass);
             element.classList.remove(watchCssClass);
         }, true);
@@ -1832,7 +1694,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             rb.logError('failed', id, element);
         };
 
-        var findElements = rb.throttle(function () {
+        var findElements = throttle(function () {
             let element, moduleId, i, componentPromise, len;
 
             if(mainInit){
@@ -2322,9 +2184,9 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             }
 
             if (!(id = element.id)) {
-                id = 'js' + rb.nameSeparator + rb.getID();
+                id = 'js' + rb.nameSeparator + getId();
                 if(async){
-                    rb.rAFQueue(()=> {
+                    rAFQueue(()=> {
                         element.id = id;
                     }, true);
                 } else {
@@ -2375,7 +2237,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          * @see rb.Component.prototype.trigger
          */
         triggerRaf(){
-            rb.rAFQueue(() => {
+            rAFQueue(() => {
                 this.trigger(...arguments);
             }, true);
         }

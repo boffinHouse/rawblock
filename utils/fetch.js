@@ -12,7 +12,11 @@ const getData = function (oReq, obj) {
 
     if (typeof obj.data != 'object' &&
         (oReq.getResponseHeader('Content-Type') || '').split(';')[0].endsWith('json')) {
-        obj.data = rb.jsonParse(oReq.responseText) || obj.data;
+        try {
+            obj.data = JSON.parse(oReq.responseText) || obj.data;
+        } catch(er){
+            //continue
+        }
     }
 };
 
@@ -119,16 +123,15 @@ rb.fetch = function (url, options) {
             oReq = null;
         });
 
-
-
         options.type = options.type.toUpperCase();
 
         if(options.processData && data && typeof data == 'object' && !(data instanceof window.FormData)){
+            const param = $ && $.param || rb.param;
 
-            if($.param){
-                data = $.param(data);
+            if(param){
+                data = param(data);
             } else if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-                rb.logError('no $.param for fetch stringify');
+                rb.logError('no $.param/rb.param for fetch stringify');
             }
 
             if(options.type == 'GET'){
