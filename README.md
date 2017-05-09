@@ -4,7 +4,7 @@ The worlds most flexible and efficient responsive component library to build mod
 ##Requirements
 RawBlock relies on some tools who must be globally installed on your machine.  
 
-- [NodeJS](https://nodejs.org/en/). Works with version 0.12 and higher!
+- [NodeJS](https://nodejs.org/en/). Works with version 6.9.x and higher!
 - [Grunt](http://gruntjs.com/getting-started) is used as our task runner to build the project.
 - [SASS](http://sass-lang.com/) as our CSS preprocessor.
 

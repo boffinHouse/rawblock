@@ -107,21 +107,29 @@ Object.assign(FetchManager.prototype, {
         promise.offAbort = promise.abortCb.remove;
 
         this.waitingPromises.push(promise);
-        promise.then(onComplete, onComplete);
+        promise.then(()=>{
+            this.onComplete(id, true);
+        }, onComplete);
 
         this.promises[id] = promise;
     },
-    onComplete: function(id){
-        this.removePromise(id);
+    onComplete: function(id, cacheable){
+        this.removePromise(id, cacheable);
 
         this.startFetch();
     },
-    removePromise: function(id){
+    removePromise: function(id, cacheable){
         const requestingPromisesIndex = this.requestingPromises.findIndex(findById, id);
         const waitingPromisesIndex = this.waitingPromises.findIndex(findById, id);
 
         if(this.promises[id]){
-            this.promises[id] = null;
+            if((!cacheable || !this.options.cache)){
+                this.promises[id] = null;
+            } else if(typeof this.options.cache == 'number') {
+                setTimeout(()=>{
+                    this.promises[id] = null;
+                }, this.options.cache * 1000);
+            }
         }
 
         if(requestingPromisesIndex != -1){

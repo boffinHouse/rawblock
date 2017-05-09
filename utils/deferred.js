@@ -14,11 +14,14 @@ export default function deferred(){
         tmp.resolve = function(data){
             promise.isResolved = true;
             promise.isDone = true;
+            promise.value = data;
             return resolve(data);
         };
         tmp.reject = function(data){
             promise.isRejected = true;
             promise.isDone = true;
+            promise.value = data;
+            promise.catch(value => value);
             return reject(data);
         };
     });

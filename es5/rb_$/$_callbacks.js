@@ -52,4 +52,8 @@
             }
         };
     }
+
+    if (window.rb && window.rb.$) {
+        rb.$.Callbacks = Callbacks;
+    }
 });
