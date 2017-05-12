@@ -241,6 +241,12 @@ Object.assign(Draggy.prototype, {
         this.movedPos.x = this.startPos.x - this.curPos.x;
         this.movedPos.y = this.startPos.y - this.curPos.y;
 
+        if(!('x' in this.relPos) && !('y' in this.lastPos)){
+            this.lastPos = this.curPos;
+            this.relPos.x = this.lastPos.x - this.curPos.x;
+            this.relPos.y = this.lastPos.y - this.curPos.y;
+        }
+
         options.end(this, evt);
 
         if((Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
