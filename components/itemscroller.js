@@ -3,6 +3,8 @@ import '../utils/wheelanalyzer';
 import '../utils/resize';
 import '../utils/prefixed';
 import '../utils/debounce';
+import cssSupports from '../utils/css-supports';
+
 
 const rb = window.rb;
 const $ = rb.$;
@@ -10,7 +12,7 @@ const regIndex = /\{index}/g;
 const orderProp = rb.prefixed('order') || rb.prefixed('flexOrder');
 const supportSomeOrder = !!orderProp;
 const transformProp = rb.prefixed('transform');
-const supports3dTransform = rb.cssSupports('transform', 'translate3d(0,0,0)');
+const supports3dTransform = cssSupports('transform', 'translate3d(0,0,0)');
 
 /**
  * Class component to create a carousel/slider/itemscroller.

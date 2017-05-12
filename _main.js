@@ -2,71 +2,18 @@ import rb from './utils/global-rb';
 import deferred from './utils/deferred';
 import rIC from './utils/request-idle-callback';
 import rAFQueue from './utils/rafqueue';
+import './utils/rafs';
 import throttle from './utils/throttle';
 import getId from './utils/get-id';
+import addLog from './utils/add-log';
 
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
     require('./utils/debughelpers');
 }
 
-(function(){
-    const console = window.console || {};
-    const log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
-    const logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
-        const fnName = (errorName == 'log') ?
-                'log' :
-                'log' + (errorName.charAt(0).toUpperCase()) + (errorName.substr(1))
-            ;
-        return {
-            name: fnName,
-            errorLevel: errorLevel,
-            fn: (console[errorName] && console[errorName].bind ? console[errorName] : rb.$.noop).bind(console)
-        };
-    });
 
-
-    /**
-     * Adds a log method and a isDebug property to an object, which can be muted by setting isDebug to false.
-     * @memberof rb
-     * @param obj    {Object}
-     * @param [initial] {Boolean}
-     */
-    rb.addLog = function (obj, initial) {
-        const fakeLog = rb.$.noop;
-
-        const setValue = function(){
-            const level = obj.__isDebug;
-
-            logs.forEach(function(log){
-                const fn = (level !== false && (level === true || level >= log.errorLevel)) ?
-                    log.fn :
-                    fakeLog;
-
-                obj[log.name] = fn;
-            });
-        };
-
-        obj.__isDebug = initial;
-        setValue();
-
-        Object.defineProperty(obj, 'isDebug', {
-            configurable: true,
-            enumerable: true,
-            get: function () {
-                return obj.__isDebug;
-            },
-            set: function (value) {
-                if(obj.__isDebug !== value){
-                    obj.__isDebug = value;
-                    setValue();
-                }
-            },
-        });
-    };
-})();
-
-rb.addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
+addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
     rb.logWarn('rawblock dev mode active. Do not use in production');
@@ -458,105 +405,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     })();
     /* End: parseValue */
 
-    /**
-     * Generates and returns a new, rAFed version of the passed function, so that the passed function is always called using requestAnimationFrame. Normally all methods/functions, that mutate the DOM/CSSOM, should be wrapped using `rb.rAF` to avoid layout thrashing.
-     * @memberof rb
-     * @param fn {Function} The function to be rAFed
-     * @param options {Object} Options object
-     * @param options.that=null {Object} The context in which the function should be invoked. If nothing is passed the context of the wrapper function is used.
-     * @param options.queue=false {Object} Whether the fn should be added to an ongoing rAF (i.e.: `false`) or should be queued to the next rAF (i.e.: `true`).
-     * @param options.throttle=false {boolean} Whether multiple calls in one frame cycle should be throtteled to one.
-     * @returns {Function}
-     *
-     * @example
-     *  class Foo {
-	 *      constructor(element){
-	 *          this.element = element;
-	 *          this.changeLayout = rb.rAF(this.changeLayout);
-	 *      }
-	 *
-	 *      changeLayout(width){
-	 *          this.element.classList[width > 800 ? 'add' : 'remove']('is-large');
-	 *      }
-	 *
-	 *      measureLayout(){
-	 *          this.changeLayout(this.element.offsetWidth);
-	 *      }
-	 *  }
-     */
-    rb.rAF = function (fn, options) {
-        var running, args, that, inProgress;
-        var batchStack = [];
-        var run = function () {
-            running = false;
-            if (!options.throttle) {
-                while (batchStack.length) {
-                    args = batchStack.shift();
-                    fn.apply(args[0], args[1]);
-                }
-            } else {
-                fn.apply(that, args);
-            }
-        };
-        var rafedFn = function () {
-            args = arguments;
-            that = options.that || this;
-            if (!options.throttle) {
-                batchStack.push([that, args]);
-            }
-            if (!running) {
-                running = true;
-                rAFQueue(run, inProgress);
-            }
-        };
-
-        if (!options) {
-            options = {};
-        }
-
-        inProgress = !options.queue;
-
-        if (fn._rbUnrafedFn) {
-            rb.log('double rafed', fn);
-        }
-
-        rafedFn._rbUnrafedFn = fn;
-
-        return rafedFn;
-    };
-
-    /* End: rAF helpers */
-
-    /* Begin: rAFs helper */
-
-    /**
-     * Invokes `rb.rAF` on multiple methodNames of on object.
-     *
-     * @memberof rb
-     *
-     * @param {Object} obj
-     * @param {Object} [options]
-     * @param {...String} methodNames
-     *
-     * @example
-     * rb.rAFs(this, {throttle: true}, 'renderList', 'renderCircle');
-     */
-    rb.rAFs = function (obj) {
-        var options;
-        var args = slice.call(arguments);
-
-        args.shift();
-
-        if (typeof args[0] == 'object') {
-            options = args.shift();
-        }
-
-        args.forEach(function (fn) {
-            obj[fn] = rb.rAF(obj[fn], options);
-        });
-    };
-    /* End: rAFs helper */
-
     /* Begin: rbComponent */
 
     /**
@@ -630,18 +478,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         return $.easing[easing] || $.easing.swing || $.easing.linear;
     };
     /* End: addEasing */
-
-    /* Begin: cssSupports */
-    var CSS = window.CSS;
-    rb.cssSupports = CSS && CSS.supports ?
-        function(){
-            return CSS.supports.apply(CSS, arguments);
-        } :
-        function(){
-            return '';
-        }
-    ;
-    /* End: cssSupports */
 
     /* Begin: rb.events */
 
@@ -2126,7 +1962,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             this._evtName = this.jsName + 'changed';
             this._beforeEvtName = this.jsName + 'change';
 
-            rb.addLog(this, this.options.debug == null ? rb.isDebug : this.options.debug);
+            addLog(this, this.options.debug == null ? rb.isDebug : this.options.debug);
 
             /**
              * Template function or hash of template functions to be used with `this.render`. On instantiation the `rb.template['nameOfComponent']` is referenced.

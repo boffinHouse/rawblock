@@ -415,11 +415,15 @@
             if (typeof opts == 'string') {
                 opts = { id: opts };
             }
+
             dialog = document.getElementById(opts.id);
+
+            opts.event = event;
 
             if (dialog && (dialog = rb.getComponent(dialog))) {
                 dialog.open(opts);
                 event.preventDefault();
+                opts.event = event;
             }
         });
     });

@@ -36,10 +36,19 @@
 
     var rb = window.rb;
 
+    var regPlus = /\+/g;
     var regSlashBegin = /^\//;
     var regSlashEnd = /\/$/;
     var regFullHash = /#(.*)$/;
     var regWildCard = /\*$/;
+
+    var returnTrue = function returnTrue() {
+        return true;
+    };
+
+    function decodeParam(param) {
+        return decodeURIComponent(param.replace(regPlus, ' '));
+    }
 
     rb.Router = {
         routes: {},
@@ -133,8 +142,14 @@
                     routes[path] = routeObj;
                 }
 
-                if (routeObj.subRoutes && !path.endsWith('*')) {
-                    path += '*';
+                if (routeObj.subRoutes) {
+                    if (!routeObj.handler) {
+                        routeObj.handler = returnTrue;
+                    }
+
+                    if (!path.endsWith('*')) {
+                        path += '*';
+                    }
                 }
 
                 routeObj.path = path;
@@ -176,12 +191,12 @@
                     }
                 } else if (routePart.type == 'wildcard') {
                     if (pathPart) {
-                        params['*'] = path.slice(i).join('/');
+                        params['*'] = decodeParam(path.slice(i).join('/'));
                     }
                     break;
                 } else if (routePart.type == 'placeholder') {
                     if (pathPart) {
-                        params[routePart.name] = pathPart;
+                        params[routePart.name] = decodeParam(pathPart);
                     } else {
                         params = null;
                     }

@@ -1,8 +1,12 @@
+import rAFQueue from './rafqueue';
+import addLog from './add-log';
+import deferred from './deferred';
+
 // aliases
-const rb = window.rb;
-const $ = rb.$;
+const rb = window.rb || {};
 const min = Math.min;
 const max = Math.max;
+const noop = ()=>{};
 
 const AFTER_OSCILLATION_STIFFNESS = 170;
 const AFTER_OSCILLATION_DAMPING = 5;
@@ -32,9 +36,9 @@ class SpringAnimation {
             keepAlivePrecision: SpringAnimation.PRECISION.LOW,
 
             // callbacks
-            progress: $.noop,
-            complete: $.noop,
-            stop: $.noop,
+            progress: noop,
+            complete: noop,
+            stop: noop,
 
             // debug
             debug: 'inherit',
@@ -51,7 +55,7 @@ class SpringAnimation {
     constructor(options) {
         const o = this.options = Object.assign({}, SpringAnimation.defaults, options);
 
-        rb.addLog(this, this.options.debug === 'inherit' ? rb.isDebug : this.options.debug);
+        addLog(this, this.options.debug === 'inherit' ? rb.isDebug : this.options.debug);
 
         // spring stiffness, in kg/s^2
         this.stiffness = o.stiffness;
@@ -60,14 +64,14 @@ class SpringAnimation {
 
         this._update = this._update.bind(this);
 
-        if (o.from === null) {
-            rb.logError('Can not create springAnimation without start and end values');
+        if (o.from == null) {
+            this.logError('Can not create springAnimation without start and end values');
             return;
         }
 
         this.oscillationCount = 0;
         this.oscillationDetected = false;
-        this.currentValue = o.from.value || parseInt(o.from, 10) || 0;
+        this.currentValue = o.from.value || parseFloat(o.from) || 0;
         this.currentVelocity = o.from.velocity || 0;
 
         this.target = o.target;
@@ -75,6 +79,7 @@ class SpringAnimation {
         this.averageFrameTime = 10;
         this.lastUpdate = Date.now();
         this.ended = false;
+        this.promise = deferred();
 
         // initial calls
         this.update();
@@ -113,6 +118,9 @@ class SpringAnimation {
 
         if(this.ended && !this.shouldFinish()){
             this.ended = false;
+            if(this.promise.isDone){
+                this.promise = deferred();
+            }
             this.update();
         }
     }
@@ -122,7 +130,7 @@ class SpringAnimation {
     }
 
     update() {
-        rb.rAFQueue(this._update, false, true);
+        rAFQueue(this._update, false, true);
     }
 
     _update() {
@@ -198,13 +206,14 @@ class SpringAnimation {
     getProgressState() {
         return {
             currentValue: this.currentValue,
-            currentVelocity: this.currentVelocity
+            currentVelocity: this.currentVelocity,
         };
     }
 
     stop() {
         if (!this.ended) {
             this.options.stop(this.getProgressState());
+            this.promise.reject(this);
         }
         this.ended = true;
     }
@@ -212,8 +221,9 @@ class SpringAnimation {
     finish() {
         this.ended = true;
         this.currentValue = this._targetValue;
+        this.promise.resolve(this);
 
-        rb.rAFQueue(() => {
+        rAFQueue(() => {
             this.options.progress(this.getProgressState());
             this.options.complete(this.getProgressState());
         }, false, true);

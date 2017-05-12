@@ -1,24 +1,35 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports'], factory);
+        define(['exports', './css-supports', './get-id', './rafs'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports);
+        factory(exports, require('./css-supports'), require('./get-id'), require('./rafs'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports);
+        factory(mod.exports, global.cssSupports, global.getId, global.rafs);
         global.draggy = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _cssSupports, _getId, _rafs) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    var rb = window.rb;
-    var $ = rb.$;
 
+    var _cssSupports2 = _interopRequireDefault(_cssSupports);
+
+    var _getId2 = _interopRequireDefault(_getId);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    var rb = window.rb || {};
+    var $ = rb.$;
+    var noop = function noop() {};
     var btnsMap = {
         image: 1,
         file: 1,
@@ -27,21 +38,25 @@
     };
 
     var regInputs = /^(?:input|textarea)$/i;
-    var usePointer = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
-    var usePassiveListener = !usePointer && rb.cssSupports('(touch-action: pan-y)') && rb.cssSupports('(touch-action: none)') && function () {
+    var supportsPointerWithoutTouch = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
+    var supportsPassiveEventListener = !supportsPointerWithoutTouch && (0, _cssSupports2.default)('(touch-action: pan-y)') && (0, _cssSupports2.default)('(touch-action: none)') && function () {
         var supportsPassiveOption = false;
+        var id = 'test' + (0, _getId2.default)();
+
         try {
             var opts = Object.defineProperty({}, 'passive', {
                 get: function get() {
                     supportsPassiveOption = true;
                 }
             });
-            window.addEventListener('test' + rb.getID(), null, opts);
+
+            window.addEventListener(id, noop, opts);
+            window.removeEventListener(id, noop, opts);
         } catch (e) {} // eslint-disable-line no-empty
+
         return supportsPassiveOption;
     }();
-    var useTouchAction = usePassiveListener || usePointer;
-    var touchOpts = usePassiveListener ? { passive: true } : false;
+    var supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
 
     function Draggy(element, options) {
 
@@ -49,11 +64,11 @@
         this.options = Object.assign({}, Draggy._defaults, options);
         this.destroyed = false;
 
-        this._velDelay = 333;
-
         this.velocitySnapShot = this.velocitySnapShot.bind(this);
 
-        rb.rAFs(this, { throttle: true }, 'setTouchAction');
+        (0, _rafs.rAFs)(this, { throttle: true }, 'setTouchAction');
+
+        this.touchOpts = this.options.usePassiveEventListener && supportsTouchAction ? { passive: true } : false;
 
         this.reset();
 
@@ -65,7 +80,7 @@
         }
 
         if (this.options.useTouch) {
-            if (usePointer) {
+            if (supportsPointerWithoutTouch) {
                 this.setupPointer();
             } else {
                 this.setupTouch();
@@ -74,9 +89,9 @@
     }
 
     Draggy._defaults = {
-        move: $.noop,
-        start: $.noop,
-        end: $.noop,
+        move: noop,
+        start: noop,
+        end: noop,
         preventClick: true,
         preventMove: true,
         useMouse: true,
@@ -85,14 +100,25 @@
         horizontal: true,
         vertical: true,
         exclude: false,
-        stopPropagation: true
+        excludeNothing: false,
+        stopPropagation: true,
+        usePassiveEventListener: true,
+        usePointerOnActive: false,
+        catchMove: false,
+        velocityBase: 333
     };
 
     Object.assign(Draggy.prototype, {
         setTouchAction: function setTouchAction() {
-            if (!useTouchAction) {
+            var _options = this.options,
+                usePointerOnActive = _options.usePointerOnActive,
+                usePassiveEventListener = _options.usePassiveEventListener;
+
+
+            if (!supportsTouchAction || !usePassiveEventListener && (!usePointerOnActive || !supportsPointerWithoutTouch)) {
                 return;
             }
+
             var style = '';
 
             if (!this.destroyed) {
@@ -137,7 +163,7 @@
             this.velTime = null;
             this.horizontalVel = 0;
             this.verticalVel = 0;
-            this.allowClick = $.noop;
+            this.allowClick = noop;
         },
         velocitySnapShot: function velocitySnapShot() {
             var velTiming = void 0;
@@ -145,8 +171,11 @@
             if (this.velTime) {
                 velTiming = Date.now() - this.velTime;
 
-                if (velTiming > 99 || !this.horizontalVel && !this.verticalVel) {
-                    velTiming = velTiming / this._velDelay || 1;
+                if (velTiming > 85 || !this.horizontalVel && !this.verticalVel) {
+                    var velocityBase = this.options.velocityBase;
+
+
+                    velTiming = velTiming / velocityBase || 1;
 
                     this.velPos = this._velPos;
                     this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x) || 1;
@@ -182,7 +211,7 @@
             }
 
             clearInterval(this._velocityTimer);
-            this._velocityTimer = setInterval(this.velocitySnapShot, this._velDelay);
+            this._velocityTimer = setInterval(this.velocitySnapShot, 200);
             this.velocitySnapShot();
 
             options.start(this, evt);
@@ -203,7 +232,7 @@
                 return;
             }
 
-            if (options.preventMove && this.relevantChange != 'undecided' && !usePassiveListener) {
+            if (options.preventMove && this.relevantChange != 'undecided' && !supportsPassiveEventListener) {
                 evt.preventDefault();
             }
             if (options.stopPropagation) {
@@ -263,7 +292,7 @@
                 _this.isClickPrevented = false;
             }, 333);
 
-            if (evt && evt.preventDefault && (!usePassiveListener || evt.type != 'touchend' && evt.type != 'pointerup')) {
+            if (evt && evt.preventDefault && (!supportsPassiveEventListener || evt.type != 'touchend' && evt.type != 'pointerup')) {
                 evt.preventDefault();
             }
         },
@@ -287,7 +316,11 @@
             this.element.addEventListener('selectstart', this._onSelectStart, true);
         },
         allowedDragTarget: function allowedDragTarget(target) {
-            return btnsMap[target.type] || !regInputs.test(target.nodeName || '') && (!this.options.exclude || !target.closest(this.options.exclude));
+            var _options2 = this.options,
+                excludeNothing = _options2.excludeNothing,
+                exclude = _options2.exclude;
+
+            return excludeNothing || btnsMap[target.type] || !regInputs.test(target.nodeName || '') && (!exclude || !target.closest(exclude));
         },
         setupMouse: function setupMouse() {
             var timer = void 0;
@@ -335,6 +368,8 @@
             this.element.addEventListener('mousedown', this._onmousedown);
         },
         setupTouch: function setupTouch() {
+            var _this2 = this;
+
             var identifier = void 0;
             var that = this;
             var getTouch = function getTouch(touches) {
@@ -364,43 +399,60 @@
                 var touch = getTouch(e.changedTouches || e.touches);
 
                 if (touch) {
-                    that.allowMouse = true;
-                    that._destroyTouch();
-                    that.end(touch, e);
+                    _this2.allowMouse = true;
+                    _this2._destroyTouch();
+                    _this2.end(touch, e);
+
+                    if (_this2.options.catchMove) {
+                        _this2.element.addEventListener('touchmove', _this2._ontouchstart, _this2.touchOpts);
+                    }
+
                     identifier = undefined;
                 }
             };
 
-            this._destroyTouch = function () {
-                that.element.removeEventListener('touchmove', move, touchOpts);
-                that.element.removeEventListener('touchend', end, touchOpts);
-                that.element.removeEventListener('touchcancel', end, touchOpts);
-            };
+            if (!this._destroyTouch) {
+                this._destroyTouch = function () {
+                    _this2.element.removeEventListener('touchmove', move, _this2.touchOpts);
+                    _this2.element.removeEventListener('touchend', end, _this2.touchOpts);
+                    _this2.element.removeEventListener('touchcancel', end, _this2.touchOpts);
+                };
+            }
 
-            this._ontouchstart = this._ontouchstart || function (e) {
-                if (e.touches.length != 1) {
-                    return;
-                }
+            if (!this._ontouchstart) {
+                this._ontouchstart = function (e) {
+                    if (e.touches.length != 1) {
+                        return;
+                    }
 
-                that._destroyTouch();
+                    that._destroyTouch();
 
-                if (e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0] || !that.allowedDragTarget(e.target)) {
-                    return;
-                }
+                    if (e.defaultPrevented || !that.options.useTouch || !that.allowTouch || !e.touches[0] || !that.allowedDragTarget(e.target)) {
+                        return;
+                    }
 
-                identifier = e.touches[0].identifier;
+                    identifier = e.touches[0].identifier;
 
-                that.allowMouse = false;
-                that.isType = 'touch';
+                    that.allowMouse = false;
+                    that.isType = 'touch';
 
-                that.element.addEventListener('touchmove', move, touchOpts);
-                that.element.addEventListener('touchend', end, touchOpts);
-                that.element.addEventListener('touchcancel', end, touchOpts);
+                    that.element.addEventListener('touchmove', move, _this2.touchOpts);
+                    that.element.addEventListener('touchend', end, _this2.touchOpts);
+                    that.element.addEventListener('touchcancel', end, _this2.touchOpts);
 
-                that.start(e.touches[0], e);
-            };
+                    if (_this2.options.catchMove) {
+                        _this2.element.removeEventListener('touchmove', _this2._ontouchstart, _this2.touchOpts);
+                    }
 
-            this.element.addEventListener('touchstart', this._ontouchstart, touchOpts);
+                    that.start(e.touches[0], e);
+                };
+            }
+
+            this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
+
+            if (this.options.catchMove) {
+                this.element.addEventListener('touchmove', this._ontouchstart, this.touchOpts);
+            }
         },
         setupPointer: function setupPointer() {
             var identifier = void 0;
@@ -472,7 +524,7 @@
             this.destroyed = true;
 
             if (this._ontouchstart) {
-                this.element.removeEventListener('touchstart', this._ontouchstart, touchOpts);
+                this.element.removeEventListener('touchstart', this._ontouchstart, this.touchOpts);
             }
             if (this._pointerdown) {
                 this.element.removeEventListener('pointerdown', this._pointerdown);
@@ -494,23 +546,25 @@
 
     rb.Draggy = Draggy;
 
-    $.fn.draggy = function (options) {
-        var draggy = void 0;
+    if ($ && $.fn) {
+        $.fn.draggy = function (options) {
+            var draggy = void 0;
 
-        this.each(function () {
-            if (options == 'destroy') {
-                if (this._rbDraggy) {
-                    this._rbDraggy.destroy();
+            this.each(function () {
+                if (options == 'destroy') {
+                    if (this._rbDraggy) {
+                        this._rbDraggy.destroy();
+                    }
+                } else if (!this._rbDraggy) {
+                    this._rbDraggy = new Draggy(this, options || {});
                 }
-            } else if (!this._rbDraggy) {
-                this._rbDraggy = new Draggy(this, options || {});
-            }
-            if (!draggy) {
-                draggy = this._rbDraggy;
-            }
-        });
-        return draggy || this;
-    };
+                if (!draggy) {
+                    draggy = this._rbDraggy;
+                }
+            });
+            return draggy || this;
+        };
+    }
 
     exports.default = Draggy;
 });
