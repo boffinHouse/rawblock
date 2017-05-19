@@ -1,6 +1,5 @@
 import fetch from './fetch';
 import deferred from './deferred';
-import param from '../rb_$/$_param';
 import callbacks from '../rb_$/$_callbacks';
 import extend from '../rb_$/$_extend';
 
@@ -211,11 +210,19 @@ Object.assign(FetchManager.prototype, {
         const id = [options.url];
 
         if(options.data){
-            id.push(param(options.data));
+            try {
+                id.push(JSON.stringify(options.data));
+            } catch(er){
+                //continue
+            }
         }
 
         if(options.headers){
-            id.push(param(options.headers));
+            try {
+                id.push(JSON.stringify(options.headers));
+            } catch(er){
+                //continue
+            }
         }
 
         return id.join(',');
