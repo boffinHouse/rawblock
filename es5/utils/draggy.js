@@ -59,7 +59,7 @@
     var supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
     var hasIOSScrollBug = function () {
         var ua = navigator.userAgent || '';
-        var version = /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
+        var version = supportsPassiveEventListener && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
 
         return version && parseInt(version[1], 10) < 3;
     }();
