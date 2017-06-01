@@ -32,12 +32,20 @@ const supportsPassiveEventListener = !supportsPointerWithoutTouch && cssSupports
         return supportsPassiveOption;
     })();
 const supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
+const hasIOSScrollBug = (function () {
+    const ua = navigator.userAgent || '';
+    const version = supportsPassiveEventListener && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
+
+    return (version && parseInt(version[1], 10) < 3);
+})();
 
 function Draggy(element, options) {
 
     this.element = element;
     this.options = Object.assign({}, Draggy._defaults, options);
     this.destroyed = false;
+
+    this.noop = ()=>{};
 
     this.velocitySnapShot = this.velocitySnapShot.bind(this);
 
@@ -418,6 +426,10 @@ Object.assign(Draggy.prototype, {
 
         this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
 
+        if(hasIOSScrollBug){
+            window.addEventListener('touchmove', this.noop);
+        }
+
         if(this.options.catchMove){
             this.element.addEventListener('touchmove', this._ontouchstart, this.touchOpts);
         }
@@ -501,6 +513,10 @@ Object.assign(Draggy.prototype, {
 
         if(this._onmousedown){
             this.element.removeEventListener('mousedown', this._onmousedown);
+        }
+
+        if(hasIOSScrollBug){
+            window.removeEventListener('touchmove', this.noop);
         }
 
         this.element.removeEventListener('click', this._onclick, true);
