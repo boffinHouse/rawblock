@@ -14,7 +14,8 @@ const btnsMap = {
 
 const regInputs = /^(?:input|textarea)$/i;
 const supportsPointerWithoutTouch = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
-const supportsPassiveEventListener = !supportsPointerWithoutTouch && cssSupports('(touch-action: pan-y)') && cssSupports('(touch-action: none)') && (function(){
+const supportsCssTouchActionPan = cssSupports('(touch-action: pan-y)') && cssSupports('(touch-action: none)');
+const supportsPassiveEventListener = !supportsPointerWithoutTouch && supportsCssTouchActionPan && (function(){
         let supportsPassiveOption = false;
         const id = 'test' + getId();
 
@@ -34,7 +35,7 @@ const supportsPassiveEventListener = !supportsPointerWithoutTouch && cssSupports
 const supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
 const hasIOSScrollBug = (function () {
     const ua = navigator.userAgent || '';
-    const version = supportsPassiveEventListener && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
+    const version = !supportsCssTouchActionPan && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
 
     return (version && parseInt(version[1], 10) < 3);
 })();
