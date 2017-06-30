@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './fetch', './deferred', '../rb_$/$_param', '../rb_$/$_callbacks', '../rb_$/$_extend'], factory);
+        define(['exports', './fetch', './deferred', '../rb_$/$_callbacks', '../rb_$/$_extend'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./fetch'), require('./deferred'), require('../rb_$/$_param'), require('../rb_$/$_callbacks'), require('../rb_$/$_extend'));
+        factory(exports, require('./fetch'), require('./deferred'), require('../rb_$/$_callbacks'), require('../rb_$/$_extend'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.fetch, global.deferred, global.$_param, global.$_callbacks, global.$_extend);
+        factory(mod.exports, global.fetch, global.deferred, global.$_callbacks, global.$_extend);
         global.fetchmanager = mod.exports;
     }
-})(this, function (exports, _fetch, _deferred, _$_param, _$_callbacks, _$_extend) {
+})(this, function (exports, _fetch, _deferred, _$_callbacks, _$_extend) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -20,8 +20,6 @@
     var _fetch2 = _interopRequireDefault(_fetch);
 
     var _deferred2 = _interopRequireDefault(_deferred);
-
-    var _$_param2 = _interopRequireDefault(_$_param);
 
     var _$_callbacks2 = _interopRequireDefault(_$_callbacks);
 
@@ -67,12 +65,14 @@
         this.requestingPromises = [];
         this.waitingPromises = [];
         this.promises = {};
+        this.lastFetch = 0;
 
         this.options = Object.assign({
             maxRequests: 1,
             type: 'queue', // 'queue', 'clear', 'abort'
             fetchOpts: {}, // defaults for every fetch
-            preventDouble: true
+            preventDouble: true,
+            staggering: 0
         }, options);
     };
 
@@ -178,6 +178,8 @@
             }
         },
         startFetch: function startFetch() {
+            var _this3 = this;
+
             var promise = void 0,
                 that = void 0;
             var managerOptions = this.options;
@@ -186,9 +188,12 @@
                 return;
             }
 
-            if (this.requestingPromises.length < managerOptions.maxRequests) {
+            var nowTime = Date.now();
+
+            if (this.requestingPromises.length < managerOptions.maxRequests || managerOptions.staggering && nowTime - this.lastFetch > managerOptions.staggering) {
                 that = this;
                 promise = this.waitingPromises.shift();
+                this.lastFetch = nowTime;
 
                 this.requestingPromises.push(promise);
                 promise.fetch = (0, _fetch2.default)(promise.options);
@@ -205,6 +210,10 @@
                 });
 
                 return;
+            } else if (managerOptions.staggering) {
+                setTimeout(function () {
+                    _this3.startFetch();
+                }, managerOptions.staggering + 9);
             }
 
             if (managerOptions.type == 'clear' && this.waitingPromises.length > 1) {
@@ -250,11 +259,19 @@
             var id = [options.url];
 
             if (options.data) {
-                id.push((0, _$_param2.default)(options.data));
+                try {
+                    id.push(JSON.stringify(options.data));
+                } catch (er) {
+                    //continue
+                }
             }
 
             if (options.headers) {
-                id.push((0, _$_param2.default)(options.headers));
+                try {
+                    id.push(JSON.stringify(options.headers));
+                } catch (er) {
+                    //continue
+                }
             }
 
             return id.join(',');

@@ -65,8 +65,6 @@
         if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
-    // import './_childfx';
-
     var rb = window.rb;
     var $ = rb.$;
     var isContainerScroll = { scroll: 1, auto: 1 };
@@ -217,7 +215,7 @@
         };
 
         Sticky.prototype._getElements = function _getElements() {
-            var offsetName;
+            var offsetName = void 0;
 
             var options = this.options;
             this.isContainerScroll = false;
@@ -252,7 +250,7 @@
         };
 
         Sticky.prototype._setScrollingElement = function _setScrollingElement() {
-            var curScrollingEventElement;
+            var curScrollingEventElement = void 0;
             var oldEventElement = this.$scrollEventElem && this.$scrollEventElem.get(0);
 
             if (this.options.scrollContainer) {
@@ -281,27 +279,23 @@
             }
         };
 
-        Sticky.prototype.calculateLayout = function calculateLayout() {
+        Sticky.prototype.getCalculatedLayout = function getCalculatedLayout() {
             var box = void 0,
                 elemOffset = void 0,
                 containerBox = void 0,
                 containerOffset = void 0;
 
-            this.minFixedPos = -1;
-            this.maxFixedPos = Number.MAX_VALUE;
-            this.minScrollPos = this.maxFixedPos;
-            this.maxScrollPos = this.minFixedPos;
-
-            this.scroll = this.scrollingElement.scrollTop;
-
-            this.viewportheight = docElem.clientHeight;
-
-            this.lastCheck = Date.now();
+            var boxes = {
+                minFixedPos: -1,
+                maxFixedPos: Number.MAX_VALUE,
+                minScrollPos: -1,
+                maxScrollPos: Number.MAX_VALUE
+            };
 
             box = (this.isFixed ? this.clone : this.element).getBoundingClientRect();
 
             if (!box.right && !box.bottom && !box.top && !box.left) {
-                return;
+                return boxes;
             }
 
             elemOffset = box[this.posProp] + this.scroll;
@@ -317,17 +311,18 @@
             }
 
             if (this.posProp == 'top') {
-                this.minFixedPos = elemOffset + this.calcedOffset;
+                boxes.minFixedPos = elemOffset + this.calcedOffset;
 
                 if (this.options.progress) {
-                    this.minProgressPos = this.minFixedPos;
-                    this.maxProgressPos = this.minFixedPos + this.options.progress;
+                    boxes.minProgressPos = boxes.minFixedPos;
+                    boxes.maxProgressPos = boxes.minFixedPos + this.options.progress;
                 }
             } else {
-                this.maxFixedPos = elemOffset - this.calcedOffset - this.viewportheight;
+                boxes.maxFixedPos = elemOffset - this.calcedOffset - this.viewportheight;
+
                 if (this.options.progress) {
-                    this.minProgressPos = this.maxFixedPos - this.options.progress;
-                    this.maxProgressPos = this.maxFixedPos;
+                    boxes.minProgressPos = boxes.maxFixedPos - boxes.options.progress;
+                    boxes.maxProgressPos = boxes.maxFixedPos;
                 }
             }
 
@@ -337,17 +332,31 @@
                 containerOffset = containerBox[this.posProp == 'top' ? 'bottom' : 'top'] + this.scroll;
 
                 if (this.posProp == 'top') {
-                    this.maxFixedPos = containerOffset + this.calcedOffset;
-                    this.minScrollPos = this.maxFixedPos - box.height - $.css(this.container, 'padding-bottom', true, this.containerStyles) - $.css(this.element, 'margin-bottom', true, this.elemStyles);
-                    this.maxFixedPos += 9 - this.calcedOffset;
-                    this.maxScrollPos = this.maxFixedPos;
+                    boxes.maxFixedPos = containerOffset + this.calcedOffset;
+
+                    boxes.minScrollPos = boxes.maxFixedPos - box.height - $.css(this.container, 'padding-bottom', true, this.containerStyles) - $.css(this.element, 'margin-bottom', true, this.elemStyles);
+                    boxes.maxFixedPos += 9 - this.calcedOffset;
+                    boxes.maxScrollPos = boxes.maxFixedPos;
                 } else {
-                    this.minFixedPos = containerOffset - docElem.clientHeight - this.calcedOffset;
-                    this.maxScrollPos = this.minFixedPos + box.height + $.css(this.container, 'padding-top', true, this.containerStyles) + $.css(this.element, 'margin-top', true, this.elemStyles);
-                    this.minFixedPos += 9 + this.calcedOffset;
-                    this.minScrollPos = this.minFixedPos;
+                    boxes.minFixedPos = containerOffset - docElem.clientHeight - this.calcedOffset;
+                    boxes.maxScrollPos = boxes.minFixedPos + box.height + $.css(this.container, 'padding-top', true, this.containerStyles) + $.css(this.element, 'margin-top', true, this.elemStyles);
+                    boxes.minFixedPos += 9 + this.calcedOffset;
+                    boxes.minScrollPos = boxes.minFixedPos;
                 }
             }
+
+            return boxes;
+        };
+
+        Sticky.prototype.calculateLayout = function calculateLayout() {
+
+            this.scroll = this.scrollingElement.scrollTop;
+
+            this.viewportheight = docElem.clientHeight;
+
+            this.lastCheck = Date.now();
+
+            Object.assign(this, this.getCalculatedLayout());
 
             this._poses = [this.minScrollPos, this.minFixedPos, this.maxFixedPos, this.maxScrollPos, this.minProgressPos, this.maxProgressPos].filter(Sticky.filterPos);
 
@@ -364,7 +373,11 @@
                 return;
             }
 
-            var shouldFix, shouldScroll, shouldWidth, progress, wasProgress;
+            var shouldFix = void 0,
+                shouldScroll = void 0,
+                shouldWidth = void 0,
+                progress = void 0,
+                wasProgress = void 0;
 
             this.scroll = this.scrollingElement.scrollTop;
 
@@ -425,7 +438,9 @@
         };
 
         Sticky.prototype.updateLayout = function updateLayout(shouldFix, shouldScroll, shouldWidth) {
-            var offset, trigger;
+            var offset = void 0,
+                trigger = void 0;
+
             if (this.options.switchedOff) {
                 return;
             }

@@ -1,8 +1,8 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', '../utils/springAnimation'], factory);
+        define(['exports', '../utils/spring-animation'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('../utils/springAnimation'));
+        factory(exports, require('../utils/spring-animation'));
     } else {
         var mod = {
             exports: {}

@@ -1,21 +1,29 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', '../utils/draggy', '../utils/wheelanalyzer', '../utils/resize', '../utils/prefixed', '../utils/debounce'], factory);
+        define(['exports', '../utils/css-supports', '../utils/draggy', '../utils/wheelanalyzer', '../utils/resize', '../utils/prefixed', '../utils/debounce'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('../utils/draggy'), require('../utils/wheelanalyzer'), require('../utils/resize'), require('../utils/prefixed'), require('../utils/debounce'));
+        factory(exports, require('../utils/css-supports'), require('../utils/draggy'), require('../utils/wheelanalyzer'), require('../utils/resize'), require('../utils/prefixed'), require('../utils/debounce'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.draggy, global.wheelanalyzer, global.resize, global.prefixed, global.debounce);
+        factory(mod.exports, global.cssSupports, global.draggy, global.wheelanalyzer, global.resize, global.prefixed, global.debounce);
         global.itemscroller = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _cssSupports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _cssSupports2 = _interopRequireDefault(_cssSupports);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -71,7 +79,7 @@
     var orderProp = rb.prefixed('order') || rb.prefixed('flexOrder');
     var supportSomeOrder = !!orderProp;
     var transformProp = rb.prefixed('transform');
-    var supports3dTransform = rb.cssSupports('transform', 'translate3d(0,0,0)');
+    var supports3dTransform = (0, _cssSupports2.default)('transform', 'translate3d(0,0,0)');
 
     /**
      * Class component to create a carousel/slider/itemscroller.

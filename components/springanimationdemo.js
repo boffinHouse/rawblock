@@ -1,4 +1,4 @@
-import '../utils/springAnimation';
+import '../utils/spring-animation';
 
 const rb = window.rb;
 const $ = rb.$;

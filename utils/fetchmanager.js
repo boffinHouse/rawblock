@@ -1,6 +1,5 @@
 import fetch from './fetch';
 import deferred from './deferred';
-import param from '../rb_$/$_param';
 import callbacks from '../rb_$/$_callbacks';
 import extend from '../rb_$/$_extend';
 
@@ -32,12 +31,14 @@ const FetchManager = function(managerId, options){
     this.requestingPromises = [];
     this.waitingPromises = [];
     this.promises = {};
+    this.lastFetch = 0;
 
     this.options = Object.assign({
         maxRequests: 1,
         type: 'queue', // 'queue', 'clear', 'abort'
         fetchOpts: {}, // defaults for every fetch
         preventDouble: true,
+        staggering: 0,
     }, options);
 };
 
@@ -145,9 +146,13 @@ Object.assign(FetchManager.prototype, {
 
         if(!this.waitingPromises.length){return;}
 
-        if(this.requestingPromises.length < managerOptions.maxRequests){
+        const nowTime = Date.now();
+
+        if(this.requestingPromises.length < managerOptions.maxRequests ||
+            (managerOptions.staggering && nowTime - this.lastFetch > managerOptions.staggering)){
             that = this;
             promise = this.waitingPromises.shift();
+            this.lastFetch = nowTime;
 
             this.requestingPromises.push(promise);
             promise.fetch = fetch(promise.options);
@@ -167,6 +172,10 @@ Object.assign(FetchManager.prototype, {
             );
 
             return;
+        } else if(managerOptions.staggering){
+            setTimeout(()=>{
+                this.startFetch();
+            }, managerOptions.staggering + 9);
         }
 
         if(managerOptions.type == 'clear' && this.waitingPromises.length > 1){
@@ -211,11 +220,19 @@ Object.assign(FetchManager.prototype, {
         const id = [options.url];
 
         if(options.data){
-            id.push(param(options.data));
+            try {
+                id.push(JSON.stringify(options.data));
+            } catch(er){
+                //continue
+            }
         }
 
         if(options.headers){
-            id.push(param(options.headers));
+            try {
+                id.push(JSON.stringify(options.headers));
+            } catch(er){
+                //continue
+            }
         }
 
         return id.join(',');
