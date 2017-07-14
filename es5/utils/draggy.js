@@ -39,7 +39,8 @@
 
     var regInputs = /^(?:input|textarea)$/i;
     var supportsPointerWithoutTouch = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
-    var supportsPassiveEventListener = !supportsPointerWithoutTouch && (0, _cssSupports2.default)('(touch-action: pan-y)') && (0, _cssSupports2.default)('(touch-action: none)') && function () {
+    var supportsCssTouchActionPan = (0, _cssSupports2.default)('(touch-action: pan-y)') && (0, _cssSupports2.default)('(touch-action: none)');
+    var supportsPassiveEventListener = !supportsPointerWithoutTouch && supportsCssTouchActionPan && function () {
         var supportsPassiveOption = false;
         var id = 'test' + (0, _getId2.default)();
 
@@ -59,7 +60,7 @@
     var supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
     var hasIOSScrollBug = function () {
         var ua = navigator.userAgent || '';
-        var version = supportsPassiveEventListener && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
+        var version = !supportsCssTouchActionPan && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
 
         return version && parseInt(version[1], 10) < 3;
     }();
