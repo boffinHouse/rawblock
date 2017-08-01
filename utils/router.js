@@ -256,13 +256,14 @@ rb.Router = {
 
         return data;
     },
-    applyRoutes(fragment) {
+    applyRoutes(fragment, caller = {type: 'unknown/initial'}) {
 
         const data = this._saveState(fragment);
         const options = deserialize(this.currentOptions);
 
         data.changedRoute = this.beforeRoute != this.currentRoute;
         data.changedOptions = this.beforeOptions != this.currentOptions;
+        data.caller = caller;
 
         fragment = data.fragment.split('/');
 
@@ -281,11 +282,11 @@ rb.Router = {
 
         return this;
     },
-    applyRoutesIfNeeded(){
+    applyRoutesIfNeeded(caller){
         const cur = this.getFragment();
 
         if (this.current !== cur) {
-            this.applyRoutes(cur);
+            this.applyRoutes(cur, caller);
         }
 
         return this;
@@ -296,7 +297,16 @@ rb.Router = {
         this.unlisten();
 
         if (!this._listener) {
-            this._listener = this.applyRoutesIfNeeded.bind(this);
+            //'interval' often means either browser bug or external (disapproved) pushState/replaceState call
+            this._listener = (e = {type: 'interval'}) => {
+                this.applyRoutesIfNeeded({
+                    type: 'popstate',
+                    original: {
+                        type: e.type,
+                        state: e.state,
+                    },
+                });
+            };
         }
 
         this.interval = setInterval(this._listener, 999);
@@ -309,11 +319,17 @@ rb.Router = {
 
         return this;
     },
-    navigate(path, silent, replace) {
+    navigate(path, state = null, silent, replace) {
         path = path || '';
 
+        if(typeof state == 'boolean'){
+            replace = silent;
+            silent = state;
+            state = null;
+        }
+
         if (this.mode === 'history') {
-            window.history[replace === true ? 'replaceState' : 'pushState'](null, '', this.root + this.clearSlashes(path));
+            window.history[replace === true ? 'replaceState' : 'pushState'](state, '', this.root + this.clearSlashes(path));
         } else {
             const value = window.location.href.replace(regFullHash, '') + '#' + path;
 
@@ -327,14 +343,17 @@ rb.Router = {
         if(silent){
             this._saveState();
         } else {
-            this.applyRoutesIfNeeded();
+            this.applyRoutesIfNeeded({
+                type: 'navigate',
+                replace,
+            });
         }
 
         return this;
     },
 
-    replace(path, silent) {
-        return this.navigate(path, silent, true);
+    replace(path, state, silent) {
+        return this.navigate(path, state, silent, true);
     },
 };
 
