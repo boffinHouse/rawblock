@@ -257,12 +257,15 @@
             return data;
         },
         applyRoutes: function applyRoutes(fragment) {
+            var caller = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { type: 'unknown/initial' };
+
 
             var data = this._saveState(fragment);
             var options = (0, _deserialize2.default)(this.currentOptions);
 
             data.changedRoute = this.beforeRoute != this.currentRoute;
             data.changedOptions = this.beforeOptions != this.currentOptions;
+            data.caller = caller;
 
             fragment = data.fragment.split('/');
 
@@ -281,22 +284,35 @@
 
             return this;
         },
-        applyRoutesIfNeeded: function applyRoutesIfNeeded() {
+        applyRoutesIfNeeded: function applyRoutesIfNeeded(caller) {
             var cur = this.getFragment();
 
             if (this.current !== cur) {
-                this.applyRoutes(cur);
+                this.applyRoutes(cur, caller);
             }
 
             return this;
         },
         listen: function listen() {
+            var _this = this;
+
             this.current = this.getFragment();
 
             this.unlisten();
 
             if (!this._listener) {
-                this._listener = this.applyRoutesIfNeeded.bind(this);
+                //'interval' often means either browser bug or external (disapproved) pushState/replaceState call
+                this._listener = function () {
+                    var e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { type: 'interval' };
+
+                    _this.applyRoutesIfNeeded({
+                        type: 'popstate',
+                        original: {
+                            type: e.type,
+                            state: e.state
+                        }
+                    });
+                };
             }
 
             this.interval = setInterval(this._listener, 999);
@@ -309,11 +325,21 @@
 
             return this;
         },
-        navigate: function navigate(path, silent, replace) {
+        navigate: function navigate(path) {
+            var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var silent = arguments[2];
+            var replace = arguments[3];
+
             path = path || '';
 
+            if (typeof state == 'boolean') {
+                replace = silent;
+                silent = state;
+                state = null;
+            }
+
             if (this.mode === 'history') {
-                window.history[replace === true ? 'replaceState' : 'pushState'](null, '', this.root + this.clearSlashes(path));
+                window.history[replace === true ? 'replaceState' : 'pushState'](state, '', this.root + this.clearSlashes(path));
             } else {
                 var value = window.location.href.replace(regFullHash, '') + '#' + path;
 
@@ -327,13 +353,16 @@
             if (silent) {
                 this._saveState();
             } else {
-                this.applyRoutesIfNeeded();
+                this.applyRoutesIfNeeded({
+                    type: 'navigate',
+                    replace: replace
+                });
             }
 
             return this;
         },
-        replace: function replace(path, silent) {
-            return this.navigate(path, silent, true);
+        replace: function replace(path, state, silent) {
+            return this.navigate(path, state, silent, true);
         }
     };
 

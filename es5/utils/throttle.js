@@ -51,7 +51,13 @@
         var _run = function _run() {
             running = false;
             lastTime = Date.now();
-            fn.apply(that, args);
+            var nowThat = that;
+            var nowArgs = args;
+
+            that = null;
+            args = null;
+
+            fn.apply(nowThat, nowArgs);
         };
 
         var afterAF = function afterAF() {
@@ -59,6 +65,10 @@
         };
 
         var throttel = function throttel() {
+
+            that = options.that || this;
+            args = arguments;
+
             if (running) {
                 return;
             }
@@ -66,9 +76,6 @@
             var delay = options.delay;
 
             running = true;
-
-            that = options.that || this;
-            args = arguments;
 
             if (options.unthrottle) {
                 _run();
