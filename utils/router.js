@@ -27,6 +27,7 @@ rb.Router = {
     root: '/',
     regHash: /#!(.*)$/,
     regIndex: /\/index\.htm[l]*$/,
+    noNavigate: false,
     config: function (options) {
         options = options || {};
 
@@ -213,6 +214,10 @@ rb.Router = {
     },
     findMatchingRoutes(routes, fragment, data, options){
 
+        const noNavigate = this.noNavigate;
+
+        this.noNavigate = true;
+
         for(let route in routes){
             route = routes[route];
 
@@ -235,6 +240,8 @@ rb.Router = {
                 }
             }
         }
+
+        this.noNavigate = noNavigate;
 
         return false;
     },
@@ -320,6 +327,15 @@ rb.Router = {
         return this;
     },
     navigate(path, state = null, silent, replace) {
+
+        if(this.noNavigate){
+            setTimeout(() => {
+                this.navigate(...arguments);
+            });
+
+            return this;
+        }
+
         path = path || '';
 
         if(typeof state == 'boolean'){
