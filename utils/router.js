@@ -256,14 +256,14 @@ rb.Router = {
 
         return data;
     },
-    applyRoutes(fragment, caller = {type: 'unknown/initial'}) {
+    applyRoutes(fragment, event = {type: 'unknown/initial'}) {
 
         const data = this._saveState(fragment);
         const options = deserialize(this.currentOptions);
 
         data.changedRoute = this.beforeRoute != this.currentRoute;
         data.changedOptions = this.beforeOptions != this.currentOptions;
-        data.caller = caller;
+        data.event = event;
 
         fragment = data.fragment.split('/');
 
@@ -282,11 +282,11 @@ rb.Router = {
 
         return this;
     },
-    applyRoutesIfNeeded(caller){
+    applyRoutesIfNeeded(event){
         const cur = this.getFragment();
 
         if (this.current !== cur) {
-            this.applyRoutes(cur, caller);
+            this.applyRoutes(cur, event);
         }
 
         return this;
