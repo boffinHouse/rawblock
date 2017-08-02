@@ -14,6 +14,7 @@ const regSlashBegin = /^\//;
 const regSlashEnd = /\/$/;
 const regFullHash = /#(.*)$/;
 const regWildCard = /\*$/;
+let currentIndex = 0;
 
 const returnTrue = () => true;
 
@@ -28,6 +29,8 @@ rb.Router = {
     regHash: /#!(.*)$/,
     regIndex: /\/index\.htm[l]*$/,
     noNavigate: false,
+    history: [],
+    selectedIndex: -1,
     config: function (options) {
         options = options || {};
 
@@ -44,6 +47,7 @@ rb.Router = {
         }
 
         this.root = options.root ? '/' + this.clearSlashes(options.root) + '/' : '/';
+
         return this;
     },
     getFragment: function () {
@@ -326,6 +330,24 @@ rb.Router = {
 
         return this;
     },
+    addToHistory(replace){
+        const historyIndex = this.history.length - 1;
+
+        if(replace){
+            this.history[Math.max(this.selectedIndex, 0)] = currentIndex;
+        } else {
+            if(historyIndex > this.selectedIndex){
+                this.history.length = this.selectedIndex + 1;
+            }
+
+            this.history.push(currentIndex);
+
+            this.selectedIndex = this.history.length - 1;
+        }
+
+        window.sessionStorage.set('rawblock_router', JSON.stringify({history: this.history, selectedIndex: this.selectedIndex}));
+
+    },
     navigate(path, state = null, silent, replace) {
 
         if(this.noNavigate){
@@ -343,6 +365,10 @@ rb.Router = {
             silent = state;
             state = null;
         }
+
+        this.addToHistory(replace);
+
+        state = {state, currentIndex};
 
         if (this.mode === 'history') {
             window.history[replace === true ? 'replaceState' : 'pushState'](state, '', this.root + this.clearSlashes(path));
