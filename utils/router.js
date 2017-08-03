@@ -287,6 +287,8 @@ rb.Router = {
         data.changedRoute = this.beforeRoute != this.currentRoute;
         data.changedOptions = this.beforeOptions != this.currentOptions;
         data.event = event;
+        data.history = this.history;
+        data.activeHistoryIndex = this.activeHistoryIndex;
 
         fragment = data.fragment.split('/');
 
@@ -309,8 +311,8 @@ rb.Router = {
         const cur = this.getFragment();
 
         if (this.current !== cur) {
-            this.applyRoutes(cur, event);
             this.updateActiveHistoryIndex();
+            this.applyRoutes(cur, event);
         } else if(event && event.original && event.original.type === 'popstate') {
             rb.logWarn('route did not change, but pop event occurred');
             this.updateActiveHistoryIndex();
