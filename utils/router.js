@@ -35,10 +35,13 @@ rb.Router = {
     history: null,
     activeHistoryIndex: -1,
     storageKey: 'rb_router',
-    init({ options } = {}) {
+    init({ options, listen } = {}) {
         this.config(options);
-        this.listen();
         this.initHistory();
+
+        if(listen){
+            this.listen();
+        }
     },
     config: function (options) {
         options = options || {};
@@ -356,7 +359,7 @@ rb.Router = {
         }
     },
     updateActiveHistoryIndex(){
-        const currentHistoryKey = winHistory.state.historyKey;
+        const currentHistoryKey = winHistory.state && winHistory.state.historyKey;
 
         if(!currentHistoryKey){
             return rb.logWarn('missing currentHistoryKey');
