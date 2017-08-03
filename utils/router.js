@@ -2,10 +2,12 @@
  * original by
  * http://krasimirtsonev.com/blog/article/A-modern-JavaScript-router-in-100-lines-history-api-pushState-hash-url
  */
+
 if (!window.rb) {
     window.rb = {};
 }
 import deserialize from './deserialize';
+import getID from './get-id';
 
 const rb = window.rb;
 
@@ -14,7 +16,8 @@ const regSlashBegin = /^\//;
 const regSlashEnd = /\/$/;
 const regFullHash = /#(.*)$/;
 const regWildCard = /\*$/;
-let currentIndex = 0;
+const winHistory = window.history;
+let historyKeyCounter = 0;
 
 const returnTrue = () => true;
 
@@ -29,8 +32,14 @@ rb.Router = {
     regHash: /#!(.*)$/,
     regIndex: /\/index\.htm[l]*$/,
     noNavigate: false,
-    history: [],
-    selectedIndex: -1,
+    history: null,
+    activeHistoryIndex: -1,
+    storageKey: 'rb_router',
+    init({ options } = {}) {
+        this.config(options);
+        this.listen();
+        this.initHistory();
+    },
     config: function (options) {
         options = options || {};
 
@@ -298,9 +307,93 @@ rb.Router = {
 
         if (this.current !== cur) {
             this.applyRoutes(cur, event);
+            this.updateActiveHistoryIndex();
+        } else if(event && event.original && event.original.type === 'popstate') {
+            rb.logWarn('route did not change, but pop event occurred');
+            this.updateActiveHistoryIndex();
         }
 
         return this;
+    },
+    initHistory: function(){
+        const state = winHistory.state;
+        let currentHistoryKey = state && state.historyKey;
+        let restoredRouterState;
+        this.history = null;
+
+        try {
+            restoredRouterState = JSON.parse(window.sessionStorage.getItem(this.storageKey));
+        } catch(e) {} // eslint-disable-line no-empty
+
+        if(restoredRouterState){
+            this.sessionHistories = restoredRouterState.sessionHistories;
+
+            if(currentHistoryKey && this.sessionHistories.length){
+                this.history = this.sessionHistories.find((history) => {
+                    const historyIndex = history.indexOf(currentHistoryKey);
+                    if(historyIndex > -1){
+                        this.activeHistoryIndex = historyIndex;
+                        return true;
+                    }
+                });
+            }
+        }
+
+        if(!currentHistoryKey){
+            currentHistoryKey = this.getHistoryKey();
+            winHistory.replaceState({
+                state,
+                historyKey: currentHistoryKey,
+            }, '');
+        }
+
+        this.sessionHistories = this.sessionHistories || [];
+
+        if(!this.history){
+            this.history = [currentHistoryKey];
+            this.activeHistoryIndex = 0;
+            this.sessionHistories.push(this.history);
+        }
+    },
+    updateActiveHistoryIndex(){
+        const currentHistoryKey = winHistory.state.historyKey;
+
+        if(!currentHistoryKey){
+            return rb.logWarn('missing currentHistoryKey');
+        }
+
+        this.activeHistoryIndex = this.history.indexOf(currentHistoryKey);
+
+        if(this.activeHistoryIndex === -1){
+            rb.logWarn('did not find key in history', currentHistoryKey, this.history, this.sessionHistories);
+            this.history = [currentHistoryKey];
+            this.activeHistoryIndex = 0;
+            this.sessionHistories.push(this.history);
+        }
+
+        this.saveRouterState();
+    },
+    getHistoryKey(){
+        historyKeyCounter += 1;
+        return historyKeyCounter + '-' + getID();
+    },
+    addToHistory(historyKey, replace){
+        if(replace){
+            this.history[this.activeHistoryIndex] = historyKey;
+        } else {
+            // remove former history future stack
+            const historyEndIndex = this.history.length - 1;
+            if(historyEndIndex > this.activeHistoryIndex){
+                this.history.length = this.activeHistoryIndex + 1;
+            }
+
+            this.history.push(historyKey);
+            this.activeHistoryIndex = this.history.length - 1;
+        }
+        this.saveRouterState();
+    },
+    saveRouterState(){
+        window.sessionStorage.setItem(this.storageKey, JSON.stringify({sessionHistories: this.sessionHistories}));
     },
     listen() {
         this.current = this.getFragment();
@@ -330,33 +423,16 @@ rb.Router = {
 
         return this;
     },
-    addToHistory(replace){
-        const historyIndex = this.history.length - 1;
 
-        if(replace){
-            this.history[Math.max(this.selectedIndex, 0)] = currentIndex;
-        } else {
-            if(historyIndex > this.selectedIndex){
-                this.history.length = this.selectedIndex + 1;
-            }
-
-            this.history.push(currentIndex);
-
-            this.selectedIndex = this.history.length - 1;
-        }
-
-        window.sessionStorage.set('rawblock_router', JSON.stringify({history: this.history, selectedIndex: this.selectedIndex}));
-
-    },
     navigate(path, state = null, silent, replace) {
 
-        if(this.noNavigate){
-            setTimeout(() => {
-                this.navigate(...arguments);
-            });
-
-            return this;
-        }
+        // if(this.noNavigate){
+        //     setTimeout(() => {
+        //         this.navigate(...arguments);
+        //     });
+        //
+        //     return this;
+        // }
 
         path = path || '';
 
@@ -366,12 +442,14 @@ rb.Router = {
             state = null;
         }
 
-        this.addToHistory(replace);
+        if(!state || !state.historyKey || !state.state){
+            state = {state, historyKey: this.getHistoryKey()};
+        }
 
-        state = {state, currentIndex};
+        this.addToHistory(state.historyKey, replace);
 
         if (this.mode === 'history') {
-            window.history[replace === true ? 'replaceState' : 'pushState'](state, '', this.root + this.clearSlashes(path));
+            winHistory[replace === true ? 'replaceState' : 'pushState'](state, '', this.root + this.clearSlashes(path));
         } else {
             const value = window.location.href.replace(regFullHash, '') + '#' + path;
 
