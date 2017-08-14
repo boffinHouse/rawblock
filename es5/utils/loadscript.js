@@ -43,32 +43,34 @@
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
         if (!promises[src]) {
-            var script = document.createElement('script');
+            (function () {
+                var script = document.createElement('script');
 
-            var inject = function inject() {
-                (document.body || document.documentElement).appendChild(script);
-                script = null;
-            };
+                var inject = function inject() {
+                    (document.body || document.documentElement).appendChild(script);
+                    script = null;
+                };
 
-            promises[src] = (0, _deferred2.default)();
+                promises[src] = (0, _deferred2.default)();
 
-            script.addEventListener('load', function () {
-                promises[src].resolve();
-            });
-            script.addEventListener('error', function () {
-                rb.logWarn('load script error. Configure rb.packageConfig? src: ' + src);
-                promises[src].resolve();
-            });
+                script.addEventListener('load', function () {
+                    promises[src].resolve();
+                });
+                script.addEventListener('error', function () {
+                    rb.logWarn('load script error. Configure rb.packageConfig? src: ' + src);
+                    promises[src].resolve();
+                });
 
-            script.src = src;
-            script.async = !!options.async;
-            script.defer = !!options.defer;
+                script.src = src;
+                script.async = !!options.async;
+                script.defer = !!options.defer;
 
-            if (document.body && !options.instantInject) {
-                (rb.rAFQueue || requestAnimationFrame)(inject);
-            } else {
-                inject();
-            }
+                if (document.body && !options.instantInject) {
+                    (rb.rAFQueue || requestAnimationFrame)(inject);
+                } else {
+                    inject();
+                }
+            })();
         }
 
         return promises[src];
