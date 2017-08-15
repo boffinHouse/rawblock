@@ -38,30 +38,32 @@
         }
 
         if (this.length) {
-            var opts = Object.assign({}, options, {
-                always: function always() {
-                    this.style.display = options.display ? 'none' : '';
-                    this.style.visibility = 'hidden';
+            (function () {
+                var opts = Object.assign({}, options, {
+                    always: function always() {
+                        this.style.display = options.display ? 'none' : '';
+                        this.style.visibility = 'hidden';
 
-                    if (options.always) {
-                        return options.always.apply(this, arguments);
+                        if (options.always) {
+                            return options.always.apply(this, arguments);
+                        }
                     }
-                }
-            });
+                });
 
-            if (opts.easing) {
-                rb.addEasing(opts.easing);
-            }
-
-            this.stop().each(function () {
-                var $panel = $(_this);
-
-                if (options.duration == 'auto') {
-                    opts.duration = calcDuration(0, $panel.innerHeight(), options);
+                if (opts.easing) {
+                    rb.addEasing(opts.easing);
                 }
 
-                $panel.animate({ height: 0 }, opts);
-            }).css({ overflow: 'hidden', display: 'block', visibility: 'inherit' });
+                _this.stop().each(function () {
+                    var $panel = $(_this);
+
+                    if (options.duration == 'auto') {
+                        opts.duration = calcDuration(0, $panel.innerHeight(), options);
+                    }
+
+                    $panel.animate({ height: 0 }, opts);
+                }).css({ overflow: 'hidden', display: 'block', visibility: 'inherit' });
+            })();
         }
         return this;
     };
