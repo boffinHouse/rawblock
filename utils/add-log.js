@@ -1,4 +1,7 @@
-const console = window.console || {};
+import glob from './glob';
+import rb from './global-rb';
+
+const console = glob.console || {};
 const log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
 const logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
     const fnName = (errorName == 'log') ?
@@ -52,6 +55,4 @@ export default function addLog(obj, initial) {
     });
 }
 
-if(window.rb){
-    window.rb.addLog = addLog;
-}
+rb.addLog = addLog;

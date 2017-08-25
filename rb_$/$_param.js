@@ -1,4 +1,5 @@
-const rb = window.rb;
+import rb from '../utils/global-rb';
+
 const $ = rb.$;
 const r20 = /%20/g;
 const rbracket = /\[]$/;

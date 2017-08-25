@@ -1,4 +1,4 @@
-const rb = window.rb;
+import rb from './global-rb';
 
 const escapeMap = {
     '&': '&amp;',

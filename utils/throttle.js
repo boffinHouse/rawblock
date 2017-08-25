@@ -1,5 +1,7 @@
+import rb from './global-rb';
 import rIC from './request-idle-callback';
 import rAFQueue from './rafqueue';
+
 
 /**
  * Throttles a given function
@@ -17,7 +19,6 @@ export default function throttle(fn, options) {
     let running, that, args;
 
     let lastTime = 0;
-    let Date = window.Date;
 
     const _run = function () {
         running = false;
@@ -88,6 +89,4 @@ export default function throttle(fn, options) {
     return throttel;
 }
 
-if(window.rb){
-    window.rb.throttle = throttle;
-}
+rb.throttle = throttle;

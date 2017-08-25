@@ -1,3 +1,5 @@
+import rb from './global-rb';
+
 let id = Math.round(Date.now() * Math.random());
 
 /**
@@ -10,6 +12,4 @@ export default function getID() {
     return id.toString(36);
 }
 
-if(window.rb){
-    window.rb.getID = getID;
-}
+rb.getID = getID;
