@@ -1,22 +1,33 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(["exports"], factory);
+        define(['exports', './global-rb', './rafqueue', './request-idle-callback'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports);
+        factory(exports, require('./global-rb'), require('./rafqueue'), require('./request-idle-callback'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports);
+        factory(mod.exports, global.globalRb, global.rafqueue, global.requestIdleCallback);
         global.debounce = mod.exports;
     }
-})(this, function (exports) {
-    "use strict";
+})(this, function (exports, _globalRb, _rafqueue, _requestIdleCallback) {
+    'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    var rb = window.rb;
+
+    var _globalRb2 = _interopRequireDefault(_globalRb);
+
+    var _rafqueue2 = _interopRequireDefault(_rafqueue);
+
+    var _requestIdleCallback2 = _interopRequireDefault(_requestIdleCallback);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     /**
      *
@@ -30,7 +41,7 @@
      * @returns {Function}
      *
      */
-    rb.debounce = function (fn, opts) {
+    _globalRb2.default.debounce = function (fn, opts) {
         var args = void 0,
             that = void 0,
             timestamp = void 0,
@@ -48,10 +59,10 @@
                 timeout = setTimeout(later, Math.max(opts.delay - last, (opts.minFrame - frames) * 17));
             } else if (!isWriteCalled) {
                 isWriteCalled = true;
-                rb.rAFQueue(later);
+                (0, _rafqueue2.default)(later);
             } else if (!isReadCalled && !opts.write) {
                 isReadCalled = true;
-                rb.rIC(later);
+                (0, _requestIdleCallback2.default)(later);
             } else {
                 timeout = null;
                 fn.apply(that, args);
@@ -60,7 +71,7 @@
         var countFrames = function countFrames() {
             frames++;
             if (timeout) {
-                rb.rAFQueue(countFrames);
+                (0, _rafqueue2.default)(countFrames);
             }
         };
 
@@ -77,12 +88,12 @@
 
             if (!timeout) {
                 if (opts.minFrame) {
-                    rb.rAFQueue(countFrames);
+                    (0, _rafqueue2.default)(countFrames);
                 }
                 timeout = setTimeout(later, opts.delay);
             }
         };
     };
 
-    exports.default = rb.debounce;
+    exports.default = _globalRb2.default.debounce;
 });

@@ -38,32 +38,30 @@
         }
 
         if (this.length) {
-            (function () {
-                var opts = Object.assign({}, options, {
-                    always: function always() {
-                        this.style.display = options.display ? 'none' : '';
-                        this.style.visibility = 'hidden';
+            var opts = Object.assign({}, options, {
+                always: function always() {
+                    this.style.display = options.display ? 'none' : '';
+                    this.style.visibility = 'hidden';
 
-                        if (options.always) {
-                            return options.always.apply(this, arguments);
-                        }
+                    if (options.always) {
+                        return options.always.apply(this, arguments);
                     }
-                });
+                }
+            });
 
-                if (opts.easing) {
-                    rb.addEasing(opts.easing);
+            if (opts.easing) {
+                rb.addEasing(opts.easing);
+            }
+
+            this.stop().each(function () {
+                var $panel = $(_this);
+
+                if (options.duration == 'auto') {
+                    opts.duration = calcDuration(0, $panel.innerHeight(), options);
                 }
 
-                _this.stop().each(function () {
-                    var $panel = $(_this);
-
-                    if (options.duration == 'auto') {
-                        opts.duration = calcDuration(0, $panel.innerHeight(), options);
-                    }
-
-                    $panel.animate({ height: 0 }, opts);
-                }).css({ overflow: 'hidden', display: 'block', visibility: 'inherit' });
-            })();
+                $panel.animate({ height: 0 }, opts);
+            }).css({ overflow: 'hidden', display: 'block', visibility: 'inherit' });
         }
         return this;
     };
