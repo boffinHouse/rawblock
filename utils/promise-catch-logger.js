@@ -5,10 +5,14 @@ const origCatch = promiseProto.catch;
 const origThen = promiseProto.then;
 const promiseLogger = addLog({}, 1);
 
+function isError(e){
+    return !!(e && (e instanceof Error || (e.stack && e.message && typeof e.message == 'string')));
+}
+
 promiseProto.catch = function(catchFn){
 
     const catchLogger = function catchLogger(error){
-        if(error instanceof Error){
+        if(isError(error)){
             promiseLogger.logError(error, 'catch logger');
         } else {
             promiseLogger.logWarn(error, 'catch logger');
@@ -24,8 +28,9 @@ promiseProto.catch = function(catchFn){
 };
 
 promiseProto.then = function (successFn, errorFn) {
+
     const catchLogger = function catchLogger(error){
-        if(error instanceof Error){
+        if(isError(error)){
             promiseLogger.logInfo(error, 'catch logger');
         } else {
             promiseLogger.log(error, 'catch logger');
