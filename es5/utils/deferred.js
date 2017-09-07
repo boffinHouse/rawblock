@@ -44,6 +44,7 @@
                 promise.value = data;
                 return resolve(data);
             };
+
             tmp.reject = function (data) {
                 promise.isRejected = true;
                 promise.isDone = true;
@@ -56,6 +57,12 @@
         });
 
         Object.assign(promise, tmp);
+
+        if (_globalRb2.default.logError && (_globalRb2.default.isDebug === true || _globalRb2.default.isDebug > 2)) {
+            promise.catch(function (e) {
+                _globalRb2.default.logError(e);throw e;
+            });
+        }
 
         return promise;
     }

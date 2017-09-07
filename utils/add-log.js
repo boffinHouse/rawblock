@@ -22,7 +22,7 @@ const logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel
  * @param obj    {Object}
  * @param [initial] {Boolean}
  */
-export default function addLog(obj, initial) {
+export default function addLog(obj, initial = true) {
     const fakeLog = ()=>{};
 
     const setValue = function(){
@@ -53,6 +53,8 @@ export default function addLog(obj, initial) {
             }
         },
     });
+
+    return obj;
 }
 
 rb.addLog = addLog;
