@@ -444,6 +444,10 @@ rb.Router = addLog({
         return this;
     },
 
+    normalizePath(path){
+        return this.root + this.clearSlashes(path);
+    },
+
     navigate(path, state = null, silent, replace) {
 
         if(this.noNavigate){
@@ -457,8 +461,7 @@ rb.Router = addLog({
 
         path = path || '';
 
-        const comparePath = this.root != '/' ? path.replace(this.root, '') : path;
-        const changedPath = comparePath !== this.current;
+        const changedPath = this.clearSlashes(path) !== this.clearSlashes(this.current);
 
         if(typeof state == 'boolean'){
             replace = silent;

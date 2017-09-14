@@ -1,25 +1,29 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './deserialize', './get-id'], factory);
+        define(['exports', './global-rb', './deserialize', './get-id', './add-log'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./deserialize'), require('./get-id'));
+        factory(exports, require('./global-rb'), require('./deserialize'), require('./get-id'), require('./add-log'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.deserialize, global.getId);
+        factory(mod.exports, global.globalRb, global.deserialize, global.getId, global.addLog);
         global.router = mod.exports;
     }
-})(this, function (exports, _deserialize, _getId) {
+})(this, function (exports, _globalRb, _deserialize, _getId, _addLog) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
 
+    var _globalRb2 = _interopRequireDefault(_globalRb);
+
     var _deserialize2 = _interopRequireDefault(_deserialize);
 
     var _getId2 = _interopRequireDefault(_getId);
+
+    var _addLog2 = _interopRequireDefault(_addLog);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -32,18 +36,15 @@
      * http://krasimirtsonev.com/blog/article/A-modern-JavaScript-router-in-100-lines-history-api-pushState-hash-url
      */
 
-    if (!window.rb) {
-        window.rb = {};
-    }
-
-    var rb = window.rb;
-
     var regPlus = /\+/g;
     var regSlashBegin = /^\//;
     var regSlashEnd = /\/$/;
     var regFullHash = /#(.*)$/;
     var regWildCard = /\*$/;
     var regReloadStop = /reload|stop/;
+
+    var thenable = Promise.resolve();
+
     var winHistory = window.history;
     var historyKeyCounter = 0;
 
@@ -55,7 +56,7 @@
         return decodeURIComponent(param.replace(regPlus, ' '));
     }
 
-    rb.Router = {
+    _globalRb2.default.Router = (0, _addLog2.default)({
         routes: {},
         mode: 'history',
         root: '/',
@@ -238,10 +239,6 @@
         },
         findMatchingRoutes: function findMatchingRoutes(routes, fragment, data, options) {
 
-            var noNavigate = this.noNavigate;
-
-            this.noNavigate = true;
-
             for (var route in routes) {
                 route = routes[route];
 
@@ -264,8 +261,6 @@
                     }
                 }
             }
-
-            this.noNavigate = noNavigate;
 
             return false;
         },
@@ -302,7 +297,15 @@
 
             fragment = data.fragment.split('/');
 
+            if (this.noNavigate) {
+                this.logError('Router.applyRoutes called while routes are already applied.');
+            }
+
+            this.noNavigate = true;
+
             this.findMatchingRoutes(this.routes, fragment, data, options);
+
+            this.noNavigate = false;
 
             return this;
         },
@@ -330,7 +333,7 @@
                 this.updateActiveHistoryIndex();
                 this.applyRoutes(cur, event);
             } else if (event && event.original && event.original.type === 'popstate') {
-                rb.logWarn('route did not change, but pop event occurred');
+                this.logWarn('route did not change, but pop event occurred');
                 this.updateActiveHistoryIndex();
             }
 
@@ -383,13 +386,13 @@
             var currentHistoryKey = winHistory.state && winHistory.state.historyKey;
 
             if (!currentHistoryKey) {
-                return rb.logWarn('missing currentHistoryKey');
+                return this.logWarn('missing currentHistoryKey');
             }
 
             this.activeHistoryIndex = this.history.indexOf(currentHistoryKey);
 
             if (this.activeHistoryIndex === -1) {
-                rb.logWarn('did not find key in history', currentHistoryKey, this.history, this.sessionHistories);
+                this.logWarn('did not find key in history', currentHistoryKey, this.history, this.sessionHistories);
                 this.history = [currentHistoryKey];
                 this.activeHistoryIndex = 0;
                 this.sessionHistories.push(this.history);
@@ -457,23 +460,25 @@
         },
         navigate: function navigate(path) {
             var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+            var _this3 = this,
+                _arguments = arguments;
+
             var silent = arguments[2];
             var replace = arguments[3];
 
 
-            // if(this.noNavigate){
-            //     setTimeout(() => {
-            //         this.navigate(...arguments);
-            //     });
-            //
-            //     return this;
-            // }
-
             if (this.noNavigate) {
-                rb.logError(this.noNavigate, 'noNavigate noNavigate noNavigate');
+                thenable.then(function () {
+                    _this3.navigate.apply(_this3, _arguments);
+                });
+
+                this.logWarn('Router.navigate called while routes are already applied.');
+                return this;
             }
 
             path = path || '';
+
             var comparePath = this.root != '/' ? path.replace(this.root, '') : path;
             var changedPath = comparePath !== this.current;
 
@@ -532,7 +537,7 @@
         replace: function replace(path, state, silent) {
             return this.navigate(path, state, silent, true);
         }
-    };
+    }, 2);
 
-    exports.default = rb.Router;
+    exports.default = _globalRb2.default.Router;
 });
