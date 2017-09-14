@@ -3,14 +3,10 @@
  * http://krasimirtsonev.com/blog/article/A-modern-JavaScript-router-in-100-lines-history-api-pushState-hash-url
  */
 
-if (!window.rb) {
-    window.rb = {};
-}
-
+import rb from './global-rb';
 import deserialize from './deserialize';
 import getID from './get-id';
-
-const rb = window.rb;
+import addLog from './add-log';
 
 const regPlus = /\+/g;
 const regSlashBegin = /^\//;
@@ -18,6 +14,9 @@ const regSlashEnd = /\/$/;
 const regFullHash = /#(.*)$/;
 const regWildCard = /\*$/;
 const regReloadStop = /reload|stop/;
+
+const thenable = Promise.resolve();
+
 const winHistory = window.history;
 let historyKeyCounter = 0;
 
@@ -27,7 +26,7 @@ function decodeParam(param){
     return decodeURIComponent(param.replace(regPlus, ' '));
 }
 
-rb.Router = {
+rb.Router = addLog({
     routes: {},
     mode: 'history',
     root: '/',
@@ -234,10 +233,6 @@ rb.Router = {
     },
     findMatchingRoutes(routes, fragment, data, options){
 
-        const noNavigate = this.noNavigate;
-
-        this.noNavigate = true;
-
         for(let route in routes){
             route = routes[route];
 
@@ -260,8 +255,6 @@ rb.Router = {
                 }
             }
         }
-
-        this.noNavigate = noNavigate;
 
         return false;
     },
@@ -296,7 +289,15 @@ rb.Router = {
 
         fragment = data.fragment.split('/');
 
+        if(this.noNavigate){
+            this.logError('Router.applyRoutes called while routes are already applied.');
+        }
+
+        this.noNavigate = true;
+
         this.findMatchingRoutes(this.routes, fragment, data, options);
+
+        this.noNavigate = false;
 
         return this;
     },
@@ -324,7 +325,7 @@ rb.Router = {
             this.updateActiveHistoryIndex();
             this.applyRoutes(cur, event);
         } else if(event && event.original && event.original.type === 'popstate') {
-            rb.logWarn('route did not change, but pop event occurred');
+            this.logWarn('route did not change, but pop event occurred');
             this.updateActiveHistoryIndex();
         }
 
@@ -374,13 +375,13 @@ rb.Router = {
         const currentHistoryKey = winHistory.state && winHistory.state.historyKey;
 
         if(!currentHistoryKey){
-            return rb.logWarn('missing currentHistoryKey');
+            return this.logWarn('missing currentHistoryKey');
         }
 
         this.activeHistoryIndex = this.history.indexOf(currentHistoryKey);
 
         if(this.activeHistoryIndex === -1){
-            rb.logWarn('did not find key in history', currentHistoryKey, this.history, this.sessionHistories);
+            this.logWarn('did not find key in history', currentHistoryKey, this.history, this.sessionHistories);
             this.history = [currentHistoryKey];
             this.activeHistoryIndex = 0;
             this.sessionHistories.push(this.history);
@@ -445,17 +446,19 @@ rb.Router = {
 
     navigate(path, state = null, silent, replace) {
 
-        // if(this.noNavigate){
-        //     setTimeout(() => {
-        //         this.navigate(...arguments);
-        //     });
-        //
-        //     return this;
-        // }
+        if(this.noNavigate){
+            thenable.then(() => {
+                this.navigate(...arguments);
+            });
+
+            this.logWarn('Router.navigate called while routes are already applied.');
+            return this;
+        }
 
         path = path || '';
 
-        const changedPath = this.getFragment() !== this.current;
+        const comparePath = this.root != '/' ? path.replace(this.root, '') : path;
+        const changedPath = comparePath !== this.current;
 
         if(typeof state == 'boolean'){
             replace = silent;
@@ -513,6 +516,6 @@ rb.Router = {
     replace(path, state, silent) {
         return this.navigate(path, state, silent, true);
     },
-};
+}, 2);
 
 export default rb.Router;

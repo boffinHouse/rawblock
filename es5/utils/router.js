@@ -317,9 +317,9 @@
 
             return this;
         },
-        applyRoutesIfNeeded: function applyRoutesIfNeeded() {
+        applyRoutesIfNeeded: function applyRoutesIfNeeded(event) {
             if (this.getFragment() !== this.current) {
-                this.onRouteChanged();
+                this.onRouteChanged(event);
             }
         },
         onRouteChanged: function onRouteChanged(event) {
@@ -469,9 +469,13 @@
             //     return this;
             // }
 
-            path = path || '';
+            if (this.noNavigate) {
+                rb.logError(this.noNavigate, 'noNavigate noNavigate noNavigate');
+            }
 
-            var changedPath = this.getFragment() !== this.current;
+            path = path || '';
+            var comparePath = this.root != '/' ? path.replace(this.root, '') : path;
+            var changedPath = comparePath !== this.current;
 
             if (typeof state == 'boolean') {
                 replace = silent;
