@@ -45,7 +45,9 @@
      * @param obj    {Object}
      * @param [initial] {Boolean}
      */
-    function addLog(obj, initial) {
+    function addLog(obj) {
+        var initial = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
         var fakeLog = function fakeLog() {};
 
         var setValue = function setValue() {
@@ -74,6 +76,8 @@
                 }
             }
         });
+
+        return obj;
     }
 
     _globalRb2.default.addLog = addLog;

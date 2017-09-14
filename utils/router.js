@@ -6,6 +6,7 @@
 if (!window.rb) {
     window.rb = {};
 }
+
 import deserialize from './deserialize';
 import getID from './get-id';
 
@@ -16,6 +17,7 @@ const regSlashBegin = /^\//;
 const regSlashEnd = /\/$/;
 const regFullHash = /#(.*)$/;
 const regWildCard = /\*$/;
+const regReloadStop = /reload|stop/;
 const winHistory = window.history;
 let historyKeyCounter = 0;
 
@@ -31,6 +33,8 @@ rb.Router = {
     root: '/',
     regHash: /#!(.*)$/,
     regIndex: /\/index\.htm[l]*$/,
+    //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
+    samePathStrategy: 'replace', //reload, replace, recall, stop
     noNavigate: false,
     history: null,
     activeHistoryIndex: -1,
@@ -261,7 +265,7 @@ rb.Router = {
 
         return false;
     },
-    _saveState(fragment){
+    _saveState(fragment, event = {type: 'unknown/initial'}){
         const data = {fragment: fragment == null ? this.getFragment() : fragment};
         const fragmentParts = data.fragment.split('?');
 
@@ -277,18 +281,18 @@ rb.Router = {
 
         data.fragment = fragment;
 
-        return data;
-    },
-    applyRoutes(fragment, event = {type: 'unknown/initial'}) {
-
-        const data = this._saveState(fragment);
-        const options = deserialize(this.currentOptions);
-
         data.changedRoute = this.beforeRoute != this.currentRoute;
         data.changedOptions = this.beforeOptions != this.currentOptions;
-        data.event = event;
         data.history = this.history;
         data.activeHistoryIndex = this.activeHistoryIndex;
+        data.event = event;
+
+        return data;
+    },
+    applyRoutes(fragment, event) {
+
+        const data = this._saveState(fragment, event);
+        const options = deserialize(this.currentOptions);
 
         fragment = data.fragment.split('/');
 
@@ -307,10 +311,16 @@ rb.Router = {
 
         return this;
     },
-    applyRoutesIfNeeded(event){
+    applyRoutesIfNeeded(){
+        if(this.getFragment() !== this.current){
+            this.onRouteChanged();
+        }
+    },
+    onRouteChanged(event){
         const cur = this.getFragment();
+        const stop = cur === this.current && regReloadStop.test(this.samePathStrategy);
 
-        if (this.current !== cur) {
+        if(!stop){
             this.updateActiveHistoryIndex();
             this.applyRoutes(cur, event);
         } else if(event && event.original && event.original.type === 'popstate') {
@@ -408,13 +418,17 @@ rb.Router = {
         if (!this._listener) {
             //'interval' often means either browser bug or external (disapproved) pushState/replaceState call
             this._listener = (e = {type: 'interval'}) => {
-                this.applyRoutesIfNeeded({
-                    type: 'popstate',
-                    original: {
-                        type: e.type,
-                        state: e.state,
-                    },
-                });
+                const run = e.type != 'interval' || this.getFragment() !== this.current;
+
+                if(run){
+                    this.onRouteChanged({
+                        type: 'popstate',
+                        original: {
+                            type: e.type,
+                            state: e.state,
+                        },
+                    });
+                }
             };
         }
 
@@ -441,11 +455,29 @@ rb.Router = {
 
         path = path || '';
 
+        const changedPath = this.getFragment() !== this.current;
+
         if(typeof state == 'boolean'){
             replace = silent;
             silent = state;
             state = null;
         }
+
+        if(!changedPath){
+            const { samePathStrategy } = this;
+
+            if(samePathStrategy.includes('reload')){
+                window.location.reload();
+                return;
+            } else if(samePathStrategy.includes('replace') && replace !== false){
+                replace = true;
+            }
+        }
+
+        const event = {
+            type: 'navigate',
+            replace,
+        };
 
         if(!state || !state.historyKey || !state.state){
             state = {state, historyKey: this.getHistoryKey()};
@@ -466,15 +498,16 @@ rb.Router = {
         }
 
         if(silent){
-            this._saveState();
+            this._saveState(event);
         } else {
-            this.applyRoutesIfNeeded({
-                type: 'navigate',
-                replace,
-            });
+            this.onRouteChanged(event);
         }
 
         return this;
+    },
+
+    push(path, state, silent){
+        return this.navigate(path, state, silent, false);
     },
 
     replace(path, state, silent) {

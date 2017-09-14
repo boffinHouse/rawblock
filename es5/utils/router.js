@@ -36,7 +36,6 @@
         window.rb = {};
     }
 
-
     var rb = window.rb;
 
     var regPlus = /\+/g;
@@ -44,6 +43,7 @@
     var regSlashEnd = /\/$/;
     var regFullHash = /#(.*)$/;
     var regWildCard = /\*$/;
+    var regReloadStop = /reload|stop/;
     var winHistory = window.history;
     var historyKeyCounter = 0;
 
@@ -61,6 +61,8 @@
         root: '/',
         regHash: /#!(.*)$/,
         regIndex: /\/index\.htm[l]*$/,
+        //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
+        samePathStrategy: 'replace', //reload, replace, recall, stop
         noNavigate: false,
         history: null,
         activeHistoryIndex: -1,
@@ -268,6 +270,8 @@
             return false;
         },
         _saveState: function _saveState(fragment) {
+            var event = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { type: 'unknown/initial' };
+
             var data = { fragment: fragment == null ? this.getFragment() : fragment };
             var fragmentParts = data.fragment.split('?');
 
@@ -283,20 +287,18 @@
 
             data.fragment = fragment;
 
-            return data;
-        },
-        applyRoutes: function applyRoutes(fragment) {
-            var event = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { type: 'unknown/initial' };
-
-
-            var data = this._saveState(fragment);
-            var options = (0, _deserialize2.default)(this.currentOptions);
-
             data.changedRoute = this.beforeRoute != this.currentRoute;
             data.changedOptions = this.beforeOptions != this.currentOptions;
-            data.event = event;
             data.history = this.history;
             data.activeHistoryIndex = this.activeHistoryIndex;
+            data.event = event;
+
+            return data;
+        },
+        applyRoutes: function applyRoutes(fragment, event) {
+
+            var data = this._saveState(fragment, event);
+            var options = (0, _deserialize2.default)(this.currentOptions);
 
             fragment = data.fragment.split('/');
 
@@ -315,10 +317,16 @@
 
             return this;
         },
-        applyRoutesIfNeeded: function applyRoutesIfNeeded(event) {
+        applyRoutesIfNeeded: function applyRoutesIfNeeded() {
+            if (this.getFragment() !== this.current) {
+                this.onRouteChanged();
+            }
+        },
+        onRouteChanged: function onRouteChanged(event) {
             var cur = this.getFragment();
+            var stop = cur === this.current && regReloadStop.test(this.samePathStrategy);
 
-            if (this.current !== cur) {
+            if (!stop) {
                 this.updateActiveHistoryIndex();
                 this.applyRoutes(cur, event);
             } else if (event && event.original && event.original.type === 'popstate') {
@@ -423,13 +431,17 @@
                 this._listener = function () {
                     var e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { type: 'interval' };
 
-                    _this2.applyRoutesIfNeeded({
-                        type: 'popstate',
-                        original: {
-                            type: e.type,
-                            state: e.state
-                        }
-                    });
+                    var run = e.type != 'interval' || _this2.getFragment() !== _this2.current;
+
+                    if (run) {
+                        _this2.onRouteChanged({
+                            type: 'popstate',
+                            original: {
+                                type: e.type,
+                                state: e.state
+                            }
+                        });
+                    }
                 };
             }
 
@@ -459,11 +471,30 @@
 
             path = path || '';
 
+            var changedPath = this.getFragment() !== this.current;
+
             if (typeof state == 'boolean') {
                 replace = silent;
                 silent = state;
                 state = null;
             }
+
+            if (!changedPath) {
+                var samePathStrategy = this.samePathStrategy;
+
+
+                if (samePathStrategy.includes('reload')) {
+                    window.location.reload();
+                    return;
+                } else if (samePathStrategy.includes('replace') && replace !== false) {
+                    replace = true;
+                }
+            }
+
+            var event = {
+                type: 'navigate',
+                replace: replace
+            };
 
             if (!state || !state.historyKey || !state.state) {
                 state = { state: state, historyKey: this.getHistoryKey() };
@@ -484,15 +515,15 @@
             }
 
             if (silent) {
-                this._saveState();
+                this._saveState(event);
             } else {
-                this.applyRoutesIfNeeded({
-                    type: 'navigate',
-                    replace: replace
-                });
+                this.onRouteChanged(event);
             }
 
             return this;
+        },
+        push: function push(path, state, silent) {
+            return this.navigate(path, state, silent, false);
         },
         replace: function replace(path, state, silent) {
             return this.navigate(path, state, silent, true);

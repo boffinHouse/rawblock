@@ -1,5 +1,13 @@
 describe('router', function () {
 
+    const DEFAULT_DATA = {
+        changedRoute: true,
+        changedOptions: false,
+        event: { type: 'unknown/initial'},
+        history: jasmine.any(Array),
+        activeHistoryIndex: 0,
+    };
+
     beforeEach(function() {
         rb.Router.flush();
         rb.Router.unlisten();
@@ -34,14 +42,14 @@ describe('router', function () {
 
         rb.Router.applyRoutes('user');
 
-        expect(user).toHaveBeenCalledWith({}, {}, {fragment: 'user', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
+        expect(user).toHaveBeenCalledWith({}, {}, Object.assign({}, DEFAULT_DATA, {fragment: 'user', changedRoute: true, changedOptions: false}));
 
         expect(userId.calls.count()).toEqual(0);
         expect(customer.calls.count()).toEqual(0);
 
         rb.Router.applyRoutes('user/theId');
 
-        expect(userId).toHaveBeenCalledWith({id: 'theId'}, {}, {fragment: 'user/theId', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
+        expect(userId).toHaveBeenCalledWith({id: 'theId'}, {}, Object.assign({}, DEFAULT_DATA, {fragment: 'user/theId', changedRoute: true, changedOptions: false}));
 
         expect(userList.calls.count()).toEqual(0);
         expect(userList.calls.count()).toEqual(0);
