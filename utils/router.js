@@ -30,6 +30,7 @@ rb.Router = addLog({
     routes: {},
     mode: 'history',
     root: '/',
+    current: '',
     regHash: /#!(.*)$/,
     regIndex: /\/index\.htm[l]*$/,
     //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
