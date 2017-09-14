@@ -13,7 +13,6 @@ const regSlashBegin = /^\//;
 const regSlashEnd = /\/$/;
 const regFullHash = /#(.*)$/;
 const regWildCard = /\*$/;
-const regReloadStop = /reload|stop/;
 
 const thenable = Promise.resolve();
 
@@ -319,7 +318,7 @@ rb.Router = addLog({
     },
     onRouteChanged(event){
         const cur = this.getFragment();
-        const stop = cur === this.current && regReloadStop.test(this.samePathStrategy);
+        const stop = cur === this.current && this.samePathStrategy.includes('stop');
 
         if(!stop){
             this.updateActiveHistoryIndex();
