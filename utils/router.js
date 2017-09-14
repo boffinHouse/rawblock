@@ -311,9 +311,9 @@ rb.Router = {
 
         return this;
     },
-    applyRoutesIfNeeded(){
+    applyRoutesIfNeeded(event){
         if(this.getFragment() !== this.current){
-            this.onRouteChanged();
+            this.onRouteChanged(event);
         }
     },
     onRouteChanged(event){
