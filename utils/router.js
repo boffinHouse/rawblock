@@ -487,8 +487,7 @@ rb.Router = addLog({
             state = null;
         }
 
-        //or use !changedPath && !replace????
-        if(!changedPath){
+        if(!changedPath && !replace){
             const { samePathStrategy } = this.options;
 
             if(samePathStrategy.includes('reload')){
