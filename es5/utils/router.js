@@ -73,10 +73,16 @@
         init: function init() {
             var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                 options = _ref.options,
-                listen = _ref.listen;
+                listen = _ref.listen,
+                routes = _ref.routes;
 
             this.config(options);
+
             this.initHistory();
+
+            if (routes) {
+                this.map(routes);
+            }
 
             if (listen) {
                 this.listen();
@@ -512,7 +518,7 @@
                 state = null;
             }
 
-            if (!changedPath) {
+            if (!changedPath && !replace) {
                 var samePathStrategy = this.options.samePathStrategy;
 
 

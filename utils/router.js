@@ -479,15 +479,13 @@ rb.Router = addLog({
 
         path = this.normalizePath(path || '');
 
-        const changedPath = this.changedPath(path);
-
         if(typeof state == 'boolean'){
             replace = silent;
             silent = state;
             state = null;
         }
 
-        if(!changedPath && !replace){
+        if(!replace && !this.changedPath(path)){
             const { samePathStrategy } = this.options;
 
             if(samePathStrategy.includes('reload')){
