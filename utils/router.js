@@ -28,52 +28,47 @@ function decodeParam(param){
 rb.Router = addLog({
     routes: {},
     mode: 'history',
-    root: '/',
     current: '',
-    regHash: /#!(.*)$/,
-    regIndex: /\/index\.htm[l]*$/,
-    //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
-    samePathStrategy: 'replace', //reload, replace, recall, stop
+    options: {
+        regHash: /#!(.*)$/,
+        regIndex: /\/index\.htm[l]*$/,
+        //you need to install a URL polyfill for IE
+        supportRelativeRoutes: false,
+        //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
+        samePathStrategy: 'replace', //reload, replace, recall, stop
+    },
     noNavigate: false,
     history: null,
     activeHistoryIndex: -1,
     storageKey: 'rb_router',
-    init({ options, listen } = {}) {
+    init({ options, listen, routes } = {}) {
         this.config(options);
+
         this.initHistory();
+
+        if(routes){
+            this.map(routes);
+        }
 
         if(listen){
             this.listen();
         }
     },
     config: function (options) {
-        options = options || {};
-
-        this.mode = options.mode != 'hash' && ('pushState' in history) ?
-            'history' :
-            'hash';
-
-        if (options.regHash) {
-            this.regHash = options.regHash;
-        }
-
-        if (options.regIndex) {
-            this.regIndex = options.regIndex;
-        }
-
-        this.root = options.root ? '/' + this.clearSlashes(options.root) + '/' : '/';
+        Object.assign(this.options, options);
 
         return this;
     },
-    getFragment: function () {
+    getFragment: function (locationObject = location) {
         let match;
         let fragment = '';
 
-        if (this.mode != 'hash') {
-            fragment = decodeURI(location.pathname + location.search);
-            fragment = this.root != '/' ? fragment.replace(this.root, '') : fragment;
+        const {regHash, mode} = this.options;
+
+        if (mode != 'hash') {
+            fragment = decodeURI(locationObject.pathname + locationObject.search);
         } else {
-            match = window.location.href.match(this.regHash);
+            match = locationObject.href.match(regHash);
             fragment = match ? match[1] : '';
         }
 
@@ -189,7 +184,6 @@ rb.Router = addLog({
     flush() {
         this.routes = {};
         this.mode = null;
-        this.root = '/';
         return this;
     },
     matches(route, path){
@@ -262,7 +256,7 @@ rb.Router = addLog({
         const data = {fragment: fragment == null ? this.getFragment() : fragment};
         const fragmentParts = data.fragment.split('?');
 
-        fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.regIndex, ''));
+        fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.options.regIndex, ''));
 
         this.before = this.current;
         this.beforeRoute = this.currentRoute;
@@ -319,7 +313,7 @@ rb.Router = addLog({
     },
     onRouteChanged(event){
         const cur = this.getFragment();
-        const stop = cur === this.current && this.samePathStrategy.includes('stop');
+        const stop = cur === this.current && this.options.samePathStrategy.includes('stop');
 
         if(!stop){
             this.updateActiveHistoryIndex();
@@ -444,8 +438,32 @@ rb.Router = addLog({
         return this;
     },
 
-    normalizePath(path){
-        return this.root + this.clearSlashes(path);
+    normalizePath(path = ''){
+        path = path.replace(regSlashEnd, '');
+
+        if(!path.startsWith('.')){
+            path = '/' + path.replace(regSlashBegin, '');
+        }
+
+        return path;
+    },
+
+    changedPath(path, locationObj = location){
+        let changedPath;
+
+        if(this.options.supportRelativeRoutes){
+            path = this.normalizePath(path);
+            changedPath = this.current !== this.getFragment(new URL(path, locationObj.href));
+        } else {
+
+            if(path.startsWith('.')){
+                this.logError(`we do not support relative path: ${path}`);
+            }
+
+            changedPath = this.clearSlashes(path) !== this.clearSlashes(this.current);
+        }
+
+        return changedPath;
     },
 
     navigate(path, state = null, silent, replace) {
@@ -459,9 +477,9 @@ rb.Router = addLog({
             return this;
         }
 
-        path = path || '';
+        path = this.normalizePath(path || '');
 
-        const changedPath = this.clearSlashes(path) !== this.clearSlashes(this.current);
+        const changedPath = this.changedPath(path);
 
         if(typeof state == 'boolean'){
             replace = silent;
@@ -470,7 +488,7 @@ rb.Router = addLog({
         }
 
         if(!changedPath){
-            const { samePathStrategy } = this;
+            const { samePathStrategy } = this.options;
 
             if(samePathStrategy.includes('reload')){
                 window.location.reload();
@@ -492,7 +510,7 @@ rb.Router = addLog({
         this.addToHistory(state.historyKey, replace);
 
         if (this.mode === 'history') {
-            winHistory[replace === true ? 'replaceState' : 'pushState'](state, '', this.root + this.clearSlashes(path));
+            winHistory[replace === true ? 'replaceState' : 'pushState'](state, '', path);
         } else {
             const value = window.location.href.replace(regFullHash, '') + '#' + path;
 
