@@ -41,7 +41,6 @@
     var regSlashEnd = /\/$/;
     var regFullHash = /#(.*)$/;
     var regWildCard = /\*$/;
-    var regReloadStop = /reload|stop/;
 
     var thenable = Promise.resolve();
 
@@ -59,11 +58,14 @@
     _globalRb2.default.Router = (0, _addLog2.default)({
         routes: {},
         mode: 'history',
-        root: '/',
-        regHash: /#!(.*)$/,
-        regIndex: /\/index\.htm[l]*$/,
-        //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
-        samePathStrategy: 'replace', //reload, replace, recall, stop
+        current: '',
+        options: {
+            regHash: /#!(.*)$/,
+            regIndex: /\/index\.htm[l]*$/,
+            //you need to install a URL polyfill for IE
+            supportRelativeRoutes: false,
+            //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
+            samePathStrategy: 'replace' },
         noNavigate: false,
         history: null,
         activeHistoryIndex: -1,
@@ -82,31 +84,25 @@
         },
 
         config: function config(options) {
-            options = options || {};
-
-            this.mode = options.mode != 'hash' && 'pushState' in history ? 'history' : 'hash';
-
-            if (options.regHash) {
-                this.regHash = options.regHash;
-            }
-
-            if (options.regIndex) {
-                this.regIndex = options.regIndex;
-            }
-
-            this.root = options.root ? '/' + this.clearSlashes(options.root) + '/' : '/';
+            Object.assign(this.options, options);
 
             return this;
         },
         getFragment: function getFragment() {
+            var locationObject = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : location;
+
             var match = void 0;
             var fragment = '';
 
-            if (this.mode != 'hash') {
-                fragment = decodeURI(location.pathname + location.search);
-                fragment = this.root != '/' ? fragment.replace(this.root, '') : fragment;
+            var _options = this.options,
+                regHash = _options.regHash,
+                mode = _options.mode;
+
+
+            if (mode != 'hash') {
+                fragment = decodeURI(locationObject.pathname + locationObject.search);
             } else {
-                match = window.location.href.match(this.regHash);
+                match = locationObject.href.match(regHash);
                 fragment = match ? match[1] : '';
             }
 
@@ -195,7 +191,6 @@
         flush: function flush() {
             this.routes = {};
             this.mode = null;
-            this.root = '/';
             return this;
         },
         matches: function matches(route, path) {
@@ -270,7 +265,7 @@
             var data = { fragment: fragment == null ? this.getFragment() : fragment };
             var fragmentParts = data.fragment.split('?');
 
-            fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.regIndex, ''));
+            fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.options.regIndex, ''));
 
             this.before = this.current;
             this.beforeRoute = this.currentRoute;
@@ -327,7 +322,7 @@
         },
         onRouteChanged: function onRouteChanged(event) {
             var cur = this.getFragment();
-            var stop = cur === this.current && regReloadStop.test(this.samePathStrategy);
+            var stop = cur === this.current && this.options.samePathStrategy.includes('stop');
 
             if (!stop) {
                 this.updateActiveHistoryIndex();
@@ -458,6 +453,36 @@
 
             return this;
         },
+        normalizePath: function normalizePath() {
+            var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+            path = path.replace(regSlashEnd, '');
+
+            if (!path.startsWith('.')) {
+                path = '/' + path.replace(regSlashBegin, '');
+            }
+
+            return path;
+        },
+        changedPath: function changedPath(path) {
+            var locationObj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location;
+
+            var changedPath = void 0;
+
+            if (this.options.supportRelativeRoutes) {
+                path = this.normalizePath(path);
+                changedPath = this.current !== this.getFragment(new URL(path, locationObj.href));
+            } else {
+
+                if (path.startsWith('.')) {
+                    this.logError('we do not support relative path: ' + path);
+                }
+
+                changedPath = this.clearSlashes(path) !== this.clearSlashes(this.current);
+            }
+
+            return changedPath;
+        },
         navigate: function navigate(path) {
             var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
@@ -477,10 +502,9 @@
                 return this;
             }
 
-            path = path || '';
+            path = this.normalizePath(path || '');
 
-            var comparePath = this.root != '/' ? path.replace(this.root, '') : path;
-            var changedPath = comparePath !== this.current;
+            var changedPath = this.changedPath(path);
 
             if (typeof state == 'boolean') {
                 replace = silent;
@@ -489,7 +513,7 @@
             }
 
             if (!changedPath) {
-                var samePathStrategy = this.samePathStrategy;
+                var samePathStrategy = this.options.samePathStrategy;
 
 
                 if (samePathStrategy.includes('reload')) {
@@ -512,7 +536,7 @@
             this.addToHistory(state.historyKey, replace);
 
             if (this.mode === 'history') {
-                winHistory[replace === true ? 'replaceState' : 'pushState'](state, '', this.root + this.clearSlashes(path));
+                winHistory[replace === true ? 'replaceState' : 'pushState'](state, '', path);
             } else {
                 var value = window.location.href.replace(regFullHash, '') + '#' + path;
 

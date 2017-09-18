@@ -1,4 +1,4 @@
-var bind = require("function-bind");
+var bind = require('function-bind');
 var assign = require('object-assign');
 var findIndex = require('array.prototype.findindex');
 
@@ -13,6 +13,7 @@ require('string.prototype.endswith');
 require('string.prototype.includes');
 require('string.prototype.repeat');
 require('string.prototype.startswith');
+require('url-polyfill');
 
 if(!Function.prototype.bind){
 	Function.prototype.bind = bind;
