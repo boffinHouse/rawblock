@@ -79,19 +79,31 @@ Draggy._defaults = {
     move: noop,
     start: noop,
     end: noop,
-    preventClick: true,
-    preventMove: true,
-    useMouse: true,
-    useTouch: true,
-    usePointerMouse: false,
+    // set to false to allow only vertical drag
     horizontal: true,
+    // set to true to allow only vertical drag
     vertical: true,
+    // selector
     exclude: false,
     excludeNothing: false,
+    //prevents mouse click, if a drag happend
+    preventClick: true,
+    //prevents touchMove events if currently dragging.
+    preventMove: true,
+    //allow drag by touch (includes pointer events)
+    useTouch: true,
+    //allow drag by mouse
+    useMouse: true,
+    //handle mouse events in pointer events, if false uses oldSchool mouseevents.
+    usePointerMouse: false,
+    // stops event propagation, improves nested drags
     stopPropagation: true,
+    // uses passive event listener
     usePassiveEventListener: true,
     usePointerOnActive: false,
+    // catches start also with with touchmove event instead of touchstart only.
     catchMove: false,
+    // velocityBase moved pixel in 333
     velocityBase: 333,
 };
 
@@ -152,14 +164,18 @@ Object.assign(Draggy.prototype, {
         if (this.velTime) {
             velTiming = (Date.now() - this.velTime);
 
-            if (velTiming > 85 || (!this.horizontalVel && !this.verticalVel)) {
+            if (velTiming > 80 || (!this.horizontalVel && !this.verticalVel)) {
                 const {velocityBase} = this.options;
 
                 velTiming = (velTiming / velocityBase) || 1;
 
                 this.velPos = this._velPos;
-                this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x) || 0.00000001;
-                this.verticalVel = Math.abs(this.velPos.y - this.curPos.y) || 0.00000001;
+
+                this.horizontalVelDir = this.velPos.x - this.curPos.x;
+                this.verticalVelDir = this.velPos.x - this.curPos.x;
+
+                this.horizontalVel = Math.abs(this.horizontalVelDir) || 0.00000001;
+                this.verticalVel = Math.abs(this.verticalVelDir) || 0.00000001;
 
                 this.verticalVel /= velTiming;
                 this.horizontalVel /= velTiming;
