@@ -1,8 +1,7 @@
-import '../utils/draggy';
-import '../utils/wheelanalyzer';
 import '../utils/resize';
 import '../utils/prefixed';
-import '../utils/debounce';
+import '../utils/draggy_wheel';
+
 import cssSupports from '../utils/css-supports';
 
 
@@ -131,7 +130,6 @@ class ItemScroller extends rb.Component {
             endOrder: 99,
             usePx: false,
             wheel: true,
-            wheelVelocityMultiplier: 0.2,
         };
     }
 
@@ -311,125 +309,6 @@ class ItemScroller extends rb.Component {
         this.setSwitchedOffClass();
     }
 
-    addWheel(){
-        if(!this.options.wheel || !rb.debounce){return;}
-
-        var startValue;
-        var that = this;
-        var _isWheelStarted = false;
-        var isScrollerDir = null;
-        var options = this.options;
-
-        var wheelAnalyzer = rb.WheelAnalyzer();
-        var momentumBlocked = false;
-
-        var unblockMomentum = function(){
-            momentumBlocked = false;
-            reset();
-        };
-
-        var reset = function(){
-            _isWheelStarted = false;
-            isScrollerDir = null;
-        };
-
-        var wheelDirEnd = function(){
-            // prevent normal wheelEnd, when momentum is handled
-            if(momentumBlocked){
-                return;
-            }
-
-            var nearestIndex = that.getNearest();
-            var diff = that._pos - startValue;
-            var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 300);
-
-            reset();
-
-            if(nearestIndex != that._selectedIndex || Math.abs(diff) < threshold){
-                that.selectedIndex = nearestIndex;
-            } else if(diff > 0){
-                that.selectPrev();
-            } else {
-                that.selectNext();
-            }
-        };
-
-        var wheelDirEndDebounced = rb.debounce(wheelDirEnd, {delay: 77});
-        var wheelEndDebounced = rb.debounce(reset, {delay: 99});
-
-        var wheelHandler = function(e){
-            var x, y;
-
-            if(!e.deltaMode && !options.switchedOff && options.wheel && !e.defaultPrevented){
-
-                if(isScrollerDir !== false){
-                    x = Math.abs(e.deltaX);
-                    y = Math.abs(e.deltaY);
-
-                    if(isScrollerDir == null && x != y){
-                        isScrollerDir = x > y;
-                    }
-
-                    if(x >= y || x){
-
-                        wheelAnalyzer.feedWheel(e);
-
-                        if(!momentumBlocked){
-                            if(!_isWheelStarted){
-                                _isWheelStarted = true;
-                                startValue = that._pos;
-                                $(that.scroller).stop();
-                            }
-
-                            that._setRelPos(e.deltaX * -1, true);
-                            wheelDirEndDebounced();
-                        }
-
-                        e.preventDefault();
-                    }
-                } else {
-                    wheelEndDebounced();
-                }
-            }
-        };
-
-        var uninstallWheelHandler = function(){
-            that.viewport.removeEventListener('wheel', wheelHandler);
-        };
-
-        var installWheelHandler = rb.debounce(function(){
-            if(!options.switchedOff && options.wheel && that.viewport.matches(':hover')){
-                that.viewport.addEventListener('wheel', wheelHandler);
-            }
-        }, {delay: 66});
-
-        that.viewport.addEventListener('mouseleave', uninstallWheelHandler);
-        that.viewport.addEventListener('mouseenter', installWheelHandler);
-
-        installWheelHandler();
-
-        //unblock direct user interaction, when momentum ended or is interrupted
-        wheelAnalyzer
-            .subscribe('ended', unblockMomentum)
-            .subscribe('interrupted', unblockMomentum)
-            .subscribe('recognized', function(data){
-                momentumBlocked = true;
-
-                reset();
-
-                // from px/s -> px/300ms
-                var velocity = data.deltaVelocity / 1000 * 300 * -1;
-                var totalLengthMovedByWheel = data.deltaTotal;
-
-                //tune down velocity for snap from wheel
-                velocity = velocity * that.options.wheelVelocityMultiplier;
-
-                // dir, veloX, length
-                that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
-            })
-        ;
-    }
-
     setSwitchedOffClass(){
         this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
     }
@@ -480,7 +359,6 @@ class ItemScroller extends rb.Component {
 
     _setupEvents() {
         this._setupFocusScroll();
-        this.addWheel();
     }
 
     _setupFocusScroll() {
@@ -983,6 +861,7 @@ class ItemScroller extends rb.Component {
         $(this.viewport).draggy({
             vertical: false,
             useMouse: this.options.mouseDrag,
+            useWheel: this.options.wheel,
             exclude: this.options.dragExclude,
             start: this._dragStart,
             end: this._dragEnd,

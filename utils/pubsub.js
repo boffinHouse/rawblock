@@ -1,4 +1,7 @@
-const rb = window.rb;
+import rb from './global-rb';
+import Callbacks from '../rb_$/$_callbacks';
+
+const eventSpecial = rb.events && rb.events.special || {};
 
 const throttle = function (fn) {
     let isRunning, that, args;
@@ -120,7 +123,7 @@ rb.createPubSub = function(obj, options){
             }
 
             if(!stores[topic]){
-                stores[topic] = rb.$.Callbacks();
+                stores[topic] = Callbacks();
 
                 if(options.throttle){
                     stores[topic]._throttle = throttle(stores[topic].fireWith);
@@ -167,10 +170,10 @@ rb.createPubSub = function(obj, options){
             }
         }
 
-        rb.events.special[options.eventName] = {};
+        eventSpecial[options.eventName] = {};
 
         [['add', 'subscribe'], ['remove', 'unsubscribe']].forEach((action) => {
-            rb.events.special[options.eventName][action[0]] = function(element, handler, eventOpts = {}){
+            eventSpecial[options.eventName][action[0]] = function(element, handler, eventOpts = {}){
                 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
 
                     if(element != window && element != document){

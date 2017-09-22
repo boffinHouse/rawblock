@@ -1,11 +1,11 @@
+import rb from './global-rb';
 import './debounce';
+import Callbacks from '../rb_$/$_callbacks';
 
-const rb = window.rb;
-const $ = rb.$;
-const rbWheelProp = rb.Symbol('rbWheel');
-const special = rb.events.special;
+const rbWheelProp = (rb.Symbol || Symbol)('rbWheel');
+const special =  rb.events && rb.events.special || {};
 
-special.rb_wheelintent = {
+export default special.rb_wheelintent = {
     handler: function(e){
         const wheelData = this[rbWheelProp];
 
@@ -48,8 +48,8 @@ special.rb_wheelintent = {
 
         if(!wheelData){
             wheelData = {
-                cbs: $.Callbacks(),
-                intentCbs: $.Callbacks(),
+                cbs: Callbacks(),
+                intentCbs: Callbacks(),
                 intent: false,
             };
 
@@ -77,5 +77,3 @@ special.rb_wheelintent = {
         }
     },
 };
-
-export default rb.events.special.rb_wheelintent;

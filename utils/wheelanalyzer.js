@@ -1,12 +1,11 @@
+import rb from './global-rb';
 import './pubsub';
-import './debounce';
-
-const rb = window.rb;
+import debounce from './debounce';
 
 const WHEELEVENTS_TO_MERGE = 2; // 2
 const WHEELEVENTS_TO_ANALAZE = 3;
 
-// var ABSDELTA_DECREASE_THRESHOLD = 3;
+// const ABSDELTA_DECREASE_THRESHOLD = 3;
 
 const defaults = {
     isDebug: true,
@@ -29,7 +28,7 @@ const WheelAnalyzer = function(options){
     this.scrollPointsToMerge = [];
     this.overallDecreasing = [];
 
-    this._debouncedEndScroll = rb.debounce(this._endScroll, {delay: 50});
+    this._debouncedEndScroll = debounce(this._endScroll, {delay: 50});
 
     // callback api
     rb.createPubSub(this);
@@ -56,6 +55,13 @@ Object.assign(WheelAnalyzer.prototype, {
     },
 
     _addWheelEvent: function(e) {
+        if (e.deltaMode !== 0) {
+            if (this.options.isDebug) {
+                rb.logWarn('deltaMode is not 0');
+            }
+            return;
+        }
+
         if (!this.isScrolling) {
             this._beginScroll(e);
         }
@@ -64,13 +70,6 @@ Object.assign(WheelAnalyzer.prototype, {
 
         const currentDelta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
         const currentAbsDelta = Math.abs(currentDelta);
-
-        if (e.deltaMode !== 0) {
-            if (this.options.isDebug) {
-                rb.logWarn('deltaMode is not 0');
-            }
-            return;
-        }
 
         if (currentAbsDelta > this.lastAbsDelta) {
             this._endScroll(e);

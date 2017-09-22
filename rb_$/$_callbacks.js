@@ -33,6 +33,6 @@ export default function Callbacks(flags) {
     };
 }
 
-if(window.rb && window.rb.$){
+if(typeof window != 'undefined' && window.rb && window.rb.$){
     rb.$.Callbacks = Callbacks;
 }
