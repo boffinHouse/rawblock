@@ -190,7 +190,7 @@ Object.assign(Draggy.prototype, {
             if (velTiming > 80 || (!this.horizontalVel && !this.verticalVel)) {
                 const {velocityBase} = this.options;
 
-                velTiming = ((velTiming / velocityBase) || 1) * this.technicalVelFactor;
+                velTiming = ((velTiming / velocityBase) || 1) * (1 / this.technicalVelFactor);
 
                 this.velPos = this._velPos;
 

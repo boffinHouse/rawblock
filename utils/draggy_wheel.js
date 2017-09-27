@@ -102,7 +102,7 @@ Draggy.extend(
                 this.isWheelStarted = true;
                 this.isType = 'wheel';
                 this.isTechnicalType = 'wheel';
-                this.technicalVelFactor = 1.3;
+                this.technicalVelFactor = 0.65;
 
                 this.start(this.transformWheelEvent(e), e);
             } else {
