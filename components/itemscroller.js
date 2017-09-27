@@ -831,7 +831,7 @@ class ItemScroller extends rb.Component {
 
     _dragMove(draggy){
         if (draggy.relPos.x) {
-            this._setRelPos(draggy.relPos.x * -1, true);
+            this._setRelPos(draggy.relPos.x, true);
         }
     }
 

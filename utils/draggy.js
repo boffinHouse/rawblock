@@ -155,8 +155,8 @@ Object.assign(Draggy.prototype, {
         let ret = true;
 
         if (options.horizontal != options.vertical) {
-            horizontalDif = Math.abs(this.lastPos.x - this.curPos.x);
-            verticalDif = Math.abs(this.lastPos.y - this.curPos.y);
+            horizontalDif = Math.abs(this.curPos.x - this.lastPos.x);
+            verticalDif = Math.abs(this.curPos.y - this.lastPos.y);
 
             ret = (options.horizontal && horizontalDif * 0.8 > verticalDif) || (options.vertical && verticalDif * 0.8 > horizontalDif);
 
@@ -194,8 +194,8 @@ Object.assign(Draggy.prototype, {
 
                 this.velPos = this._velPos;
 
-                this.horizontalVelDir = this.velPos.x - this.curPos.x;
-                this.verticalVelDir = this.velPos.x - this.curPos.x;
+                this.horizontalVelDir = this.curPos.x - this.velPos.x;
+                this.verticalVelDir = this.curPos.x - this.velPos.x;
 
                 this.horizontalVel = Math.abs(this.horizontalVelDir) || 0.00000001;
                 this.verticalVel = Math.abs(this.verticalVelDir) || 0.00000001;
@@ -258,10 +258,10 @@ Object.assign(Draggy.prototype, {
             evt.stopImmediatePropagation();
         }
 
-        this.movedPos.x = this.startPos.x - this.curPos.x;
-        this.movedPos.y = this.startPos.y - this.curPos.y;
-        this.relPos.x = this.lastPos.x - this.curPos.x;
-        this.relPos.y = this.lastPos.y - this.curPos.y;
+        this.movedPos.x = this.curPos.x - this.startPos.x;
+        this.movedPos.y = this.curPos.y - this.startPos.y;
+        this.relPos.x = this.curPos.x - this.lastPos.x;
+        this.relPos.y = this.curPos.y - this.lastPos.y;
 
         options.move(this, evt);
     },
@@ -286,13 +286,13 @@ Object.assign(Draggy.prototype, {
             this._destroyMouse();
         }
 
-        this.movedPos.x = this.startPos.x - this.curPos.x;
-        this.movedPos.y = this.startPos.y - this.curPos.y;
+        this.movedPos.x = this.curPos.x - this.startPos.x;
+        this.movedPos.y = this.curPos.y - this.startPos.y;
 
         if(!('x' in this.relPos) && !('y' in this.lastPos)){
             this.lastPos = this.curPos;
-            this.relPos.x = this.lastPos.x - this.curPos.x;
-            this.relPos.y = this.lastPos.y - this.curPos.y;
+            this.relPos.x = this.curPos.x - this.lastPos.x;
+            this.relPos.y =  this.curPos.y - this.lastPos.y;
         }
 
         options.end(this, evt);
