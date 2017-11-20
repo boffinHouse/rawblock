@@ -881,12 +881,17 @@
         _globalRb2.default.click = {
             cbs: cbs,
             add: function add(name, fn) {
+                var _this2 = this;
+
                 cbs.push({
                     attr: 'data-' + name,
                     fn: fn
                 });
+
                 if (cbs.length == 1) {
-                    this.clickClass = _setupClick();
+                    _globalRb2.default.ready.then(function () {
+                        _this2.clickClass = _setupClick();
+                    });
                 }
             }
         };
@@ -2087,11 +2092,11 @@
             };
 
             Component.prototype.triggerRaf = function triggerRaf() {
-                var _this2 = this,
+                var _this3 = this,
                     _arguments2 = arguments;
 
                 (0, _rafqueue2.default)(function () {
-                    _this2.trigger.apply(_this2, _arguments2);
+                    _this3.trigger.apply(_this3, _arguments2);
                 }, true);
             };
 

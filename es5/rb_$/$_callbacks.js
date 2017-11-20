@@ -35,7 +35,7 @@
                 }
             },
             fire: function fire() {
-                this.fireWith(this, arguments);
+                this.fireWith(this, Array.from(arguments));
             },
             fireWith: function fireWith(that, args) {
                 var i = void 0,
@@ -53,7 +53,7 @@
         };
     }
 
-    if (window.rb && window.rb.$) {
+    if (typeof window != 'undefined' && window.rb && window.rb.$) {
         rb.$.Callbacks = Callbacks;
     }
 });

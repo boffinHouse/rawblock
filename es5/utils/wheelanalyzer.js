@@ -1,29 +1,36 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './pubsub', './debounce'], factory);
+        define(['exports', './global-rb', './debounce', './pubsub'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./pubsub'), require('./debounce'));
+        factory(exports, require('./global-rb'), require('./debounce'), require('./pubsub'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.pubsub, global.debounce);
+        factory(mod.exports, global.globalRb, global.debounce, global.pubsub);
         global.wheelanalyzer = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _globalRb, _debounce) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
 
+    var _globalRb2 = _interopRequireDefault(_globalRb);
 
-    var rb = window.rb;
+    var _debounce2 = _interopRequireDefault(_debounce);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     var WHEELEVENTS_TO_MERGE = 2; // 2
     var WHEELEVENTS_TO_ANALAZE = 3;
 
-    // var ABSDELTA_DECREASE_THRESHOLD = 3;
+    // const ABSDELTA_DECREASE_THRESHOLD = 3;
 
     var defaults = {
         isDebug: true
@@ -46,10 +53,10 @@
         this.scrollPointsToMerge = [];
         this.overallDecreasing = [];
 
-        this._debouncedEndScroll = rb.debounce(this._endScroll, { delay: 50 });
+        this._debouncedEndScroll = (0, _debounce2.default)(this._endScroll, { delay: 50 });
 
         // callback api
-        rb.createPubSub(this);
+        _globalRb2.default.createPubSub(this);
 
         this.options = Object.assign(defaults, options);
     };
@@ -73,6 +80,13 @@
         },
 
         _addWheelEvent: function _addWheelEvent(e) {
+            if (e.deltaMode !== 0) {
+                if (this.options.isDebug) {
+                    _globalRb2.default.logWarn('deltaMode is not 0');
+                }
+                return;
+            }
+
             if (!this.isScrolling) {
                 this._beginScroll(e);
             }
@@ -81,13 +95,6 @@
 
             var currentDelta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
             var currentAbsDelta = Math.abs(currentDelta);
-
-            if (e.deltaMode !== 0) {
-                if (this.options.isDebug) {
-                    rb.logWarn('deltaMode is not 0');
-                }
-                return;
-            }
 
             if (currentAbsDelta > this.lastAbsDelta) {
                 this._endScroll(e);
@@ -200,7 +207,7 @@
             });
 
             if (scrollPointsToAnalize.length < WHEELEVENTS_TO_ANALAZE) {
-                return rb.logError('not enough points.');
+                return _globalRb2.default.logError('not enough points.');
             }
 
             // check if delta is all decreasing
@@ -244,7 +251,7 @@
         }
     });
 
-    rb.WheelAnalyzer = WheelAnalyzer;
+    _globalRb2.default.WheelAnalyzer = WheelAnalyzer;
 
     exports.default = WheelAnalyzer;
 });

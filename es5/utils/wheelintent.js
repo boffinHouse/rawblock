@@ -1,29 +1,36 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './debounce'], factory);
+        define(['exports', './global-rb', '../rb_$/$_callbacks', './debounce'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./debounce'));
+        factory(exports, require('./global-rb'), require('../rb_$/$_callbacks'), require('./debounce'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.debounce);
+        factory(mod.exports, global.globalRb, global.$_callbacks, global.debounce);
         global.wheelintent = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _globalRb, _$_callbacks) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
 
+    var _globalRb2 = _interopRequireDefault(_globalRb);
 
-    var rb = window.rb;
-    var $ = rb.$;
-    var rbWheelProp = rb.Symbol('rbWheel');
-    var special = rb.events.special;
+    var _$_callbacks2 = _interopRequireDefault(_$_callbacks);
 
-    special.rb_wheelintent = {
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    var rbWheelProp = (_globalRb2.default.Symbol || Symbol)('rbWheel');
+    var special = _globalRb2.default.events && _globalRb2.default.events.special || {};
+
+    exports.default = special.rb_wheelintent = {
         handler: function handler(e) {
             var wheelData = this[rbWheelProp];
 
@@ -66,8 +73,8 @@
 
             if (!wheelData) {
                 wheelData = {
-                    cbs: $.Callbacks(),
-                    intentCbs: $.Callbacks(),
+                    cbs: (0, _$_callbacks2.default)(),
+                    intentCbs: (0, _$_callbacks2.default)(),
                     intent: false
                 };
 
@@ -97,6 +104,4 @@
             }
         }
     };
-
-    exports.default = rb.events.special.rb_wheelintent;
 });

@@ -510,15 +510,13 @@
 
             path = this.normalizePath(path || '');
 
-            var changedPath = this.changedPath(path);
-
             if (typeof state == 'boolean') {
                 replace = silent;
                 silent = state;
                 state = null;
             }
 
-            if (!changedPath && !replace) {
+            if (!replace && !this.changedPath(path)) {
                 var samePathStrategy = this.options.samePathStrategy;
 
 

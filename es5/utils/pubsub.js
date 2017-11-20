@@ -1,22 +1,33 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports'], factory);
+        define(['exports', './global-rb', '../rb_$/$_callbacks'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports);
+        factory(exports, require('./global-rb'), require('../rb_$/$_callbacks'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports);
+        factory(mod.exports, global.globalRb, global.$_callbacks);
         global.pubsub = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _globalRb, _$_callbacks) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    var rb = window.rb;
+
+    var _globalRb2 = _interopRequireDefault(_globalRb);
+
+    var _$_callbacks2 = _interopRequireDefault(_$_callbacks);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    var eventSpecial = _globalRb2.default.events && _globalRb2.default.events.special || {};
 
     var throttle = function throttle(fn) {
         var isRunning = void 0,
@@ -71,7 +82,7 @@
      *  @param options.eventPromise=false {undefined|boolean|Promise|rb.deferred}
      * @returns {function} the publish function.
      */
-    rb.createPubSub = function (obj, options) {
+    _globalRb2.default.createPubSub = function (obj, options) {
         var stores = {};
         var stored = {};
 
@@ -83,7 +94,7 @@
             if (memoize) {
                 stored[topic] = data;
             } else if (topic in stored) {
-                rb.log('memoize once, memoize always');
+                _globalRb2.default.log('memoize once, memoize always');
             }
         };
 
@@ -141,7 +152,7 @@
                 }
 
                 if (!stores[topic]) {
-                    stores[topic] = rb.$.Callbacks();
+                    stores[topic] = (0, _$_callbacks2.default)();
 
                     if (options.throttle) {
                         stores[topic]._throttle = throttle(stores[topic].fireWith);
@@ -182,21 +193,21 @@
         if (options.eventName) {
 
             if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
-                if (rb.events.special[options.eventName]) {
-                    rb.logWarn('special event for ' + options.eventName + ' already exists.', rb.events.special[options.eventName]);
+                if (_globalRb2.default.events.special[options.eventName]) {
+                    _globalRb2.default.logWarn('special event for ' + options.eventName + ' already exists.', _globalRb2.default.events.special[options.eventName]);
                 }
             }
 
-            rb.events.special[options.eventName] = {};
+            eventSpecial[options.eventName] = {};
 
             [['add', 'subscribe'], ['remove', 'unsubscribe']].forEach(function (action) {
-                rb.events.special[options.eventName][action[0]] = function (element, handler) {
+                eventSpecial[options.eventName][action[0]] = function (element, handler) {
                     var eventOpts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
                     if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {
 
                         if (element != window && element != document) {
-                            rb.logError('subscribe/unsubscribe only to window/document', arguments);
+                            _globalRb2.default.logError('subscribe/unsubscribe only to window/document', arguments);
                         }
                     }
 
@@ -216,7 +227,7 @@
         return pub;
     };
 
-    rb.createPubSub(rb);
+    _globalRb2.default.createPubSub(_globalRb2.default);
 
-    exports.default = rb.createPubSub;
+    exports.default = _globalRb2.default.createPubSub;
 });
