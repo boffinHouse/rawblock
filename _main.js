@@ -1442,7 +1442,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 fn: fn,
             });
             if (cbs.length == 1) {
-                this.clickClass = setupClick();
+                var that = this;
+
+                rb.ready.then(function(){
+                    that.clickClass = setupClick();
+                });
             }
         },
     };
