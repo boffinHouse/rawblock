@@ -852,8 +852,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
                 attr: 'data-' + name,
                 fn: fn,
             });
+
             if (cbs.length == 1) {
-                this.clickClass = setupClick();
+                rb.ready.then(()=>{
+                    this.clickClass = setupClick();
+                });
             }
         },
     };
