@@ -194,14 +194,11 @@ Object.assign(Draggy.prototype, {
 
                 this.velPos = this._velPos;
 
-                this.horizontalVelDir = this.curPos.x - this.velPos.x;
-                this.verticalVelDir = this.curPos.x - this.velPos.x;
+                this.horizontalVelDir = (this.curPos.x - this.velPos.x) / velTiming;
+                this.verticalVelDir = (this.curPos.x - this.velPos.x) / velTiming;
 
                 this.horizontalVel = Math.abs(this.horizontalVelDir) || 0.00000001;
                 this.verticalVel = Math.abs(this.verticalVelDir) || 0.00000001;
-
-                this.verticalVel /= velTiming;
-                this.horizontalVel /= velTiming;
             }
         }
 
