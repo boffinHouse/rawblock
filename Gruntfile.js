@@ -49,7 +49,7 @@
             'webpack:dev',
             'babel:tests',
             'karma',
-            'qunit',
+            // 'qunit',
         ]);
 
         grunt.registerTask('prepublish', [

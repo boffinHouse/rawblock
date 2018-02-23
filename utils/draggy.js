@@ -33,12 +33,7 @@ const supportsPassiveEventListener = !supportsPointerWithoutTouch && supportsCss
         return supportsPassiveOption;
     })();
 const supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
-const hasIOSScrollBug = (function () {
-    const ua = navigator.userAgent || '';
-    const version = !supportsCssTouchActionPan && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
-
-    return (version && parseInt(version[1], 10) < 3);
-})();
+const hasIOSScrollBug = !supportsCssTouchActionPan && (/iphone|ipad/i).test(navigator.userAgent || '');
 
 function Draggy(element, options) {
 
