@@ -58,12 +58,7 @@
         return supportsPassiveOption;
     }();
     var supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
-    var hasIOSScrollBug = function () {
-        var ua = navigator.userAgent || '';
-        var version = !supportsCssTouchActionPan && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
-
-        return version && parseInt(version[1], 10) < 3;
-    }();
+    var hasIOSScrollBug = !supportsCssTouchActionPan && /iphone|ipad/i.test(navigator.userAgent || '');
 
     function Draggy(element, options) {
         var _this = this;
