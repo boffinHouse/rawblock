@@ -1,5 +1,3 @@
-import syncedSession from '../../utils/synced-session-storage';
-
 var ASSETBASEPATH = window.siteData && siteData.basePath || '';
 //load dom or jQuery
 require('../../_$');
@@ -18,10 +16,3 @@ require('../../taskrunner/grunt/webpack/globloader!./glob.paths');
 require('../../taskrunner/grunt/webpack/lazyglobloader!./lazyglob.paths');
 
 rb.$(rb.live.init);
-rb.Router.init();
-
-syncedSession.init().then(() => {
-    syncedSession.set('yo', 'yo');
-    console.log('foo', syncedSession.get('foo'));
-    console.log('bar', syncedSession.get('bar'));
-});

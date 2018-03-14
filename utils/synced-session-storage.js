@@ -38,7 +38,7 @@ function tranferStorage({key, newValue}){
 
     if(key == GET_SYNCED_STORAGE){
         dispatchOwnSession();
-    } else if(key == SYNCED_STORAGE_KEY){
+    } else if(key == SYNCED_STORAGE_KEY && !promise.isDone){
         storeOtherWindowsSession(newValue);
     }
 }
@@ -50,8 +50,8 @@ function initSyncedSession(){
         storage.local.set(GET_SYNCED_STORAGE, true);
 
         setTimeout(() => {
-            storage.local.remove(GET_SYNCED_STORAGE, true);
             promise.resolve();
+            storage.local.remove(GET_SYNCED_STORAGE);
         }, 9);
     }
 
