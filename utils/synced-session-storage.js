@@ -38,7 +38,7 @@ function tranferStorage({key, newValue}){
 
     if(key == GET_SYNCED_STORAGE){
         dispatchOwnSession();
-    } else if(key == SYNCED_STORAGE_KEY && !promise.isDone){
+    } else if(key == SYNCED_STORAGE_KEY){
         storeOtherWindowsSession(newValue);
     }
 }
