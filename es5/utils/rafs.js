@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './rafqueue'], factory);
+        define(['exports', './global-rb', './rafqueue'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./rafqueue'));
+        factory(exports, require('./global-rb'), require('./rafqueue'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.rafqueue);
+        factory(mod.exports, global.globalRb, global.rafqueue);
         global.rafs = mod.exports;
     }
-})(this, function (exports, _rafqueue) {
+})(this, function (exports, _globalRb, _rafqueue) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -22,6 +22,8 @@
     exports.default = function (fn) {
         return typeof fn == 'function' ? rAF.apply(undefined, arguments) : rAFs.apply(undefined, arguments);
     };
+
+    var _globalRb2 = _interopRequireDefault(_globalRb);
 
     var _rafqueue2 = _interopRequireDefault(_rafqueue);
 
@@ -49,19 +51,19 @@
      *
      * @example
      *  class Foo {
-    	 *      constructor(element){
-    	 *          this.element = element;
-    	 *          this.changeLayout = rb.rAF(this.changeLayout);
-    	 *      }
-    	 *
-    	 *      changeLayout(width){
-    	 *          this.element.classList[width > 800 ? 'add' : 'remove']('is-large');
-    	 *      }
-    	 *
-    	 *      measureLayout(){
-    	 *          this.changeLayout(this.element.offsetWidth);
-    	 *      }
-    	 *  }
+     *      constructor(element){
+     *          this.element = element;
+     *          this.changeLayout = rb.rAF(this.changeLayout);
+     *      }
+     *
+     *      changeLayout(width){
+     *          this.element.classList[width > 800 ? 'add' : 'remove']('is-large');
+     *      }
+     *
+     *      measureLayout(){
+     *          this.changeLayout(this.element.offsetWidth);
+     *      }
+     *  }
      */
     function rAF(fn, options) {
         var running = void 0,
@@ -98,8 +100,8 @@
 
         inProgress = !options.queue;
 
-        if (fn._rbUnrafedFn) {
-            rb.log('double rafed', fn);
+        if (fn._rbUnrafedFn && _globalRb2.default.log) {
+            _globalRb2.default.log('double rafed', fn);
         }
 
         rafedFn._rbUnrafedFn = fn;
@@ -134,11 +136,9 @@
         }
 
         args.forEach(function (fn) {
-            obj[fn] = rb.rAF(obj[fn], options);
+            obj[fn] = _globalRb2.default.rAF(obj[fn], options);
         });
     }
 
-    if (window.rb) {
-        Object.assign(window.rb, { rAF: rAF, rAFs: rAFs });
-    }
+    Object.assign(_globalRb2.default, { rAF: rAF, rAFs: rAFs });
 });

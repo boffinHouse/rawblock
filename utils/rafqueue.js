@@ -1,6 +1,9 @@
+import rb from './global-rb';
+
 let isInProgress, inProgressStack;
 const fns1 = [];
 const fns2 = [];
+const immediatePromise = Promise.resolve();
 
 let curFns = fns1;
 
@@ -9,9 +12,11 @@ const run = function () {
     curFns = fns1.length ? fns2 : fns1;
 
     isInProgress = true;
+
     while (inProgressStack.length) {
         inProgressStack.shift()();
     }
+
     isInProgress = false;
 };
 
@@ -26,7 +31,8 @@ const run = function () {
 export default function rAFQueue(fn, inProgress, hiddenRaf) {
 
     if (inProgress && isInProgress) {
-        fn();
+        //ToDo needs some more testing compared to real immediate callback (i.e.: `fn();`)
+        immediatePromise.then(fn);
     } else {
         curFns.push(fn);
         if (curFns.length == 1) {
@@ -35,6 +41,4 @@ export default function rAFQueue(fn, inProgress, hiddenRaf) {
     }
 }
 
-if(window.rb){
-    window.rb.rAFQueue = rAFQueue;
-}
+rb.rAFQueue = rAFQueue;

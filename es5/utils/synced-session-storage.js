@@ -80,8 +80,8 @@
             _storage2.default.local.set(GET_SYNCED_STORAGE, true);
 
             setTimeout(function () {
-                _storage2.default.local.remove(GET_SYNCED_STORAGE, true);
                 promise.resolve();
+                _storage2.default.local.remove(GET_SYNCED_STORAGE);
             }, 9);
         }
 
