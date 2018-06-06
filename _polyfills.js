@@ -1,6 +1,8 @@
 var bind = require('function-bind');
 var assign = require('object-assign');
 var findIndex = require('array.prototype.findindex');
+var entries = require('object.entries');
+var values = require('object.values');
 
 require('dom4');
 require('es6-promise');
@@ -20,7 +22,15 @@ if(!Function.prototype.bind){
 }
 
 if(!Object.assign){
-	Object.assign = assign;
+    Object.assign = assign;
+}
+
+if (!Object.entries) {
+    entries.shim();
+}
+
+if (!Object.values) {
+    values.shim();
 }
 
 if(!Array.prototype.findIndex){

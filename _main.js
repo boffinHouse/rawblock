@@ -6,6 +6,9 @@ import './utils/rafs';
 import throttle from './utils/throttle';
 import getId from './utils/get-id';
 import addLog from './utils/add-log';
+import getCSSNumbers from './utils/getCssNumbers';
+
+rb.getCSSNumbers = getCSSNumbers;
 
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
@@ -307,37 +310,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     }, {that: rb.resize, read: true});
 
     /* End: resize */
-
-    /* Begin: getCSSNumbers */
-    /**
-     * Sums up all style values of an element
-     * @memberof rb
-     * @param element {Element}
-     * @param styles {String[]} The names of the style properties (i.e. paddingTop, marginTop)
-     * @param onlyPositive {Boolean} Whether only positive numbers should be considered
-     * @returns {number} Total of all style values
-     * @example
-     * var innerWidth = rb.getCSSNumbers(domElement, ['paddingLeft', 'paddingRight', 'width'];
-     */
-    rb.getCSSNumbers = function (element, styles, onlyPositive) {
-        var i, value;
-        var numbers = 0;
-        var cStyles = rb.getStyles(element);
-        if (!Array.isArray(styles)) {
-            styles = [styles];
-        }
-
-        for (i = 0; i < styles.length; i++) {
-            value = $.css(element, styles[i], true, cStyles);
-
-            if (!onlyPositive || value > 0) {
-                numbers += value;
-            }
-        }
-
-        return numbers;
-    };
-    /* End: getCSSNumbers */
 
     /* Begin: memoize */
 

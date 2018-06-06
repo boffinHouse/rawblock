@@ -1,4 +1,5 @@
 import rb from './utils/global-rb';
+import getStyles from './utils/get-styles';
 
 let getPseudoToParse;
 
@@ -87,24 +88,7 @@ rb.hasPseudoChanged = function(element, privateExpando){
     return getPseudoToParse(element) != value;
 };
 
-/**
- * Returns the ComputedStyleObject of an element.
- * @memberof rb
- * @param element {Element}
- * @param [pseudo] {String|null} Either `'::after'`, `'::before'` or `null`/`undefined`
- * @returns {CssStyle}
- *
- * @example
- * rb.getStyles(element).position // returns 'absolute', 'relative' ...
- */
-rb.getStyles = function (element, pseudo) {
-    let view = element.ownerDocument.defaultView;
-
-    if (!view.opener) {
-        view = window;
-    }
-    return view.getComputedStyle(element, pseudo || null) || {getPropertyValue: rb.$ && rb.$.noop, isNull: true};
-};
+rb.getStyles = getStyles;
 
 /**
  * Parsed global data from Stylesheet (html::before and html::before)
@@ -156,7 +140,7 @@ const parseCSS = function () {
         configurable: true,
         enumerable: true,
         writable: true,
-        value: Object.assign(cssConfig, styles)
+        value: Object.assign(cssConfig, styles),
     });
 
     Object.defineProperty(cssConfig, 'mqChange', {
