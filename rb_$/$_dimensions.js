@@ -1,9 +1,10 @@
 import rb from '../utils/global-rb';
 import rAFQueue from '../utils/rafqueue';
 import getStyles from '../utils/get-styles';
-import getCSSNumbers from '../utils/getCSSNumbers';
+import getCss from '../utils/get-css';
+import getCSSNumbers from '../utils/get-css-numbers';
 
-export default function addDimensions(Dom){
+export default function addDimensions(Dom, asyncDefault){
     let added, isBorderBoxRelieable;
     let div = document.createElement('div');
     const fn = Dom.fn;
@@ -62,10 +63,11 @@ export default function addDimensions(Dom){
             const oldFn = fn[fnName];
             const outerName = `outer${names[1]}`;
 
-            fn[fnName] = function(margin, margin2){
+            fn[fnName] = function(margin, ...rest){
+                const isSync = margin == 'sync';
 
-                if(oldFn && margin != 'async'){
-                    return oldFn.apply(this, arguments);
+                if(oldFn && ((margin != 'async' && !asyncDefault) || isSync)){
+                    return oldFn.apply(this, isSync ? rest : arguments);
                 }
 
                 let styles, extraStyles, isBorderBox, doc;
@@ -73,7 +75,7 @@ export default function addDimensions(Dom){
                 const elem = this.get(0);
 
                 if(margin == 'async'){
-                    margin = margin2;
+                    margin = rest && rest[0];
                 }
 
                 if(margin != null && typeof margin == 'number'){
@@ -99,7 +101,7 @@ export default function addDimensions(Dom){
                         );
                     } else if(elem.nodeType){
                         styles = getStyles(elem);
-                        ret = Dom.css(elem, cssName, true, styles);
+                        ret = getCss(elem, cssName, true, styles);
                         isBorderBox = styles.boxSizing == 'border-box' && boxSizingReliable();
 
                         switch (modifier){

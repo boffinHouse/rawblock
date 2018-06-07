@@ -30,6 +30,7 @@
         inProgressStack = void 0;
     var fns1 = [];
     var fns2 = [];
+    var immediatePromise = Promise.resolve();
 
     var curFns = fns1;
 
@@ -38,9 +39,11 @@
         curFns = fns1.length ? fns2 : fns1;
 
         isInProgress = true;
+
         while (inProgressStack.length) {
             inProgressStack.shift()();
         }
+
         isInProgress = false;
     };
 
@@ -55,7 +58,8 @@
     function rAFQueue(fn, inProgress, hiddenRaf) {
 
         if (inProgress && isInProgress) {
-            fn();
+            //ToDo needs some more testing compared to real immediate callback (i.e.: `fn();`)
+            immediatePromise.then(fn);
         } else {
             curFns.push(fn);
             if (curFns.length == 1) {

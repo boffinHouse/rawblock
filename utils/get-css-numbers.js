@@ -1,4 +1,4 @@
-import rb from './global-rb';
+import getCss from './get-css';
 import getStyles from './get-styles';
 
 /**
@@ -12,15 +12,15 @@ import getStyles from './get-styles';
  * var innerWidth = rb.getCSSNumbers(domElement, ['paddingLeft', 'paddingRight', 'width'];
  */
 export default function getCSSNumbers(element, styles, onlyPositive) {
-    var i, value;
-    var numbers = 0;
-    var cStyles = getStyles(element);
+    let numbers = 0;
+    const cStyles = getStyles(element);
+
     if (!Array.isArray(styles)) {
         styles = [styles];
     }
 
-    for (i = 0; i < styles.length; i++) {
-        value = rb.$.css(element, styles[i], true, cStyles);
+    for (let i = 0; i < styles.length; i++) {
+        const value = getCss(element, styles[i], true, cStyles);
 
         if (!onlyPositive || value > 0) {
             numbers += value;

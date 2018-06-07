@@ -119,7 +119,8 @@
      * @memberof rb
      *
      * @param {Object} obj
-     * @param {Object} [options]
+     * @param {Object} [options] see more option @ `rb.rAF`
+     * @param {String} options.nameAppendix='' Wether the rafed method should be renamed by appending the given string.
      * @param {...String} methodNames
      *
      * @example
@@ -135,8 +136,10 @@
             options = args.shift();
         }
 
+        var nameAppendix = options && options.nameAppendix || '';
+
         args.forEach(function (fn) {
-            obj[fn] = _globalRb2.default.rAF(obj[fn], options);
+            obj[fn + nameAppendix] = _globalRb2.default.rAF(obj[fn], options);
         });
     }
 

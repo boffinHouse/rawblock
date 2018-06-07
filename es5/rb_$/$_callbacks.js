@@ -53,7 +53,7 @@
         };
     }
 
-    if (typeof window != 'undefined' && window.rb && window.rb.$) {
+    if (typeof window != 'undefined' && window.rb && window.rb.$ && !window.rb.$.Callbacks) {
         rb.$.Callbacks = Callbacks;
     }
 });

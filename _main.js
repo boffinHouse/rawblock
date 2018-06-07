@@ -6,7 +6,7 @@ import './utils/rafs';
 import throttle from './utils/throttle';
 import getId from './utils/get-id';
 import addLog from './utils/add-log';
-import getCSSNumbers from './utils/getCssNumbers';
+import getCSSNumbers from './utils/get-css-numbers';
 
 rb.getCSSNumbers = getCSSNumbers;
 

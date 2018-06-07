@@ -3,6 +3,7 @@ import isPlainObject from './$_is-plain-object';
 import extend from './$_extend';
 import Callbacks from './$_callbacks';
 import addDimensions from './$_dimensions';
+import getCss, {cssHooks} from '../utils/get-css';
 
 let dataSymbol, regFocusable;
 const specialEvents = {};
@@ -45,7 +46,7 @@ const Dom = function (elements, context) {
     this.elements = elements;
     this.length = this.elements.length || 0;
 };
-const regComma = /^\d+,\d+(px|em|rem|%|deg)$/;
+
 const regWhite = /\s+/g;
 const regHTML = /^\s*</;
 const fn = Dom.prototype;
@@ -53,6 +54,7 @@ const fn = Dom.prototype;
 Object.assign(Dom, {
     isPlainObject: isPlainObject,
     extend: extend,
+    cssHooks,
     event: {
         special: specialEvents,
     },
@@ -60,7 +62,6 @@ Object.assign(Dom, {
     cssNumber: {
         opacity: true,
     },
-    cssHooks: {},
     support: {},
     isReady: document.readyState != 'loading',
     parseHTML: function(string, context = document){
@@ -85,28 +86,7 @@ Object.assign(Dom, {
         return event;
     },
     Callbacks: Callbacks,
-    css: function (elem, name, extra, styles) {
-        let ret, num;
 
-        if (Dom.cssHooks[name] && Dom.cssHooks[name].get) {
-            ret = Dom.cssHooks[name].get(elem);
-        } else {
-            styles = styles || rb.getStyles(elem, null);
-            ret = styles.getPropertyValue(name) || styles[name];
-        }
-
-        if(ret && regComma.test(ret)){
-            ret = ret.replace(',', '.');
-        }
-
-        if (extra) {
-            num = parseFloat(ret);
-            if (extra === true || !isNaN(num)) {
-                ret = num || 0;
-            }
-        }
-        return ret;
-    },
     camelCase: (function () {
         const reg = /-([\da-z])/gi;
         const camelCase = function (all, found) {
@@ -150,7 +130,7 @@ Object.assign(fn, {
         if (typeof style == 'string') {
             if(arguments.length == 1){
                 elem = this.elements[0];
-                return elem && Dom.css(elem, style);
+                return elem && getCss(elem, style);
             }
 
             style = {[style]: value};
@@ -691,5 +671,7 @@ if (!Dom.isReady) {
 if(rb.param){
     Dom.param = rb.param;
 }
+
+rb.$ = Dom;
 
 export default Dom;

@@ -7,19 +7,19 @@ module.exports = {
     options: {
         port: '<%= ports.app %>',
         livereload: '<%= ports.livereload %>',
-        hostname: 'localhost'
+        hostname: '*',
     },
     livereload: {
         options: {
             open: true,
-            base: ['<%= paths.dev %>']
-        }
+            base: ['<%= paths.dev %>'],
+        },
     },
     casper: {
         options: {
             port: '<%= ports.test %>',
             base: ['<%= paths.dev %>'],
             livereload: false,
-        }
+        },
     },
 };
