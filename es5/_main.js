@@ -1717,7 +1717,7 @@
             if (delegateEvents.length) {
                 oldCallbacks = {
                     attached: that.attached,
-                    detached: that.detached
+                    detached: that.detached,
                 };
 
                 [['attached', 'add'], ['detached', 'remove']].forEach(function (descriptor) {

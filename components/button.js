@@ -1,4 +1,4 @@
-const rb = window.rb;
+import rb, { Component } from '../core';
 
 /**
  * Class component to create a button.
@@ -21,7 +21,7 @@ const rb = window.rb;
  * <div id="panel-1" data-module="panel"></div>
  * ```
  */
-class Button extends rb.Component {
+class Button extends Component {
     /**
      * @static
      *
@@ -228,6 +228,6 @@ class Button extends rb.Component {
     }
 }
 
-rb.live.register('button', Button);
+Component.register('button', Button);
 
 export default Button;

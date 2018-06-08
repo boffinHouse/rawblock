@@ -1,4 +1,5 @@
 import rb from './utils/global-rb';
+import './_crucial';
 import deferred from './utils/deferred';
 import rIC from './utils/request-idle-callback';
 import rAFQueue from './utils/rafqueue';
@@ -2372,13 +2373,20 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          * }
          */
         events: {},
+
+        register: live.register,
+        $: $,
     });
 
     Component.prototype.getElementsFromString = Component.prototype.getElementsByString;
 
     rb.Component = Component;
 
+
+
 })(window, document, rb.live);
+
+export const Component = rb.Component;
 
 export default window.rb;
 

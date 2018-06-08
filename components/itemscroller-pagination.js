@@ -1,7 +1,7 @@
+import rb, { Component } from '../core';
 import './itemscroller';
 
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 
 class ItemScrollerPagination extends rb.components.itemscroller {
     /**
@@ -98,7 +98,7 @@ class ItemScrollerPagination extends rb.components.itemscroller {
     }
 }
 
-rb.live.register('itemscroller', ItemScrollerPagination, true);
+Component.register('itemscroller', ItemScrollerPagination, true);
 
 export default ItemScrollerPagination;
 

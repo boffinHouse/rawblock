@@ -1,6 +1,6 @@
-const rb = window.rb;
+import rb, { Component } from '../core';
 
-class Selectlist extends rb.Component {
+class Selectlist extends Component {
 
     static get events() {
         return {
@@ -29,5 +29,5 @@ class Selectlist extends rb.Component {
     }
 }
 
-rb.live.register('selectlist', Selectlist);
+Component.register('selectlist', Selectlist);
 

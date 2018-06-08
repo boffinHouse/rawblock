@@ -1,7 +1,6 @@
+import rb, { Component } from '../core';
 import './itemscroller';
 import '../utils/keyboardfocus';
-
-const rb = window.rb;
 
 class ItemScrollerPlayer extends rb.components.itemscroller {
     /**
@@ -124,6 +123,6 @@ class ItemScrollerPlayer extends rb.components.itemscroller {
     }
 }
 
-rb.live.register('itemscroller', ItemScrollerPlayer, true);
+Component.register('itemscroller', ItemScrollerPlayer, true);
 
 export default ItemScrollerPlayer;

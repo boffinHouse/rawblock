@@ -1,3 +1,4 @@
+import rb, { Component } from '../core';
 import './button';
 
 /**
@@ -112,6 +113,6 @@ class PanelButton extends rb.components.button {
     }
 }
 
-rb.live.register('panelbutton', PanelButton);
+Component.register('panelbutton', PanelButton);
 
 export default PanelButton;

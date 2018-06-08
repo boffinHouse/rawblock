@@ -19,7 +19,7 @@
       "url": "http://github.com/afarkas"
     }
   ],
-  "main": "_main",
+  "main": "core",
   "style": "_helpers.scss",
   "engines": {
     "node": ">=4.6"

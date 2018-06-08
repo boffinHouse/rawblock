@@ -1,13 +1,13 @@
+import rb, { Component } from '../core';
 import '../utils/spring-animation';
 
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 
 /**
  * Class component to create a SpringAnimation Demo
  *
  */
-class SpringAnimationDemoGroup extends rb.Component {
+class SpringAnimationDemoGroup extends Component {
 
     static get defaults() {
         return {
@@ -38,7 +38,7 @@ class SpringAnimationDemoGroup extends rb.Component {
         this.childsWereAtEnd = false;
 
         this.templates = Object.assign({}, this.templates, {
-            childTemplate: rb.template(this.query('.{name}-child-template').innerHTML)
+            childTemplate: rb.template(this.query('.{name}-child-template').innerHTML),
         });
 
         this.rAFs({that: this}, 'createChildComponents', 'removeChildComponent');
@@ -278,7 +278,7 @@ class SpringAnimationDemo extends rb.Component {
                 this._hasEnded = true;
                 this.trigger('ended');
                 this.updateStateClass();
-            }
+            },
         }, opts);
 
         this.springAnimation = new rb.SpringAnimation(springOpts);
@@ -314,7 +314,7 @@ class SpringAnimationDemo extends rb.Component {
     // alt key -> show ghosts (would be better with canvas)
 }
 
-rb.live.register('springanimationdemogroup', SpringAnimationDemoGroup);
+Component.register('springanimationdemogroup', SpringAnimationDemoGroup);
 
 export {SpringAnimationDemoGroup, SpringAnimationDemo};
-export default rb.live.register('springanimationdemo', SpringAnimationDemo);
+export default Component.register('springanimationdemo', SpringAnimationDemo);

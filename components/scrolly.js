@@ -1,5 +1,6 @@
-const rb = window.rb;
-const $ = rb.$;
+import rb, { Component } from '../core';
+
+const $ = Component.$;
 
 const docElem = rb.root;
 
@@ -72,7 +73,7 @@ const docElem = rb.root;
  * </div>
  *
  */
-class Scrolly extends (rb.components._childfx || rb.Component) {
+class Scrolly extends (rb.components._childfx || Component) {
     /**
      * @mixes rb.components._childfx.defaults
      *
@@ -411,6 +412,6 @@ Object.assign(Scrolly, {
     knownUnits: {vh: 1, eh: 1, vw: 1, ew: 1},
 });
 
-rb.live.register('scrolly', Scrolly);
+Component.register('scrolly', Scrolly);
 
 export default Scrolly;

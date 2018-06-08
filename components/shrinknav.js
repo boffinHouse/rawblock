@@ -1,8 +1,9 @@
+import rb, { Component } from '../core';
+
 import '../utils/resize';
 
 const regPoint = /^./;
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 
 /**
  * Class component to create a ShrinkNav.
@@ -19,7 +20,7 @@ const $ = rb.$;
  * @example
  * <div class="js-rb-live" data-module="shrinknav"></div>
  */
-class ShrinkNav extends rb.Component {
+class ShrinkNav extends Component {
     /**
      * @static
      * @mixes rb.Component.defaults
@@ -313,6 +314,6 @@ class ShrinkNav extends rb.Component {
     }
 }
 
-rb.live.register('shrinknav', ShrinkNav);
+Component.register('shrinknav', ShrinkNav);
 
 export default ShrinkNav;

@@ -1,6 +1,6 @@
+import rb, { Component } from '../core';
 import './itemscroller';
 
-const rb = window.rb;
 const regSizes = /(\(\s*(min|max)(-width)?\s*:\s*(\d+\.*\d*)(px)?\)\s*)?(\d+\.*\d*)(px|%)?/g;
 
 const createConditions = rb.memoize(function (value) {
@@ -131,6 +131,6 @@ class ItemScrollerQueries extends rb.components.itemscroller {
     }
 }
 
-rb.live.register('itemscroller', ItemScrollerQueries, true);
+Component.register('itemscroller', ItemScrollerQueries, true);
 
 export default ItemScrollerQueries;

@@ -1,10 +1,10 @@
+import rb, { Component } from '../core';
 import './panelbutton';
 import './panel';
 import './_composer-component';
 import '../utils/contains';
 
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 const live = rb.live;
 const componentExpando = live.componentExpando;
 const components = rb.components;
@@ -508,7 +508,7 @@ class PanelGroup extends rb.components._composer_component {
     }
 }
 
-rb.live.register('panelgroup', PanelGroup);
+Component.register('panelgroup', PanelGroup);
 
 export default PanelGroup;
 
@@ -516,7 +516,7 @@ class PanelGroupButton extends components.button {
 
 }
 
-live.register('panelgroupbutton', PanelGroupButton);
+Component.register('panelgroupbutton', PanelGroupButton);
 
 /**
  * Class component to create a tab component. This component simply just changes some default options of the [panelgroup component]{@link rb.components.panelgroup}.
@@ -568,7 +568,7 @@ class Tabs extends components.panelgroup {
     }
 }
 
-live.register('tabs', Tabs);
+Component.register('tabs', Tabs);
 
 /**
  * Class component to create a accordion component. This component simply just changes some default options of the [panelgroup component]{@link rb.components.panelgroup}.
@@ -616,4 +616,4 @@ class Accordion extends components.panelgroup {
     }
 }
 
-live.register('accordion', Accordion);
+Component.register('accordion', Accordion);

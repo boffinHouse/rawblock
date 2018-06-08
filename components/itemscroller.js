@@ -1,3 +1,4 @@
+import rb, {Component} from '../core';
 import '../utils/resize';
 import '../utils/prefixed';
 import '../utils/draggy_wheel';
@@ -5,8 +6,7 @@ import '../utils/draggy_wheel';
 import cssSupports from '../utils/css-supports';
 
 
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 const regIndex = /\{index}/g;
 const orderProp = rb.prefixed('order') || rb.prefixed('flexOrder');
 const supportSomeOrder = !!orderProp;
@@ -86,7 +86,7 @@ const supports3dTransform = cssSupports('transform', 'translate3d(0,0,0)');
  *      buildOptions();
  * });
  */
-class ItemScroller extends rb.Component {
+class ItemScroller extends Component {
     /**
      * @static
      * @mixes rb.Component.prototype.defaults
@@ -1053,8 +1053,7 @@ class ItemScroller extends rb.Component {
         if(this.maxWrapRight > 0){
             this.maxWrapRight = 0;
         }
-
-}
+    }
 
     _writeLayout() {
         var wasPos = this._pos;
@@ -1305,7 +1304,7 @@ class ItemScroller extends rb.Component {
 
 
 
-rb.live.register('itemscroller', ItemScroller);
+Component.register('itemscroller', ItemScroller);
 
 export default ItemScroller;
 

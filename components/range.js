@@ -1,7 +1,7 @@
+import rb, { Component } from '../core';
 import '../utils/draggy';
 
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 
 if (!rb.i18n) {
     rb.i18n = {};
@@ -43,7 +43,7 @@ if (!rb.i18n) {
  *      console.log('values changed', rb.$(this).rbComponent().getValues());
  * });
  */
-class Range extends rb.Component {
+class Range extends Component {
     /**
      * @static
      * @mixes rb.Component.defaults
@@ -701,6 +701,6 @@ Object.assign(Range, {
     },
 });
 
-rb.live.register('range', Range);
+Component.register('range', Range);
 
 export default Range;

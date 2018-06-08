@@ -1,4 +1,5 @@
-const rb = window.rb;
+import rb, { Component } from '../core';
+
 
 /**
  * Class component to create a ListBox.
@@ -19,7 +20,7 @@ const rb = window.rb;
  *      <span class="listbox-item">Item 2</span>
  * </div>
  */
-class Listbox extends rb.Component {
+class Listbox extends Component {
 
     /**
      * @static
@@ -46,7 +47,7 @@ class Listbox extends rb.Component {
 
         this.isList = Listbox.regList.test(element.nodeName);
 
-        rb.rAFs(this, {throttle: true}, '_changeSelected', '_changeChecked', 'postRender', 'renderList', '_setFocusElement', '_setInitialMarkup');
+        this.rAFs({throttle: true}, '_changeSelected', '_changeChecked', 'postRender', 'renderList', '_setFocusElement', '_setInitialMarkup');
 
         this._onkeyboardInput = this._onkeyboardInput.bind(this);
 
@@ -323,6 +324,6 @@ Object.assign(Listbox, {
     },
 });
 
-rb.live.register('listbox', Listbox);
+Component.register('listbox', Listbox);
 
 export default Listbox;

@@ -1,8 +1,8 @@
+import rb, { Component } from '../core';
 import '../utils/scrollbarwidth';
 import './_focus-component';
 
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 const regInputs = /^(?:input|textarea)$/i;
 
 /**
@@ -389,6 +389,6 @@ rb.ready.then(function(){
     });
 });
 
-rb.live.register('dialog', Dialog);
+Component.register('dialog', Dialog);
 
 export default Dialog;

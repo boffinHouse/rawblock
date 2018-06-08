@@ -1,10 +1,10 @@
+import rb, { Component } from '../core';
 import './panelbutton';
 import './_focus-component';
 import '../utils/$_slide-up-down';
 import '../utils/contains';
 
-const rb = window.rb;
-const $ = rb.$;
+const $ = Component.$;
 const regInputs = /^(?:input|textarea)$/i;
 
 /**
@@ -560,6 +560,6 @@ class Panel extends rb.components._focus_component {
     }
 }
 
-rb.live.register('panel', Panel);
+Component.register('panel', Panel);
 
 export default Panel;

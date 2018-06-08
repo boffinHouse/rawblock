@@ -1,5 +1,6 @@
-const rb = window.rb;
-const $ = rb.$;
+import rb, { Component } from '../core';
+
+const $ = Component.$;
 const isContainerScroll = {scroll: 1, auto: 1};
 const isContainerAncestor = {parent: 'parentNode', positionedParent: 'offsetParent'};
 const docElem = document.documentElement;
@@ -54,7 +55,7 @@ if (!rb.components._childfx) {
  *     }
  * </style>
  */
-class Sticky extends (rb.components._childfx || rb.Component) {
+class Sticky extends (rb.components._childfx || Component) {
     /**
      * @mixes rb.components._childfx.defaults
      *
@@ -501,4 +502,4 @@ class Sticky extends (rb.components._childfx || rb.Component) {
     }
 }
 
-export default rb.live.register('sticky', Sticky);
+export default Component.register('sticky', Sticky);

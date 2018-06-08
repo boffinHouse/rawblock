@@ -1,8 +1,9 @@
+import rb, { Component } from '../core';
 import './panel';
 import '../utils/position';
 
-const rb = window.rb;
-const $ = rb.$;
+
+const $ = Component.$;
 
 const Position = rb.Position;
 
@@ -206,6 +207,6 @@ Object.assign(Popover, {
     },
 });
 
-rb.live.register('popover', Popover);
+Component.register('popover', Popover);
 
 export default Popover;

@@ -2,7 +2,7 @@ var ASSETBASEPATH = window.siteData && siteData.basePath || '';
 //load dom or jQuery
 require('../../_$');
 
-require('../../_main');
+require('../../core');
 
 rb.BezierEasing = require('bezier-easing');
 //require('./utils/rb_$$');
