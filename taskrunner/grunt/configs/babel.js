@@ -10,7 +10,7 @@ module.exports = {
             {
                 expand: true,
                 cwd: 'src/',
-                src: ['*.js', '!polyfills.js', '!*-tests.js', '!*-spec.js'],
+                src: ['**/*.js', '!**/*-tests.js', '!**/*-spec.js'],
                 dest: '',
             },
         ],

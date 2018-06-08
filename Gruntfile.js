@@ -55,6 +55,7 @@
         grunt.registerTask('prepublish', [
             'lint',
             'test',
+            'clean:publish',
             'babel:publish',
             'copy:publish',
         ]);

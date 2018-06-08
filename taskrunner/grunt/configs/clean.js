@@ -7,6 +7,14 @@ module.exports = {
 	options: {
 		force: true
 	},
+	publish: {
+        files: [
+            {
+                src: ['components', 'helpers', 'utils', 'polyfills.js', 'core.js', '$.js', 'crucial.js',
+					'_basics.scss', '_helpers.scss'],
+            }
+        ],
+	},
 	dev: {
 		files: [
 			{
