@@ -1,1 +1,1 @@
-require('../../_polyfills');
+require('../../src/polyfills');

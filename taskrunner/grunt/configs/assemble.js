@@ -8,35 +8,35 @@ module.exports = {
 	options: {
 		data: [
 			'<%= paths.src %>/templates/data/**/*.{json,yml}',
-			'./components/**/*.{json,yml}',
+			'./src/components/**/*.{json,yml}',
 			],
 		helpers: ['handlebarsg-helper-partial', '<%= paths.src %>/templates/helpers/**/*.js'],
 		layoutdir: '<%= paths.src %>/templates/layouts/',
 		partials: [
 			'<%= paths.src %>/templates/partials/**/*.hbs',
-			'./components/**/*.hbs',
-			'!./components/**/*_page.hbs'
-		]
+			'./src/components/**/*.hbs',
+			'!./src/components/**/*_page.hbs',
+		],
 	},
 	dev: {
 		options: {
-			production: false
+			production: false,
 		},
 		files: [
 			{
-				cwd: './components/',
+				cwd: './src/components/',
 				dest: '<%= paths.dev %>/',
 				expand: true,
 				flatten: true,
-				src: ['**/*_page.hbs']
+				src: ['**/*_page.hbs'],
 			},
 			{
 				cwd: '<%= paths.src %>/templates/pages/',
 				dest: '<%= paths.dev %>/',
 				expand: true,
 				flatten: true,
-				src: ['**/*.hbs']
+				src: ['**/*.hbs'],
 			},
-		]
+		],
 	},
 };

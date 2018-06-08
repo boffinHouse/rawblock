@@ -1,128 +1,206 @@
-import rb, { Component } from '../core';
-import './itemscroller';
-import '../utils/keyboardfocus';
+(function (global, factory) {
+    if (typeof define === "function" && define.amd) {
+        define(['exports', '../core', './itemscroller', '../utils/keyboardfocus'], factory);
+    } else if (typeof exports !== "undefined") {
+        factory(exports, require('../core'), require('./itemscroller'), require('../utils/keyboardfocus'));
+    } else {
+        var mod = {
+            exports: {}
+        };
+        factory(mod.exports, global.core, global.itemscroller, global.keyboardfocus);
+        global.itemscrollerPlayer = mod.exports;
+    }
+})(this, function (exports, _core) {
+    'use strict';
 
-class ItemScrollerPlayer extends rb.components.itemscroller {
-    /**
-     * @static
-     * @mixes rb.components.itemscroller.defaults
-     *
-     * @property {Number} autoplayDelay=2000 Delay between autoplay next and current slide.
-     * @property {Boolean} autoplay=false Activates autoplay/slide show.
-     * @property {Boolean} pauseOnHover=true Pauses slide show on mouseenter.
-     * @property {Boolean} jumpToStart=true In case of a non-carousel jumps to the first slide instead of sliding to the first slide.
-     */
-    static get defaults(){
-        return {
-            autoplay: false,
-            autoplayDelay: 2000,
-            pauseOnHover: true,
-            jumpToStart: true,
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    var _core2 = _interopRequireDefault(_core);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
         };
     }
 
-    constructor(element, initialDefaults) {
-        super(element, initialDefaults);
-
-        this._setAutoplayUI = rb.rAF(function () {
-            this.$element[this.options.autoplay ? 'addClass' : 'removeClass'](rb.statePrefix + 'autoplay');
-        }, {that: this});
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
     }
 
-    static get events(){
-        return {
-            'click:closest(.{name}{e}autoplay{-}btn)'() {
-                this.setOption('autoplay', !this.options.autoplay);
-            },
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
+
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    }
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
         };
+    }();
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
-    setOption (name, value, isSticky) {
-        super.setOption(name, value, isSticky);
+    var ItemScrollerPlayer = function (_rb$components$itemsc) {
+        _inherits(ItemScrollerPlayer, _rb$components$itemsc);
 
-        switch (name) {
-            case 'autoplay':
-                this[value ? 'startAutoplay' : 'stopAutoplay']();
-                break;
-            case 'autoplayDelay':
-                if (this.options.autoplay) {
-                    this.startAutoplay();
-                }
-                break;
-        }
-    }
+        _createClass(ItemScrollerPlayer, null, [{
+            key: 'defaults',
+            get: function get() {
+                return {
+                    autoplay: false,
+                    autoplayDelay: 2000,
+                    pauseOnHover: true,
+                    jumpToStart: true
+                };
+            }
+        }]);
 
-    stopAutoplay () {
-        clearInterval(this._autoplayTimer);
-        if (this._onenterAutoplay) {
-            this.$element.off('mouseenter', this._onenterAutoplay);
-        }
-        if (this._onleaveAutoplay) {
-            this.$element.off('mouseleave', this._onleaveAutoplay);
+        function ItemScrollerPlayer(element, initialDefaults) {
+            _classCallCheck(this, ItemScrollerPlayer);
+
+            var _this = _possibleConstructorReturn(this, _rb$components$itemsc.call(this, element, initialDefaults));
+
+            _this._setAutoplayUI = _core2.default.rAF(function () {
+                this.$element[this.options.autoplay ? 'addClass' : 'removeClass'](_core2.default.statePrefix + 'autoplay');
+            }, { that: _this });
+            return _this;
         }
 
-        if (!this.options.autoplay) {
+        ItemScrollerPlayer.prototype.setOption = function setOption(name, value, isSticky) {
+            _rb$components$itemsc.prototype.setOption.call(this, name, value, isSticky);
+
+            switch (name) {
+                case 'autoplay':
+                    this[value ? 'startAutoplay' : 'stopAutoplay']();
+                    break;
+                case 'autoplayDelay':
+                    if (this.options.autoplay) {
+                        this.startAutoplay();
+                    }
+                    break;
+            }
+        };
+
+        ItemScrollerPlayer.prototype.stopAutoplay = function stopAutoplay() {
+            clearInterval(this._autoplayTimer);
+            if (this._onenterAutoplay) {
+                this.$element.off('mouseenter', this._onenterAutoplay);
+            }
+            if (this._onleaveAutoplay) {
+                this.$element.off('mouseleave', this._onleaveAutoplay);
+            }
+
+            if (!this.options.autoplay) {
+                this._setAutoplayUI();
+            }
+        };
+
+        ItemScrollerPlayer.prototype.startAutoplay = function startAutoplay() {
+            var that = this;
+            var options = this.options;
+            var keyboardFocusSel = '.' + _core2.default.utilPrefix + _core2.default.nameSeparator + 'keyboardfocus';
+            if (!options.autoplay) {
+                return;
+            }
+            this.stopAutoplay();
+
+            if (!this._onenterAutoplay) {
+                this._onenterAutoplay = function () {
+                    if (options.pauseOnHover) {
+                        clearInterval(that._autoplayTimer);
+                    }
+                };
+            }
+
+            if (!this._onleaveAutoplay) {
+                this._onleaveAutoplay = function () {
+                    if (options.pauseOnHover && options.autoplay) {
+                        clearInterval(that._autoplayTimer);
+                        that._autoplayTimer = setInterval(that._autoplayHandler, options.autoplayDelay);
+                    }
+                };
+            }
+
+            if (!this._autoplayHandler) {
+                this._autoplayHandler = function () {
+                    if (that.element.querySelector(keyboardFocusSel)) {
+                        return;
+                    }
+                    if (that.isCarousel || that.selectedIndex + 1 < that.baseLength) {
+                        that.selectNext();
+                    } else {
+                        that.selectIndex(0, options.jumpToStart);
+                    }
+                };
+            }
+
+            this.$element.on('mouseenter', this._onenterAutoplay);
+            this.$element.on('mouseleave', this._onleaveAutoplay);
+
+            clearInterval(that._autoplayTimer);
+            that._autoplayTimer = setInterval(this._autoplayHandler, options.autoplayDelay);
+
             this._setAutoplayUI();
-        }
-    }
+        };
 
-    startAutoplay() {
-        var that = this;
-        var options = this.options;
-        var keyboardFocusSel = '.' + rb.utilPrefix + rb.nameSeparator + 'keyboardfocus';
-        if (!options.autoplay) {
-            return;
-        }
-        this.stopAutoplay();
+        ItemScrollerPlayer.prototype.attached = function attached() {
+            if (this.options.autoplay) {
+                this.startAutoplay();
+            }
+        };
 
-        if (!this._onenterAutoplay) {
-            this._onenterAutoplay = function () {
-                if (options.pauseOnHover) {
-                    clearInterval(that._autoplayTimer);
-                }
-            };
-        }
+        ItemScrollerPlayer.prototype.detached = function detached() {
+            this.stopAutoplay();
+        };
 
-        if (!this._onleaveAutoplay) {
-            this._onleaveAutoplay = function () {
-                if (options.pauseOnHover && options.autoplay) {
-                    clearInterval(that._autoplayTimer);
-                    that._autoplayTimer = setInterval(that._autoplayHandler, options.autoplayDelay);
-                }
-            };
-        }
+        _createClass(ItemScrollerPlayer, null, [{
+            key: 'events',
+            get: function get() {
+                return {
+                    'click:closest(.{name}{e}autoplay{-}btn)': function clickClosestNameEAutoplayBtn() {
+                        this.setOption('autoplay', !this.options.autoplay);
+                    }
+                };
+            }
+        }]);
 
-        if (!this._autoplayHandler) {
-            this._autoplayHandler = function () {
-                if(that.element.querySelector(keyboardFocusSel)){return;}
-                if (that.isCarousel || that.selectedIndex + 1 < that.baseLength) {
-                    that.selectNext();
-                } else {
-                    that.selectIndex(0, options.jumpToStart);
-                }
-            };
-        }
+        return ItemScrollerPlayer;
+    }(_core2.default.components.itemscroller);
 
-        this.$element.on('mouseenter', this._onenterAutoplay);
-        this.$element.on('mouseleave', this._onleaveAutoplay);
+    _core.Component.register('itemscroller', ItemScrollerPlayer, true);
 
-        clearInterval(that._autoplayTimer);
-        that._autoplayTimer = setInterval(this._autoplayHandler, options.autoplayDelay);
-
-        this._setAutoplayUI();
-    }
-
-    attached () {
-        if (this.options.autoplay) {
-            this.startAutoplay();
-        }
-    }
-
-    detached () {
-        this.stopAutoplay();
-    }
-}
-
-Component.register('itemscroller', ItemScrollerPlayer, true);
-
-export default ItemScrollerPlayer;
+    exports.default = ItemScrollerPlayer;
+});

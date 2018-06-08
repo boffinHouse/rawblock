@@ -56,7 +56,7 @@
             'lint',
             'test',
             'babel:publish',
-            'copy:es5',
+            'copy:publish',
         ]);
 
         grunt.registerTask('svg', [

@@ -1,1 +1,1 @@
-../../components/**/*.render.ejs
+../../src/components/**/*.render.ejs

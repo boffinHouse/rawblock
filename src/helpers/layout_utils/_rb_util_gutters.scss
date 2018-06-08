@@ -1,0 +1,82 @@
+
+// Adds space between columns if "u-size-" is set on element.
+//
+// @param {List|Number} $gutters - list of horizontal and vertical gutter values (em/px/%).
+@mixin rb-util-gutters($breakpoint) {
+
+    //Horizontal & vertical gutters
+    .u#{$rb-name-separator}gutters {
+       @include rb-grid-gutters($breakpoint, $element: "container");
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
+            @include rb-grid-gutters($breakpoint);
+        }
+    }
+
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}half {
+        @include rb-grid-gutters($breakpoint, $element: "container", $size: 0.5);
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
+            @include rb-grid-gutters($breakpoint, $size: 0.5);
+        }
+    }
+
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}double {
+        @include rb-grid-gutters($breakpoint, $element: "container", $size: 2);
+
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}] {
+            @include rb-grid-gutters($breakpoint, $size: 2);
+        }
+    }
+
+    //Only vertical gutters
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical {
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
+            @include rb-grid-gutters($breakpoint, $axis: "vertical");
+        }
+    }
+
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical#{$rb-name-separator}half {
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
+            @include rb-grid-gutters($breakpoint, $axis: "vertical", $size: 0.5);
+        }
+    }
+
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}vertical#{$rb-name-separator}double {
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
+            @include rb-grid-gutters($breakpoint,  $axis: "vertical", $size: 2);
+        }
+    }
+
+    //Only horizontal gutters
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal {
+        @include rb-grid-gutters($breakpoint, $element: "container", $axis: "horizontal");
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
+            @include rb-grid-gutters($breakpoint, $axis: "horizontal");
+        }
+    }
+
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal#{$rb-name-separator}half {
+        @include rb-grid-gutters($breakpoint, $element: "container", $axis: "horizontal", $size: 0.5);
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
+            @include rb-grid-gutters($breakpoint, $axis: "horizontal", $size: 0.5);
+        }
+    }
+
+    .u#{$rb-name-separator}gutters#{$rb-name-separator}horizontal#{$rb-name-separator}double {
+        @include rb-grid-gutters($breakpoint, $element: "container", $axis: "horizontal", $size: 2);
+
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
+            @include rb-grid-gutters($breakpoint, $axis: "horizontal", $size: 2);
+        }
+    }
+}
+
+
+

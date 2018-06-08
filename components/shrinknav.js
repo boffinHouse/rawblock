@@ -1,319 +1,394 @@
-import rb, { Component } from '../core';
+(function (global, factory) {
+    if (typeof define === "function" && define.amd) {
+        define(['exports', '../core', '../utils/resize'], factory);
+    } else if (typeof exports !== "undefined") {
+        factory(exports, require('../core'), require('../utils/resize'));
+    } else {
+        var mod = {
+            exports: {}
+        };
+        factory(mod.exports, global.core, global.resize);
+        global.shrinknav = mod.exports;
+    }
+})(this, function (exports, _core) {
+    'use strict';
 
-import '../utils/resize';
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
 
-const regPoint = /^./;
-const $ = Component.$;
+    var _core2 = _interopRequireDefault(_core);
 
-/**
- * Class component to create a ShrinkNav.
- *
- * @alias rb.components.shrinknav
- *
- * @extends rb.Component
- *
- * @param element {Element}
- * @param [initialDefaults] {OptionsObject}
- *
- * @fires componentName#changed
- *
- * @example
- * <div class="js-rb-live" data-module="shrinknav"></div>
- */
-class ShrinkNav extends Component {
-    /**
-     * @static
-     * @mixes rb.Component.defaults
-     *
-     * @prop {String} measureElement='self' The element that is used to measure the full width. Either self or a selector.
-     * @prop {String} items='.children(.{name}{e}item)' The items which may be overflowed.
-     * @prop {String} toggleItemSelector='.{name}{e}toggle{-}item' The items which may be overflowed.
-     * @prop {Number} minItems=2 The minimum items to see in the main bar.
-     * @prop {Number} minSubItems=2 The minimum items to see in the submenu.
-     * @prop {Boolean} growItems=false
-     */
-    static get defaults() {
-        return {
-            measureElement: 'self',
-            items: '.children(.{name}{e}item)',
-            toggleItemSelector: '.is{-}toggle{-}item',
-            togglePanel: 'find(.{name}{e}panel)',
-            minItems: 2,
-            minSubItems: 2,
-            growItems: false,
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
         };
     }
 
-    static get events(){
-        return {
-            'rb_resize': 'measureElements',
-        };
-    }
-
-    constructor(element, initialDefaults) {
-        super(element, initialDefaults);
-
-        this.rAFs('addItemsTo');
-
-        this.reflow = rb.throttle(this.measureElements);
-
-        this._getMeasureElement();
-        this._getItems();
-        this._calcMinItems();
-
-        this.measureElements();
-    }
-
-    setOption(name, value, isSticky){
-        super.setOption(name, value, isSticky);
-
-        if(name == 'measureElement'){
-            this._getMeasureElement();
-            this.reflow();
-        } else if(name == 'minSubItems' || name == 'minItems'){
-            this._calcMinItems();
-            this.reflow();
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
         }
     }
 
-    _switchOff(){
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
 
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
     }
 
-    _switchOn(){
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
 
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
-    _calcMinItems(){
-        const fullLength = this.allItems.length;
-        const {minSubItems, minItems} = this.options;
-        const needItems = minSubItems + minItems;
+    var regPoint = /^./;
+    var $ = _core.Component.$;
 
-        if(needItems > fullLength){
-            if(minItems < fullLength){
-                this.minSubItems = fullLength - minItems;
+    /**
+     * Class component to create a ShrinkNav.
+     *
+     * @alias rb.components.shrinknav
+     *
+     * @extends rb.Component
+     *
+     * @param element {Element}
+     * @param [initialDefaults] {OptionsObject}
+     *
+     * @fires componentName#changed
+     *
+     * @example
+     * <div class="js-rb-live" data-module="shrinknav"></div>
+     */
+
+    var ShrinkNav = function (_Component) {
+        _inherits(ShrinkNav, _Component);
+
+        _createClass(ShrinkNav, null, [{
+            key: 'defaults',
+            get: function get() {
+                return {
+                    measureElement: 'self',
+                    items: '.children(.{name}{e}item)',
+                    toggleItemSelector: '.is{-}toggle{-}item',
+                    togglePanel: 'find(.{name}{e}panel)',
+                    minItems: 2,
+                    minSubItems: 2,
+                    growItems: false
+                };
+            }
+        }, {
+            key: 'events',
+            get: function get() {
+                return {
+                    'rb_resize': 'measureElements'
+                };
+            }
+        }]);
+
+        function ShrinkNav(element, initialDefaults) {
+            _classCallCheck(this, ShrinkNav);
+
+            var _this = _possibleConstructorReturn(this, _Component.call(this, element, initialDefaults));
+
+            _this.rAFs('addItemsTo');
+
+            _this.reflow = _core2.default.throttle(_this.measureElements);
+
+            _this._getMeasureElement();
+            _this._getItems();
+            _this._calcMinItems();
+
+            _this.measureElements();
+            return _this;
+        }
+
+        ShrinkNav.prototype.setOption = function setOption(name, value, isSticky) {
+            _Component.prototype.setOption.call(this, name, value, isSticky);
+
+            if (name == 'measureElement') {
+                this._getMeasureElement();
+                this.reflow();
+            } else if (name == 'minSubItems' || name == 'minItems') {
+                this._calcMinItems();
+                this.reflow();
+            }
+        };
+
+        ShrinkNav.prototype._switchOff = function _switchOff() {};
+
+        ShrinkNav.prototype._switchOn = function _switchOn() {};
+
+        ShrinkNav.prototype._calcMinItems = function _calcMinItems() {
+            var fullLength = this.allItems.length;
+            var _options = this.options,
+                minSubItems = _options.minSubItems,
+                minItems = _options.minItems;
+
+            var needItems = minSubItems + minItems;
+
+            if (needItems > fullLength) {
+                if (minItems < fullLength) {
+                    this.minSubItems = fullLength - minItems;
+                } else {
+                    this.minItems = 0;
+                    this.minSubItems = 0;
+                }
             } else {
+                this.minItems = minItems;
+                this.minSubItems = minSubItems;
+            }
+
+            if (this.minItems < 2) {
                 this.minItems = 0;
+            }
+
+            if (this.minSubItems < 2) {
                 this.minSubItems = 0;
             }
-        } else {
-            this.minItems = minItems;
-            this.minSubItems = minSubItems ;
-        }
+        };
 
-        if(this.minItems < 2){
-            this.minItems = 0;
-        }
+        ShrinkNav.prototype.hideItems = function hideItems() {
+            var _this2 = this;
 
-        if(this.minSubItems < 2){
-            this.minSubItems = 0;
-        }
-    }
+            var hideItems = [];
 
-    hideItems(){
-        const hideItems = [];
+            var currentMenuLength = this.panelmenuItems.length;
+            var currentVisibleLength = this.mainbarItems.length;
 
-        let currentMenuLength = this.panelmenuItems.length;
-        let currentVisibleLength = this.mainbarItems.length;
+            this.mainbarItems.forEach(function (item) {
+                if (_this2.remainingWidth < 0 || currentMenuLength < _this2.minSubItems || currentVisibleLength < _this2.minItems) {
+                    hideItems.push(item);
 
-        this.mainbarItems.forEach((item)=>{
-            if(this.remainingWidth < 0 || currentMenuLength < this.minSubItems || currentVisibleLength < this.minItems ){
-                hideItems.push(item);
-
-                currentVisibleLength--;
-                currentMenuLength++;
-            }
-            this.remainingWidth += item.width;
-        });
-
-        this.addItemsTo(hideItems);
-    }
-
-    showElements(){
-        let run = true;
-        const changeItems = [];
-        const lastIndex = this.panelmenuItems.length - 1;
-        let currentMenuLength = this.panelmenuItems.length;
-        let currentVisibleLength = this.mainbarItems.length;
-
-        this.panelmenuItems.forEach((item, index) => {
-            if(run){
-                if(index == lastIndex){
-                    this.remainingWidth += this.toggleItemWidth;
+                    currentVisibleLength--;
+                    currentMenuLength++;
                 }
-
-                if(this.remainingWidth > item.width){
-                    changeItems.push(item);
-
-                    currentVisibleLength++;
-                    currentMenuLength--;
-
-                    this.remainingWidth -= item.width;
-                } else {
-                    run = false;
-                }
-            }
-        });
-
-        if(currentMenuLength){
-            while(changeItems.length && currentMenuLength < this.minSubItems){
-                changeItems.pop();
-
-                currentVisibleLength--;
-                currentMenuLength++;
-            }
-
-            if(currentVisibleLength < this.minItems){
-                return;
-            }
-        }
-
-        if(changeItems.length){
-            this.addItemsTo(changeItems, true);
-        }
-    }
-
-    addItemsTo(items, isVisibleBar){
-        const hadSubmenu = !!this.panelmenuItems.length;
-
-        if(isVisibleBar){
-            items.forEach(this.addItemToBar, this);
-        } else {
-            items.forEach(this.addItemToPanel, this);
-        }
-
-        const hasMenus = !!this.panelmenuItems.length;
-
-        if(this.hasSubmenu !== hasMenus){
-            this.hasSubmenu = hasMenus;
-            this.$element.rbToggleState('submenu-within', hasMenus);
-        }
-
-        this.trigger({hadSubmenu, changedItems: items, setToBar: !!isVisibleBar});
-    }
-
-    addItemToBar(item){
-        const index = this.panelmenuItems.indexOf(item);
-
-        let setElement = false;
-        let position = item.position - 1;
-
-        while(position >= 0 && !setElement){
-            const posItem = this.allItems[position];
-
-            if(posItem && posItem.parent == posItem.$item.parent().get(0)){
-                posItem.$item.after(item.$item);
-                setElement = true;
-                break;
-            }
-
-            position--;
-        }
-
-        if(!setElement){
-            $(item.parent).prepend(item.$item);
-        }
-
-        if(index != -1){
-            this.panelmenuItems.splice(index, 1);
-            this.mainbarItems.unshift(item);
-        }
-    }
-
-    addItemToPanel(item){
-        const index = this.mainbarItems.indexOf(item);
-
-        this.$submenu.prepend(item.$item);
-
-        if(index != -1){
-            this.mainbarItems.splice(index, 1);
-            this.panelmenuItems.unshift(item);
-        }
-    }
-
-    measureElements(){
-        const add = this.options.growItems ? -0.1 : 0.1;
-        const {panelmenuItems} = this;
-
-        this.innerWidth = this.$measureElement.innerWidth();
-
-        this.neededWidth = this.mainbarItems.reduce((value, item) => {
-            item.width = item.$item.outerWidth() + add;
-            return value + item.width;
-        }, 0);
-
-        this.toggleItemWidth = this.$toggleItem.outerWidth() || this.toggleItemWidth || 0;
-        this.remainingWidth = this.innerWidth - this.neededWidth - this.toggleItemWidth;
-
-        if(this.remainingWidth < (panelmenuItems.length ? 0 : -this.toggleItemWidth) + 0.1){
-            this.hideItems();
-        } else if(this.panelmenuItems.length) {
-            const itemWidth = panelmenuItems.length == 1 ?
-                panelmenuItems[0].width - this.toggleItemWidth :
-                panelmenuItems[0].width
-            ;
-
-            if(this.remainingWidth > itemWidth + 0.1){
-                this.showElements();
-            }
-        }
-    }
-
-    _getItems(){
-        const {items, toggleItemSelector, togglePanel} = this.options;
-
-        const toggleItem = this.query(toggleItemSelector);
-
-        this.$submenu = $(this.getElementsByString(togglePanel)[0]);
-
-        this.$toggleItem = $(toggleItem);
-
-        this.allItems = this.getElementsByString(items)
-            .filter(item => item != toggleItem)
-            .map((item, position)=> ({
-                $item: $(item),
-                width: 0,
-                position,
-                parent: item.parentNode,
-                priority: (parseInt(item.getAttribute('data-priority'), 10) || 0),
-            }))
-        ;
-
-        if(!this.$submenu.is('ul, ol') && (this.allItems[0] && this.allItems[0].$item.is('li'))){
-            const $menuWrapper = this.$submenu;
-            this.$submenu = $(document.createElement('ul'));
-
-            this.$submenu.prop({className: this.interpolateName(`${togglePanel.replace(regPoint, '')}{-}list`)});
-
-            rb.rAFQueue(()=>{
-                $menuWrapper.append(this.$submenu);
+                _this2.remainingWidth += item.width;
             });
-        }
 
-        this.mainbarItems = [...this.allItems];
+            this.addItemsTo(hideItems);
+        };
 
-        this.mainbarItems
-            .sort(
-                (item1, item2) =>
-                    (item2.priority - item1.priority)
-            )
-        ;
+        ShrinkNav.prototype.showElements = function showElements() {
+            var _this3 = this;
 
-        this.mainbarItems.reverse();
-        this.panelmenuItems = [];
+            var run = true;
+            var changeItems = [];
+            var lastIndex = this.panelmenuItems.length - 1;
+            var currentMenuLength = this.panelmenuItems.length;
+            var currentVisibleLength = this.mainbarItems.length;
 
-    }
+            this.panelmenuItems.forEach(function (item, index) {
+                if (run) {
+                    if (index == lastIndex) {
+                        _this3.remainingWidth += _this3.toggleItemWidth;
+                    }
 
-    _getMeasureElement(){
-        const {measureElement} = this.options;
+                    if (_this3.remainingWidth > item.width) {
+                        changeItems.push(item);
 
-        this.$measureElement = measureElement == 'self' ?
-            this.$element :
-            this.$element.closest(measureElement)
-        ;
-    }
-}
+                        currentVisibleLength++;
+                        currentMenuLength--;
 
-Component.register('shrinknav', ShrinkNav);
+                        _this3.remainingWidth -= item.width;
+                    } else {
+                        run = false;
+                    }
+                }
+            });
 
-export default ShrinkNav;
+            if (currentMenuLength) {
+                while (changeItems.length && currentMenuLength < this.minSubItems) {
+                    changeItems.pop();
+
+                    currentVisibleLength--;
+                    currentMenuLength++;
+                }
+
+                if (currentVisibleLength < this.minItems) {
+                    return;
+                }
+            }
+
+            if (changeItems.length) {
+                this.addItemsTo(changeItems, true);
+            }
+        };
+
+        ShrinkNav.prototype.addItemsTo = function addItemsTo(items, isVisibleBar) {
+            var hadSubmenu = !!this.panelmenuItems.length;
+
+            if (isVisibleBar) {
+                items.forEach(this.addItemToBar, this);
+            } else {
+                items.forEach(this.addItemToPanel, this);
+            }
+
+            var hasMenus = !!this.panelmenuItems.length;
+
+            if (this.hasSubmenu !== hasMenus) {
+                this.hasSubmenu = hasMenus;
+                this.$element.rbToggleState('submenu-within', hasMenus);
+            }
+
+            this.trigger({ hadSubmenu: hadSubmenu, changedItems: items, setToBar: !!isVisibleBar });
+        };
+
+        ShrinkNav.prototype.addItemToBar = function addItemToBar(item) {
+            var index = this.panelmenuItems.indexOf(item);
+
+            var setElement = false;
+            var position = item.position - 1;
+
+            while (position >= 0 && !setElement) {
+                var posItem = this.allItems[position];
+
+                if (posItem && posItem.parent == posItem.$item.parent().get(0)) {
+                    posItem.$item.after(item.$item);
+                    setElement = true;
+                    break;
+                }
+
+                position--;
+            }
+
+            if (!setElement) {
+                $(item.parent).prepend(item.$item);
+            }
+
+            if (index != -1) {
+                this.panelmenuItems.splice(index, 1);
+                this.mainbarItems.unshift(item);
+            }
+        };
+
+        ShrinkNav.prototype.addItemToPanel = function addItemToPanel(item) {
+            var index = this.mainbarItems.indexOf(item);
+
+            this.$submenu.prepend(item.$item);
+
+            if (index != -1) {
+                this.mainbarItems.splice(index, 1);
+                this.panelmenuItems.unshift(item);
+            }
+        };
+
+        ShrinkNav.prototype.measureElements = function measureElements() {
+            var add = this.options.growItems ? -0.1 : 0.1;
+            var panelmenuItems = this.panelmenuItems;
+
+
+            this.innerWidth = this.$measureElement.innerWidth();
+
+            this.neededWidth = this.mainbarItems.reduce(function (value, item) {
+                item.width = item.$item.outerWidth() + add;
+                return value + item.width;
+            }, 0);
+
+            this.toggleItemWidth = this.$toggleItem.outerWidth() || this.toggleItemWidth || 0;
+            this.remainingWidth = this.innerWidth - this.neededWidth - this.toggleItemWidth;
+
+            if (this.remainingWidth < (panelmenuItems.length ? 0 : -this.toggleItemWidth) + 0.1) {
+                this.hideItems();
+            } else if (this.panelmenuItems.length) {
+                var itemWidth = panelmenuItems.length == 1 ? panelmenuItems[0].width - this.toggleItemWidth : panelmenuItems[0].width;
+
+                if (this.remainingWidth > itemWidth + 0.1) {
+                    this.showElements();
+                }
+            }
+        };
+
+        ShrinkNav.prototype._getItems = function _getItems() {
+            var _this4 = this;
+
+            var _options2 = this.options,
+                items = _options2.items,
+                toggleItemSelector = _options2.toggleItemSelector,
+                togglePanel = _options2.togglePanel;
+
+
+            var toggleItem = this.query(toggleItemSelector);
+
+            this.$submenu = $(this.getElementsByString(togglePanel)[0]);
+
+            this.$toggleItem = $(toggleItem);
+
+            this.allItems = this.getElementsByString(items).filter(function (item) {
+                return item != toggleItem;
+            }).map(function (item, position) {
+                return {
+                    $item: $(item),
+                    width: 0,
+                    position: position,
+                    parent: item.parentNode,
+                    priority: parseInt(item.getAttribute('data-priority'), 10) || 0
+                };
+            });
+
+            if (!this.$submenu.is('ul, ol') && this.allItems[0] && this.allItems[0].$item.is('li')) {
+                var $menuWrapper = this.$submenu;
+                this.$submenu = $(document.createElement('ul'));
+
+                this.$submenu.prop({ className: this.interpolateName(togglePanel.replace(regPoint, '') + '{-}list') });
+
+                _core2.default.rAFQueue(function () {
+                    $menuWrapper.append(_this4.$submenu);
+                });
+            }
+
+            this.mainbarItems = [].concat(this.allItems);
+
+            this.mainbarItems.sort(function (item1, item2) {
+                return item2.priority - item1.priority;
+            });
+
+            this.mainbarItems.reverse();
+            this.panelmenuItems = [];
+        };
+
+        ShrinkNav.prototype._getMeasureElement = function _getMeasureElement() {
+            var measureElement = this.options.measureElement;
+
+
+            this.$measureElement = measureElement == 'self' ? this.$element : this.$element.closest(measureElement);
+        };
+
+        return ShrinkNav;
+    }(_core.Component);
+
+    _core.Component.register('shrinknav', ShrinkNav);
+
+    exports.default = ShrinkNav;
+});

@@ -11,6 +11,18 @@ styleguide
 visual-tests
 sources/components/**/tests/visual/visual-tests/results
 
+//npm files
+components
+helpers
+utils
+core.js
+$.js
+crucial.js
+polyfills.js
+_basics.scss
+_helpers.scss
+
+
 .sass-cache
 .css
 

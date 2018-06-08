@@ -4,7 +4,7 @@ module.exports = {
     },
     js: {
         files: {
-            src: ['$.js', 'crucial.js', 'main.js', 'utils/**/*.js', 'components/**/*.js', 'rb_$/**/*.js'],
+            src: ['src/**/*.js'],
         },
     },
 };

@@ -9,13 +9,13 @@ module.exports = {
         cwd: '<%= paths.src %>/img/appicons/',
         dest: '<%= paths.dist %>/img/appicons/',
         expand: true,
-        src: ['**/*.ico']
+        src: ['**/*.ico'],
     },
     fonts: {
         cwd: '<%= paths.src %>/fonts/',
         dest: '<%= paths.dist %>/fonts/',
         expand: true,
-        src: ['**/*']
+        src: ['**/*'],
     },
     dist: {
         cwd: '<%= paths.dev %>/',
@@ -23,10 +23,10 @@ module.exports = {
         expand: true,
         src: ['**/*', '!test-*.html'],
     },
-    es5: {
-        cwd: 'components/',
-        dest: 'es5/components/',
+    publish: {
+        cwd: 'src/',
+        dest: '',
         expand: true,
-        src: ['**/*.ejs'],
-    }
+        src: ['**/*.ejs', '**/*.scss', '!components/*.scss'],
+    },
 };

@@ -1,0 +1,44 @@
+// Apply to generate arrow-like line icon.
+//
+// @param {Number} $height - size height arrow.
+// @param {Number} $width - size width arrow.
+// @param {Number} $thickness - line thickness of arrow
+// @param {Color} $color - color of arrow (use border-left-color to change color on hover/focus)
+// @param {String} $direction - direction arrow points (up | down | right | left)
+//
+// @example
+// .element {
+//	    &::after {
+//			@include arrow-icon(10px, 10px, 2px, #fff, down);
+//		}
+// }
+//
+@mixin rb-arrow-icon($height, $width, $thickness, $color, $direction) {
+    content: " ";
+    position: absolute;
+    height: $height;
+    width: $width;
+    border-top: $thickness solid $color;
+    border-right: $thickness solid $color;
+    background-color: rgba(255,255,255,0);
+    pointer-events: none;
+
+    @if $direction == "right" {
+        transform: rotate(45deg);
+    }
+
+    @if $direction == "down" {
+        transform: rotate(135deg);
+    }
+
+    @if $direction == "up" {
+        transform: rotate(-45deg);
+    }
+
+    @if $direction == "left" {
+        transform: rotate(-135deg);
+    }
+}
+
+
+

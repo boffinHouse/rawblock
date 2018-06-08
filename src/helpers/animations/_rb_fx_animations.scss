@@ -1,0 +1,26 @@
+$rb-included-animations: ();
+
+@mixin rb-fx-options($options: ()){
+    $prop-map: (
+        fillMode: animation-fill-mode,
+        mode: animation-fill-mode,
+        duration: animation-duration,
+        count: animation-iteration-count,
+        iterationCount: animation-iteration-count,
+        delay: animation-delay,
+        easing: animation-timing-function,
+        timingFunction: animation-timing-function,
+    );
+
+    $options: map_merge((mode: both, duration: 400ms), $options);
+
+    @each $key, $value in $options {
+        $keyname: map_get($prop-map, $key);
+
+        @if $keyname {
+            #{$keyname}: $value;
+        }
+    }
+}
+
+

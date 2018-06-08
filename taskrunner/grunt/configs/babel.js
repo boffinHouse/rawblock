@@ -9,27 +9,9 @@ module.exports = {
         files: [
             {
                 expand: true,
-                cwd: 'components/',
-                src: ['**/*.js', '!*-tests.js', '!*-spec.js'],
-                dest: 'es5/components/',
-            },
-            {
-                expand: true,
-                cwd: '',
-                src: ['_$.js', '_crucial.js', '_main.js'],
-                dest: 'es5/',
-            },
-            {
-                expand: true,
-                cwd: 'rb_$/',
-                src: ['*.js'],
-                dest: 'es5/rb_$/',
-            },
-            {
-                expand: true,
-                cwd: 'utils/',
-                src: ['**/*.js', '!*-tests.js', '!*-tests.js'],
-                dest: 'es5/utils/',
+                cwd: 'src/',
+                src: ['*.js', '!polyfills.js', '!*-tests.js', '!*-spec.js'],
+                dest: '',
             },
         ],
     },
@@ -37,7 +19,7 @@ module.exports = {
         files: [
             {
                 expand: true,
-                cwd: 'components/',
+                cwd: 'src/components/',
                 src: ['**/*-tests.js'],
                 dest: 'tmp/tests/components/',
             },

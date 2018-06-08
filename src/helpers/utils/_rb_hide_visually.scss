@@ -1,0 +1,17 @@
+// Hides element visually while still allowing accessibility for assistive technology.
+//
+// @example scss
+// .your-element {
+//      @include rb-aural;
+// }
+@mixin rb-hide-visually {
+    display: block;
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: circle(1% at 1% 1%);
+    width: 1px;
+    height: 1px;
+    border: 0;
+    padding: 0;
+    overflow: hidden;
+}

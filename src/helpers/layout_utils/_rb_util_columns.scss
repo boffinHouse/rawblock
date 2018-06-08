@@ -1,0 +1,21 @@
+//
+@mixin rb-util-columns() {
+
+    .u#{$rb-name-separator}equal#{$rb-name-separator}heights {
+        > [class*=u#{$rb-name-separator}size#{$rb-name-separator}]  {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+
+    .u#{$rb-name-separator}unequal#{$rb-name-separator}height,
+    [class*=u#{$rb-name-separator}size#{$rb-name-separator}].u#{$rb-name-separator}unequal#{$rb-name-separator}height {
+        display: block;
+    }
+
+    .u#{$rb-name-separator}equal#{$rb-name-separator}height,
+    [class*=u#{$rb-name-separator}size#{$rb-name-separator}].u#{$rb-name-separator}equal#{$rb-name-separator}height {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}

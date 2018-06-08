@@ -1,0 +1,48 @@
+// Apply to generate arrow-like triangles icon.
+//
+// @param {Number} $height - size height arrow.
+// @param {Number} $width - size width arrow.
+// @param {Color} $color - color of arrow
+// @param {String} $direction - direction arrow points (up | down | right | left)
+//
+// @example
+// .element {
+//	    &::after {
+//			@include rb-triangle-icon(10px, 10px, #fff, down);
+//		}
+// }
+//
+@mixin rb-triangle-icon($height, $width, $color, $direction) {
+	content: " ";
+	position: absolute;
+	height: $height;
+    width: $width;
+	pointer-events: none;
+
+    @if $direction == "right" {
+        border-top: $height solid rgba(255,255,255,0);
+        border-bottom: $height solid rgba(255,255,255,0);
+        border-left: $width solid $color;
+    }
+
+	@if $direction == "down" {
+        border-right: $height solid rgba(255,255,255,0);
+        border-top: $width solid $color;
+        border-left: $height solid rgba(255,255,255,0);
+	}
+
+	@if $direction == "up" {
+        border-right: $height solid rgba(255,255,255,0);
+        border-bottom: $width solid $color;
+        border-left: $height solid rgba(255,255,255,0);
+	}
+
+	@if $direction == "left" {
+        border-top: $height solid rgba(255,255,255,0);
+        border-bottom: $height solid rgba(255,255,255,0);
+        border-right: $width solid $color;
+	}
+
+}
+
+

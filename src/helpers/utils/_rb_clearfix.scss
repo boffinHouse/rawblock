@@ -1,0 +1,17 @@
+//Provides way for an element (floated) to automatically clear its child elements.
+//
+// @example
+// .your-element {
+//      @include rb-clearfix;
+// }
+@mixin rb-clearfix {
+    &::after,
+    &::before {
+        clear: both;
+        content: " ";
+        display: table;
+        visibility: hidden;
+        flex-basis: 0;
+        order: 1;
+    }
+}

@@ -1,7 +1,7 @@
-../../components/**/*.js
-../../utils/**/*.js
-!../../components/**/*.lazy.js
-!../../components/**/*-tests.js
-!../../components/**/*-spec.js
-!../../utils/rb_elemresize.js
-!../../utils/rb_packageloader.js
+../../src/components/**/*.js
+../../src/utils/**/*.js
+!../../src/components/**/*.lazy.js
+!../../src/components/**/*-tests.js
+!../../src/components/**/*-spec.js
+!../../src/utils/rb_elemresize.js
+!../../src/utils/rb_packageloader.js
