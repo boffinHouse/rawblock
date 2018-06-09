@@ -15,6 +15,7 @@ sources/components/**/tests/visual/visual-tests/results
 components
 helpers
 utils
+rb_$
 core.js
 $.js
 crucial.js
