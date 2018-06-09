@@ -7,11 +7,11 @@
         (function (docElem) {
             //polyfills
             if (!Object.assign || !window.fetch || !docElem.closest || !String.prototype.includes || !window.cancelAnimationFrame || !Array.from || !Array.prototype.find || !('sizes' in document.createElement('img'))) { //  || !docElem.before || !docElem.queryAll
-                document.write('<script src="../dev/js/_rb_polyfills.js"><\/script>');
+                document.write('<script src="../../dev/js/_rb_polyfills.js"><\/script>');
             }
         })(document.documentElement);
     </script>
-    <link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css"/>
+    <link rel="stylesheet" href="../../node_modules/qunitjs/qunit/qunit.css"/>
     <link rel="stylesheet" href="itemscroller-tests.css"/>
     <style>
         /*
@@ -27,21 +27,21 @@
 <div id="qunit-fixture">
 
 </div>
-<script src="../node_modules/qunitjs/qunit/qunit.js"></script>
+<script src="../../node_modules/qunitjs/qunit/qunit.js"></script>
 
-<script src="../node_modules/sinon/pkg/sinon.js"></script>
-<script src="../tests/qunit/syn.js"></script>
+<script src="../../node_modules/sinon/pkg/sinon.js"></script>
+<script src="../../tests/qunit/syn.js"></script>
 
-<script src="../tests/qunit/qunit-helper.js"></script>
-<script src="../tests/qunit/qunit-config.js"></script>
-<script src="../dev/js/_crucial-behavior.js"></script>
-<script src="../dev/js/_main-behavior.js"></script>
+<script src="../../tests/qunit/qunit-helper.js"></script>
+<script src="../../tests/qunit/qunit-config.js"></script>
+<script src="../../dev/js/_crucial-behavior.js"></script>
+<script src="../../dev/js/_main-behavior.js"></script>
 
 <script>
     rb.live.autoStart = false;
 </script>
 
-<script src="../tmp/tests/components/itemscroller-tests.js"></script>
+<script src="../../tmp/tests/components/itemscroller-tests.js"></script>
 
 </body>
 </html>

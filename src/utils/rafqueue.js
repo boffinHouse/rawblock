@@ -41,4 +41,10 @@ export default function rAFQueue(fn, inProgress, hiddenRaf) {
     }
 }
 
+export const rAFPromise = (inProgress = true, hiddenRaf) => {
+    return new Promise((resolve) => {
+        rAFQueue(resolve, inProgress, hiddenRaf);
+    });
+};
+
 rb.rAFQueue = rAFQueue;

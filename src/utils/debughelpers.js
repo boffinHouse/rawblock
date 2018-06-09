@@ -1,8 +1,18 @@
+import rb from './global-rb';
+
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
     const helpers = {};
     const devData = {
         componentsCount: 0,
     };
+
+    if(!rb.$){
+        rb.logError('You need to either include jQuery or `rawblock/$` and map it to rb.');
+    }
+
+    if(!Element.prototype.append){
+        rb.logError('You need to include `rawblock/polyfills` in incapable browsers');
+    }
 
     helpers.onEventsAdd = function(element, type, handler, opts){
         if(opts && (type == 'mouseenter' || type == 'mouseleave' || type == 'focusin' || type == 'focusout')){

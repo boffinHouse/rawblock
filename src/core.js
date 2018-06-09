@@ -1,5 +1,4 @@
 import rb from './utils/global-rb';
-import './crucial';
 import deferred from './utils/deferred';
 import rIC from './utils/request-idle-callback';
 import rAFQueue from './utils/rafqueue';
@@ -10,6 +9,18 @@ import addLog from './utils/add-log';
 import getCSSNumbers from './utils/get-css-numbers';
 
 rb.getCSSNumbers = getCSSNumbers;
+
+if(!rb.jsonParse || !('cssConfig' in rb) || !rb.parsePseudo){
+    require('./crucial');
+}
+
+/**
+ * Reference to the internally used dom.js or jQuery instance
+ * @memberof rb
+ */
+if(!rb.$){
+    rb.$ = window.jQuery;
+}
 
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
@@ -35,14 +46,6 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
      * @external "jQuery.fn"
      * @see {@link http://learn.jquery.com/plugins/|jQuery Plugins}
      */
-
-    /**
-     * Reference to the internally used dom.js or jQuery instance
-     * @memberof rb
-     */
-    if(!rb.$){
-        rb.$ = window.jQuery;
-    }
 
     const $ = rb.$;
 
