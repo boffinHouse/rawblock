@@ -1,4 +1,5 @@
 import deferred from './deferred';
+import rb from './global-rb';
 
 export default function deferredDelay(delay, readOptimized){
     const promise = deferred();
@@ -32,4 +33,4 @@ export default function deferredDelay(delay, readOptimized){
     return promise;
 }
 
-window.rb.deferredDelay = deferredDelay;
+rb.deferredDelay = deferredDelay;

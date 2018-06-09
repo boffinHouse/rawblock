@@ -1,27 +1,31 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './$_is-plain-object', './$_extend', './$_callbacks'], factory);
+        define(['exports', '../utils/global-rb', './$_is-plain-object', './$_extend', './$_callbacks', './$_dimensions'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./$_is-plain-object'), require('./$_extend'), require('./$_callbacks'));
+        factory(exports, require('../utils/global-rb'), require('./$_is-plain-object'), require('./$_extend'), require('./$_callbacks'), require('./$_dimensions'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.$_isPlainObject, global.$_extend, global.$_callbacks);
+        factory(mod.exports, global.globalRb, global.$_isPlainObject, global.$_extend, global.$_callbacks, global.$_dimensions);
         global.$_slim = mod.exports;
     }
-})(this, function (exports, _$_isPlainObject, _$_extend, _$_callbacks) {
+})(this, function (exports, _globalRb, _$_isPlainObject, _$_extend, _$_callbacks, _$_dimensions) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
 
+    var _globalRb2 = _interopRequireDefault(_globalRb);
+
     var _$_isPlainObject2 = _interopRequireDefault(_$_isPlainObject);
 
     var _$_extend2 = _interopRequireDefault(_$_extend);
 
     var _$_callbacks2 = _interopRequireDefault(_$_callbacks);
+
+    var _$_dimensions2 = _interopRequireDefault(_$_dimensions);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -37,7 +41,6 @@
 
     var dataSymbol = void 0,
         regFocusable = void 0;
-    var rb = window.rb;
     var specialEvents = {};
 
     var Dom = function Dom(elements, context) {
@@ -108,7 +111,7 @@
             return new Dom((context || document).querySelectorAll(sel));
         },
         Event: function Event(type, options) {
-            var event = rb.events.Event(type, options);
+            var event = _globalRb2.default.events.Event(type, options);
 
             if (!event.isDefaultPrevented || event.isDefaultPrevented._deprecated) {
                 event.isDefaultPrevented = function () {
@@ -126,7 +129,7 @@
             if (Dom.cssHooks[name] && Dom.cssHooks[name].get) {
                 ret = Dom.cssHooks[name].get(elem);
             } else {
-                styles = styles || rb.getStyles(elem, null);
+                styles = styles || _globalRb2.default.getStyles(elem, null);
                 ret = styles.getPropertyValue(name) || styles[name];
             }
 
@@ -650,7 +653,7 @@
                 }
 
                 if (sel) {
-                    useFn = rb.events.proxies.delegate(fn, sel);
+                    useFn = _globalRb2.default.events.proxies.delegate(fn, sel);
                 } else {
                     useFn = fn;
                 }
@@ -679,7 +682,7 @@
 
     function getData(element, getAttrs) {
         if (!dataSymbol) {
-            dataSymbol = rb.Symbol('_rb$data');
+            dataSymbol = _globalRb2.default.Symbol('_rb$data');
         }
 
         var data = element[dataSymbol];
@@ -690,7 +693,7 @@
         }
 
         if (!data.isAttr && getAttrs) {
-            Object.assign(data._, Object.assign(rb.parseDataAttrs(element), data._));
+            Object.assign(data._, Object.assign(_globalRb2.default.parseDataAttrs(element), data._));
         }
 
         return data;
@@ -707,131 +710,7 @@
         };
     }
 
-    (function () {
-        var added = void 0,
-            isBorderBoxRelieable = void 0;
-        var div = document.createElement('div');
-
-        var read = function read() {
-            var width = void 0;
-
-            if (isBorderBoxRelieable == null && div) {
-                width = parseFloat(rb.getStyles(div).width);
-                isBorderBoxRelieable = width < 4.02 && width > 3.98;
-                (rb.rAFQueue || requestAnimationFrame)(function () {
-                    if (div) {
-                        div.remove();
-                        div = null;
-                    }
-                });
-            }
-        };
-
-        var add = function add() {
-            if (!added) {
-                added = true;
-                document.documentElement.appendChild(div);
-
-                setTimeout(read, 9);
-            }
-        };
-
-        var boxSizingReliable = function boxSizingReliable() {
-            if (isBorderBoxRelieable == null) {
-                add();
-                read();
-            }
-            return isBorderBoxRelieable;
-        };
-
-        div.style.cssText = 'position:absolute;top:0;visibility:hidden;' + 'width:4px;border:0;padding:1px;box-sizing:border-box;';
-
-        if (window.CSS && CSS.supports && CSS.supports('box-sizing', 'border-box')) {
-            isBorderBoxRelieable = true;
-        } else {
-            requestAnimationFrame(add);
-        }
-
-        Dom.support.boxSizingReliable = boxSizingReliable;
-
-        [['height', 'Height'], ['width', 'Width']].forEach(function (names) {
-            var cssName = names[0];
-            var extras = cssName == 'height' ? ['Top', 'Bottom'] : ['Left', 'Right'];
-
-            ['inner', 'outer', ''].forEach(function (modifier) {
-                var fnName = modifier ? modifier + names[1] : names[0];
-
-                fn[fnName] = function (margin) {
-                    var styles = void 0,
-                        extraStyles = void 0,
-                        isBorderBox = void 0,
-                        doc = void 0;
-                    var ret = 0;
-                    var elem = this.elements[0];
-
-                    if (margin != null && typeof margin == 'number') {
-                        this.each(function () {
-                            var $elem = new Dom(elem);
-                            var size = $elem[fnName]() - $elem[cssName]();
-
-                            rb.rAFQueue(function () {
-                                var _$elem$css;
-
-                                $elem.css((_$elem$css = {}, _$elem$css[cssName] = margin - size, _$elem$css));
-                            }, true);
-                        });
-                        return this;
-                    }
-
-                    if (elem) {
-                        if (elem.nodeType == 9) {
-                            doc = elem.documentElement;
-                            ret = Math.max(elem.body['scroll' + names[1]], doc['scroll' + names[1]], elem.body['offset' + names[1]], doc['offset' + names[1]], doc['client' + names[1]]);
-                        } else if (elem.nodeType) {
-                            styles = rb.getStyles(elem);
-                            ret = Dom.css(elem, cssName, true, styles);
-                            isBorderBox = styles.boxSizing == 'border-box' && boxSizingReliable();
-
-                            switch (modifier) {
-                                case '':
-                                    if (isBorderBox) {
-                                        extraStyles = ['border' + extras[0] + 'Width', 'border' + extras[1] + 'Width', 'padding' + extras[0], 'padding' + extras[1]];
-
-                                        ret -= rb.getCSSNumbers(elem, extraStyles, true);
-                                    }
-                                    break;
-                                case 'inner':
-                                    if (isBorderBox) {
-                                        extraStyles = ['border' + extras[0] + 'Width', 'border' + extras[1] + 'Width'];
-                                        ret -= rb.getCSSNumbers(elem, extraStyles, true);
-                                    } else {
-                                        extraStyles = ['padding' + extras[0], 'padding' + extras[1]];
-
-                                        ret += rb.getCSSNumbers(elem, extraStyles, true);
-                                    }
-                                    break;
-                                case 'outer':
-                                    if (!isBorderBox) {
-                                        extraStyles = ['border' + extras[0] + 'Width', 'border' + extras[1] + 'Width', 'padding' + extras[0], 'padding' + extras[1]];
-                                        ret += rb.getCSSNumbers(elem, extraStyles, true);
-                                    }
-
-                                    if (margin === true) {
-                                        ret += rb.getCSSNumbers(elem, ['margin' + extras[0], 'margin' + extras[1]], true);
-                                    }
-                                    break;
-                                default:
-                                    rb.logWarn('no modifiert', modifier);
-                            }
-                        } else if ('innerWidth' in elem) {
-                            ret = modifier == 'outer' ? elem['inner' + names[1]] : elem.document.documentElement['client' + names[1]];
-                        }
-                    }
-                    return ret;
-                };
-            });
-        });
-    })();
+    (0, _$_dimensions2.default)(Dom);
 
     if (!Dom.isReady) {
         document.addEventListener('DOMContentLoaded', function () {
@@ -839,22 +718,8 @@
         });
     }
 
-    if (rb) {
-        if (rb.param) {
-            Dom.param = rb.param;
-        }
-
-        /**
-         * @memberOf rb
-         * @type Function
-         *
-         * @param elements {String|Element|NodeList|Array]
-         *
-         * @returns {jQueryfiedDOMList}
-         */
-        if (!rb.$) {
-            rb.$ = Dom;
-        }
+    if (_globalRb2.default.param) {
+        Dom.param = _globalRb2.default.param;
     }
 
     exports.default = Dom;

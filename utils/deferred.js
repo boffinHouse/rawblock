@@ -1,3 +1,4 @@
+import rb from './global-rb';
 
 /**
  * Creates a promise with a resolve and a reject method.
@@ -31,6 +32,4 @@ export default function deferred(){
     return promise;
 }
 
-if(window.rb){
-    window.rb.deferred = deferred;
-}
+rb.deferred = deferred;

@@ -1,4 +1,4 @@
-const rb = window.rb;
+import rb from './global-rb';
 
 export function registerTemplate(name, fun) {
 

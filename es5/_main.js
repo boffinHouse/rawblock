@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './utils/global-rb', './utils/deferred', './utils/request-idle-callback', './utils/rafqueue', './utils/throttle', './utils/get-id', './utils/add-log', './utils/rafs', './utils/debughelpers'], factory);
+        define(['exports', './utils/global-rb', './utils/deferred', './utils/request-idle-callback', './utils/rafqueue', './utils/throttle', './utils/get-id', './utils/add-log', './utils/getCssNumbers', './utils/rafs', './utils/debughelpers'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./utils/global-rb'), require('./utils/deferred'), require('./utils/request-idle-callback'), require('./utils/rafqueue'), require('./utils/throttle'), require('./utils/get-id'), require('./utils/add-log'), require('./utils/rafs'), require('./utils/debughelpers'));
+        factory(exports, require('./utils/global-rb'), require('./utils/deferred'), require('./utils/request-idle-callback'), require('./utils/rafqueue'), require('./utils/throttle'), require('./utils/get-id'), require('./utils/add-log'), require('./utils/getCssNumbers'), require('./utils/rafs'), require('./utils/debughelpers'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.globalRb, global.deferred, global.requestIdleCallback, global.rafqueue, global.throttle, global.getId, global.addLog, global.rafs, global.debughelpers);
+        factory(mod.exports, global.globalRb, global.deferred, global.requestIdleCallback, global.rafqueue, global.throttle, global.getId, global.addLog, global.getCssNumbers, global.rafs, global.debughelpers);
         global._main = mod.exports;
     }
-})(this, function (exports, _globalRb, _deferred, _requestIdleCallback, _rafqueue, _throttle, _getId2, _addLog) {
+})(this, function (exports, _globalRb, _deferred, _requestIdleCallback, _rafqueue, _throttle, _getId2, _addLog, _getCssNumbers) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -31,6 +31,8 @@
 
     var _addLog2 = _interopRequireDefault(_addLog);
 
+    var _getCssNumbers2 = _interopRequireDefault(_getCssNumbers);
+
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
@@ -48,6 +50,8 @@
     } : function (obj) {
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
+
+    _globalRb2.default.getCSSNumbers = _getCssNumbers2.default;
 
     if (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') {}
 
@@ -346,37 +350,6 @@
         }, { that: _globalRb2.default.resize, read: true });
 
         /* End: resize */
-
-        /* Begin: getCSSNumbers */
-        /**
-         * Sums up all style values of an element
-         * @memberof rb
-         * @param element {Element}
-         * @param styles {String[]} The names of the style properties (i.e. paddingTop, marginTop)
-         * @param onlyPositive {Boolean} Whether only positive numbers should be considered
-         * @returns {number} Total of all style values
-         * @example
-         * var innerWidth = rb.getCSSNumbers(domElement, ['paddingLeft', 'paddingRight', 'width'];
-         */
-        _globalRb2.default.getCSSNumbers = function (element, styles, onlyPositive) {
-            var i, value;
-            var numbers = 0;
-            var cStyles = _globalRb2.default.getStyles(element);
-            if (!Array.isArray(styles)) {
-                styles = [styles];
-            }
-
-            for (i = 0; i < styles.length; i++) {
-                value = $.css(element, styles[i], true, cStyles);
-
-                if (!onlyPositive || value > 0) {
-                    numbers += value;
-                }
-            }
-
-            return numbers;
-        };
-        /* End: getCSSNumbers */
 
         /* Begin: memoize */
 
@@ -881,12 +854,17 @@
         _globalRb2.default.click = {
             cbs: cbs,
             add: function add(name, fn) {
+                var _this2 = this;
+
                 cbs.push({
                     attr: 'data-' + name,
                     fn: fn
                 });
+
                 if (cbs.length == 1) {
-                    this.clickClass = _setupClick();
+                    _globalRb2.default.ready.then(function () {
+                        _this2.clickClass = _setupClick();
+                    });
                 }
             }
         };
@@ -2087,11 +2065,11 @@
             };
 
             Component.prototype.triggerRaf = function triggerRaf() {
-                var _this2 = this,
+                var _this3 = this,
                     _arguments2 = arguments;
 
                 (0, _rafqueue2.default)(function () {
-                    _this2.trigger.apply(_this2, _arguments2);
+                    _this3.trigger.apply(_this3, _arguments2);
                 }, true);
             };
 

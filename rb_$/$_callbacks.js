@@ -16,7 +16,7 @@ export default function Callbacks(flags) {
             }
         },
         fire: function () {
-            this.fireWith(this, arguments);
+            this.fireWith(this, Array.from(arguments));
         },
         fireWith: function (that, args) {
             let i, len;
@@ -33,6 +33,6 @@ export default function Callbacks(flags) {
     };
 }
 
-if(window.rb && window.rb.$){
+if(typeof window != 'undefined' && window.rb && window.rb.$ && !window.rb.$.Callbacks){
     rb.$.Callbacks = Callbacks;
 }

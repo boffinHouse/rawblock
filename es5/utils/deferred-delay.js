@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './deferred'], factory);
+        define(['exports', './deferred', './global-rb'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./deferred'));
+        factory(exports, require('./deferred'), require('./global-rb'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.deferred);
+        factory(mod.exports, global.deferred, global.globalRb);
         global.deferredDelay = mod.exports;
     }
-})(this, function (exports, _deferred) {
+})(this, function (exports, _deferred, _globalRb) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -19,6 +19,8 @@
     exports.default = deferredDelay;
 
     var _deferred2 = _interopRequireDefault(_deferred);
+
+    var _globalRb2 = _interopRequireDefault(_globalRb);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -32,7 +34,7 @@
         var rAF = readOptimized ? function (fn) {
             setTimeout(fn, 30);
         } : function (fn) {
-            rb.rAFQueue(fn, false, true);
+            _globalRb2.default.rAFQueue(fn, false, true);
         };
         var startRaf = function startRaf() {
             rAF(check);
@@ -55,5 +57,5 @@
         return promise;
     }
 
-    window.rb.deferredDelay = deferredDelay;
+    _globalRb2.default.deferredDelay = deferredDelay;
 });

@@ -33,12 +33,7 @@ const supportsPassiveEventListener = !supportsPointerWithoutTouch && supportsCss
         return supportsPassiveOption;
     })();
 const supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
-const hasIOSScrollBug = (function () {
-    const ua = navigator.userAgent || '';
-    const version = !supportsCssTouchActionPan && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
-
-    return (version && parseInt(version[1], 10) < 3);
-})();
+const hasIOSScrollBug = !supportsCssTouchActionPan && (/iphone|ipad/i).test(navigator.userAgent || '');
 
 function Draggy(element, options) {
 
@@ -73,30 +68,64 @@ function Draggy(element, options) {
             this.setupTouch();
         }
     }
+
+    Draggy.constructs.forEach((construct) => {
+        construct.call(this, this.element, this.options);
+    });
 }
 
 Draggy._defaults = {
     move: noop,
     start: noop,
     end: noop,
-    preventClick: true,
-    preventMove: true,
-    useMouse: true,
-    useTouch: true,
-    usePointerMouse: false,
+    // set to false to allow only vertical drag
     horizontal: true,
+    // set to true to allow only vertical drag
     vertical: true,
+    // selector
     exclude: false,
     excludeNothing: false,
+    //prevents mouse click, if a drag happend
+    preventClick: true,
+    //prevents touchMove events if currently dragging.
+    preventMove: true,
+    //allow drag by touch (includes pointer events)
+    useTouch: true,
+    //allow drag by mouse
+    useMouse: true,
+    //handle mouse events in pointer events, if false uses oldSchool mouseevents.
+    usePointerMouse: false,
+    // stops event propagation, improves nested drags
     stopPropagation: true,
+    // uses passive event listener
     usePassiveEventListener: true,
     usePointerOnActive: false,
+    // catches start also with with touchmove event instead of touchstart only.
     catchMove: false,
+    // velocityBase moved pixel in 333
     velocityBase: 333,
 };
 
+Draggy.constructs = [];
+Draggy.extend = function(defaults, construct, proto){
+    Draggy.constructs.push(construct);
+
+    Object.entries(proto).forEach(([name, prop]) => {
+        if(typeof Draggy.prototype[name] == 'function'){
+            prop.superFn = Draggy.prototype[name];
+
+            Draggy.prototype[name] = prop;
+
+        } else {
+            Draggy.prototype[name] = prop;
+        }
+    });
+
+    Object.assign(Draggy._defaults, defaults);
+};
+
 Object.assign(Draggy.prototype, {
-    setTouchAction: function(){
+    setTouchAction(){
         const {usePointerOnActive, usePassiveEventListener} = this.options;
 
         if(!supportsTouchAction || (!usePassiveEventListener && (!usePointerOnActive || !supportsPointerWithoutTouch))){return;}
@@ -115,14 +144,14 @@ Object.assign(Draggy.prototype, {
 
         this.element.style.touchAction = style;
     },
-    hasRelevantChange: function () {
+    hasRelevantChange() {
         let horizontalDif, verticalDif;
         const options = this.options;
         let ret = true;
 
         if (options.horizontal != options.vertical) {
-            horizontalDif = Math.abs(this.lastPos.x - this.curPos.x);
-            verticalDif = Math.abs(this.lastPos.y - this.curPos.y);
+            horizontalDif = Math.abs(this.curPos.x - this.lastPos.x);
+            verticalDif = Math.abs(this.curPos.y - this.lastPos.y);
 
             ret = (options.horizontal && horizontalDif * 0.8 > verticalDif) || (options.vertical && verticalDif * 0.8 > horizontalDif);
 
@@ -133,10 +162,10 @@ Object.assign(Draggy.prototype, {
 
         return ret;
     },
-    reset: function () {
+    reset() {
         this.isType = '';
-        this.allowMouse = true;
-        this.allowTouch = true;
+        this.technicalVelFactor = 1;
+        this.isTechnicalType = '';
         this.startPos = {};
         this.lastPos = {};
         this.relPos = {};
@@ -146,35 +175,37 @@ Object.assign(Draggy.prototype, {
         this.verticalVel = 0;
         this.allowClick = noop;
     },
-    velocitySnapShot: function () {
+    technicalVelFactor: 1,
+    velocitySnapShot() {
         let velTiming;
 
         if (this.velTime) {
             velTiming = (Date.now() - this.velTime);
 
-            if (velTiming > 85 || (!this.horizontalVel && !this.verticalVel)) {
+            if (velTiming > 80 || (!this.horizontalVel && !this.verticalVel)) {
                 const {velocityBase} = this.options;
 
-                velTiming = (velTiming / velocityBase) || 1;
+                velTiming = ((velTiming / velocityBase) || 1) * (1 / this.technicalVelFactor);
 
                 this.velPos = this._velPos;
-                this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x) || 1;
-                this.verticalVel = Math.abs(this.velPos.y - this.curPos.y) || 1;
 
-                this.verticalVel /= velTiming;
-                this.horizontalVel /= velTiming;
+                this.horizontalVelDir = (this.curPos.x - this.velPos.x) / velTiming;
+                this.verticalVelDir = (this.curPos.x - this.velPos.x) / velTiming;
+
+                this.horizontalVel = Math.abs(this.horizontalVelDir) || 0.00000001;
+                this.verticalVel = Math.abs(this.verticalVelDir) || 0.00000001;
             }
         }
 
         this._velPos = this.curPos;
         this.velTime = Date.now();
     },
-    start: function (pos, evt) {
+    start(pos, evt) {
         const options = this.options;
 
         this.startPos = {
-            x: pos.clientX,
-            y: pos.clientY,
+            x: 'draggyX' in pos ? pos.draggyX : pos.clientX,
+            y: 'draggyY' in pos ? pos.draggyY :pos.clientY,
             pX: pos.pageX,
             pY: pos.pageY,
         };
@@ -196,13 +227,13 @@ Object.assign(Draggy.prototype, {
 
         options.start(this, evt);
     },
-    move: function (pos, evt) {
+    move(pos, evt) {
         const options = this.options;
 
         this.lastPos = this.curPos;
         this.curPos = {
-            x: pos.clientX,
-            y: pos.clientY,
+            x: 'draggyX' in pos ? pos.draggyX : pos.clientX,
+            y: 'draggyY' in pos ? pos.draggyY :pos.clientY,
             pX: pos.pageX,
             pY: pos.pageY,
         };
@@ -219,14 +250,14 @@ Object.assign(Draggy.prototype, {
             evt.stopImmediatePropagation();
         }
 
-        this.movedPos.x = this.startPos.x - this.curPos.x;
-        this.movedPos.y = this.startPos.y - this.curPos.y;
-        this.relPos.x = this.lastPos.x - this.curPos.x;
-        this.relPos.y = this.lastPos.y - this.curPos.y;
+        this.movedPos.x = this.curPos.x - this.startPos.x;
+        this.movedPos.y = this.curPos.y - this.startPos.y;
+        this.relPos.x = this.curPos.x - this.lastPos.x;
+        this.relPos.y = this.curPos.y - this.lastPos.y;
 
         options.move(this, evt);
     },
-    end: function (pos, evt) {
+    end(pos, evt) {
         const options = this.options;
         let preventClick = options.preventClick;
 
@@ -247,13 +278,13 @@ Object.assign(Draggy.prototype, {
             this._destroyMouse();
         }
 
-        this.movedPos.x = this.startPos.x - this.curPos.x;
-        this.movedPos.y = this.startPos.y - this.curPos.y;
+        this.movedPos.x = this.curPos.x - this.startPos.x;
+        this.movedPos.y = this.curPos.y - this.startPos.y;
 
         if(!('x' in this.relPos) && !('y' in this.lastPos)){
             this.lastPos = this.curPos;
-            this.relPos.x = this.lastPos.x - this.curPos.x;
-            this.relPos.y = this.lastPos.y - this.curPos.y;
+            this.relPos.x = this.curPos.x - this.lastPos.x;
+            this.relPos.y =  this.curPos.y - this.lastPos.y;
         }
 
         options.end(this, evt);
@@ -268,7 +299,7 @@ Object.assign(Draggy.prototype, {
         }
         this.reset();
     },
-    preventClick: function (evt) {
+    preventClick(evt) {
         this.isClickPrevented = true;
         clearTimeout(this._preventClickTimer);
 
@@ -280,7 +311,7 @@ Object.assign(Draggy.prototype, {
             evt.preventDefault();
         }
     },
-    setupEvents: function () {
+    setupEvents() {
         const that = this;
 
         this._onclick = function (e) {
@@ -304,7 +335,10 @@ Object.assign(Draggy.prototype, {
         return excludeNothing ||
             (btnsMap[target.type] || !regInputs.test(target.nodeName || '') && (!exclude || !target.closest(exclude)));
     },
-    setupMouse: function () {
+    isAllowedForType(type){
+        return (!this.isTechnicalType || this.isTechnicalType == type);
+    },
+    setupMouse() {
         let timer;
 
         const move = (e)=> {
@@ -322,7 +356,6 @@ Object.assign(Draggy.prototype, {
         };
 
         this._destroyMouse = ()=> {
-            this.allowTouch = true;
             clearTimeout(timer);
             document.removeEventListener('mousemove', move);
             document.removeEventListener('mouseup', up);
@@ -330,7 +363,7 @@ Object.assign(Draggy.prototype, {
 
         this._onmousedown = (e)=> {
             this._destroyMouse();
-            if (e.defaultPrevented || e.button || !this.options.useMouse || !this.allowMouse || !this.allowedDragTarget(e.target)) {
+            if (e.defaultPrevented || e.button || !this.options.useMouse || !this.isAllowedForType('mouse') || !this.allowedDragTarget(e.target)) {
                 return;
             }
 
@@ -338,8 +371,8 @@ Object.assign(Draggy.prototype, {
                 e.preventDefault();
             }
 
-            this.allowTouch = false;
             this.isType = 'mouse';
+            this.isTechnicalType = 'mouse';
 
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
@@ -349,7 +382,7 @@ Object.assign(Draggy.prototype, {
 
         this.element.addEventListener('mousedown', this._onmousedown);
     },
-    setupTouch: function () {
+    setupTouch() {
         let identifier;
         const getTouch = function(touches){
             let i, len, touch;
@@ -376,7 +409,6 @@ Object.assign(Draggy.prototype, {
             const touch = getTouch(e.changedTouches || e.touches);
 
             if(touch) {
-                this.allowMouse = true;
                 this._destroyTouch();
                 this.end(touch, e);
 
@@ -404,14 +436,14 @@ Object.assign(Draggy.prototype, {
 
                 this._destroyTouch();
 
-                if (e.defaultPrevented || !this.options.useTouch || !this.allowTouch || !e.touches[0] || !this.allowedDragTarget(e.target)) {
+                if (e.defaultPrevented || !this.options.useTouch || !this.isAllowedForType('touch') || !e.touches[0] || !this.allowedDragTarget(e.target)) {
                     return;
                 }
 
                 identifier = e.touches[0].identifier;
 
-                this.allowMouse = false;
                 this.isType = 'touch';
+                this.isTechnicalType = 'touch';
 
                 this.element.addEventListener('touchmove', move, this.touchOpts);
                 this.element.addEventListener('touchend', end, this.touchOpts);
@@ -449,7 +481,6 @@ Object.assign(Draggy.prototype, {
         const end = (e)=> {
 
             if(e.pointerId == identifier) {
-                this.allowMouse = true;
                 this._destroyPointer();
                 this.end(e, e);
             }
@@ -471,7 +502,7 @@ Object.assign(Draggy.prototype, {
 
                 that._destroyPointer();
 
-                if (e.defaultPrevented || e.isPrimary === false || (isMouse && !options.useMouse) || e.button || !options.useTouch || !that.allowTouch || !that.allowedDragTarget(e.target)) {
+                if (e.defaultPrevented || e.isPrimary === false || (isMouse && !options.useMouse) || e.button || !options.useTouch || !this.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
                     return;
                 }
 
@@ -488,9 +519,8 @@ Object.assign(Draggy.prototype, {
 
                 identifier = e.pointerId;
 
-                that.allowMouse = false;
-                that.isType = 'pointer';
-
+                that.isType = isMouse ? 'mouse' : 'touch';
+                that.isTechnicalType = 'pointer';
 
                 document.addEventListener('pointermove', move);
                 document.addEventListener('pointerup', end);
@@ -501,7 +531,7 @@ Object.assign(Draggy.prototype, {
 
         this.element.addEventListener('pointerdown', this._pointerdown);
     },
-    destroy: function () {
+    destroy() {
         clearInterval(this._velocityTimer);
         this.destroyed = true;
 

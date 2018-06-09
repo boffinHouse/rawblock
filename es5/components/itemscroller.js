@@ -1,13 +1,13 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', '../utils/css-supports', '../utils/draggy', '../utils/wheelanalyzer', '../utils/resize', '../utils/prefixed', '../utils/debounce'], factory);
+        define(['exports', '../utils/css-supports', '../utils/resize', '../utils/prefixed', '../utils/draggy_wheel'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('../utils/css-supports'), require('../utils/draggy'), require('../utils/wheelanalyzer'), require('../utils/resize'), require('../utils/prefixed'), require('../utils/debounce'));
+        factory(exports, require('../utils/css-supports'), require('../utils/resize'), require('../utils/prefixed'), require('../utils/draggy_wheel'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.cssSupports, global.draggy, global.wheelanalyzer, global.resize, global.prefixed, global.debounce);
+        factory(mod.exports, global.cssSupports, global.resize, global.prefixed, global.draggy_wheel);
         global.itemscroller = mod.exports;
     }
 })(this, function (exports, _cssSupports) {
@@ -180,8 +180,7 @@
                     startOrder: -1,
                     endOrder: 99,
                     usePx: false,
-                    wheel: true,
-                    wheelVelocityMultiplier: 0.2
+                    wheel: true
                 };
             }
         }]);
@@ -307,123 +306,6 @@
             this.setSwitchedOffClass();
         };
 
-        ItemScroller.prototype.addWheel = function addWheel() {
-            if (!this.options.wheel || !rb.debounce) {
-                return;
-            }
-
-            var startValue;
-            var that = this;
-            var _isWheelStarted = false;
-            var isScrollerDir = null;
-            var options = this.options;
-
-            var wheelAnalyzer = rb.WheelAnalyzer();
-            var momentumBlocked = false;
-
-            var unblockMomentum = function unblockMomentum() {
-                momentumBlocked = false;
-                reset();
-            };
-
-            var reset = function reset() {
-                _isWheelStarted = false;
-                isScrollerDir = null;
-            };
-
-            var wheelDirEnd = function wheelDirEnd() {
-                // prevent normal wheelEnd, when momentum is handled
-                if (momentumBlocked) {
-                    return;
-                }
-
-                var nearestIndex = that.getNearest();
-                var diff = that._pos - startValue;
-                var threshold = Math.min(Math.max(that.viewportWidth / 4, 150), 300);
-
-                reset();
-
-                if (nearestIndex != that._selectedIndex || Math.abs(diff) < threshold) {
-                    that.selectedIndex = nearestIndex;
-                } else if (diff > 0) {
-                    that.selectPrev();
-                } else {
-                    that.selectNext();
-                }
-            };
-
-            var wheelDirEndDebounced = rb.debounce(wheelDirEnd, { delay: 77 });
-            var wheelEndDebounced = rb.debounce(reset, { delay: 99 });
-
-            var wheelHandler = function wheelHandler(e) {
-                var x, y;
-
-                if (!e.deltaMode && !options.switchedOff && options.wheel && !e.defaultPrevented) {
-
-                    if (isScrollerDir !== false) {
-                        x = Math.abs(e.deltaX);
-                        y = Math.abs(e.deltaY);
-
-                        if (isScrollerDir == null && x != y) {
-                            isScrollerDir = x > y;
-                        }
-
-                        if (x >= y || x) {
-
-                            wheelAnalyzer.feedWheel(e);
-
-                            if (!momentumBlocked) {
-                                if (!_isWheelStarted) {
-                                    _isWheelStarted = true;
-                                    startValue = that._pos;
-                                    $(that.scroller).stop();
-                                }
-
-                                that._setRelPos(e.deltaX * -1, true);
-                                wheelDirEndDebounced();
-                            }
-
-                            e.preventDefault();
-                        }
-                    } else {
-                        wheelEndDebounced();
-                    }
-                }
-            };
-
-            var uninstallWheelHandler = function uninstallWheelHandler() {
-                that.viewport.removeEventListener('wheel', wheelHandler);
-            };
-
-            var installWheelHandler = rb.debounce(function () {
-                if (!options.switchedOff && options.wheel && that.viewport.matches(':hover')) {
-                    that.viewport.addEventListener('wheel', wheelHandler);
-                }
-            }, { delay: 66 });
-
-            that.viewport.addEventListener('mouseleave', uninstallWheelHandler);
-            that.viewport.addEventListener('mouseenter', installWheelHandler);
-
-            installWheelHandler();
-
-            //unblock direct user interaction, when momentum ended or is interrupted
-            wheelAnalyzer.subscribe('ended', unblockMomentum).subscribe('interrupted', unblockMomentum).subscribe('recognized', function (data) {
-                momentumBlocked = true;
-
-                reset();
-
-                // from px/s -> px/300ms
-                var velocity = data.deltaVelocity / 1000 * 300 * -1;
-                var totalLengthMovedByWheel = data.deltaTotal;
-
-                //tune down velocity for snap from wheel
-                velocity = velocity * that.options.wheelVelocityMultiplier;
-
-                // dir, veloX, length
-                that._snapTo(velocity < 0 ? -1 : 1, Math.abs(velocity), totalLengthMovedByWheel * 0.25);
-            });
-        };
-
         ItemScroller.prototype.setSwitchedOffClass = function setSwitchedOffClass() {
             this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
         };
@@ -470,7 +352,6 @@
 
         ItemScroller.prototype._setupEvents = function _setupEvents() {
             this._setupFocusScroll();
-            this.addWheel();
         };
 
         ItemScroller.prototype._setupFocusScroll = function _setupFocusScroll() {
@@ -854,7 +735,7 @@
 
         ItemScroller.prototype._dragMove = function _dragMove(draggy) {
             if (draggy.relPos.x) {
-                this._setRelPos(draggy.relPos.x * -1, true);
+                this._setRelPos(draggy.relPos.x, true);
             }
         };
 
@@ -884,6 +765,7 @@
             $(this.viewport).draggy({
                 vertical: false,
                 useMouse: this.options.mouseDrag,
+                useWheel: this.options.wheel,
                 exclude: this.options.dragExclude,
                 start: this._dragStart,
                 end: this._dragEnd,

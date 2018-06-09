@@ -1,3 +1,4 @@
+import rb from './global-rb';
 import rAFQueue from './rafqueue';
 
 /**
@@ -12,19 +13,19 @@ import rAFQueue from './rafqueue';
  *
  * @example
  *  class Foo {
-	 *      constructor(element){
-	 *          this.element = element;
-	 *          this.changeLayout = rb.rAF(this.changeLayout);
-	 *      }
-	 *
-	 *      changeLayout(width){
-	 *          this.element.classList[width > 800 ? 'add' : 'remove']('is-large');
-	 *      }
-	 *
-	 *      measureLayout(){
-	 *          this.changeLayout(this.element.offsetWidth);
-	 *      }
-	 *  }
+ *      constructor(element){
+ *          this.element = element;
+ *          this.changeLayout = rb.rAF(this.changeLayout);
+ *      }
+ *
+ *      changeLayout(width){
+ *          this.element.classList[width > 800 ? 'add' : 'remove']('is-large');
+ *      }
+ *
+ *      measureLayout(){
+ *          this.changeLayout(this.element.offsetWidth);
+ *      }
+ *  }
  */
 export function rAF(fn, options) {
     let running, args, that, inProgress;
@@ -58,7 +59,7 @@ export function rAF(fn, options) {
 
     inProgress = !options.queue;
 
-    if (fn._rbUnrafedFn) {
+    if (fn._rbUnrafedFn && rb.log) {
         rb.log('double rafed', fn);
     }
 
@@ -77,7 +78,8 @@ export function rAF(fn, options) {
  * @memberof rb
  *
  * @param {Object} obj
- * @param {Object} [options]
+ * @param {Object} [options] see more option @ `rb.rAF`
+ * @param {String} options.nameAppendix='' Wether the rafed method should be renamed by appending the given string.
  * @param {...String} methodNames
  *
  * @example
@@ -93,8 +95,10 @@ export function rAFs(obj) {
         options = args.shift();
     }
 
+    const nameAppendix = options && options.nameAppendix || '';
+
     args.forEach(function (fn) {
-        obj[fn] = rb.rAF(obj[fn], options);
+        obj[fn + nameAppendix] = rb.rAF(obj[fn], options);
     });
 }
 
@@ -102,6 +106,4 @@ export default function(fn){
     return typeof fn == 'function' ? rAF(...arguments) : rAFs(...arguments);
 }
 
-if(window.rb){
-    Object.assign(window.rb, {rAF, rAFs});
-}
+Object.assign(rb, {rAF, rAFs});

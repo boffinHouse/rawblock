@@ -1,22 +1,24 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './request-idle-callback', './rafqueue'], factory);
+        define(['exports', './global-rb', './request-idle-callback', './rafqueue'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./request-idle-callback'), require('./rafqueue'));
+        factory(exports, require('./global-rb'), require('./request-idle-callback'), require('./rafqueue'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.requestIdleCallback, global.rafqueue);
+        factory(mod.exports, global.globalRb, global.requestIdleCallback, global.rafqueue);
         global.throttle = mod.exports;
     }
-})(this, function (exports, _requestIdleCallback, _rafqueue) {
+})(this, function (exports, _globalRb, _requestIdleCallback, _rafqueue) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
     exports.default = throttle;
+
+    var _globalRb2 = _interopRequireDefault(_globalRb);
 
     var _requestIdleCallback2 = _interopRequireDefault(_requestIdleCallback);
 
@@ -46,12 +48,17 @@
             args = void 0;
 
         var lastTime = 0;
-        var Date = window.Date;
 
         var _run = function _run() {
             running = false;
             lastTime = Date.now();
-            fn.apply(that, args);
+            var nowThat = that;
+            var nowArgs = args;
+
+            that = null;
+            args = null;
+
+            fn.apply(nowThat, nowArgs);
         };
 
         var afterAF = function afterAF() {
@@ -59,6 +66,10 @@
         };
 
         var throttel = function throttel() {
+
+            that = options.that || this;
+            args = arguments;
+
             if (running) {
                 return;
             }
@@ -66,9 +77,6 @@
             var delay = options.delay;
 
             running = true;
-
-            that = options.that || this;
-            args = arguments;
 
             if (options.unthrottle) {
                 _run();
@@ -110,7 +118,5 @@
         return throttel;
     }
 
-    if (window.rb) {
-        window.rb.throttle = throttle;
-    }
+    _globalRb2.default.throttle = throttle;
 });

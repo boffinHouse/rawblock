@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', './utils/global-rb'], factory);
+        define(['exports', './utils/global-rb', './utils/get-styles'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('./utils/global-rb'));
+        factory(exports, require('./utils/global-rb'), require('./utils/get-styles'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.globalRb);
+        factory(mod.exports, global.globalRb, global.getStyles);
         global._crucial = mod.exports;
     }
-})(this, function (exports, _globalRb) {
+})(this, function (exports, _globalRb, _getStyles) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -18,6 +18,8 @@
     });
 
     var _globalRb2 = _interopRequireDefault(_globalRb);
+
+    var _getStyles2 = _interopRequireDefault(_getStyles);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -109,24 +111,7 @@
         return getPseudoToParse(element) != value;
     };
 
-    /**
-     * Returns the ComputedStyleObject of an element.
-     * @memberof rb
-     * @param element {Element}
-     * @param [pseudo] {String|null} Either `'::after'`, `'::before'` or `null`/`undefined`
-     * @returns {CssStyle}
-     *
-     * @example
-     * rb.getStyles(element).position // returns 'absolute', 'relative' ...
-     */
-    _globalRb2.default.getStyles = function (element, pseudo) {
-        var view = element.ownerDocument.defaultView;
-
-        if (!view.opener) {
-            view = window;
-        }
-        return view.getComputedStyle(element, pseudo || null) || { getPropertyValue: _globalRb2.default.$ && _globalRb2.default.$.noop, isNull: true };
-    };
+    _globalRb2.default.getStyles = _getStyles2.default;
 
     /**
      * Parsed global data from Stylesheet (html::before and html::before)

@@ -1,8 +1,4 @@
-const glob = typeof window != 'undefined' ?
-    window :
-    typeof global != 'undefined' ?
-        global :
-    this || {};
+import glob from './glob';
 
 if(!glob.rb){
     glob.rb = {};

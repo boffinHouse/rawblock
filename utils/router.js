@@ -2,12 +2,11 @@
  * original by
  * http://krasimirtsonev.com/blog/article/A-modern-JavaScript-router-in-100-lines-history-api-pushState-hash-url
  */
-if (!window.rb) {
-    window.rb = {};
-}
-import deserialize from './deserialize';
 
-const rb = window.rb;
+import rb from './global-rb';
+import deserialize from './deserialize';
+import getID from './get-id';
+import addLog from './add-log';
 
 const regPlus = /\+/g;
 const regSlashBegin = /^\//;
@@ -15,45 +14,61 @@ const regSlashEnd = /\/$/;
 const regFullHash = /#(.*)$/;
 const regWildCard = /\*$/;
 
+const thenable = Promise.resolve();
+
+const winHistory = window.history;
+let historyKeyCounter = 0;
+
 const returnTrue = () => true;
 
 function decodeParam(param){
     return decodeURIComponent(param.replace(regPlus, ' '));
 }
 
-rb.Router = {
+rb.Router = addLog({
     routes: {},
     mode: 'history',
-    root: '/',
-    regHash: /#!(.*)$/,
-    regIndex: /\/index\.htm[l]*$/,
+    current: '',
+    options: {
+        regHash: /#!(.*)$/,
+        regIndex: /\/index\.htm[l]*$/,
+        //you need to install a URL polyfill for IE
+        supportRelativeRoutes: false,
+        //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
+        samePathStrategy: 'replace', //reload, replace, recall, stop
+    },
+    noNavigate: false,
+    history: null,
+    activeHistoryIndex: -1,
+    storageKey: 'rb_router',
+    init({ options, listen, routes } = {}) {
+        this.config(options);
+
+        this.initHistory();
+
+        if(routes){
+            this.map(routes);
+        }
+
+        if(listen){
+            this.listen();
+        }
+    },
     config: function (options) {
-        options = options || {};
+        Object.assign(this.options, options);
 
-        this.mode = options.mode != 'hash' && ('pushState' in history) ?
-            'history' :
-            'hash';
-
-        if (options.regHash) {
-            this.regHash = options.regHash;
-        }
-
-        if (options.regIndex) {
-            this.regIndex = options.regIndex;
-        }
-
-        this.root = options.root ? '/' + this.clearSlashes(options.root) + '/' : '/';
         return this;
     },
-    getFragment: function () {
+    getFragment: function (locationObject = location) {
         let match;
         let fragment = '';
 
-        if (this.mode != 'hash') {
-            fragment = decodeURI(location.pathname + location.search);
-            fragment = this.root != '/' ? fragment.replace(this.root, '') : fragment;
+        const {regHash, mode} = this.options;
+
+        if (mode != 'hash') {
+            fragment = decodeURI(locationObject.pathname + locationObject.search);
         } else {
-            match = window.location.href.match(this.regHash);
+            match = locationObject.href.match(regHash);
             fragment = match ? match[1] : '';
         }
 
@@ -169,7 +184,6 @@ rb.Router = {
     flush() {
         this.routes = {};
         this.mode = null;
-        this.root = '/';
         return this;
     },
     matches(route, path){
@@ -238,11 +252,11 @@ rb.Router = {
 
         return false;
     },
-    _saveState(fragment){
+    _saveState(fragment, event = {type: 'unknown/initial'}){
         const data = {fragment: fragment == null ? this.getFragment() : fragment};
         const fragmentParts = data.fragment.split('?');
 
-        fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.regIndex, ''));
+        fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.options.regIndex, ''));
 
         this.before = this.current;
         this.beforeRoute = this.currentRoute;
@@ -254,19 +268,30 @@ rb.Router = {
 
         data.fragment = fragment;
 
-        return data;
-    },
-    applyRoutes(fragment) {
-
-        const data = this._saveState(fragment);
-        const options = deserialize(this.currentOptions);
-
         data.changedRoute = this.beforeRoute != this.currentRoute;
         data.changedOptions = this.beforeOptions != this.currentOptions;
+        data.history = this.history;
+        data.activeHistoryIndex = this.activeHistoryIndex;
+        data.event = event;
+
+        return data;
+    },
+    applyRoutes(fragment, event) {
+
+        const data = this._saveState(fragment, event);
+        const options = deserialize(this.currentOptions);
 
         fragment = data.fragment.split('/');
 
+        if(this.noNavigate){
+            this.logError('Router.applyRoutes called while routes are already applied.');
+        }
+
+        this.noNavigate = true;
+
         this.findMatchingRoutes(this.routes, fragment, data, options);
+
+        this.noNavigate = false;
 
         return this;
     },
@@ -281,14 +306,104 @@ rb.Router = {
 
         return this;
     },
-    applyRoutesIfNeeded(){
+    applyRoutesIfNeeded(event){
+        if(this.getFragment() !== this.current){
+            this.onRouteChanged(event);
+        }
+    },
+    onRouteChanged(event){
         const cur = this.getFragment();
+        const stop = cur === this.current && this.options.samePathStrategy.includes('stop');
 
-        if (this.current !== cur) {
-            this.applyRoutes(cur);
+        if(!stop){
+            this.updateActiveHistoryIndex();
+            this.applyRoutes(cur, event);
+        } else if(event && event.original && event.original.type === 'popstate') {
+            this.logWarn('route did not change, but pop event occurred');
+            this.updateActiveHistoryIndex();
         }
 
         return this;
+    },
+    initHistory: function(){
+        const state = winHistory.state;
+        let currentHistoryKey = state && state.historyKey;
+        let restoredRouterState;
+        this.history = null;
+
+        try {
+            restoredRouterState = JSON.parse(window.sessionStorage.getItem(this.storageKey));
+        } catch(e) {} // eslint-disable-line no-empty
+
+        if(restoredRouterState){
+            this.sessionHistories = restoredRouterState.sessionHistories;
+
+            if(currentHistoryKey && this.sessionHistories.length){
+                this.history = this.sessionHistories.find((history) => {
+                    const historyIndex = history.indexOf(currentHistoryKey);
+                    if(historyIndex > -1){
+                        this.activeHistoryIndex = historyIndex;
+                        return true;
+                    }
+                });
+            }
+        }
+
+        if(!currentHistoryKey){
+            currentHistoryKey = this.getHistoryKey();
+            winHistory.replaceState({
+                state,
+                historyKey: currentHistoryKey,
+            }, '');
+        }
+
+        this.sessionHistories = this.sessionHistories || [];
+
+        if(!this.history){
+            this.history = [currentHistoryKey];
+            this.activeHistoryIndex = 0;
+            this.sessionHistories.push(this.history);
+        }
+    },
+    updateActiveHistoryIndex(){
+        const currentHistoryKey = winHistory.state && winHistory.state.historyKey;
+
+        if(!currentHistoryKey){
+            return this.logWarn('missing currentHistoryKey');
+        }
+
+        this.activeHistoryIndex = this.history.indexOf(currentHistoryKey);
+
+        if(this.activeHistoryIndex === -1){
+            this.logWarn('did not find key in history', currentHistoryKey, this.history, this.sessionHistories);
+            this.history = [currentHistoryKey];
+            this.activeHistoryIndex = 0;
+            this.sessionHistories.push(this.history);
+        }
+
+        this.saveRouterState();
+    },
+    getHistoryKey(){
+        historyKeyCounter += 1;
+        return historyKeyCounter + '-' + getID();
+    },
+    addToHistory(historyKey, replace){
+        if(replace){
+            this.history[this.activeHistoryIndex] = historyKey;
+        } else {
+            // remove former history future stack
+            const historyEndIndex = this.history.length - 1;
+            if(historyEndIndex > this.activeHistoryIndex){
+                this.history.length = this.activeHistoryIndex + 1;
+            }
+
+            this.history.push(historyKey);
+            this.activeHistoryIndex = this.history.length - 1;
+        }
+        this.saveRouterState();
+    },
+    saveRouterState(){
+        window.sessionStorage.setItem(this.storageKey, JSON.stringify({sessionHistories: this.sessionHistories}));
     },
     listen() {
         this.current = this.getFragment();
@@ -296,7 +411,20 @@ rb.Router = {
         this.unlisten();
 
         if (!this._listener) {
-            this._listener = this.applyRoutesIfNeeded.bind(this);
+            //'interval' often means either browser bug or external (disapproved) pushState/replaceState call
+            this._listener = (e = {type: 'interval'}) => {
+                const run = e.type != 'interval' || this.getFragment() !== this.current;
+
+                if(run){
+                    this.onRouteChanged({
+                        type: 'popstate',
+                        original: {
+                            type: e.type,
+                            state: e.state,
+                        },
+                    });
+                }
+            };
         }
 
         this.interval = setInterval(this._listener, 999);
@@ -309,11 +437,78 @@ rb.Router = {
 
         return this;
     },
-    navigate(path, silent, replace) {
-        path = path || '';
+
+    normalizePath(path = ''){
+        path = path.replace(regSlashEnd, '');
+
+        if(!path.startsWith('.')){
+            path = '/' + path.replace(regSlashBegin, '');
+        }
+
+        return path;
+    },
+
+    changedPath(path, locationObj = location){
+        let changedPath;
+
+        if(this.options.supportRelativeRoutes){
+            path = this.normalizePath(path);
+            changedPath = this.current !== this.getFragment(new URL(path, locationObj.href));
+        } else {
+
+            if(path.startsWith('.')){
+                this.logError(`we do not support relative path: ${path}`);
+            }
+
+            changedPath = this.clearSlashes(path) !== this.clearSlashes(this.current);
+        }
+
+        return changedPath;
+    },
+
+    navigate(path, state = null, silent, replace) {
+
+        if(this.noNavigate){
+            thenable.then(() => {
+                this.navigate(...arguments);
+            });
+
+            this.logWarn('Router.navigate called while routes are already applied.');
+            return this;
+        }
+
+        path = this.normalizePath(path || '');
+
+        if(typeof state == 'boolean'){
+            replace = silent;
+            silent = state;
+            state = null;
+        }
+
+        if(!replace && !this.changedPath(path)){
+            const { samePathStrategy } = this.options;
+
+            if(samePathStrategy.includes('reload')){
+                window.location.reload();
+                return;
+            } else if(samePathStrategy.includes('replace') && replace !== false){
+                replace = true;
+            }
+        }
+
+        const event = {
+            type: 'navigate',
+            replace,
+        };
+
+        if(!state || !state.historyKey || !state.state){
+            state = {state, historyKey: this.getHistoryKey()};
+        }
+
+        this.addToHistory(state.historyKey, replace);
 
         if (this.mode === 'history') {
-            window.history[replace === true ? 'replaceState' : 'pushState'](null, '', this.root + this.clearSlashes(path));
+            winHistory[replace === true ? 'replaceState' : 'pushState'](state, '', path);
         } else {
             const value = window.location.href.replace(regFullHash, '') + '#' + path;
 
@@ -325,17 +520,21 @@ rb.Router = {
         }
 
         if(silent){
-            this._saveState();
+            this._saveState(event);
         } else {
-            this.applyRoutesIfNeeded();
+            this.onRouteChanged(event);
         }
 
         return this;
     },
 
-    replace(path, silent) {
-        return this.navigate(path, silent, true);
+    push(path, state, silent){
+        return this.navigate(path, state, silent, false);
     },
-};
+
+    replace(path, state, silent) {
+        return this.navigate(path, state, silent, true);
+    },
+}, 2);
 
 export default rb.Router;

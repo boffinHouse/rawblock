@@ -1,8 +1,10 @@
+import glob from '../utils/glob';
+import rb from '../utils/global-rb';
+
 import './$_param';
 import serialize from '../utils/serialize';
 
-const rb = window.rb;
-const $ = rb.$ || window.jQuery;
+const $ = rb.$ || glob.jQuery;
 
 if(!$.fn.serializeArray || !$.fn.serialize){
 

@@ -1,21 +1,29 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports'], factory);
+        define(['exports', '../utils/global-rb'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports);
+        factory(exports, require('../utils/global-rb'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports);
+        factory(mod.exports, global.globalRb);
         global.$_param = mod.exports;
     }
-})(this, function (exports) {
+})(this, function (exports, _globalRb) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _globalRb2 = _interopRequireDefault(_globalRb);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
 
     var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
         return typeof obj;
@@ -23,8 +31,7 @@
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
 
-    var rb = window.rb;
-    var $ = rb.$;
+    var $ = _globalRb2.default.$;
     var r20 = /%20/g;
     var rbracket = /\[]$/;
 
@@ -75,7 +82,7 @@
         return s.join('&').replace(r20, '+');
     };
 
-    rb.param = param;
+    _globalRb2.default.param = param;
 
     if ($ && !$.param) {
         $.param = param;

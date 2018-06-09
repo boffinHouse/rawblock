@@ -1,12 +1,20 @@
 describe('router', function () {
 
+    const DEFAULT_DATA = {
+        changedRoute: true,
+        changedOptions: false,
+        event: { type: 'unknown/initial'},
+        history: jasmine.any(Array),
+        activeHistoryIndex: 0,
+    };
+
     beforeEach(function() {
         rb.Router.flush();
         rb.Router.unlisten();
     });
 
     it('applies routes', function(){
-        rb.Router.config();
+        rb.Router.init();
 
         const userEdit = jasmine.createSpy('userEdit');
         const userEditItem = jasmine.createSpy('userEditItem');
@@ -34,14 +42,14 @@ describe('router', function () {
 
         rb.Router.applyRoutes('user');
 
-        expect(user).toHaveBeenCalledWith({}, {}, {fragment: 'user', changedRoute: true, changedOptions: false});
+        expect(user).toHaveBeenCalledWith({}, {}, Object.assign({}, DEFAULT_DATA, {fragment: 'user', changedRoute: true, changedOptions: false}));
 
         expect(userId.calls.count()).toEqual(0);
         expect(customer.calls.count()).toEqual(0);
 
         rb.Router.applyRoutes('user/theId');
 
-        expect(userId).toHaveBeenCalledWith({id: 'theId'}, {}, {fragment: 'user/theId', changedRoute: true, changedOptions: false});
+        expect(userId).toHaveBeenCalledWith({id: 'theId'}, {}, Object.assign({}, DEFAULT_DATA, {fragment: 'user/theId', changedRoute: true, changedOptions: false}));
 
         expect(userList.calls.count()).toEqual(0);
         expect(userList.calls.count()).toEqual(0);
@@ -60,7 +68,7 @@ describe('router', function () {
 
         rb.Router.applyRoutes('user/theUserId-1/editItem/theItemId-1');
 
-        expect(userEditItem).toHaveBeenCalledWith({id: 'theUserId-1', itemdId: 'theItemId-1'}, {}, {fragment: 'user/theUserId-1/editItem/theItemId-1', changedRoute: true, changedOptions: false});
+        expect(userEditItem).toHaveBeenCalledWith({id: 'theUserId-1', itemdId: 'theItemId-1'}, {}, {fragment: 'user/theUserId-1/editItem/theItemId-1', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
 
         expect(userList.calls.count()).toEqual(0);
 
@@ -116,21 +124,21 @@ describe('router', function () {
 
         rb.Router.applyRoutes('/en/');
 
-        expect(routes['/:lang'].handler).toHaveBeenCalledWith({lang: 'en'}, {}, {fragment: 'en', changedRoute: true, changedOptions: false});
-        expect(routes['/:lang'].subRoutes['/'].handler).toHaveBeenCalledWith({lang: 'en'}, {}, {fragment: 'en', changedRoute: true, changedOptions: false});
+        expect(routes['/:lang'].handler).toHaveBeenCalledWith({lang: 'en'}, {}, {fragment: 'en', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
+        expect(routes['/:lang'].subRoutes['/'].handler).toHaveBeenCalledWith({lang: 'en'}, {}, {fragment: 'en', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
 
         rb.Router.applyRoutes('/en/products/12/edit/');
 
         expect(routes['/:lang'].handler.calls.count()).toEqual(2);
         expect(routes['/:lang'].subRoutes['/products'].handler.calls.count()).toEqual(0);
         expect(routes['/:lang'].subRoutes['products/:id/edit/'].handler.calls.count()).toEqual(1);
-        expect(routes['/:lang'].subRoutes['products/:id/edit/'].handler).toHaveBeenCalledWith({lang: 'en', id: '12'}, {}, {fragment: 'en/products/12/edit', changedRoute: true, changedOptions: false});
-        expect(routes['/:lang'].handler).toHaveBeenCalledWith({lang: 'en', '*': 'products/12/edit'}, {}, {fragment: 'en/products/12/edit', changedRoute: true, changedOptions: false});
+        expect(routes['/:lang'].subRoutes['products/:id/edit/'].handler).toHaveBeenCalledWith({lang: 'en', id: '12'}, {}, {fragment: 'en/products/12/edit', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
+        expect(routes['/:lang'].handler).toHaveBeenCalledWith({lang: 'en', '*': 'products/12/edit'}, {}, {fragment: 'en/products/12/edit', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
 
         rb.Router.applyRoutes('/en/products/12/edit/?foo=bar');
 
         expect(routes['/:lang'].subRoutes['products/:id/edit/'].handler.calls.count()).toEqual(2);
-        expect(routes['/:lang'].subRoutes['products/:id/edit/'].handler).toHaveBeenCalledWith({lang: 'en', id: '12'}, {foo: 'bar'}, {fragment: 'en/products/12/edit', changedRoute: false, changedOptions: true});
+        expect(routes['/:lang'].subRoutes['products/:id/edit/'].handler).toHaveBeenCalledWith({lang: 'en', id: '12'}, {foo: 'bar'}, {fragment: 'en/products/12/edit', changedRoute: false, changedOptions: true, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
 
         rb.Router.applyRoutes('/de/products');
         expect(routes['/:lang'].subRoutes['/products'].handler.calls.count()).toEqual(1);
@@ -142,7 +150,7 @@ describe('router', function () {
         expect(routes['/:lang'].subRoutes['/products'].handler.calls.count()).toEqual(1);
         expect(routes['*'].handler.calls.count()).toEqual(1);
 
-        expect(routes['/:lang'].handler).toHaveBeenCalledWith({lang: 'unknownLanguage', '*': 'products'}, {}, {fragment: 'unknownLanguage/products', changedRoute: true, changedOptions: false});
+        expect(routes['/:lang'].handler).toHaveBeenCalledWith({lang: 'unknownLanguage', '*': 'products'}, {}, {fragment: 'unknownLanguage/products', changedRoute: true, changedOptions: false, event: { type: 'unknown/initial'}, history: jasmine.any(Array), activeHistoryIndex: 0});
 
         rb.Router.applyRoutes('/de/products/foo/bar');
         expect(routes['*'].handler.calls.count()).toEqual(2);

@@ -39,7 +39,8 @@
 
     var regInputs = /^(?:input|textarea)$/i;
     var supportsPointerWithoutTouch = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
-    var supportsPassiveEventListener = !supportsPointerWithoutTouch && (0, _cssSupports2.default)('(touch-action: pan-y)') && (0, _cssSupports2.default)('(touch-action: none)') && function () {
+    var supportsCssTouchActionPan = (0, _cssSupports2.default)('(touch-action: pan-y)') && (0, _cssSupports2.default)('(touch-action: none)');
+    var supportsPassiveEventListener = !supportsPointerWithoutTouch && supportsCssTouchActionPan && function () {
         var supportsPassiveOption = false;
         var id = 'test' + (0, _getId2.default)();
 
@@ -57,14 +58,10 @@
         return supportsPassiveOption;
     }();
     var supportsTouchAction = supportsPassiveEventListener || supportsPointerWithoutTouch;
-    var hasIOSScrollBug = function () {
-        var ua = navigator.userAgent || '';
-        var version = supportsPassiveEventListener && /Safari\/60\d\./.test(ua) && /Version\/10\.(\d+)/.exec(ua);
-
-        return version && parseInt(version[1], 10) < 3;
-    }();
+    var hasIOSScrollBug = !supportsCssTouchActionPan && /iphone|ipad/i.test(navigator.userAgent || '');
 
     function Draggy(element, options) {
+        var _this = this;
 
         this.element = element;
         this.options = Object.assign({}, Draggy._defaults, options);
@@ -94,26 +91,62 @@
                 this.setupTouch();
             }
         }
+
+        Draggy.constructs.forEach(function (construct) {
+            construct.call(_this, _this.element, _this.options);
+        });
     }
 
     Draggy._defaults = {
         move: noop,
         start: noop,
         end: noop,
-        preventClick: true,
-        preventMove: true,
-        useMouse: true,
-        useTouch: true,
-        usePointerMouse: false,
+        // set to false to allow only vertical drag
         horizontal: true,
+        // set to true to allow only vertical drag
         vertical: true,
+        // selector
         exclude: false,
         excludeNothing: false,
+        //prevents mouse click, if a drag happend
+        preventClick: true,
+        //prevents touchMove events if currently dragging.
+        preventMove: true,
+        //allow drag by touch (includes pointer events)
+        useTouch: true,
+        //allow drag by mouse
+        useMouse: true,
+        //handle mouse events in pointer events, if false uses oldSchool mouseevents.
+        usePointerMouse: false,
+        // stops event propagation, improves nested drags
         stopPropagation: true,
+        // uses passive event listener
         usePassiveEventListener: true,
         usePointerOnActive: false,
+        // catches start also with with touchmove event instead of touchstart only.
         catchMove: false,
+        // velocityBase moved pixel in 333
         velocityBase: 333
+    };
+
+    Draggy.constructs = [];
+    Draggy.extend = function (defaults, construct, proto) {
+        Draggy.constructs.push(construct);
+
+        Object.entries(proto).forEach(function (_ref) {
+            var name = _ref[0],
+                prop = _ref[1];
+
+            if (typeof Draggy.prototype[name] == 'function') {
+                prop.superFn = Draggy.prototype[name];
+
+                Draggy.prototype[name] = prop;
+            } else {
+                Draggy.prototype[name] = prop;
+            }
+        });
+
+        Object.assign(Draggy._defaults, defaults);
     };
 
     Object.assign(Draggy.prototype, {
@@ -148,8 +181,8 @@
             var ret = true;
 
             if (options.horizontal != options.vertical) {
-                horizontalDif = Math.abs(this.lastPos.x - this.curPos.x);
-                verticalDif = Math.abs(this.lastPos.y - this.curPos.y);
+                horizontalDif = Math.abs(this.curPos.x - this.lastPos.x);
+                verticalDif = Math.abs(this.curPos.y - this.lastPos.y);
 
                 ret = options.horizontal && horizontalDif * 0.8 > verticalDif || options.vertical && verticalDif * 0.8 > horizontalDif;
 
@@ -162,8 +195,8 @@
         },
         reset: function reset() {
             this.isType = '';
-            this.allowMouse = true;
-            this.allowTouch = true;
+            this.technicalVelFactor = 1;
+            this.isTechnicalType = '';
             this.startPos = {};
             this.lastPos = {};
             this.relPos = {};
@@ -173,24 +206,27 @@
             this.verticalVel = 0;
             this.allowClick = noop;
         },
+
+        technicalVelFactor: 1,
         velocitySnapShot: function velocitySnapShot() {
             var velTiming = void 0;
 
             if (this.velTime) {
                 velTiming = Date.now() - this.velTime;
 
-                if (velTiming > 85 || !this.horizontalVel && !this.verticalVel) {
+                if (velTiming > 80 || !this.horizontalVel && !this.verticalVel) {
                     var velocityBase = this.options.velocityBase;
 
 
-                    velTiming = velTiming / velocityBase || 1;
+                    velTiming = (velTiming / velocityBase || 1) * (1 / this.technicalVelFactor);
 
                     this.velPos = this._velPos;
-                    this.horizontalVel = Math.abs(this.velPos.x - this.curPos.x) || 1;
-                    this.verticalVel = Math.abs(this.velPos.y - this.curPos.y) || 1;
 
-                    this.verticalVel /= velTiming;
-                    this.horizontalVel /= velTiming;
+                    this.horizontalVelDir = (this.curPos.x - this.velPos.x) / velTiming;
+                    this.verticalVelDir = (this.curPos.x - this.velPos.x) / velTiming;
+
+                    this.horizontalVel = Math.abs(this.horizontalVelDir) || 0.00000001;
+                    this.verticalVel = Math.abs(this.verticalVelDir) || 0.00000001;
                 }
             }
 
@@ -201,8 +237,8 @@
             var options = this.options;
 
             this.startPos = {
-                x: pos.clientX,
-                y: pos.clientY,
+                x: 'draggyX' in pos ? pos.draggyX : pos.clientX,
+                y: 'draggyY' in pos ? pos.draggyY : pos.clientY,
                 pX: pos.pageX,
                 pY: pos.pageY
             };
@@ -229,8 +265,8 @@
 
             this.lastPos = this.curPos;
             this.curPos = {
-                x: pos.clientX,
-                y: pos.clientY,
+                x: 'draggyX' in pos ? pos.draggyX : pos.clientX,
+                y: 'draggyY' in pos ? pos.draggyY : pos.clientY,
                 pX: pos.pageX,
                 pY: pos.pageY
             };
@@ -247,10 +283,10 @@
                 evt.stopImmediatePropagation();
             }
 
-            this.movedPos.x = this.startPos.x - this.curPos.x;
-            this.movedPos.y = this.startPos.y - this.curPos.y;
-            this.relPos.x = this.lastPos.x - this.curPos.x;
-            this.relPos.y = this.lastPos.y - this.curPos.y;
+            this.movedPos.x = this.curPos.x - this.startPos.x;
+            this.movedPos.y = this.curPos.y - this.startPos.y;
+            this.relPos.x = this.curPos.x - this.lastPos.x;
+            this.relPos.y = this.curPos.y - this.lastPos.y;
 
             options.move(this, evt);
         },
@@ -275,13 +311,13 @@
                 this._destroyMouse();
             }
 
-            this.movedPos.x = this.startPos.x - this.curPos.x;
-            this.movedPos.y = this.startPos.y - this.curPos.y;
+            this.movedPos.x = this.curPos.x - this.startPos.x;
+            this.movedPos.y = this.curPos.y - this.startPos.y;
 
             if (!('x' in this.relPos) && !('y' in this.lastPos)) {
                 this.lastPos = this.curPos;
-                this.relPos.x = this.lastPos.x - this.curPos.x;
-                this.relPos.y = this.lastPos.y - this.curPos.y;
+                this.relPos.x = this.curPos.x - this.lastPos.x;
+                this.relPos.y = this.curPos.y - this.lastPos.y;
             }
 
             options.end(this, evt);
@@ -297,13 +333,13 @@
             this.reset();
         },
         preventClick: function preventClick(evt) {
-            var _this = this;
+            var _this2 = this;
 
             this.isClickPrevented = true;
             clearTimeout(this._preventClickTimer);
 
             this._preventClickTimer = setTimeout(function () {
-                _this.isClickPrevented = false;
+                _this2.isClickPrevented = false;
             }, 333);
 
             if (evt && evt.preventDefault && (!supportsPassiveEventListener || evt.type != 'touchend' && evt.type != 'pointerup')) {
@@ -329,6 +365,7 @@
             this.element.addEventListener('click', this._onclick, true);
             this.element.addEventListener('selectstart', this._onSelectStart, true);
         },
+
         allowedDragTarget: function allowedDragTarget(target) {
             var _options2 = this.options,
                 excludeNothing = _options2.excludeNothing,
@@ -336,35 +373,37 @@
 
             return excludeNothing || btnsMap[target.type] || !regInputs.test(target.nodeName || '') && (!exclude || !target.closest(exclude));
         },
+        isAllowedForType: function isAllowedForType(type) {
+            return !this.isTechnicalType || this.isTechnicalType == type;
+        },
         setupMouse: function setupMouse() {
-            var _this2 = this;
+            var _this3 = this;
 
             var timer = void 0;
 
             var move = function move(e) {
                 if (!e.buttons && !e.which) {
                     up(e);
-                    _this2._destroyMouse();
+                    _this3._destroyMouse();
                     return;
                 }
-                _this2.move(e, e);
+                _this3.move(e, e);
             };
 
             var up = function up(e) {
-                _this2._destroyMouse();
-                _this2.end(e, e);
+                _this3._destroyMouse();
+                _this3.end(e, e);
             };
 
             this._destroyMouse = function () {
-                _this2.allowTouch = true;
                 clearTimeout(timer);
                 document.removeEventListener('mousemove', move);
                 document.removeEventListener('mouseup', up);
             };
 
             this._onmousedown = function (e) {
-                _this2._destroyMouse();
-                if (e.defaultPrevented || e.button || !_this2.options.useMouse || !_this2.allowMouse || !_this2.allowedDragTarget(e.target)) {
+                _this3._destroyMouse();
+                if (e.defaultPrevented || e.button || !_this3.options.useMouse || !_this3.isAllowedForType('mouse') || !_this3.allowedDragTarget(e.target)) {
                     return;
                 }
 
@@ -372,19 +411,19 @@
                     e.preventDefault();
                 }
 
-                _this2.allowTouch = false;
-                _this2.isType = 'mouse';
+                _this3.isType = 'mouse';
+                _this3.isTechnicalType = 'mouse';
 
                 document.addEventListener('mousemove', move);
                 document.addEventListener('mouseup', up);
 
-                _this2.start(e, e);
+                _this3.start(e, e);
             };
 
             this.element.addEventListener('mousedown', this._onmousedown);
         },
         setupTouch: function setupTouch() {
-            var _this3 = this;
+            var _this4 = this;
 
             var identifier = void 0;
             var getTouch = function getTouch(touches) {
@@ -406,7 +445,7 @@
                 var touch = getTouch(e.changedTouches || e.touches);
 
                 if (touch) {
-                    _this3.move(touch, e);
+                    _this4.move(touch, e);
                 }
             };
 
@@ -414,12 +453,11 @@
                 var touch = getTouch(e.changedTouches || e.touches);
 
                 if (touch) {
-                    _this3.allowMouse = true;
-                    _this3._destroyTouch();
-                    _this3.end(touch, e);
+                    _this4._destroyTouch();
+                    _this4.end(touch, e);
 
-                    if (_this3.options.catchMove) {
-                        _this3.element.addEventListener('touchmove', _this3._ontouchstart, _this3.touchOpts);
+                    if (_this4.options.catchMove) {
+                        _this4.element.addEventListener('touchmove', _this4._ontouchstart, _this4.touchOpts);
                     }
 
                     identifier = undefined;
@@ -428,9 +466,9 @@
 
             if (!this._destroyTouch) {
                 this._destroyTouch = function () {
-                    _this3.element.removeEventListener('touchmove', move, _this3.touchOpts);
-                    _this3.element.removeEventListener('touchend', end, _this3.touchOpts);
-                    _this3.element.removeEventListener('touchcancel', end, _this3.touchOpts);
+                    _this4.element.removeEventListener('touchmove', move, _this4.touchOpts);
+                    _this4.element.removeEventListener('touchend', end, _this4.touchOpts);
+                    _this4.element.removeEventListener('touchcancel', end, _this4.touchOpts);
                 };
             }
 
@@ -440,26 +478,26 @@
                         return;
                     }
 
-                    _this3._destroyTouch();
+                    _this4._destroyTouch();
 
-                    if (e.defaultPrevented || !_this3.options.useTouch || !_this3.allowTouch || !e.touches[0] || !_this3.allowedDragTarget(e.target)) {
+                    if (e.defaultPrevented || !_this4.options.useTouch || !_this4.isAllowedForType('touch') || !e.touches[0] || !_this4.allowedDragTarget(e.target)) {
                         return;
                     }
 
                     identifier = e.touches[0].identifier;
 
-                    _this3.allowMouse = false;
-                    _this3.isType = 'touch';
+                    _this4.isType = 'touch';
+                    _this4.isTechnicalType = 'touch';
 
-                    _this3.element.addEventListener('touchmove', move, _this3.touchOpts);
-                    _this3.element.addEventListener('touchend', end, _this3.touchOpts);
-                    _this3.element.addEventListener('touchcancel', end, _this3.touchOpts);
+                    _this4.element.addEventListener('touchmove', move, _this4.touchOpts);
+                    _this4.element.addEventListener('touchend', end, _this4.touchOpts);
+                    _this4.element.addEventListener('touchcancel', end, _this4.touchOpts);
 
-                    if (_this3.options.catchMove) {
-                        _this3.element.removeEventListener('touchmove', _this3._ontouchstart, _this3.touchOpts);
+                    if (_this4.options.catchMove) {
+                        _this4.element.removeEventListener('touchmove', _this4._ontouchstart, _this4.touchOpts);
                     }
 
-                    _this3.start(e.touches[0], e);
+                    _this4.start(e.touches[0], e);
                 };
             }
 
@@ -473,8 +511,9 @@
                 this.element.addEventListener('touchmove', this._ontouchstart, this.touchOpts);
             }
         },
+
         setupPointer: function setupPointer() {
-            var _this4 = this;
+            var _this5 = this;
 
             var identifier = void 0;
             var that = this;
@@ -482,16 +521,15 @@
 
             var move = function move(e) {
                 if (e.pointerId == identifier) {
-                    _this4.move(e, e);
+                    _this5.move(e, e);
                 }
             };
 
             var end = function end(e) {
 
                 if (e.pointerId == identifier) {
-                    _this4.allowMouse = true;
-                    _this4._destroyPointer();
-                    _this4.end(e, e);
+                    _this5._destroyPointer();
+                    _this5.end(e, e);
                 }
             };
 
@@ -511,7 +549,7 @@
 
                 that._destroyPointer();
 
-                if (e.defaultPrevented || e.isPrimary === false || isMouse && !options.useMouse || e.button || !options.useTouch || !that.allowTouch || !that.allowedDragTarget(e.target)) {
+                if (e.defaultPrevented || e.isPrimary === false || isMouse && !options.useMouse || e.button || !options.useTouch || !this.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
                     return;
                 }
 
@@ -528,8 +566,8 @@
 
                 identifier = e.pointerId;
 
-                that.allowMouse = false;
-                that.isType = 'pointer';
+                that.isType = isMouse ? 'mouse' : 'touch';
+                that.isTechnicalType = 'pointer';
 
                 document.addEventListener('pointermove', move);
                 document.addEventListener('pointerup', end);

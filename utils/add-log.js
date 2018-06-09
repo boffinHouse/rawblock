@@ -1,4 +1,7 @@
-const console = window.console || {};
+import glob from './glob';
+import rb from './global-rb';
+
+const console = glob.console || {};
 const log = console.log && console.log.bind ? console.log : rb.$.noop; //eslint-disable-line no-unused-vars
 const logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel){
     const fnName = (errorName == 'log') ?
@@ -19,7 +22,7 @@ const logs = ['error', 'warn', 'info', 'log'].map(function(errorName, errorLevel
  * @param obj    {Object}
  * @param [initial] {Boolean}
  */
-export default function addLog(obj, initial) {
+export default function addLog(obj, initial = true) {
     const fakeLog = ()=>{};
 
     const setValue = function(){
@@ -50,8 +53,8 @@ export default function addLog(obj, initial) {
             }
         },
     });
+
+    return obj;
 }
 
-if(window.rb){
-    window.rb.addLog = addLog;
-}
+rb.addLog = addLog;

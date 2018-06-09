@@ -1,4 +1,6 @@
-const rb = window.rb;
+import rb from './global-rb';
+import rAFQueue from './rafqueue';
+import rIC from './request-idle-callback';
 
 /**
  *
@@ -16,7 +18,7 @@ rb.debounce = function(fn, opts){
     let args, that, timestamp, timeout, isWriteCalled, isReadCalled, frames;
 
     const later = function(){
-        var last = Date.now() - timestamp;
+        const last = Date.now() - timestamp;
 
         if (last < opts.delay || frames < opts.minFrame) {
             isWriteCalled = false;
@@ -24,10 +26,10 @@ rb.debounce = function(fn, opts){
             timeout = setTimeout(later, Math.max(opts.delay - last, (opts.minFrame - frames) * 17));
         } else if(!isWriteCalled) {
             isWriteCalled = true;
-            rb.rAFQueue(later);
+            rAFQueue(later);
         }  else if(!isReadCalled && !opts.write) {
             isReadCalled = true;
-            rb.rIC(later);
+            rIC(later);
         } else {
             timeout = null;
             fn.apply(that, args);
@@ -36,7 +38,7 @@ rb.debounce = function(fn, opts){
     const countFrames = function(){
         frames++;
         if(timeout){
-            rb.rAFQueue(countFrames);
+            rAFQueue(countFrames);
         }
     };
 
@@ -54,7 +56,7 @@ rb.debounce = function(fn, opts){
 
         if (!timeout) {
             if(opts.minFrame){
-                rb.rAFQueue(countFrames);
+                rAFQueue(countFrames);
             }
             timeout = setTimeout(later, opts.delay);
         }

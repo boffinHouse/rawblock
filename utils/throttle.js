@@ -1,5 +1,7 @@
+import rb from './global-rb';
 import rIC from './request-idle-callback';
 import rAFQueue from './rafqueue';
+
 
 /**
  * Throttles a given function
@@ -17,12 +19,17 @@ export default function throttle(fn, options) {
     let running, that, args;
 
     let lastTime = 0;
-    let Date = window.Date;
 
     const _run = function () {
         running = false;
         lastTime = Date.now();
-        fn.apply(that, args);
+        const nowThat = that;
+        const nowArgs = args;
+
+        that = null;
+        args = null;
+
+        fn.apply(nowThat, nowArgs);
     };
 
     let afterAF = function () {
@@ -30,6 +37,10 @@ export default function throttle(fn, options) {
     };
 
     const throttel = function () {
+
+        that = options.that || this;
+        args = arguments;
+
         if (running) {
             return;
         }
@@ -37,9 +48,6 @@ export default function throttle(fn, options) {
         let delay = options.delay;
 
         running = true;
-
-        that = options.that || this;
-        args = arguments;
 
         if (options.unthrottle) {
             _run();
@@ -81,6 +89,4 @@ export default function throttle(fn, options) {
     return throttel;
 }
 
-if(window.rb){
-    window.rb.throttle = throttle;
-}
+rb.throttle = throttle;
