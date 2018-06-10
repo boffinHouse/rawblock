@@ -1,9 +1,7 @@
 import rb, { Component } from '../core';
+import getCss from '../utils/get-css';
 import './panel';
 import '../utils/position';
-
-
-const $ = Component.$;
 
 const Position = rb.Position;
 
@@ -168,7 +166,7 @@ class Popover extends rb.components.panel {
         this.lastOpeningOptions = options;
 
         if (this.options.positioned) {
-            if($.css(this.element, 'display') == 'none'){
+            if(getCss(this.element, 'display') == 'none'){
                 this.element.style.display = typeof this.options.setDisplay == 'string' ?
                     this.options.setDisplay :
                     'block'

@@ -1,4 +1,6 @@
-const rb = window.rb;
+import rb from './global-rb';
+import getCss from './get-css';
+
 const $ = rb.$;
 
 const Position = function (element, options) {
@@ -154,7 +156,7 @@ Object.assign(Position.prototype, {
         if (useMargin) {
             styles = rb.getStyles(element);
             for (i = 0; i < 4; i++) {
-                box[Position.margins[i]] = $.css(element, Position.margins[i], true, styles);
+                box[Position.margins[i]] = getCss(element, Position.margins[i], true, styles);
             }
         }
 
@@ -214,8 +216,8 @@ Object.assign(Position.prototype, {
         let pos, targetBox, elementBox;
         const options = this.options;
 
-        this.pos.top = $.css(this.element, 'top', 1, this.elemCstyle);
-        this.pos.left = $.css(this.element, 'left', 1, this.elemCstyle);
+        this.pos.top = getCss(this.element, 'top', 1, this.elemCstyle);
+        this.pos.left = getCss(this.element, 'left', 1, this.elemCstyle);
         this.flipped.x = false;
         this.flipped.y = false;
 

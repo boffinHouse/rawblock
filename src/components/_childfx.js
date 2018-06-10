@@ -1,5 +1,7 @@
-const rb = window.rb;
-const $ = rb.$;
+import rb, { Component } from '../core';
+import getCss from '../utils/get-css';
+
+const $ = Component.$;
 const pseudoExpando = rb.Symbol('childfxPseudo');
 
 /**
@@ -47,7 +49,7 @@ const pseudoExpando = rb.Symbol('childfxPseudo');
  * });
  * </script>
  */
-class _ChildFX extends rb.Component {
+class _ChildFX extends Component {
 
     /**
      * @prop {Boolean} defaults.switchedOff=false Switches the component off.
@@ -85,7 +87,7 @@ class _ChildFX extends rb.Component {
             }
         }
 
-        value.value = value.value != null ? value.value : $.css(elem, prop, 1, styles);
+        value.value = value.value != null ? value.value : getCss(elem, prop, 1, styles);
 
         if (typeof value.value == 'string' && typeof options.end[prop] == 'string') {
             value.template = value.value;
@@ -221,4 +223,4 @@ class _ChildFX extends rb.Component {
 _ChildFX.regNumber = /(-*\d+[.\d]*)/g;
 _ChildFX.regWhite =  /\s/g;
 
-rb.live.register('_childfx', _ChildFX);
+Component.register('_childfx', _ChildFX);

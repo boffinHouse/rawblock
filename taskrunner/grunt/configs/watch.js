@@ -12,8 +12,8 @@ module.exports = {
         },
         files: [
             '<%= paths.helper.task %>/*.js',
-            'Gruntfile.js'
-        ]
+            'Gruntfile.js',
+        ],
     },
     livereload: {
         options: {
@@ -26,7 +26,7 @@ module.exports = {
         ]
     },
     scss: {
-        files: ['<%= paths.src %>/sass/**/*.scss', 'helpers/**/*.scss', '!<%= paths.src %>/sass/tmp_*.scss'],
+        files: ['<%= paths.src %>/sass/**/*.scss', 'src/**/*.scss', '!<%= paths.src %>/sass/tmp_*.scss'],
         tasks: ['css'],
         options: {
             debounceDelay: 100,
@@ -34,8 +34,8 @@ module.exports = {
         }
     },
     component: {
-        files: ['components/**/*.scss','components/**/*.{json,hbs,md}'],
-        tasks: ['css', 'newer:assemble:dev', 'prettify:dev'],
+        files: ['src/components/**/*.{json,hbs,md}'],
+        tasks: ['newer:assemble:dev', 'prettify:dev'],
     },
     sync_img: {
         files: ['<%= paths.src %>/img/{,*/}*.{svg, png, jpg}'],
@@ -54,7 +54,7 @@ module.exports = {
     //	tasks: ['test'] //
     //},
     templates: {
-        files: ['<%= paths.dev %>/js/_inlinehead-behavior.js', '<%= paths.src %>/templates/**/*.{json,hbs,md}', 'components/**/*.{json,hbs,md}'],
+        files: ['<%= paths.dev %>/js/_inlinehead-behavior.js', '<%= paths.src %>/templates/**/*.{json,hbs,md}', 'src/components/**/*.{json,hbs,md}'],
         tasks: ['newer:assemble:dev', 'prettify:dev']
     },
     ejs: {

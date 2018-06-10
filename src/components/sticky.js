@@ -1,4 +1,5 @@
 import rb, { Component } from '../core';
+import getCss from '../utils/get-css';
 
 const $ = Component.$;
 const isContainerScroll = {scroll: 1, auto: 1};
@@ -186,7 +187,7 @@ class Sticky extends (rb.components._childfx || Component) {
             if (this.container == document.body || this.container == docElem) {
                 this.container = null;
             } else if (this.container) {
-                this.isContainerScroll = !!isContainerScroll[$.css(this.container, 'overflowY', false, this.containerStyles) || $.css(this.container, 'overflow', false, this.containerStyles)];
+                this.isContainerScroll = !!isContainerScroll[getCss(this.container, 'overflowY', false, this.containerStyles) || getCss(this.container, 'overflow', false, this.containerStyles)];
                 this.containerStyles = rb.getStyles(this.container);
             }
         }
@@ -277,15 +278,15 @@ class Sticky extends (rb.components._childfx || Component) {
                 boxes.maxFixedPos = containerOffset + this.calcedOffset;
 
                 boxes.minScrollPos = boxes.maxFixedPos - box.height -
-                    $.css(this.container, 'padding-bottom', true, this.containerStyles) -
-                    $.css(this.element, 'margin-bottom', true, this.elemStyles);
+                    getCss(this.container, 'padding-bottom', true, this.containerStyles) -
+                    getCss(this.element, 'margin-bottom', true, this.elemStyles);
                 boxes.maxFixedPos += 9 - this.calcedOffset;
                 boxes.maxScrollPos = boxes.maxFixedPos;
             } else {
                 boxes.minFixedPos = containerOffset - docElem.clientHeight - this.calcedOffset;
                 boxes.maxScrollPos = boxes.minFixedPos + box.height +
-                    $.css(this.container, 'padding-top', true, this.containerStyles) +
-                    $.css(this.element, 'margin-top', true, this.elemStyles);
+                    getCss(this.container, 'padding-top', true, this.containerStyles) +
+                    getCss(this.element, 'margin-top', true, this.elemStyles);
                 boxes.minFixedPos += 9 + this.calcedOffset;
                 boxes.minScrollPos = boxes.minFixedPos;
             }
@@ -355,7 +356,7 @@ class Sticky extends (rb.components._childfx || Component) {
                 (this.progress !== 0 && this.progress !== 1)
             )
         ) {
-            progress = 1 - Math.max(Math.min((this.scroll - this.minProgressPos) / (this.maxProgressPos - this.minProgressPos), 1), 0);
+            progress = Math.max(Math.min((this.scroll - this.minProgressPos) / (this.maxProgressPos - this.minProgressPos), 1), 0);
             wasProgress = this.progress;
 
             if (!shouldFix && wasProgress == -2) {

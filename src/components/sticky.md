@@ -13,9 +13,9 @@ To apply the sticky component:
 
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
-    <div class="rb-sticky js-rb-live" data-module="sticky">
+    <div class="rb-sticky js-rb-live is-specialsticky" data-module="sticky">
         <div class="docs-item" style="height: 40px;">
-            Sticky to the top
+            Sticky to the top <span class="sticky-inside"></span>
         </div>
     </div>
 </div>
@@ -128,3 +128,12 @@ Or if you want to offset the element 150px from the top. Create a class, in this
         Footer
     </div>
 </footer>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
