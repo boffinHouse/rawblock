@@ -3,7 +3,6 @@ build
 dist
 dev
 doc
-jsdoc
 tmp
 bower_components
 styleguide
@@ -22,6 +21,7 @@ components/**/*.md
 components/**/*.json
 components/**/*-test.html
 components/**/*-tests.*
+Gruntfile.js
 
 .sass-cache
 .css

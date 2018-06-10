@@ -23,7 +23,7 @@
 
         module = {
             name: name,
-            component: rb.live.register(name, class extends rb.Component {
+            component: rb.live.register(name, class Foo extends rb.Component {
                 constructor(element, initDefaults){
                     super(element, initDefaults);
                 }

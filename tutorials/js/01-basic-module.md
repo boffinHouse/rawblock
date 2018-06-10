@@ -23,7 +23,9 @@ The functional childs should have a class prefixed with the component name (html
 ## JS-Boilerplate of a rawblock component
 
 ```js
-class SlimHeader extends rb.Component {
+import { Component } from 'rawblock';
+
+class SlimHeader extends Component {
 
     // The static defaults getter defines the default options of our component.
     static get defaults(){
@@ -58,7 +60,14 @@ class SlimHeader extends rb.Component {
 }
 
 //rb.live.register registers the Component class and defines the component name. The class is then added to the `rb.components` namespace (i.e. `rb.components.clearinput`).
-rb.live.register('slimheader', SlimHeader);
+Component.register('slimheader', SlimHeader);
+
+//in your app.js include core files...
+//import 'rawblock/$';
+//import rb from 'rawblock';
+
+//... and your component
+//import 'slimheader';
 
 //call rb.live.init in your main file to start rawblock.
 //rb.live.init();
@@ -70,7 +79,9 @@ rb.live.register('slimheader', SlimHeader);
 First we define the threshold as `topThreshold` in our `defaults` getter.
 
 ```js
-class SlimHeader extends rb.Component {
+import { Component } from 'rawblock';
+
+class SlimHeader extends Component {
 
     static get defaults(){
         return {
@@ -85,7 +96,7 @@ class SlimHeader extends rb.Component {
     }
 }
 
-rb.live.register('slimheader', SlimHeader);
+Component.register('slimheader', SlimHeader);
 ```
 
 A rawblock component can be configured in multiple ways.
@@ -93,6 +104,7 @@ A rawblock component can be configured in multiple ways.
 With JS:
 
 ```js
+import rb from 'rawblock';
 //change the default itself (Note: rawblock changes the defaults getter to a defaults object value.)
 rb.components.slimheader.defaults.topThreshold = 70;
 
@@ -149,7 +161,7 @@ Due to the fact that the threshold is heavily style/layout related it might make
 By extending/overriding the `setOption` method it is possible to react to option changes:
 
 ```js
-class SlimHeader extends rb.Component {
+class SlimHeader extends Component {
     setOption(name, value, isSticky){
         super.setOption(name, value, isSticky);
 
@@ -195,7 +207,7 @@ But due to the fact that the `scroll` event happens outside of the component eve
 
 
 ```js
-class SlimHeader extends rb.Component {
+class SlimHeader extends Component {
 
     static get events(){
         return {
@@ -227,7 +239,7 @@ There are 4 different kinds of event options:
 Now we can fill in some logic to add a class as soon as the header reaches our threshold.
 
 ```js
-class SlimHeader extends rb.Component {
+class SlimHeader extends Component {
 
     static get defaults(){
         return {
@@ -253,7 +265,7 @@ class SlimHeader extends rb.Component {
     }
 }
 
-rb.live.register('slimheader', SlimHeader);
+Component.register('slimheader', SlimHeader);
 ```
 
 ### Improvements to our current component
@@ -269,7 +281,7 @@ Performance considerations
 To fix the first point we will add a `isSlim` property and only change the class if it has changed
 
 ```js
-class SlimHeader extends rb.Component {
+class SlimHeader extends Component {
     //.....
 
     constructor(element, initialDefaults){
@@ -296,7 +308,7 @@ To fix the second point rawblock offers a method called `this.rAFs`. This method
 Due to the fact, that getting `document.scrollingElement.scrollTop` is a layout read we need to separate it from our layout write `classList.toggle`.
 
 ```js
-class SlimHeader extends rb.Component {
+class SlimHeader extends Component {
     //.....
 
     constructor(element, initialDefaults){
@@ -327,7 +339,7 @@ class SlimHeader extends rb.Component {
 For small DOM changes rawblock also supports jQuery-like functions, that are called in a rAF. To these methods the string "Raf" is appended. In our case the method `toggleClassRaf` can be used:
 
 ```js
-class SlimHeader extends rb.Component {
+class SlimHeader extends Component {
     //...
     calculateState(){
             const shouldBeSlim = this.options.topThreshold < document.scrollingElement.scrollTop;
@@ -344,7 +356,7 @@ class SlimHeader extends rb.Component {
 Point 3. could be fixed by using `rb.throttle`. But I assume that in our refactored case the `calculateState` is so light, that throttling won't affect the performance too much.
 
 ```js
-class SlimHeader extends rb.Component {
+class SlimHeader extends Component {
     //.....
 
     constructor(element, initialDefaults){
@@ -382,7 +394,9 @@ Our final improved code could look like this:
 
 
 ```js
-class SlimHeader extends rb.Component {
+import { Component } from 'rawblock';
+
+class SlimHeader extends Component {
 
     static get defaults(){
         return {
@@ -428,5 +442,5 @@ class SlimHeader extends rb.Component {
     }
 }
 
-rb.live.register('slimheader', SlimHeader);
+Component.register('slimheader', SlimHeader);
 ```

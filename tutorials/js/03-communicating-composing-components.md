@@ -18,11 +18,13 @@ The markup of the component and its controlled elements looks like this:
 ```
 
 Due to the fact, that our component does only need to be initialized after the user interacts with it, we add the `js-rb-click` instead the `js-rb-live` class.
- 
+
 ## The basic JS code
 
 ```js
-class Selectcontrol extends rb.Component {
+import { Component } from 'rawblock';
+
+class Selectcontrol extends Component {
 
     static get events(){
         return {
@@ -45,8 +47,8 @@ class Selectcontrol extends rb.Component {
     }
 }
 
-rb.live.register('selectcontrol', Selectcontrol);
+Component.register('selectcontrol', Selectcontrol);
 ```
 
-The 
+The
 

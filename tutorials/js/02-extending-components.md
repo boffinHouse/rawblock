@@ -11,15 +11,14 @@ As a base we will use the [panelgroup component](rb.components.panelgroup.html).
 First we extend the panelgroup component and register our new component class with the name `checklist`:
 
 ```js
-import 'rawblock/components/panelgroup';
+import Panelgroup from 'rawblock/components/panelgroup';
+import rb, { Component } from 'rawblock';
 
-const rb = window.rb;
-
-class CheckList extends rb.components.panelgroup {
+class CheckList extends Panelgroup {
 
 }
 
-rb.live.register('checklist', CheckList);
+Component.register('checklist', CheckList);
 
 export default CheckList;
 
@@ -27,7 +26,7 @@ export default CheckList;
 
 ### Excursion: The "name" feature of rawblock.
 
-In rawblock events and the CSS classes for elements are prefixed with the component name. For example panels and panelbutton elements for the panelgroup component have the class `.panelgroup-panel`/`.panelgroup-btn`. 
+In rawblock events and the CSS classes for elements are prefixed with the component name. For example panels and panelbutton elements for the panelgroup component have the class `.panelgroup-panel`/`.panelgroup-btn`.
 
 Our checklist component changes this now to `.checklist-panel` and `.checklist-btn`. Rawblock has the concept of basically 3 different names:
 
@@ -59,7 +58,7 @@ Of course you are not forced to use this in your components, but we highly recom
 
 ## Checklist markup
 
-Our component markup will now look like this. There are 3 different inerhited behavior elements in our component. (`checklist-btn`, `checklist-panel` and `checklist-panel-close`). 
+Our component markup will now look like this. There are 3 different inerhited behavior elements in our component. (`checklist-btn`, `checklist-panel` and `checklist-panel-close`).
 
 ```html
 <div class="rb-checklist js-rb-click" data-module="checklist" role="group" aria-label="Auswahlliste">
@@ -106,7 +105,7 @@ We can additionally improve the behavior of the component by adding the attribut
 Additionally we can change some of the panelgroup default options:
 
 ```js
-class CheckList extends rb.components.panelgroup {
+class CheckList extends Panelgroup {
    static get defaults() {
         return {
             closeOnFocusout: true,
@@ -119,14 +118,14 @@ class CheckList extends rb.components.panelgroup {
 
 ## Adding some custom logic to our component.
 
-We are now pretty close to our final component behavior. 
+We are now pretty close to our final component behavior.
 
 What we need to change is add the label text of the selected options into our `.checklist-value` element.
 
 To do this, we first save the current value `.checklist-value` as a default value and then check write the function to update its content.
 
 ```js
-class CheckList extends rb.components.panelgroup {
+class CheckList extends Panelgroup {
 
     //...
 
@@ -138,7 +137,7 @@ class CheckList extends rb.components.panelgroup {
         this.defaultValue = this.valueElement && this.valueElement.textContent || '';
         this.currentValue = this.defaultValue;
     }
-        
+
     static get events(){
         return {
             // run updateValue everytime a checkbox/rawdio button changes
@@ -159,7 +158,7 @@ class CheckList extends rb.components.panelgroup {
             this._updateValue();
         }
     }
-    
+
     static getLabelContent(input){
         return input.closest('label, li').textContent;
     }
@@ -168,7 +167,7 @@ class CheckList extends rb.components.panelgroup {
         if(this.valueElement){
             this.valueElement.innerText = this.currentValue;
         }
-        
+
         //trigger checklistvaluechanged
         this.trigger('valuechanged');
     }
@@ -178,7 +177,7 @@ class CheckList extends rb.components.panelgroup {
 Additionally we also want to automatically close the list if a radio button, but not a checkbox was changed. To do this we refactor the change handler. The panelgroup gives us a nice method called [`closeAll`](rb.components.panelgroup.html#closeAll__anchor) to do exactly this.
 
 ```js
-class CheckList extends rb.components.panelgroup {
+class CheckList extends Panelgroup {
 
     static get defaults() {
         return {
@@ -205,17 +204,16 @@ class CheckList extends rb.components.panelgroup {
 The event handler is not only passed the event object, but also a function, that will invoke a possible overridden handler defined in a super class.
 
 ### A11y fixes
- 
+
 Unfortunately the `change` event is also dispatched by using the keyboard to navigate in the radio group. To only close the list if it was handled by mouse we add a `mouseup` listener.
- 
+
 Our final component JS looks now like this:
 
 ```js
-import './panelgroup';
+import Panelgroup from 'rawblock/components/panelgroup';
+import rb, { Component } from 'rawblock';
 
-const rb = window.rb;
-
-class CheckList extends rb.components.panelgroup {
+class CheckList extends Panelgroup {
 
     static get defaults() {
         return {
@@ -244,7 +242,7 @@ class CheckList extends rb.components.panelgroup {
             },
         };
     }
-    
+
     static getLabelContent(input){
         return input.closest('label, li').textContent;
     }
@@ -285,7 +283,7 @@ class CheckList extends rb.components.panelgroup {
     }
 }
 
-rb.live.register('checklist', CheckList);
+Component.register('checklist', CheckList);
 
 export default CheckList;
 ```
