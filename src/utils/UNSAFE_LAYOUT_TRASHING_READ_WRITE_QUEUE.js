@@ -3,9 +3,10 @@ const resolvedPromise = Promise.resolve();
 let readRunning = false;
 let writeRunning = false;
 const readQueue = [];
-const writeQueue = [];
+let writeQueue = [];
 
 const resolveRead = () => {
+
     while (readQueue.length) {
         readQueue.shift()();
     }
@@ -15,15 +16,19 @@ const resolveRead = () => {
 
 const resolveWrite = () => {
     resolvedPromise.then(() => {
-        while (writeQueue.length) {
-            writeQueue.shift()();
-        }
+        const proccessWrites = writeQueue;
 
+        writeQueue = [];
         writeRunning = false;
+
+        while (proccessWrites.length) {
+            proccessWrites.shift()();
+        }
     });
 };
 
-export function read(fn){
+export function thrashingRead(fn){
+
     readQueue.push(fn);
 
     if(!readRunning){
@@ -32,13 +37,94 @@ export function read(fn){
     }
 }
 
-export function write(fn) {
+export function improperWrite(fn) {
+
     writeQueue.push(fn);
 
     if(!writeRunning){
         writeRunning = true;
-        read(resolveWrite);
+        thrashingRead(resolveWrite);
     }
 }
 
 
+/*
+import {Component} from '../core';
+import {thrashingRead, improperWrite} from '../utils/UNSAFE_LAYOUT_TRASHING_READ_WRITE_QUEUE';
+
+// const $ = Component.$;
+
+
+<div
+    class="js-rb-live"
+    data-module="rafbox"
+    style="width: 500px; height: 400px; background-color: #000;"
+    >
+
+</div>
+
+class RafBox extends Component {
+
+    static get defaults() {
+        return {};
+    }
+
+    constructor(element, initialDefaults) {
+        super(element, initialDefaults);
+
+        this.test();
+
+    }
+
+    test(){
+        thrashingRead(() => {
+            console.log('read 1');
+        });
+
+
+        improperWrite(() => {
+            console.log('write 1');
+
+
+            improperWrite(() => {
+                console.log('write 2');
+            });
+            thrashingRead(() => {
+                console.log('read 2');
+            });
+
+
+            thrashingRead(() => {
+                console.log('read 2');
+            });
+
+            improperWrite(() => {
+                console.log('write 2');
+            });
+
+            thrashingRead(() => {
+                console.log('read 2');
+            });
+        });
+
+
+        thrashingRead(() => {
+            console.log('read 1');
+        });
+
+        improperWrite(() => {
+            console.log('write 1');
+        });
+
+        thrashingRead(() => {
+            console.log('read 1');
+        });
+
+    }
+}
+
+Component.register('rafbox', RafBox);
+
+export default RafBox;
+
+ */

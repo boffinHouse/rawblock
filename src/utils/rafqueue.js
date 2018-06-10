@@ -1,9 +1,11 @@
 import rb from './global-rb';
+import deferred from './deferred';
 
 let isInProgress, inProgressStack;
 const fns1 = [];
 const fns2 = [];
 const immediatePromise = Promise.resolve();
+
 
 let curFns = fns1;
 
@@ -41,10 +43,19 @@ export default function rAFQueue(fn, inProgress, hiddenRaf) {
     }
 }
 
-export const rAFPromise = (inProgress = true, hiddenRaf) => {
-    return new Promise((resolve) => {
-        rAFQueue(resolve, inProgress, hiddenRaf);
-    });
+let rafPromise;
+
+export const mutationPhase = (fn) => {
+    if(!rafPromise || rafPromise.isResolved){
+        rafPromise = deferred();
+        rAFQueue(rafPromise.resolve, true);
+    }
+
+    if(fn){
+        rAFQueue(fn, true);
+    }
+
+    return rafPromise;
 };
 
 rb.rAFQueue = rAFQueue;

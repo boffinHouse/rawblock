@@ -1,4 +1,4 @@
-const ASSETBASEPATH = window.siteData && siteData.basePath || '';
+var ASSETBASEPATH = window.siteData && siteData.basePath || '';
 //load dom or jQuery
 require('../../src/$');
 

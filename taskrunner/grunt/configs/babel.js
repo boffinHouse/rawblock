@@ -1,7 +1,11 @@
 module.exports = {
     options: {
-        presets: ['es2015-loose', 'es2016', 'es2017'],
+        presets: ['es2015-loose', 'es2016', 'es2017', 'stage-2'],
         plugins: [
+            ['transform-runtime', {
+                'polyfill': false,
+                'regenerator': true,
+            }],
             'transform-es2015-modules-umd',
         ],
     },

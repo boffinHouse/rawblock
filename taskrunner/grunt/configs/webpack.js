@@ -26,14 +26,14 @@ var devPlugins = [
 	}),
 	new webpack.optimize.AggressiveMergingPlugin({
 		minSizeReduce: 1.5,
-	})
+	}),
 ];
 
 module.exports = {
 	options: {
 		cache: true,
 		entry: {
-			'_main-behavior': './<%= paths.src %>/js/_main-behavior.js',
+			'_main-behavior': ['./<%= paths.src %>/js/_main-behavior.js'],
 			'_crucial-behavior': './<%= paths.src %>/js/_crucial-behavior.js',
 			'_rb_polyfills': './<%= paths.src %>/js/_rb_polyfills.js',
 		},
@@ -48,8 +48,13 @@ module.exports = {
 					exclude: /node_modules/,
 					loader: 'babel-loader',
 					query: {
-						plugins: [],
-						presets: ['es2015-loose', 'es2016', 'es2017'],
+						plugins: [
+							['transform-runtime', {
+								'polyfill': false,
+								'regenerator': true,
+							}],
+						],
+						presets: ['es2015-loose', 'es2016', 'es2017', 'stage-2'],
 					},
 				},
 				{
