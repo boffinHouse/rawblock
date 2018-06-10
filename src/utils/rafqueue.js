@@ -33,7 +33,6 @@ const run = function () {
 export default function rAFQueue(fn, inProgress, hiddenRaf) {
 
     if (inProgress && isInProgress) {
-        //ToDo needs some more testing compared to real immediate callback (i.e.: `fn();`)
         immediatePromise.then(fn);
     } else {
         curFns.push(fn);
