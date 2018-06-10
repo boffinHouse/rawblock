@@ -1,67 +1,88 @@
-const resolvedPromise = Promise.resolve();
+import deferred from './deferred';
 
-let readRunning = false;
-let writeRunning = false;
-const readQueue = [];
-let writeQueue = [];
+class ReadWriteQueue {
 
-const resolveRead = () => {
+    /* eslint-disable no-undef */
+    static defaultPhase = 'read';
+    static phase = 'read';
 
-    while (readQueue.length) {
-        readQueue.shift()();
+    constructor(type){
+        this.runs = 0;
+        this.myType = type;
+        this.oppositeType = type == 'read' ? 'write' : 'read';
+
+        this.getPhase = this.getPhase.bind(this);
     }
 
-    readRunning = false;
-};
+    addOppositeQueue(oppositeQueue){
+        this.oppositeQueue = oppositeQueue;
+    }
 
-const resolveWrite = () => {
-    resolvedPromise.then(() => {
-        const proccessWrites = writeQueue;
+    getPhase(){
+        if(!this.queuePromise){
+            this.queuePromise = deferred();
 
-        writeQueue = [];
-        writeRunning = false;
+            if(ReadWriteQueue.phase == this.myType){
+                this.queuePromise.resolve();
+            } else {
+                this.oppositeQueue.getEndPhase().then(() => {
+                    ReadWriteQueue.phase = this.myType;
+                    this.queuePromise.resolve();
+                });
+            }
 
-        while (proccessWrites.length) {
-            proccessWrites.shift()();
+            this.queuePromise.then(() => {
+                this.queuePromise = null;
+                ReadWriteQueue.phase = this.oppositeType;
+            });
+
+            if(this.myType == 'write'){
+                this.getEndPhase();
+            }
         }
-    });
-};
 
-export function thrashingRead(fn){
+        this.runs++;
 
-    readQueue.push(fn);
+        this.queuePromise.then(() => {
+            this.runs--;
 
-    if(!readRunning){
-        readRunning = true;
-        resolvedPromise.then(resolveRead);
+            if (this.runs === 0) {
+                if (this._endQueuePromise) {
+                    ReadWriteQueue.phase = this.oppositeType;
+                    this._endQueuePromise.resolve();
+                }
+            }
+
+            // console.log(label, this.runs, ReadWriteQueue.phase, this);
+        });
+
+        return this.queuePromise;
+    }
+
+    getEndPhase(){
+        if(!this._endQueuePromise){
+            this._endQueuePromise = deferred();
+        }
+
+        return this._endQueuePromise;
     }
 }
 
-export function improperWrite(fn) {
+const readQueue = new ReadWriteQueue('read');
+const writeQueue = new ReadWriteQueue('write');
 
-    writeQueue.push(fn);
+readQueue.addOppositeQueue(writeQueue);
+writeQueue.addOppositeQueue(readQueue);
 
-    if(!writeRunning){
-        writeRunning = true;
-        thrashingRead(resolveWrite);
-    }
-}
+export const thrashingMeasurePhase = readQueue.getPhase;
+export const improperMutationPhase = writeQueue.getPhase;
 
 
 /*
 import {Component} from '../core';
-import {thrashingRead, improperWrite} from '../utils/UNSAFE_LAYOUT_TRASHING_READ_WRITE_QUEUE';
+import {thrashingMeasurePhase, improperMutationPhase} from '../utils/UNSAFE_LAYOUT_TRASHING_READ_WRITE_QUEUE';
 
 // const $ = Component.$;
-
-
-<div
-    class="js-rb-live"
-    data-module="rafbox"
-    style="width: 500px; height: 400px; background-color: #000;"
-    >
-
-</div>
 
 class RafBox extends Component {
 
@@ -77,46 +98,61 @@ class RafBox extends Component {
     }
 
     test(){
-        thrashingRead(() => {
+        thrashingMeasurePhase().then(() => {
             console.log('read 1');
         });
 
-
-        improperWrite(() => {
+        improperMutationPhase().then(() => {
             console.log('write 1');
 
 
-            improperWrite(() => {
-                console.log('write 2');
-            });
-            thrashingRead(() => {
-                console.log('read 2');
-            });
-
-
-            thrashingRead(() => {
-                console.log('read 2');
-            });
-
-            improperWrite(() => {
+            improperMutationPhase('firstWrite').then(() => {
                 console.log('write 2');
             });
 
-            thrashingRead(() => {
+            thrashingMeasurePhase('firstRead').then(() => {
+                console.log('read 2');
+            });
+
+            thrashingMeasurePhase().then(() => {
+                console.log('read 2');
+            });
+
+            improperMutationPhase().then(() => {
+                console.log('write 2');
+
+                thrashingMeasurePhase().then(() => {
+                    console.log('read 3');
+                });
+
+                improperMutationPhase('firstWrite').then(() => {
+                    console.log('write 3');
+                });
+
+                thrashingMeasurePhase().then(() => {
+                    console.log('read 3');
+                });
+            });
+
+            thrashingMeasurePhase().then(() => {
+                console.log('read 2');
+            });
+
+            thrashingMeasurePhase().then(() => {
                 console.log('read 2');
             });
         });
 
 
-        thrashingRead(() => {
+        thrashingMeasurePhase().then(() => {
             console.log('read 1');
         });
 
-        improperWrite(() => {
+        improperMutationPhase().then(() => {
             console.log('write 1');
         });
 
-        thrashingRead(() => {
+        thrashingMeasurePhase().then(() => {
             console.log('read 1');
         });
 

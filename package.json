@@ -37,6 +37,7 @@
     "array.from": "~1.0.2",
     "array.prototype.find": "^2.0.4",
     "array.prototype.findindex": "^2.0.2",
+    "babel-eslint": "^7.2.3",
     "babel-runtime": "^6.26.0",
     "bezier-easing": "~2.1.0",
     "dom4": "^2.0.1",
