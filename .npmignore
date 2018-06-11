@@ -7,6 +7,7 @@ tmp
 bower_components
 styleguide
 tests
+jsdoc
 jsdoc-md
 todos.md
 scaffold.js
