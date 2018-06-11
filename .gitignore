@@ -3,7 +3,6 @@ build
 dist
 dev
 doc
-jsdoc
 jsdoc-md
 tmp
 bower_components

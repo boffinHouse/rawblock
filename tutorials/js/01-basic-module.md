@@ -1,6 +1,6 @@
 # How to create a rawblock component I
 
-As an example component we will create a "slim header". As soon as the user scrolls down a certain threshold the header gets slim. A full demo can be seen at [codepen (SlimHeader with rawblock)](http://codepen.io/aFarkas/pen/GNNMxR).
+As an example component we will create a "slim header". As soon as the user scrolls down a certain threshold the header gets slim. A full demo can be seen at [codesandbox (SlimHeader with rawblock)](https://codesandbox.io/s/3q51m1pxjm).
 
 ## HTML of our slim header component
 
@@ -42,8 +42,8 @@ class SlimHeader extends Component {
     }
 
     // The constructor is invoked to create the rb component
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
     }
 
@@ -89,8 +89,8 @@ class SlimHeader extends Component {
         };
     }
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         this.log(this.options.topThreshold); //outputs 60
     }
@@ -181,8 +181,9 @@ Due to the fact, that the `window` object remains even if our component is destr
 
 ```js
 class SuperSlimHeader extends rb.components.slimheader {
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         this.handleScroll = this.handleScroll.bind(this);
     }
@@ -215,8 +216,8 @@ class SlimHeader extends Component {
         };
     }
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
     }
 
     handleScroll(){
@@ -253,8 +254,8 @@ class SlimHeader extends Component {
         };
     }
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         //call handleScroll to get the initial state right
         this.handleScroll();
@@ -284,8 +285,8 @@ To fix the first point we will add a `isSlim` property and only change the class
 class SlimHeader extends Component {
     //.....
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         this.isSlim = false;
 
@@ -311,8 +312,8 @@ Due to the fact, that getting `document.scrollingElement.scrollTop` is a layout 
 class SlimHeader extends Component {
     //.....
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         this.isSlim = false;
 
@@ -356,15 +357,17 @@ class SlimHeader extends Component {
 Point 3. could be fixed by using `rb.throttle`. But I assume that in our refactored case the `calculateState` is so light, that throttling won't affect the performance too much.
 
 ```js
+import rb, { Component } from 'rawblock';
+
 class SlimHeader extends Component {
     //.....
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         this.isSlim = false;
 
-        this.calculateState = rb.throttle(this.calculateState);
+        this.calculateState = rb.throttle(this.calculateState, {read: true});
 
         this.calculateState();
     }
@@ -390,11 +393,11 @@ The slimheader component can be further improved under the following more rawblo
 
     Often the developer still has to do some work to react to those option changes (cleanup changed markup). In case your specific project needs this or you want to build a general re-usable component you should do this.
 
-Our final improved code could look like this:
+Our [final improved code](https://codesandbox.io/s/3q51m1pxjm) could look like this:
 
 
 ```js
-import { Component } from 'rawblock';
+import rb, { Component } from 'rawblock';
 
 class SlimHeader extends Component {
 
@@ -410,12 +413,12 @@ class SlimHeader extends Component {
         };
     }
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         this.isSlim = false;
 
-        this.calculateState = rb.throttle(this.calculateState);
+        this.calculateState = rb.throttle(this.calculateState, {read: true});
 
         this.calculateState();
     }

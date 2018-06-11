@@ -5,7 +5,7 @@ const rsubmittable = /^(?:input|select|textarea|keygen)/i;
 
 /**
  *
- * @param elements {Element, Element[]}
+ * @param elements {Element}
  * @return {Array}
  */
 export default function serialize(elements){

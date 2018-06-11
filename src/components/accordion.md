@@ -5,7 +5,6 @@
 To apply the accordion component add the `rb-accordion` class and attribute `data-module="accordion"` to an container element.
 Inside this container you add items `accordion-item`. Each item has an header/button `accordion-btn` which open/close the according panel `accordion-panel`.
 
-
 <h3 class="docs-example-title">Demo</h3>
 <div class="docs-example">
 	{{#with accordion.default }}

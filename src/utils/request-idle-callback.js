@@ -1,7 +1,8 @@
-const rIC = window.requestIdleCallback ?
+//https://bugs.chromium.org/p/chromium/issues/detail?id=811451
+const rIC = /*window.requestIdleCallback ?
     function(fn){
-        return requestIdleCallback(fn, {timeout: 99});
-    } :
+        return requestIdleCallback(fn, {timeout: 66});
+    } :*/
     function(fn){
         return setTimeout(fn);
     }

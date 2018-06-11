@@ -10,7 +10,7 @@ module.exports = {
 	publish: {
         files: [
             {
-                src: ['components', 'helpers', 'utils', 'polyfills.js', 'core.js', '$.js', 'crucial.js',
+                src: ['jsdoc', 'components', 'helpers', 'utils', 'polyfills.js', 'core.js', '$.js', 'crucial.js',
 					'_basics.scss', '_helpers.scss'],
             }
         ],

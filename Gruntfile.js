@@ -56,6 +56,7 @@
             'lint',
             'test',
             'clean:publish',
+            'jsdoc',
             'babel:publish',
             'copy:publish',
         ]);

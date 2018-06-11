@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>DocStrap Source: utils/router.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">DocStrap</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.html">rb</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-ajaxform.html">ajaxform</a></li><li><a href="module-validity.html">validity</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.components._childfx.html">rb.components._childfx</a></li><li><a href="rb.components._composer_component.html">rb.components._composer_component</a></li><li><a href="rb.components._focus_component.html">rb.components._focus_component</a></li><li><a href="rb.components.accordion.html">rb.components.accordion</a></li><li><a href="rb.components.button.html">rb.components.button</a></li><li><a href="rb.components.dialog.html">rb.components.dialog</a></li><li><a href="rb.components.itemscroller.html">rb.components.itemscroller</a></li><li><a href="rb.components.panel.html">rb.components.panel</a></li><li><a href="rb.components.panelgroup.html">rb.components.panelgroup</a></li><li><a href="rb.components.popover.html">rb.components.popover</a></li><li><a href="rb.components.range.html">rb.components.range</a></li><li><a href="rb.components.scrolly.html">rb.components.scrolly</a></li><li><a href="rb.components.shrinknav.html">rb.components.shrinknav</a></li><li><a href="rb.components.sticky.html">rb.components.sticky</a></li><li><a href="rb.components.tabs.html">rb.components.tabs</a></li><li><a href="SpringAnimation.html">SpringAnimation</a></li><li><a href="SpringAnimationDemoGroup.html">SpringAnimationDemoGroup</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-01-basic-module.html">01-basic-module</a></li><li><a href="tutorial-02-extending-components.html">02-extending-components</a></li><li><a href="tutorial-03-communicating-composing-components.html">03-communicating-composing-components</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#map">map</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: utils/router.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * original by
+ * http://krasimirtsonev.com/blog/article/A-modern-JavaScript-router-in-100-lines-history-api-pushState-hash-url
+ */
+
+import rb from './global-rb';
+import deserialize from './deserialize';
+import getID from './get-id';
+import addLog from './add-log';
+
+const regPlus = /\+/g;
+const regSlashBegin = /^\//;
+const regSlashEnd = /\/$/;
+const regFullHash = /#(.*)$/;
+const regWildCard = /\*$/;
+
+const thenable = Promise.resolve();
+
+const winHistory = window.history;
+let historyKeyCounter = 0;
+
+const returnTrue = () => true;
+
+function decodeParam(param){
+    return decodeURIComponent(param.replace(regPlus, ' '));
+}
+
+rb.Router = addLog({
+    routes: {},
+    mode: 'history',
+    current: '',
+    options: {
+        regHash: /#!(.*)$/,
+        regIndex: /\/index\.htm[l]*$/,
+        //you need to install a URL polyfill for IE
+        supportRelativeRoutes: false,
+        //reload reloads the page on Router.navigate, replace uses replaceState on Router.navigate and recalls the handler and recall simply re-calls the router handler
+        samePathStrategy: 'replace', //reload, replace, recall, stop
+    },
+    noNavigate: false,
+    history: null,
+    activeHistoryIndex: -1,
+    storageKey: 'rb_router',
+    init({ options, listen, routes } = {}) {
+        this.config(options);
+
+        this.initHistory();
+
+        if(routes){
+            this.map(routes);
+        }
+
+        if(listen){
+            this.listen();
+        }
+    },
+    config: function (options) {
+        Object.assign(this.options, options);
+
+        return this;
+    },
+    getFragment: function (locationObject = location) {
+        let match;
+        let fragment = '';
+
+        const {regHash, mode} = this.options;
+
+        if (mode != 'hash') {
+            fragment = decodeURI(locationObject.pathname + locationObject.search);
+        } else {
+            match = locationObject.href.match(regHash);
+            fragment = match ? match[1] : '';
+        }
+
+        return fragment;
+    },
+    clearSlashes(path) {
+        return path.toString().replace(regSlashBegin, '').replace(regSlashEnd, '');
+    },
+    createRouteMatcher(routeObj, parentRoute = ''){
+        let {path} = routeObj;
+        const hasWildCard = regWildCard.test(path);
+
+        path = this.clearSlashes(path);
+
+        if(hasWildCard){
+            path = path.replace(regWildCard, '');
+        }
+
+        if(parentRoute &amp;&amp; !parentRoute.endsWith('/') &amp;&amp; path){
+            parentRoute += '/';
+        }
+
+        path = parentRoute + path;
+
+        routeObj.path = path;
+
+        routeObj.matcher = path ?
+            path.split('/').map((name)=>{
+                const isPlaceHolder = name[0] == ':';
+
+                return {
+                    type: isPlaceHolder ? 'placeholder' : 'strict',
+                    name: isPlaceHolder ? name.slice(1) : name,
+                };
+            }) :
+            []
+        ;
+
+        if(hasWildCard){
+            routeObj.matcher.push({
+                type: 'wildcard',
+            });
+        } else if(!routeObj.matcher.length){
+            routeObj.matcher.push({
+                type: 'strict',
+                name: '',
+            });
+        }
+    },
+
+    extendRoutes(routes, parentPath){
+        let path;
+
+        for(path in routes){
+            let routeObj = routes[path];
+
+            if(typeof routeObj == 'function'){
+                routeObj = {
+                    handler: routeObj,
+                };
+                routes[path] = routeObj;
+            }
+
+            if(routeObj.subRoutes){
+                if(!routeObj.handler){
+                    routeObj.handler = returnTrue;
+                }
+
+                if(!path.endsWith('*')){
+                    path += '*';
+                }
+            }
+
+            routeObj.path = path;
+
+            this.createRouteMatcher(routeObj, parentPath);
+
+            if(routeObj.subRoutes){
+                this.extendRoutes(routeObj.subRoutes, routeObj.path);
+            }
+        }
+    },
+    /**
+     *
+     * @param routes
+     *
+     * @example
+     * Router.map({
+     *      '/'(){
+     *
+     *      },
+     *      '/:lang': {
+     *          handler({lang}){
+     *              return (lang in availableLangs);
+     *          },
+     *          subRoutes: {
+     *              '/'(){
+     *
+     *              },
+     *              '/user'
+     *          }
+     *      },
+     *      '*'(){
+     *
+     *      }
+     * });
+     */
+    map(routes){
+        this.extendRoutes(routes);
+
+        this.routes = routes;
+    },
+    flush() {
+        this.routes = {};
+        this.mode = null;
+        return this;
+    },
+    matches(route, path){
+        const length = path.length + 1;
+
+        if(route.length > length || ((length - 2) > route.length &amp;&amp; route[route.length - 1].type != 'wildcard')){
+            return null;
+        }
+
+        let params = {};
+
+        for(let i = 0; i &lt; length; i++){
+            let routePart = route[i];
+            let pathPart = path[i];
+
+            if(!routePart){
+                if(pathPart){
+                    params = null;
+                }
+            } else if(routePart.type == 'wildcard'){
+                if(pathPart){
+                    params['*'] = decodeParam(path.slice(i).join('/'));
+                }
+                break;
+            } else if(routePart.type == 'placeholder'){
+                if(pathPart){
+                    params[routePart.name] = decodeParam(pathPart);
+                } else {
+                    params = null;
+                }
+            } else if(routePart.name != pathPart) {
+                params = null;
+            }
+
+            if(!params){
+                break;
+            }
+        }
+
+        return params;
+    },
+    findMatchingRoutes(routes, fragment, data, options){
+
+        for(let route in routes){
+            route = routes[route];
+
+            let handleResult;
+            let params = this.matches(route.matcher, fragment);
+
+            if (params) {
+                handleResult = route.handler(params, options, data);
+
+                if (handleResult == null) {
+                    return null;
+                } else if(handleResult === true){
+                    if(route.subRoutes){
+                        handleResult = this.findMatchingRoutes(route.subRoutes, fragment, data, options);
+
+                        if(handleResult !== false){
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    },
+    _saveState(fragment, event = {type: 'unknown/initial'}){
+        const data = {fragment: fragment == null ? this.getFragment() : fragment};
+        const fragmentParts = data.fragment.split('?');
+
+        fragment = this.clearSlashes((fragmentParts[0] || '').replace(this.options.regIndex, ''));
+
+        this.before = this.current;
+        this.beforeRoute = this.currentRoute;
+        this.beforeOptions = this.currentOptions || '';
+
+        this.current = data.fragment;
+        this.currentRoute = fragment;
+        this.currentOptions = fragmentParts[1] || '';
+
+        data.fragment = fragment;
+
+        data.changedRoute = this.beforeRoute != this.currentRoute;
+        data.changedOptions = this.beforeOptions != this.currentOptions;
+        data.history = this.history;
+        data.activeHistoryIndex = this.activeHistoryIndex;
+        data.event = event;
+
+        return data;
+    },
+    applyRoutes(fragment, event) {
+
+        const data = this._saveState(fragment, event);
+        const options = deserialize(this.currentOptions);
+
+        fragment = data.fragment.split('/');
+
+        if(this.noNavigate){
+            this.logError('Router.applyRoutes called while routes are already applied.');
+        }
+
+        this.noNavigate = true;
+
+        this.findMatchingRoutes(this.routes, fragment, data, options);
+
+        this.noNavigate = false;
+
+        return this;
+    },
+    unlisten() {
+        if (this._listener) {
+            window.removeEventListener('hashchange', this._listener);
+            window.removeEventListener('popstate', this._listener);
+        }
+        if (this._listener || this.interval) {
+            clearInterval(this.interval);
+        }
+
+        return this;
+    },
+    applyRoutesIfNeeded(event){
+        if(this.getFragment() !== this.current){
+            this.onRouteChanged(event);
+        }
+    },
+    onRouteChanged(event){
+        const cur = this.getFragment();
+        const stop = cur === this.current &amp;&amp; this.options.samePathStrategy.includes('stop');
+
+        if(!stop){
+            this.updateActiveHistoryIndex();
+            this.applyRoutes(cur, event);
+        } else if(event &amp;&amp; event.original &amp;&amp; event.original.type === 'popstate') {
+            this.logWarn('route did not change, but pop event occurred');
+            this.updateActiveHistoryIndex();
+        }
+
+        return this;
+    },
+    initHistory: function(){
+        const state = winHistory.state;
+        let currentHistoryKey = state &amp;&amp; state.historyKey;
+        let restoredRouterState;
+        this.history = null;
+
+        try {
+            restoredRouterState = JSON.parse(window.sessionStorage.getItem(this.storageKey));
+        } catch(e) {} // eslint-disable-line no-empty
+
+        if(restoredRouterState){
+            this.sessionHistories = restoredRouterState.sessionHistories;
+
+            if(currentHistoryKey &amp;&amp; this.sessionHistories.length){
+                this.history = this.sessionHistories.find((history) => {
+                    const historyIndex = history.indexOf(currentHistoryKey);
+                    if(historyIndex > -1){
+                        this.activeHistoryIndex = historyIndex;
+                        return true;
+                    }
+                });
+            }
+        }
+
+        if(!currentHistoryKey){
+            currentHistoryKey = this.getHistoryKey();
+            winHistory.replaceState({
+                state,
+                historyKey: currentHistoryKey,
+            }, '');
+        }
+
+        this.sessionHistories = this.sessionHistories || [];
+
+        if(!this.history){
+            this.history = [currentHistoryKey];
+            this.activeHistoryIndex = 0;
+            this.sessionHistories.push(this.history);
+        }
+    },
+    updateActiveHistoryIndex(){
+        const currentHistoryKey = winHistory.state &amp;&amp; winHistory.state.historyKey;
+
+        if(!currentHistoryKey){
+            return this.logWarn('missing currentHistoryKey');
+        }
+
+        this.activeHistoryIndex = this.history.indexOf(currentHistoryKey);
+
+        if(this.activeHistoryIndex === -1){
+            this.logWarn('did not find key in history', currentHistoryKey, this.history, this.sessionHistories);
+            this.history = [currentHistoryKey];
+            this.activeHistoryIndex = 0;
+            this.sessionHistories.push(this.history);
+        }
+
+        this.saveRouterState();
+    },
+    getHistoryKey(){
+        historyKeyCounter += 1;
+        return historyKeyCounter + '-' + getID();
+    },
+    addToHistory(historyKey, replace){
+        if(replace){
+            this.history[this.activeHistoryIndex] = historyKey;
+        } else {
+            // remove former history future stack
+            const historyEndIndex = this.history.length - 1;
+            if(historyEndIndex > this.activeHistoryIndex){
+                this.history.length = this.activeHistoryIndex + 1;
+            }
+
+            this.history.push(historyKey);
+            this.activeHistoryIndex = this.history.length - 1;
+        }
+        this.saveRouterState();
+    },
+    saveRouterState(){
+        window.sessionStorage.setItem(this.storageKey, JSON.stringify({sessionHistories: this.sessionHistories}));
+    },
+    listen() {
+        this.current = this.getFragment();
+
+        this.unlisten();
+
+        if (!this._listener) {
+            //'interval' often means either browser bug or external (disapproved) pushState/replaceState call
+            this._listener = (e = {type: 'interval'}) => {
+                const run = e.type != 'interval' || this.getFragment() !== this.current;
+
+                if(run){
+                    this.onRouteChanged({
+                        type: 'popstate',
+                        original: {
+                            type: e.type,
+                            state: e.state,
+                        },
+                    });
+                }
+            };
+        }
+
+        this.interval = setInterval(this._listener, 999);
+
+        if (this.mode == 'hash') {
+            window.addEventListener('hashchange', this._listener);
+        } else {
+            window.addEventListener('popstate', this._listener);
+        }
+
+        return this;
+    },
+
+    normalizePath(path = ''){
+        path = path.replace(regSlashEnd, '');
+
+        if(!path.startsWith('.')){
+            path = '/' + path.replace(regSlashBegin, '');
+        }
+
+        return path;
+    },
+
+    changedPath(path, locationObj = location){
+        let changedPath;
+
+        if(this.options.supportRelativeRoutes){
+            path = this.normalizePath(path);
+            changedPath = this.current !== this.getFragment(new URL(path, locationObj.href));
+        } else {
+
+            if(path.startsWith('.')){
+                this.logError(`we do not support relative path: ${path}`);
+            }
+
+            changedPath = this.clearSlashes(path) !== this.clearSlashes(this.current);
+        }
+
+        return changedPath;
+    },
+
+    navigate(path, state = null, silent, replace) {
+
+        if(this.noNavigate){
+            thenable.then(() => {
+                this.navigate(...arguments);
+            });
+
+            this.logWarn('Router.navigate called while routes are already applied.');
+            return this;
+        }
+
+        path = this.normalizePath(path || '');
+
+        if(typeof state == 'boolean'){
+            replace = silent;
+            silent = state;
+            state = null;
+        }
+
+        if(!replace &amp;&amp; !this.changedPath(path)){
+            const { samePathStrategy } = this.options;
+
+            if(samePathStrategy.includes('reload')){
+                window.location.reload();
+                return;
+            } else if(samePathStrategy.includes('replace') &amp;&amp; replace !== false){
+                replace = true;
+            }
+        }
+
+        const event = {
+            type: 'navigate',
+            replace,
+        };
+
+        if(!state || !state.historyKey || !state.state){
+            state = {state, historyKey: this.getHistoryKey()};
+        }
+
+        this.addToHistory(state.historyKey, replace);
+
+        if (this.mode === 'history') {
+            winHistory[replace === true ? 'replaceState' : 'pushState'](state, '', path);
+        } else {
+            const value = window.location.href.replace(regFullHash, '') + '#' + path;
+
+            if(replace === true){
+                location.replace(value);
+            } else {
+                window.location.href = value;
+            }
+        }
+
+        if(silent){
+            this._saveState(event);
+        } else {
+            this.onRouteChanged(event);
+        }
+
+        return this;
+    },
+
+    push(path, state, silent){
+        return this.navigate(path, state, silent, false);
+    },
+
+    replace(path, state, silent) {
+        return this.navigate(path, state, silent, true);
+    },
+}, 2);
+
+export default rb.Router;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Mon Jun 11th 2018
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

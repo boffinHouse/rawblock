@@ -5,7 +5,7 @@
  */
 module.exports = {
     dist: {
-        src: ['js.md', '_crucial.js', '_main.js', '_$.js', 'utils/**/*.js', 'components/**/*.js', '!components/**/*-tests.js'],
+        src: ['js.md', 'src/crucial.js', 'src/main.js', 'src/$.js', 'src/utils/**/*.js', 'src/components/**/*.js', '!src/components/**/*-tests.js'],
         options: {
             destination: 'jsdoc',
             tutorials: 'tutorials/js',

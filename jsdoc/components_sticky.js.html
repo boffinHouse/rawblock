@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>DocStrap Source: components/sticky.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">DocStrap</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.html">rb</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-ajaxform.html">ajaxform</a></li><li><a href="module-validity.html">validity</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.components._childfx.html">rb.components._childfx</a></li><li><a href="rb.components._composer_component.html">rb.components._composer_component</a></li><li><a href="rb.components._focus_component.html">rb.components._focus_component</a></li><li><a href="rb.components.accordion.html">rb.components.accordion</a></li><li><a href="rb.components.button.html">rb.components.button</a></li><li><a href="rb.components.dialog.html">rb.components.dialog</a></li><li><a href="rb.components.itemscroller.html">rb.components.itemscroller</a></li><li><a href="rb.components.panel.html">rb.components.panel</a></li><li><a href="rb.components.panelgroup.html">rb.components.panelgroup</a></li><li><a href="rb.components.popover.html">rb.components.popover</a></li><li><a href="rb.components.range.html">rb.components.range</a></li><li><a href="rb.components.scrolly.html">rb.components.scrolly</a></li><li><a href="rb.components.shrinknav.html">rb.components.shrinknav</a></li><li><a href="rb.components.sticky.html">rb.components.sticky</a></li><li><a href="rb.components.tabs.html">rb.components.tabs</a></li><li><a href="SpringAnimation.html">SpringAnimation</a></li><li><a href="SpringAnimationDemoGroup.html">SpringAnimationDemoGroup</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-01-basic-module.html">01-basic-module</a></li><li><a href="tutorial-02-extending-components.html">02-extending-components</a></li><li><a href="tutorial-03-communicating-composing-components.html">03-communicating-composing-components</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#map">map</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: components/sticky.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">import rb, { Component } from '../core';
+import getCss from '../utils/get-css';
+
+const $ = Component.$;
+const isContainerScroll = {scroll: 1, auto: 1};
+const isContainerAncestor = {parent: 'parentNode', positionedParent: 'offsetParent'};
+const docElem = document.documentElement;
+
+if (!rb.components._childfx) {
+    rb.log('_childfx not included');
+}
+
+/**
+ * Component creates a sticky element, that can be stuck to the top or the bottom of the viewport. Optionally can animate child elements after it has become stuck according to the scroll position.
+ *
+ * @alias rb.components.sticky
+ *
+ * @extends rb.components._childfx
+ *
+ * @param element
+ * @param initialDefaults
+ *
+ *
+ *
+ * @example
+ * &lt;header class="rb-header js-rb-live" data-module="sticky">
+ *     &lt;div class="header-fx">
+ *          &lt;img class="logo" />
+ *          &lt;nav>&lt;!-- ... -->&lt;/nav>
+ *      &lt;/div>
+ * &lt;/header>
+ *
+ * &lt;style type="text/scss">
+ *     .rb-header {
+ *          (at)include exportToJS((
+ *              container: false,
+ *              progress: 100,
+ *              childSel: 'find(.header-fx)',
+ *          ));
+ *
+ *          .header-fx {
+ *              padding: 20px;
+ *              font-size: 16px;
+ *
+ *              (at)include exportToJS((
+ *                  fontSize: 12,
+ *                  paddingTop: 10,
+ *                  paddingBottom: 10
+ *              ));
+ *          }
+ *
+ *          .logo,
+ *          nav {
+ *              height: 1em;
+ *          }
+ *     }
+ * &lt;/style>
+ */
+class Sticky extends (rb.components._childfx || Component) {
+    /**
+     * @mixes rb.components._childfx.defaults
+     *
+     * @prop {String|Boolean} container=".is{-}{name}{-}parent" The container element, that is used to calculate the bounds in which the element should be sticky to the viewport. If `false` its always sticky. Possible values: `false`, `"parent"`(direct parent element), `"positionedParent"`, `".closest-selector"`.
+     * @prop {Boolean|Number} topOffset=false If a number/string it sets sticky offset to the number.
+     * @prop {Boolean|Number} bottomOffset=false If a number/string it sets sticky offset to the number.
+     * @prop {String} offsetElements="" The height of these elements will be added to the calculated top or bottom offset. The elements are retrieved by `this.getElementsByString`.
+     * @prop {String} marginBottomElements="" The height of these elements will be added to the calculated top or bottom offset. The elements are retrieved by `this.getElementsByString`.
+     * @prop {Number} progress=0 Defines the distance in pixel a child animation should be added after an animation should be added.
+     * @prop {Boolean} setWidth=true Whether the width of the sticky element should be set, while it is stuck.
+     * @prop {Boolean} switchedOff=false Turns off the stickyness. (to be used in responsive context).
+     * @prop {Boolean} resetSwitchedOff=true Whether a switchedOff change fully resets the styles.
+     * @prop {Boolean} autoThrottle=true Tries to throttle layout reads if current scroll position is far away from a changing point.
+     * @prop {String} scrollContainer=''
+     */
+    static get defaults(){
+        return {
+            container: '.is{-}{name}{-}parent', // false || 'parent' || 'positionedParent' || '.selector'
+            switchedOff: false,
+            topOffset: false,
+            bottomOffset: false,
+            offsetElements: '',
+            progress: 0,
+            setWidth: true,
+            resetSwitchedOff: true,
+            autoThrottle: true,
+            scrollContainer: '',
+        };
+    }
+
+    static filterPos(pos) {
+        return pos != null &amp;&amp; pos > -1 &amp;&amp; pos &lt; Number.MAX_VALUE;
+    }
+
+    constructor(element, initialDefaults){
+        super(element, initialDefaults);
+
+        this.isFixed = false;
+        this.isScrollFixed = false;
+        this.checkTime = 666 + (666 * Math.random());
+
+        this.isProgressDone = false;
+        this.onprogress = $.Callbacks();
+
+        this._throttleOptions = {that: this, unthrottle: true};
+
+        this.updateChilds = this.updateChilds || $.noop;
+
+        this.onprogress.fireWith = rb.rAF(this.onprogress.fireWith, {throttle: true});
+
+        rb.rAFs(this, {throttle: true}, 'updateLayout', '_setProgressClass', 'setSwitchedOffClass');
+
+        this.calculateLayout = this.calculateLayout.bind(this);
+        this.checkPosition = rb.throttle(this.checkPosition, this._throttleOptions);
+
+        this.reflow = rb.throttle(function () {
+            if (this.checkChildReflow) {
+                this.checkChildReflow();
+            }
+            this.calculateLayout();
+        }, {that: this});
+
+
+        this._getElements();
+        this.calculateLayout();
+
+        if(this.options.switchedOff){
+            this.setSwitchedOffClass();
+        }
+    }
+
+    setOption(name, value, isSticky) {
+        super.setOption(name, value, isSticky);
+
+        if (name == 'switchedOff' || name == 'resetSwitchedOff' &amp;&amp; this.options.switchedOff &amp;&amp; this.options.resetSwitchedOff) {
+            this._unfix();
+            this.updateChilds(true);
+            this.progress = -2;
+        } else if (name == 'offsetElements' || name == 'bottomOffset' || name == 'topOffset' || (name == 'switchedOff' &amp;&amp; !value)) {
+            this._unfix();
+            this.element.style.top = '';
+            this.element.style.bottom = '';
+            this._getElements();
+            this.calculateLayout();
+        } else if (name == 'autoThrottle' &amp;&amp; !value &amp;&amp; !this._throttleOptions.unthrottle) {
+            this._throttleOptions.unthrottle = true;
+        } else if(name == 'scrollContainer'){
+            this._setScrollingElement();
+        }
+
+        if(name == 'switchedOff'){
+            this.setSwitchedOffClass();
+        }
+    }
+
+    setSwitchedOffClass(){
+        this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
+    }
+
+    _getElements() {
+        let offsetName;
+
+        const options = this.options;
+        this.isContainerScroll = false;
+
+        this.elemStyles = rb.getStyles(this.element);
+
+        this.offsetElements = options.offsetElements ?
+            this.getElementsByString(options.offsetElements) :
+            []
+        ;
+
+        this.posProp = (options.bottomOffset !== false) ?
+            'bottom' :
+            'top'
+        ;
+
+        offsetName = this.posProp + 'Offset';
+
+        this.offset = 0;
+
+        if (options[offsetName] !== false) {
+            this.offset -= options[offsetName];
+        }
+
+        if (options.container) {
+            this.container = this.element[options.container] || this.element[isContainerAncestor[options.container]] || this.element.closest(this.interpolateName(options.container));
+            if (this.container == document.body || this.container == docElem) {
+                this.container = null;
+            } else if (this.container) {
+                this.isContainerScroll = !!isContainerScroll[getCss(this.container, 'overflowY', false, this.containerStyles) || getCss(this.container, 'overflow', false, this.containerStyles)];
+                this.containerStyles = rb.getStyles(this.container);
+            }
+        }
+
+        this.calcedOffset = this.offset;
+
+        this._setScrollingElement();
+    }
+
+    _setScrollingElement(){
+        let curScrollingEventElement;
+        const oldEventElement = this.$scrollEventElem &amp;&amp; this.$scrollEventElem.get(0);
+
+        if(this.options.scrollContainer){
+            this.$scrollEventElem = $(this.element).closest(this.options.scrollContainer);
+            curScrollingEventElement = this.$scrollEventElem.get(0);
+            this.scrollingElement = curScrollingEventElement;
+        }
+
+        if(!this.options.scrollContainer || !this.scrollingElement){
+            if (this.isContainerScroll) {
+                this.$scrollEventElem = this.$container;
+                curScrollingEventElement = this.$container.get(0);
+                this.scrollingElement = curScrollingEventElement;
+            } else {
+                curScrollingEventElement = window;
+                this.$scrollEventElem = $(curScrollingEventElement);
+                this.scrollingElement = document.scrollingElement;
+            }
+        }
+
+        if(oldEventElement != curScrollingEventElement){
+            if(oldEventElement){
+                $(oldEventElement).off('scroll', this.checkPosition);
+            }
+            this.$scrollEventElem.on('scroll', this.checkPosition);
+        }
+    }
+
+    getCalculatedLayout(){
+        let box, elemOffset, containerBox, containerOffset;
+
+        const boxes = {
+            minFixedPos: -1,
+            maxFixedPos: Number.MAX_VALUE,
+            minScrollPos: -1,
+            maxScrollPos: Number.MAX_VALUE,
+        };
+
+        box = (this.isFixed ? this.clone : this.element).getBoundingClientRect();
+
+        if (!box.right &amp;&amp; !box.bottom &amp;&amp; !box.top &amp;&amp; !box.left) {
+            return boxes;
+        }
+
+        elemOffset = box[this.posProp] + this.scroll;
+
+        if(this.offsetElements.length){
+            this.calcedOffset = this.offset - this.offsetElements.reduce((prevValue, element) => prevValue + element.offsetHeight, 0);
+        }
+
+        if (this.options.setWidth) {
+            this.elemWidth = (this.isFixed ? this.clone : this.element).offsetWidth;
+        }
+
+        if (this.posProp == 'top') {
+            boxes.minFixedPos = elemOffset + this.calcedOffset;
+
+            if (this.options.progress) {
+                boxes.minProgressPos = boxes.minFixedPos;
+                boxes.maxProgressPos = boxes.minFixedPos + this.options.progress;
+            }
+        } else {
+            boxes.maxFixedPos = elemOffset - this.calcedOffset - this.viewportheight;
+
+            if (this.options.progress) {
+                boxes.minProgressPos = boxes.maxFixedPos - boxes.options.progress;
+                boxes.maxProgressPos = boxes.maxFixedPos;
+            }
+        }
+
+        if (this.container) {
+            containerBox = this.container.getBoundingClientRect();
+
+            containerOffset = containerBox[this.posProp == 'top' ? 'bottom' : 'top'] + this.scroll;
+
+            if (this.posProp == 'top') {
+                boxes.maxFixedPos = containerOffset + this.calcedOffset;
+
+                boxes.minScrollPos = boxes.maxFixedPos - box.height -
+                    getCss(this.container, 'padding-bottom', true, this.containerStyles) -
+                    getCss(this.element, 'margin-bottom', true, this.elemStyles);
+                boxes.maxFixedPos += 9 - this.calcedOffset;
+                boxes.maxScrollPos = boxes.maxFixedPos;
+            } else {
+                boxes.minFixedPos = containerOffset - docElem.clientHeight - this.calcedOffset;
+                boxes.maxScrollPos = boxes.minFixedPos + box.height +
+                    getCss(this.container, 'padding-top', true, this.containerStyles) +
+                    getCss(this.element, 'margin-top', true, this.elemStyles);
+                boxes.minFixedPos += 9 + this.calcedOffset;
+                boxes.minScrollPos = boxes.minFixedPos;
+            }
+        }
+
+        return boxes;
+    }
+
+    calculateLayout() {
+
+        this.scroll = this.scrollingElement.scrollTop;
+
+        this.viewportheight = docElem.clientHeight;
+
+        this.lastCheck = Date.now();
+
+        Object.assign(this, this.getCalculatedLayout());
+
+        this._poses = [this.minScrollPos, this.minFixedPos, this.maxFixedPos, this.maxScrollPos, this.minProgressPos, this.maxProgressPos].filter(Sticky.filterPos);
+
+        this.checkPosition();
+    }
+
+    _isNearScroll(pos) {
+        const dif = this.scroll - pos;
+        return dif &lt; 700 + this.viewportheight &amp;&amp; dif > -700 - this.viewportheight;
+    }
+
+    checkPosition() {
+        if (this.options.switchedOff) {
+            return;
+        }
+
+        let shouldFix, shouldScroll, shouldWidth, progress, wasProgress;
+
+        this.scroll = this.scrollingElement.scrollTop;
+
+        if (Date.now() - this.lastCheck > this.checkTime) {
+            this.calculateLayout();
+            return;
+        }
+
+        shouldFix = this.scroll >= this.minFixedPos &amp;&amp; this.scroll &lt;= this.maxFixedPos;
+        shouldScroll = shouldFix &amp;&amp; (this.scroll >= this.minScrollPos &amp;&amp; this.scroll &lt;= this.maxScrollPos);
+
+        if (this.options.autoThrottle) {
+            this._throttleOptions.unthrottle = this._poses.some(this._isNearScroll, this);
+        }
+
+        if (shouldFix &amp;&amp; !this.isFixed) {
+            this.elemHeight = this.element.offsetHeight;
+            if (this.options.setWidth) {
+                this.elemWidth = this.element.offsetWidth;
+            }
+        }
+
+        shouldWidth = shouldFix &amp;&amp; this.isFixed &amp;&amp; this.options.setWidth &amp;&amp; this.element.offsetWidth != this.elemWidth;
+
+        if (shouldFix != this.isFixed || shouldScroll || this.isScrollFixed || shouldWidth || (this.isFixed &amp;&amp; this._setCalcedOffset != this.calcedOffset)) {
+            this.updateLayout(shouldFix, shouldScroll, shouldWidth);
+        }
+
+        if (
+            this.options.progress &amp;&amp;
+            (
+                (shouldFix &amp;&amp; this.scroll >= this.minProgressPos &amp;&amp; this.scroll &lt;= this.maxProgressPos) ||
+                (this.progress !== 0 &amp;&amp; this.progress !== 1)
+            )
+        ) {
+            progress = Math.max(Math.min((this.scroll - this.minProgressPos) / (this.maxProgressPos - this.minProgressPos), 1), 0);
+            wasProgress = this.progress;
+
+            if (!shouldFix &amp;&amp; wasProgress == -2) {
+                return;
+            }
+
+            if (wasProgress != progress) {
+                this.progress = progress;
+
+                if (progress == 1) {
+                    if (!this.isProgressDone) {
+                        this.isProgressDone = true;
+                        this._setProgressClass();
+                    }
+                } else if (this.isProgressDone) {
+                    this.isProgressDone = false;
+                    this._setProgressClass();
+                }
+
+                this.updateChilds();
+                this.onprogress.fireWith(this, [progress]);
+            }
+        }
+    }
+
+    _setProgressClass() {
+        this.element.classList.toggle(rb.statePrefix + 'fixed' + rb.nameSeparator + 'progressed', this.isProgressDone);
+    }
+
+    updateLayout(shouldFix, shouldScroll, shouldWidth) {
+        let offset, trigger;
+
+        if (this.options.switchedOff) {
+            return;
+        }
+
+        if (shouldWidth) {
+            this.element.style.width = this.elemWidth + 'px';
+        }
+
+        if (shouldFix) {
+            if (!this.isFixed) {
+                this._fix();
+                trigger = true;
+            }
+
+            if (shouldScroll) {
+                this.isScrollFixed = true;
+                offset = this.calcedOffset * -1;
+
+                if (this.posProp == 'top') {
+                    offset += (this.minScrollPos - this.scroll);
+                } else {
+                    offset -= this.maxScrollPos - this.scroll;
+                }
+
+                this.element.style[this.posProp] = offset + 'px';
+            } else if (this.isScrollFixed || this._setCalcedOffset != this.calcedOffset) {
+                this.isScrollFixed = false;
+                this.element.style[this.posProp] = (this.calcedOffset * -1) + 'px';
+            }
+
+        } else if (this.isFixed) {
+            this._unfix();
+            trigger = true;
+        }
+
+        this._setCalcedOffset = this.calcedOffset;
+
+        if (trigger) {
+            this.trigger();
+        }
+    }
+
+    _unfix() {
+        if (!this.isFixed) {
+            return;
+        }
+
+        this.isFixed = false;
+        this.isScrollFixed = false;
+        this.element.classList.remove(rb.statePrefix + 'fixed');
+        this.detachClone();
+        this.element.style.position = '';
+        this.element.style.width = '';
+        this.element.style[this.posProp] = '';
+    }
+
+    _fix() {
+        if (this.isFixed) {
+            return;
+        }
+        this.isFixed = true;
+        this.isScrollFixed = false;
+        this.attachClone();
+        this.element.classList.add(rb.statePrefix + 'fixed');
+        this.element.style.position = 'fixed';
+
+        if (this.options.setWidth) {
+            this.element.style.width = this.elemWidth + 'px';
+        }
+
+        this.element.style[this.posProp] = (this.calcedOffset * -1) + 'px';
+    }
+
+    attachClone() {
+        if (!this.$clone) {
+            this.clone = this.element.cloneNode();
+            this.$clone = $(this.clone);
+
+            this.$clone
+                .css({visibility: 'hidden'})
+                .removeClass('js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'live')
+                .addClass('js' + rb.nameSeparator + 'sticky' + rb.nameSeparator + 'clone')
+                .attr({
+                    'data-module': '',
+                    'aria-hidden': 'true',
+                })
+            ;
+        }
+
+        this.$clone.css({height: this.elemHeight + 'px'});
+        this.$element.after(this.clone);
+    }
+
+    detachClone() {
+        if (this.$clone) {
+            this.$clone.detach();
+        }
+    }
+
+    attached() {
+        this._setScrollingElement();
+        rb.resize.on(this.reflow);
+        clearInterval(this.layoutInterval);
+        this.layoutInterval = setInterval(this.reflow, Math.round((999 * Math.random()) + 9999));
+    }
+
+    detached() {
+        this.$scrollEventElem.off('scroll', this.checkPosition);
+        rb.resize.off(this.reflow);
+        clearInterval(this.layoutInterval);
+        this.$scrollEventElem = null;
+    }
+}
+
+export default Component.register('sticky', Sticky);
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Mon Jun 11th 2018
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

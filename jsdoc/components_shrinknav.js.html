@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>DocStrap Source: components/shrinknav.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">DocStrap</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.html">rb</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-ajaxform.html">ajaxform</a></li><li><a href="module-validity.html">validity</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.components._childfx.html">rb.components._childfx</a></li><li><a href="rb.components._composer_component.html">rb.components._composer_component</a></li><li><a href="rb.components._focus_component.html">rb.components._focus_component</a></li><li><a href="rb.components.accordion.html">rb.components.accordion</a></li><li><a href="rb.components.button.html">rb.components.button</a></li><li><a href="rb.components.dialog.html">rb.components.dialog</a></li><li><a href="rb.components.itemscroller.html">rb.components.itemscroller</a></li><li><a href="rb.components.panel.html">rb.components.panel</a></li><li><a href="rb.components.panelgroup.html">rb.components.panelgroup</a></li><li><a href="rb.components.popover.html">rb.components.popover</a></li><li><a href="rb.components.range.html">rb.components.range</a></li><li><a href="rb.components.scrolly.html">rb.components.scrolly</a></li><li><a href="rb.components.shrinknav.html">rb.components.shrinknav</a></li><li><a href="rb.components.sticky.html">rb.components.sticky</a></li><li><a href="rb.components.tabs.html">rb.components.tabs</a></li><li><a href="SpringAnimation.html">SpringAnimation</a></li><li><a href="SpringAnimationDemoGroup.html">SpringAnimationDemoGroup</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-01-basic-module.html">01-basic-module</a></li><li><a href="tutorial-02-extending-components.html">02-extending-components</a></li><li><a href="tutorial-03-communicating-composing-components.html">03-communicating-composing-components</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#map">map</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: components/shrinknav.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">import rb, { Component } from '../core';
+
+import '../utils/resize';
+
+const regPoint = /^./;
+const $ = Component.$;
+
+/**
+ * Class component to create a ShrinkNav.
+ *
+ * @alias rb.components.shrinknav
+ *
+ * @extends rb.Component
+ *
+ * @param element {Element}
+ * @param [initialDefaults] {OptionsObject}
+ *
+ * @fires componentName#changed
+ *
+ * @example
+ * &lt;div class="js-rb-live" data-module="shrinknav">&lt;/div>
+ */
+class ShrinkNav extends Component {
+    /**
+     * @static
+     * @mixes rb.Component.defaults
+     *
+     * @prop {String} measureElement='self' The element that is used to measure the full width. Either self or a selector.
+     * @prop {String} items='.children(.{name}{e}item)' The items which may be overflowed.
+     * @prop {String} toggleItemSelector='.{name}{e}toggle{-}item' The items which may be overflowed.
+     * @prop {Number} minItems=2 The minimum items to see in the main bar.
+     * @prop {Number} minSubItems=2 The minimum items to see in the submenu.
+     * @prop {Boolean} growItems=false
+     */
+    static get defaults() {
+        return {
+            measureElement: 'self',
+            items: '.children(.{name}{e}item)',
+            toggleItemSelector: '.is{-}toggle{-}item',
+            togglePanel: 'find(.{name}{e}panel)',
+            minItems: 2,
+            minSubItems: 2,
+            growItems: false,
+        };
+    }
+
+    static get events(){
+        return {
+            'rb_resize': 'measureElements',
+        };
+    }
+
+    constructor(element, initialDefaults) {
+        super(element, initialDefaults);
+
+        this.rAFs('addItemsTo');
+
+        this.reflow = rb.throttle(this.measureElements);
+
+        this._getMeasureElement();
+        this._getItems();
+        this._calcMinItems();
+
+        this.measureElements();
+    }
+
+    setOption(name, value, isSticky){
+        super.setOption(name, value, isSticky);
+
+        if(name == 'measureElement'){
+            this._getMeasureElement();
+            this.reflow();
+        } else if(name == 'minSubItems' || name == 'minItems'){
+            this._calcMinItems();
+            this.reflow();
+        }
+    }
+
+    _switchOff(){
+
+    }
+
+    _switchOn(){
+
+    }
+
+    _calcMinItems(){
+        const fullLength = this.allItems.length;
+        const {minSubItems, minItems} = this.options;
+        const needItems = minSubItems + minItems;
+
+        if(needItems > fullLength){
+            if(minItems &lt; fullLength){
+                this.minSubItems = fullLength - minItems;
+            } else {
+                this.minItems = 0;
+                this.minSubItems = 0;
+            }
+        } else {
+            this.minItems = minItems;
+            this.minSubItems = minSubItems ;
+        }
+
+        if(this.minItems &lt; 2){
+            this.minItems = 0;
+        }
+
+        if(this.minSubItems &lt; 2){
+            this.minSubItems = 0;
+        }
+    }
+
+    hideItems(){
+        const hideItems = [];
+
+        let currentMenuLength = this.panelmenuItems.length;
+        let currentVisibleLength = this.mainbarItems.length;
+
+        this.mainbarItems.forEach((item)=>{
+            if(this.remainingWidth &lt; 0 || currentMenuLength &lt; this.minSubItems || currentVisibleLength &lt; this.minItems ){
+                hideItems.push(item);
+
+                currentVisibleLength--;
+                currentMenuLength++;
+            }
+            this.remainingWidth += item.width;
+        });
+
+        this.addItemsTo(hideItems);
+    }
+
+    showElements(){
+        let run = true;
+        const changeItems = [];
+        const lastIndex = this.panelmenuItems.length - 1;
+        let currentMenuLength = this.panelmenuItems.length;
+        let currentVisibleLength = this.mainbarItems.length;
+
+        this.panelmenuItems.forEach((item, index) => {
+            if(run){
+                if(index == lastIndex){
+                    this.remainingWidth += this.toggleItemWidth;
+                }
+
+                if(this.remainingWidth > item.width){
+                    changeItems.push(item);
+
+                    currentVisibleLength++;
+                    currentMenuLength--;
+
+                    this.remainingWidth -= item.width;
+                } else {
+                    run = false;
+                }
+            }
+        });
+
+        if(currentMenuLength){
+            while(changeItems.length &amp;&amp; currentMenuLength &lt; this.minSubItems){
+                changeItems.pop();
+
+                currentVisibleLength--;
+                currentMenuLength++;
+            }
+
+            if(currentVisibleLength &lt; this.minItems){
+                return;
+            }
+        }
+
+        if(changeItems.length){
+            this.addItemsTo(changeItems, true);
+        }
+    }
+
+    addItemsTo(items, isVisibleBar){
+        const hadSubmenu = !!this.panelmenuItems.length;
+
+        if(isVisibleBar){
+            items.forEach(this.addItemToBar, this);
+        } else {
+            items.forEach(this.addItemToPanel, this);
+        }
+
+        const hasMenus = !!this.panelmenuItems.length;
+
+        if(this.hasSubmenu !== hasMenus){
+            this.hasSubmenu = hasMenus;
+            this.$element.rbToggleState('submenu-within', hasMenus);
+        }
+
+        this.trigger({hadSubmenu, changedItems: items, setToBar: !!isVisibleBar});
+    }
+
+    addItemToBar(item){
+        const index = this.panelmenuItems.indexOf(item);
+
+        let setElement = false;
+        let position = item.position - 1;
+
+        while(position >= 0 &amp;&amp; !setElement){
+            const posItem = this.allItems[position];
+
+            if(posItem &amp;&amp; posItem.parent == posItem.$item.parent().get(0)){
+                posItem.$item.after(item.$item);
+                setElement = true;
+                break;
+            }
+
+            position--;
+        }
+
+        if(!setElement){
+            $(item.parent).prepend(item.$item);
+        }
+
+        if(index != -1){
+            this.panelmenuItems.splice(index, 1);
+            this.mainbarItems.unshift(item);
+        }
+    }
+
+    addItemToPanel(item){
+        const index = this.mainbarItems.indexOf(item);
+
+        this.$submenu.prepend(item.$item);
+
+        if(index != -1){
+            this.mainbarItems.splice(index, 1);
+            this.panelmenuItems.unshift(item);
+        }
+    }
+
+    measureElements(){
+        const add = this.options.growItems ? -0.1 : 0.1;
+        const {panelmenuItems} = this;
+
+        this.innerWidth = this.$measureElement.innerWidth();
+
+        this.neededWidth = this.mainbarItems.reduce((value, item) => {
+            item.width = item.$item.outerWidth() + add;
+            return value + item.width;
+        }, 0);
+
+        this.toggleItemWidth = this.$toggleItem.outerWidth() || this.toggleItemWidth || 0;
+        this.remainingWidth = this.innerWidth - this.neededWidth - this.toggleItemWidth;
+
+        if(this.remainingWidth &lt; (panelmenuItems.length ? 0 : -this.toggleItemWidth) + 0.1){
+            this.hideItems();
+        } else if(this.panelmenuItems.length) {
+            const itemWidth = panelmenuItems.length == 1 ?
+                panelmenuItems[0].width - this.toggleItemWidth :
+                panelmenuItems[0].width
+            ;
+
+            if(this.remainingWidth > itemWidth + 0.1){
+                this.showElements();
+            }
+        }
+    }
+
+    _getItems(){
+        const {items, toggleItemSelector, togglePanel} = this.options;
+
+        const toggleItem = this.query(toggleItemSelector);
+
+        this.$submenu = $(this.getElementsByString(togglePanel)[0]);
+
+        this.$toggleItem = $(toggleItem);
+
+        this.allItems = this.getElementsByString(items)
+            .filter(item => item != toggleItem)
+            .map((item, position)=> ({
+                $item: $(item),
+                width: 0,
+                position,
+                parent: item.parentNode,
+                priority: (parseInt(item.getAttribute('data-priority'), 10) || 0),
+            }))
+        ;
+
+        if(!this.$submenu.is('ul, ol') &amp;&amp; (this.allItems[0] &amp;&amp; this.allItems[0].$item.is('li'))){
+            const $menuWrapper = this.$submenu;
+            this.$submenu = $(document.createElement('ul'));
+
+            this.$submenu.prop({className: this.interpolateName(`${togglePanel.replace(regPoint, '')}{-}list`)});
+
+            rb.rAFQueue(()=>{
+                $menuWrapper.append(this.$submenu);
+            });
+        }
+
+        this.mainbarItems = [...this.allItems];
+
+        this.mainbarItems
+            .sort(
+                (item1, item2) =>
+                    (item2.priority - item1.priority)
+            )
+        ;
+
+        this.mainbarItems.reverse();
+        this.panelmenuItems = [];
+
+    }
+
+    _getMeasureElement(){
+        const {measureElement} = this.options;
+
+        this.$measureElement = measureElement == 'self' ?
+            this.$element :
+            this.$element.closest(measureElement)
+        ;
+    }
+}
+
+Component.register('shrinknav', ShrinkNav);
+
+export default ShrinkNav;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Mon Jun 11th 2018
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

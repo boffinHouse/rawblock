@@ -3,7 +3,7 @@ rawblock
 
 Rawblock JS is a simple UI component library, that allows to create re-usable, accessible, responsive and self-contained components using either ES5 or ES6.
 
-The rawblock core scripts consists of the _crucial.js and the _main.js. As a dependency for rawblock either _$.js or jQuery has to be included. In most cases _$.js, which provides a jQuery like API and adds itself to the `rb.$` namespace should be good enough.
+As a dependency for rawblock either 'rawblock/$.js' or jQuery has to be included. In most cases 'rawblock/$.js', which provides a jQuery like API and adds itself to the `rb.$` namespace should be good enough.
 
 For older browsers some polyfills (IE11-), namely DOM4 and some ES6 Promise/String/Array/Object polyfills (_polyfills.js) has to be added.
 
@@ -29,7 +29,9 @@ A simple backbone to start playing around would look like this:
 ```
 
 ```js
-rb.live.register('my-component', class MyComponent extends rb.Component {
+import {Component} from 'rawblock';
+
+Component.register('my-component', class MyComponent extends Component {
     constructor(element, initialDefaults){
         super(element, initialDefaults);
 

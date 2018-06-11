@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>DocStrap Source: components/itemscroller.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">DocStrap</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.html">rb</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-ajaxform.html">ajaxform</a></li><li><a href="module-validity.html">validity</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.components._childfx.html">rb.components._childfx</a></li><li><a href="rb.components._composer_component.html">rb.components._composer_component</a></li><li><a href="rb.components._focus_component.html">rb.components._focus_component</a></li><li><a href="rb.components.accordion.html">rb.components.accordion</a></li><li><a href="rb.components.button.html">rb.components.button</a></li><li><a href="rb.components.dialog.html">rb.components.dialog</a></li><li><a href="rb.components.itemscroller.html">rb.components.itemscroller</a></li><li><a href="rb.components.panel.html">rb.components.panel</a></li><li><a href="rb.components.panelgroup.html">rb.components.panelgroup</a></li><li><a href="rb.components.popover.html">rb.components.popover</a></li><li><a href="rb.components.range.html">rb.components.range</a></li><li><a href="rb.components.scrolly.html">rb.components.scrolly</a></li><li><a href="rb.components.shrinknav.html">rb.components.shrinknav</a></li><li><a href="rb.components.sticky.html">rb.components.sticky</a></li><li><a href="rb.components.tabs.html">rb.components.tabs</a></li><li><a href="SpringAnimation.html">SpringAnimation</a></li><li><a href="SpringAnimationDemoGroup.html">SpringAnimationDemoGroup</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-01-basic-module.html">01-basic-module</a></li><li><a href="tutorial-02-extending-components.html">02-extending-components</a></li><li><a href="tutorial-03-communicating-composing-components.html">03-communicating-composing-components</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#map">map</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: components/itemscroller.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">import rb, {Component} from '../core';
+import '../utils/resize';
+import '../utils/prefixed';
+import '../utils/draggy_wheel';
+
+import cssSupports from '../utils/css-supports';
+
+
+const $ = Component.$;
+const regIndex = /\{index}/g;
+const orderProp = rb.prefixed('order') || rb.prefixed('flexOrder');
+const supportSomeOrder = !!orderProp;
+const transformProp = rb.prefixed('transform');
+const supports3dTransform = cssSupports('transform', 'translate3d(0,0,0)');
+
+/**
+ * Class component to create a carousel/slider/itemscroller.
+ * @alias rb.components.itemscroller
+ *
+ * @param element
+ * @param initialDefaults
+ *
+ * @extends rb.Component
+ *
+ * @fires componentName#change
+ * @fires componentName#changed
+ * @fires componentName#changedcompleted
+ * @fires componentName#pagelengthchange
+ *
+ * @prop {Number} pageLength Returns the page length (page length depends on item cells and scrollStep option)
+ *
+ * @prop {$.CallbackObject} onslide
+ * @prop {Function} onslide.add Add a onslide callback function
+ * @prop {Function} onslide.remove Remove a onslide callback function
+ *
+ * @example
+ * &lt;!--  markup example -->
+ * &lt;div class="rb-itemscroller js-rb-live" data-module="itemscroller">
+ *      {{#if buttons }}
+ *          &lt;button type="button" class="itemscroller-btn-prev" tabindex="-1" aria-hidden="true">{{buttons.prev}}&lt;/button>
+ *          &lt;button type="button" class="itemscroller-btn-next" tabindex="-1" aria-hidden="true">{{buttons.next}}&lt;/button>
+ *      {{/if}}
+ *      &lt;div class="itemscroller-viewport">
+ *          &lt;div class="itemscroller-content">
+ *              {{#each items}}
+ *                  &lt;div class="itemscroller-cell">
+ *                      &lt;div class="dummy-item">&lt;/div>
+ *                  &lt;/div>
+ *              {{/each}}
+ *          &lt;/div>
+ *      &lt;/div>
+ *      {{#if pagination}}
+ *          &lt;div class="itemscroller-pagination">&lt;/div>
+ *      {{/if}}
+ * &lt;/div>
+ * @example
+ * //combines a select element with an itemscroller
+ * $('.rb-itemscroller select.itemscroller-select').each(function(){
+ *     var $itemScroller = $(this).closest('.rb-itemscroller');
+ *     var $itemSelect = $(this);
+ *     var itemscroller = $itemScroller.rbComponent();
+ *
+ *     var buildOptions = function(){
+ *          var i, option;
+ *          $itemSelect.html('');
+ *
+ *          for(i = 0; i &lt; itemscroller.pageLength; i++){
+ *              option = document.createElement('option');
+ *              option.value = i;
+ *              option.text = i;
+ *              option.selected = i == itemscroller.selectedIndex;
+ *              $itemSelect.append(option);
+ *          }
+ *      };
+ *
+ *      $itemScroller.on('itemscrollerpagelengthchanged', buildOptions);
+ *
+ *      $itemScroller.on('itemscrollerchanged', function(){
+ *          $itemSelect.prop({selectedIndex: itemscroller.selectedIndex});
+ *      });
+ *
+ *      $itemSelect.on('change', function(){
+ *          itemscroller.selectedIndex = this.selectedIndex;
+ *      });
+ *
+ *      buildOptions();
+ * });
+ */
+class ItemScroller extends Component {
+    /**
+     * @static
+     * @mixes rb.Component.prototype.defaults
+     *
+     * @property {Boolean}  centerMode=false Whether cells/selected cell should be centered in scroller.
+     * @property {Boolean}  carousel=false Whether scroller should be an infinite carousel.
+     * @property {Number} selectedIndex=0 Initially selected index.
+     * @property {Number|String} scrollStep='auto' How many cells to scroll. Either number of cells or 'view' (i.e. viewport component). 'auto' means 1 for centerMode and 'view' otherwise.
+     * @property {String}  easing='ease-in-out' Easing value for the slide animation.
+     * @property {String}  dragEasing='0.1, 0.25, 0.1, 1.03' Easing value for the slide animation after drag.
+     * @property {Number}  duration=600 Average duration for the slide animation.
+     * @property {Boolean} mouseDrag=true Whether scroller should be draggable via mouse.
+     * @property {Boolean} wheel=true Whether scroller should be draggable via wheel/trackpad scroll.
+     * @property {String|false} dragExclude=false Whether drag/swipe should be excluded on certain element selectors.
+     * @property {Boolean} mandatorySnap=false Whether each page generates a mandatory snap point.
+     * @property {String}  paginationItemTpl The markup for the pagination buttons.
+     * @property {String|false|undefined}  excludeCell=false Simple selector to exclude cells from scroller cell.
+     * @property {Boolean}  excludeHiddenCells=true Excludes cells that are set to `display: none`.
+     * @property {Boolean} switchedOff=false Whether the scroller should be turned off.
+     * @property {Boolean} useTransform=true Whether the scroller should use CSS transform3d or left property.
+     * @property {Boolean} usePx=false Whether the scroller should use CSS px units instead of % units. Set this to `true` if items are not using % as width unit.
+     */
+    static get defaults(){
+        return {
+            switchedOff: false,
+            centerMode: false,
+            selectedIndex: 0,
+            scrollStep: 'auto',
+            mouseDrag: true,
+            dragExclude: false,
+            easing: 'ease-in-out',//0.045, 0.235, 0.025, 1.025
+            dragEasing: '0.1, 0.25, 0.1, 1.03',//0.045, 0.235, 0.025, 1.025
+            duration: 600,
+            paginationItemTpl: '&lt;span class="{name}{e}pagination{-}btn">&lt;/span>',
+            excludeCell: false,
+            excludeHiddenCells: true,
+            useTransform: true,
+            carousel: false,
+            mandatorySnap: false,
+            startOrder: -1,
+            endOrder: 99,
+            usePx: false,
+            wheel: true,
+        };
+    }
+
+    constructor(element, initialDefaults) {
+        super(element, initialDefaults);
+
+        this.usesTransform = this.options.useTransform &amp;&amp; !!transformProp;
+        this._pos = 0;
+
+        this._selectedIndex = this.options.selectedIndex;
+
+        this.scroller = this.query('.{name}{e}content');
+        this.$scroller = $(this.scroller);
+        this.viewport = this.query('.{name}{e}viewport');
+        this.$pagination = $(this.query('.{name}{e}pagination'));
+        this.$pageLength = $(this.query('.{name}{e}page{-}length'));
+        this.$currentIndex = $(this.query('.{name}{e}current{-}index'));
+        this.$paginationBtns = $([]);
+
+
+        this.onslide = $.Callbacks();
+
+        this.setOption('easing', this.options.easing);
+        this.setOption('dragEasing', this.options.dragEasing);
+        this.setOption('duration', this.options.duration);
+
+        this.calculateLayout = this.calculateLayout.bind(this);
+
+        this.throttledCalculateLayout = rb.throttle(this.calculateLayout);
+        this.reflow = this.throttledCalculateLayout;
+
+        this.setPos = rb.rAF(this._setPos, {that: this, throttle: true});
+
+        rb.rAFs(this, {throttle: true}, '_writeLayout', '_createPagination', '_switchOff', 'setSwitchedOffClass', '_updateControls');
+
+        this._slideProgress = this._slideProgress.bind(this);
+        this._slideComplete = this._slideComplete.bind(this);
+        this._dragStart = this._dragStart.bind(this);
+        this._dragEnd = this._dragEnd.bind(this);
+        this._dragMove = this._dragMove.bind(this);
+
+        this._generateHelper();
+        this._setupEvents();
+
+        if (!this.options.switchedOff) {
+            this.setOption('switchedOff', false);
+        } else {
+            this.setSwitchedOffClass();
+        }
+    }
+
+    static get events(){
+        return {
+            'click:closest(.{name}{e}btn{-}next)'() {
+                if (this.options.switchedOff) {
+                    return;
+                }
+                if (this.isCarousel) {
+                    this.selectNext();
+                } else {
+                    this.selectNextIndex();
+                }
+            },
+            'click:closest(.{name}{e}btn{-}prev)'() {
+                if (this.options.switchedOff) {
+                    return;
+                }
+                if (this.isCarousel) {
+                    this.selectPrev();
+                } else {
+                    this.selectPrevIndex();
+                }
+            },
+            'click:closest(.{name}{e}pagination{-}btn)'(e) {
+                if (this.options.switchedOff) {
+                    return;
+                }
+                var index = this.$paginationBtns.index(e.delegatedTarget || e.currentTarget);
+                this.selectedIndex = index;
+            },
+            'rb_resize:width()': 'calculateLayout',
+        };
+    }
+
+    setOption(name, value, isSticky) {
+        super.setOption(name, value, isSticky);
+
+        switch (name) {
+            case 'centerMode':
+            case 'scrollStep':
+            case 'carousel':
+                this._calculatePages();
+                this._writeLayout();
+                if (name == 'carousel' &amp;&amp; value) {
+                    this.$queryAll('.{name}{e}btn{-}next, .{name}{e}btn{-}prev')
+                        .prop({disabled: false})
+                        .removeClass(rb.statePrefix + 'disabled')
+                    ;
+                }
+                break;
+            case 'easing':
+                this._easing = rb.addEasing(value);
+                this.easing = this._easing;
+                break;
+            case 'dragEasing':
+                this._dragEasing = rb.addEasing(value);
+                break;
+            case 'duration':
+                this.duration = value;
+                this.maxDuration = value * 1.2;
+                this.minDuration = value / 1.2;
+                break;
+            case 'switchedOff':
+                if (value) {
+                    this._switchOff();
+                } else {
+                    this._switchOn();
+                }
+                break;
+            case 'excludeCell':
+            case 'excludeHiddenCells':
+                this.updateCells();
+                break;
+        }
+    }
+
+    /**
+     * Returns the selected page index
+     * @returns {Number}
+     */
+    get selectedIndex() {
+        return this._selectedIndex;
+    }
+
+    /**
+     * Set the selected page index.
+     * @param {Number} index
+     */
+    set selectedIndex(index) {
+        this.selectIndex(index);
+    }
+
+    _switchOff() {
+        if ($.fn.draggy) {
+            $(this.viewport).draggy('destroy');
+        }
+
+        var cellCSS = {};
+
+        this.$cells
+            .rbToggleState('active{-}done', false)
+            .rbToggleState('active', false)
+            .rbToggleState('activated{-}done', false)
+            .rbToggleState('activated', false)
+        ;
+
+        cellCSS[orderProp] = '';
+
+        this.$cells.css(cellCSS);
+
+        this.$scroller.css({
+            position: '',
+            left: '',
+            transform: '',
+        });
+
+        $(this.viewport).css({
+            position: '',
+        });
+
+        this.helperElem.style.display = 'none';
+
+        // reset pagination
+        this.$pagination.html('');
+        this.$paginationBtns = $([]);
+
+        this.setSwitchedOffClass();
+    }
+
+    setSwitchedOffClass(){
+        this.element.classList.toggle(rb.statePrefix + 'switched' + rb.nameSeparator + 'off', this.options.switchedOff);
+    }
+
+    _switchOn() {
+        this.updateCells();
+        this._setupTouch();
+        this._mainSetup();
+        this._createPagination();
+        this.setSwitchedOffClass();
+    }
+
+    _generateHelper(){
+
+        this.helperElem = $(document.createElement('div'))
+            .attr({
+                'class': 'js' + rb.nameSeparator + this.name + rb.elementSeparator + 'helper',
+                style: 'width:0;padding:0;margin:0;visibility:hidden;border:0;height:100%;min-height:9px',
+            })
+            .css({
+                webkitFlexGrow: 0,
+                flexGrow: 0,
+                display: this.options.switchedOff ? 'none' : ''
+            })
+            .get(0)
+        ;
+
+        this._setOrder(this.helperElem, this.options.startOrder);
+    }
+
+    _mainSetup() {
+        var that = this;
+
+        rb.rAFQueue(function () {
+            $(that.viewport).css({
+                position: 'relative',
+            });
+            that.$scroller.css({
+                position: 'relative',
+            });
+
+            that.helperElem.style.display = '';
+
+            that._updateControls();
+            that._slideComplete();
+        }, true);
+    }
+
+    _setupEvents() {
+        this._setupFocusScroll();
+    }
+
+    _setupFocusScroll() {
+        var that = this;
+        var cellSel = '.' + this.name + rb.elementSeparator + 'cell';
+        var isTestStopped = false;
+        var keyboardFocusClass = rb.utilPrefix + 'keyboardfocus' + rb.nameSeparator + 'within';
+        var evtOpts = {capture: true, passive: true};
+        var resetScrollLeft = function () {
+            that.viewport.scrollLeft = 0;
+        };
+        var scrollIntoView = function (e) {
+            var cell, pageIndex, focusedElement;
+            if (that.options.switchedOff) {
+                return;
+            }
+
+            if (!isTestStopped) {
+                if(e.type == 'focus'){
+                    focusedElement = e.target;
+                } else {
+                    focusedElement = document.activeElement;
+                }
+
+                if (focusedElement &amp;&amp; focusedElement.closest &amp;&amp;
+                    rb.root.classList.contains(keyboardFocusClass) &amp;&amp;
+                    (cell = focusedElement.closest(cellSel)) &amp;&amp;
+                    that.isCellVisible(cell) !== true) {
+                    pageIndex = that.getPageIndexOfCell(cell);
+                    if(pageIndex != that._selectedIndex){
+                        that.selectedIndex = pageIndex;
+                    }
+                }
+            }
+            setTimeout(resetScrollLeft);
+            resetScrollLeft();
+        };
+        var unstopTest = function () {
+            isTestStopped = false;
+        };
+        var stopTest = function () {
+            if (!isTestStopped) {
+                isTestStopped = true;
+                setTimeout(unstopTest, 99);
+            }
+        };
+
+        this.scroller.addEventListener('mousedown', stopTest, evtOpts);
+        this.scroller.addEventListener('touchstart', stopTest, evtOpts);
+        this.scroller.addEventListener('touchend', stopTest, evtOpts);
+        this.scroller.addEventListener('click', stopTest, evtOpts);
+        this.scroller.addEventListener('focus', scrollIntoView, evtOpts);
+        this.viewport.addEventListener('scroll', scrollIntoView);
+    }
+
+    /**
+     * [_snapTo description]
+     * @param  {number} dir      direction
+     * @param  {number} velocity px in last 300ms
+     * @param  {number} length   length moved during last recognition
+     */
+    _snapTo(dir, velocity, length) {
+        var pageIndex;
+        var fullVel = velocity + Math.abs(dir);
+
+        length = Math.abs(length);
+
+        this.easing = this._dragEasing;
+
+        if (dir &amp;&amp; (fullVel > 33 || (fullVel > 9 &amp;&amp; length > 99) || (fullVel > 3 &amp;&amp; length > 200)) ) {
+
+            if (velocity > 240 &amp;&amp; !this.options.mandatorySnap &amp;&amp; length > 99) {
+                velocity = (velocity - 230) / 250 * this.velUnit;
+                if (dir &lt; 0) {
+                    velocity *= -1;
+                }
+            } else {
+                velocity = 0;
+            }
+            pageIndex = this[dir &lt; 0 ? 'getNext' : 'getPrev'](velocity);
+            this.selectIndex(pageIndex);
+        } else {
+            this.selectNearest();
+        }
+    }
+
+    getNearest() {
+        var prop, curDiff;
+        var smallestDif = Number.MAX_VALUE;
+        var index = 0;
+        var nowIndex = this.selectedIndex;
+        var pos = {
+            prev: this.getPrev() + this.baseIndex,
+            next: this.getNext() + this.baseIndex,
+        };
+
+        if (pos.next - pos.prev > 1) {
+            pos.cur = pos.next - 1;
+        }
+
+        for (prop in pos) {
+            curDiff = Math.abs(this._pos - this._getPosition(pos[prop]));
+            if (curDiff &lt; smallestDif || (nowIndex == pos[prop] &amp;&amp; curDiff - 0.9 &lt;= smallestDif)) {
+                smallestDif = curDiff;
+                index = pos[prop];
+            }
+        }
+
+        return index - this.baseIndex;
+}
+
+    selectNearest(noAnimate) {
+        return this.selectIndex(this.getNearest(), noAnimate);
+    }
+
+    _getPosition(index) {
+        var halfWidth = (this.viewportWidth / 2);
+        var curData = this.pageData[index];
+        var position = curData.l;
+
+        if (this.options.centerMode) {
+            position = halfWidth + (position * -1) - ((curData.r - position) / 2);
+        } else {
+            position *= -1;
+        }
+
+        if(!this.isCarousel &amp;&amp; position &lt; this.minScroll){
+            position = this.minScroll;
+        }
+
+        return (position || 0);
+    }
+
+    /**
+     * Returns next page index from current position
+     * @param [offset] {Number} Offset will be added to the current position to allow manipulations
+     * @returns {number}
+     */
+    getNext(offset) {
+        var i, len, cellWidth;
+        var curPos = ((this._pos + (offset || 0)) * -1) + 1;
+        var index = this.pageData.length - 1;
+
+        for (i = 0, len = index + 1; i &lt; len; i++) {
+            cellWidth = this._getPosition(i) * -1;
+            if (cellWidth > curPos) {
+                index = i;
+                break;
+            }
+        }
+
+        return index - this.baseIndex;
+    }
+
+    /**
+     * Selects next page index based on current position data
+     * @param [noAnimate] If set to true, the page index will be changed without any animations
+     * @returns {Number|undefined}
+     */
+    selectNext(noAnimate) {
+        return this.selectIndex(this.getNext(), noAnimate);
+    }
+
+    /**
+     * Returns previous page index from current position
+     * @param [offset] {Number} Offset will be added to the current position to allow manipulations
+     * @returns {number}
+     */
+    getPrev(offset) {
+        var cellWidth;
+        var curPos = ((this._pos + (offset || 0)) * -1) - 1;
+        var index = 0;
+        var i = this.pageData.length - 1;
+
+        while (i >= 0) {
+            cellWidth = this._getPosition(i) * -1;
+            if (cellWidth &lt; curPos) {
+                index = i;
+                break;
+            }
+            i--;
+        }
+
+        return index - this.baseIndex;
+    }
+
+    /**
+     * Selects previous page index based on current position data
+     * @param [noAnimate] If set to true, the page index will be changed without any animations
+     * @returns {Number|undefined}
+     */
+    selectPrev(noAnimate) {
+        return this.selectIndex(this.getPrev(), noAnimate);
+    }
+
+    /**
+     * Returns page index of a specific item cell
+     * @param cellIndex {Number|Element} Either the index of the cell or the cell DOM element
+     * @returns {Number}
+     */
+    getPageIndexOfCell(cellIndex) {
+        if (typeof cellIndex != 'number') {
+            cellIndex = this.$cells.index(cellIndex);
+        }
+
+        var cellData = this.cellData[cellIndex];
+
+        return cellData ? cellData[cellData.isSide ? 'uIndex' : 'pageIndex'] : -1;
+    }
+
+    /**
+     * Selects a specifc item cell
+     * @param cellIndex {Number|Element} Either the index of the cell or the cell DOM element
+     * @param [noAnimate] {Boolean|Undefined} If set to true, the page index will be changed without any animations
+     */
+    selectCell(cellIndex, noAnimate) {
+        this.selectIndex(this.getPageIndexOfCell(cellIndex), noAnimate);
+    }
+
+    /**
+     * Returns whether a specific cell is in scroller viewport
+     * @param cellIndex {Number|Element} Either the index of the cell or the cell DOM element
+     * @param [useEndPos=false] {boolean|Number} Wether to use the endpos in case of an animating scroller. In case a number is given this will be used.
+     * @returns {Boolean|String} Returns either true|false or 'partial'
+     */
+    isCellVisible(cellIndex, useEndPos) {
+        let cellData, cellLeft, cellRight, roundingTolerance;
+
+        let inview = false;
+        const pos = typeof useEndPos == 'number' ?
+            useEndPos :
+            useEndPos &amp;&amp; this._endPos != null ?
+            this._endPos :
+            this._pos
+        ;
+        let viewportLeft = pos * -1;
+        let viewportRight = viewportLeft + this.viewportWidth;
+        let viewportLeftPartial = viewportLeft;
+        let viewportRightPartial = viewportRight;
+
+        if (typeof cellIndex != 'number') {
+            cellIndex = this.$cells.index(cellIndex);
+        }
+
+        cellData = this.cellData[cellIndex];
+
+        if (cellData) {
+            roundingTolerance = (0.6 * cellIndex) + 1;
+            viewportLeft -= roundingTolerance;
+            viewportRight += roundingTolerance;
+            viewportLeftPartial += roundingTolerance;
+            viewportRightPartial -= roundingTolerance;
+            cellLeft = cellData.isSide ? cellData.ul : cellData.l;
+            cellRight = cellData.isSide ? cellData.ur : cellData.r;
+
+            if (viewportLeft &lt;= cellLeft &amp;&amp; viewportRight >= cellRight) {
+                inview = true;
+            } else if ((viewportLeftPartial &lt;= cellLeft &amp;&amp; viewportRightPartial >= cellLeft ) || (viewportLeftPartial &lt;= cellRight &amp;&amp; viewportRightPartial >= cellRight )) {
+                inview = 'partial';
+            }
+        }
+
+        return inview;
+    }
+
+    _slideProgress(tween, progress) {
+        this._setPos((this._animEnd - this._animStart) * this.easing(progress) + this._animStart);
+    }
+
+    _slideComplete() {
+        var curPage = this.pageData[this._selectedIndex + this.baseIndex];
+        var activeDone = rb.statePrefix + 'active' + rb.nameSeparator + 'done';
+
+        this.isAnimated = false;
+        this.$cells.removeClass(activeDone);
+
+        this.easing = this._easing;
+
+        if (curPage) {
+            ( curPage.$cellElems || (curPage.$cellElems = $(curPage.cellElems)) )
+                .addClass(activeDone)
+                .addClass(rb.statePrefix + 'activated' + rb.nameSeparator + 'done')
+            ;
+        }
+
+        this.trigger(this._evtName + 'completed');
+    }
+
+    /**
+     * Selects next page index based on current index
+     */
+    selectNextIndex() {
+        var index = this._selectedIndex + 1 + this.baseIndex;
+
+        if (index &lt; this.pageData.length) {
+            index -= this.baseIndex;
+            this.selectedIndex = index;
+        }
+}
+
+    /**
+     * Selects previous page index based on current index
+     */
+    selectPrevIndex() {
+        var index = this._selectedIndex - 1 + this.baseIndex;
+
+        if (index >= 0) {
+            index -= this.baseIndex;
+            this.selectedIndex = index;
+        }
+    }
+
+    /**
+     * Selects a page index
+     * @param index {Number} The page index, that should selected
+     * @param [noAnimate] {Boolean|Undefined} If set to true, the page index will be changed without any animations
+     * @returns {*|number}
+     */
+    selectIndex(index, noAnimate) {
+        var trigger, duration, setPos, curIndex;
+
+        var countIndex = index + this.baseIndex;
+
+        if (!arguments.length || countIndex &lt; 0 || countIndex >= this.pageData.length || !this.$cells.length) {
+            return this._selectedIndex;
+        }
+
+        if (this.options.switchedOff) {
+            return;
+        }
+
+        curIndex = this._selectedIndex || 0;
+        setPos = this._getPosition(countIndex);
+
+        if (index &lt; 0) {
+            index = this.baseLength + index;
+        } else if (index >= this.baseLength) {
+            index = index - this.baseLength;
+        }
+
+        if (!this.isCarousel) {
+            setPos = Math.max(Math.min(setPos, this.maxScroll), this.minScroll);
+        }
+
+        if (setPos != this._pos) {
+            if (curIndex != index) {
+                if (this.trigger(this._beforeEvtName, {nextIndex: index}).defaultPrevented) {
+                    return this._selectedIndex;
+                }
+                trigger = true;
+                this._selectedIndex = index;
+            }
+
+            this._animStart = false;
+            this._animEnd = setPos;
+            this.scroller.rbItemscrollerPos = this._pos;
+            this.$scroller.stop();
+
+            duration = this.duration * ((setPos &lt; this._pos) ? this._pos - setPos : setPos - this._pos) / this.viewportWidth;
+            duration = Math.max(Math.min(duration, this.maxDuration), this.minDuration);
+
+            this._endPos = setPos;
+
+            if (noAnimate) {
+                this.setPos(setPos);
+                this.isAnimated = false;
+            } else {
+                this.isAnimated = true;
+                this._animStart = this._pos;
+                this.$scroller
+                    .animate(
+                        {
+                            rbItemscrollerPos: setPos,
+                        },
+                        {
+                            easing: 'linear',
+                            start: this._pos,
+                            progress: this._slideProgress,
+                            duration: duration,
+                            complete: this._slideComplete,
+                        }
+                    );
+            }
+
+            this._updateControls(setPos);
+
+            if (trigger) {
+                this.trigger({prevIndex: curIndex});
+                if (noAnimate) {
+                    this._slideComplete();
+                }
+            }
+        }
+
+        this._selectedIndex = index;
+
+        return this._selectedIndex;
+    }
+
+    /**
+     * Returns whether scroller has reached the start point
+     * @param [position] {Number} If no pos is given the current position is used
+     * @returns {boolean}
+     */
+    isStartReached(position) {
+        if (position == null) {
+            position = this._pos;
+        }
+        return !this.isCarousel &amp;&amp; position >= this.maxScroll;
+    }
+
+    /**
+     * Returns whether scroller has reached the end point
+     * @param [position] {Number} If no pos is given the current position is used
+     * @returns {boolean}
+     */
+    isEndReached(position) {
+        if (position == null) {
+            position = this._pos;
+        }
+
+        return !this.isCarousel &amp;&amp; position &lt;= this.minScroll;
+    }
+
+    _updateControls(pos) {
+        var isEnd, isStart;
+
+        var curPage = this.pageData[this._selectedIndex + this.baseIndex];
+
+        if (!this.isCarousel || this.isCarouselChanged) {
+            isEnd = this.isEndReached(pos);
+            isStart = this.isStartReached(pos);
+
+            this.isCarouselChanged = false;
+
+            this.$queryAll('.{htmlName}{e}btn{-}next')
+                .prop({disabled: isEnd})
+                .rbToggleState('disabled', isEnd)
+            ;
+
+            this.$queryAll('.{htmlName}{e}btn{-}prev')
+                .prop({disabled: isStart})
+                .rbToggleState('disabled', isStart)
+            ;
+        }
+
+        this.element.setAttribute('data-current-index', this._selectedIndex + 1);
+
+        this.$currentIndex.html(this._selectedIndex + 1);
+
+        this.$cells.removeClass(rb.statePrefix + 'active');
+        if (curPage) {
+            ( curPage.$cellElems || (curPage.$cellElems = $(curPage.cellElems)) )
+                .addClass(rb.statePrefix + 'activated')
+                .addClass(rb.statePrefix + 'active')
+            ;
+        }
+
+        this.$paginationBtns
+            .removeClass(rb.statePrefix + 'selected')
+            .eq(this._selectedIndex)
+            .addClass(rb.statePrefix + 'selected')
+        ;
+    }
+
+    _dragStart(){
+        this.isAnimated = false;
+        $(this.scroller).stop();
+    }
+
+    _dragMove(draggy){
+        if (draggy.relPos.x) {
+            this._setRelPos(draggy.relPos.x, true);
+        }
+    }
+
+    _dragEnd(draggy){
+        if (!draggy.movedPos.x) {
+            this.selectNearest();
+            return;
+        }
+        var dir = draggy.lastPos.x - draggy.velPos.x;
+
+        if (draggy.horizontalVel &lt; 9) {
+
+            dir = 0;
+            if (draggy.horizontalVel &lt; 9 &amp;&amp; draggy.horizontalVel &lt; 9) {
+                draggy.allowClick();
+            }
+        }
+
+        this._snapTo(dir, draggy.horizontalVel, draggy.movedPos.x);
+}
+
+    _setupTouch() {
+        if (!$.fn.draggy) {
+            return;
+        }
+
+        $(this.viewport).draggy({
+            vertical: false,
+            useMouse: this.options.mouseDrag,
+            useWheel: this.options.wheel,
+            exclude: this.options.dragExclude,
+            start: this._dragStart,
+            end: this._dragEnd,
+            move: this._dragMove,
+        });
+    }
+
+    _setRelPos(relPos, keepInBounds) {
+        var minOverflow, maxOverflow, overflow, overflow_max;
+
+        var newPos = this._pos + relPos;
+
+        // reduce relative change, if the new pos is out of min/maxScroll
+        if(keepInBounds &amp;&amp; !this.isCarousel){
+            minOverflow = Math.abs(Math.min(0, newPos - this.minScroll));
+            maxOverflow = Math.abs(Math.max(0, newPos - this.maxScroll));
+            overflow = minOverflow > maxOverflow ? minOverflow : maxOverflow;
+            overflow_max = this.viewportWidth / 1.5;
+
+            if(overflow){
+                newPos = this._pos + (relPos * (1 - (overflow/overflow_max + 0.05)));
+            }
+        }
+
+        this._pos = newPos;
+        this.setPos(newPos);
+    }
+
+    _setOrder(elem, order){
+        elem.style[orderProp] = order;
+    }
+
+    _changeWrap(side, prop) {
+        var i, len, curCell, order, unitPos;
+        var posPages = this.posPages[side];
+        var cells = this.posPages[side].rbCells;
+
+        if (prop == 'ul') {
+            this.isWrap = side;
+        } else {
+            this.isWrap = '';
+        }
+
+        order = (this.isWrap == 'left') ?
+            this.options.startOrder :
+            (this.isWrap == 'right') ?
+                this.options.endOrder:
+                ''
+        ;
+
+        unitPos = this.options.usePx ?
+        posPages._helperLeft + 'px' :
+        (posPages._helperLeft / this.viewportWidth * 100) + '%'
+        ;
+
+        this.helperElem.style.marginLeft = this.isWrap ?
+            unitPos :
+            ''
+        ;
+
+        if(this._isPageDirty){
+            this._isPageDirty = false;
+            for(i = 0, len = this.$cells.length; i &lt; len; i++){
+                this.$cells.get(i).style[orderProp] = '';
+            }
+        }
+
+        for (i = 0, len = cells.length; i &lt; len; i++) {
+            curCell = cells[i];
+            curCell.isSide = this.isWrap;
+            this._setOrder(curCell.elem, order);
+        }
+    }
+
+    _setPos(pos) {
+        var shouldWrapLeft, shouldWrapRight, unWrapLeft, unWrapRight, unitPos;
+
+        if (this.isCarousel) {
+            if (pos >= this.maxWrapLeft || pos &lt;= this.minWrapRight) {
+                if (pos >= this.maxWrapLeft) {
+                    pos -= this.carouselWidth;
+                } else if (pos &lt;= this.minWrapRight) {
+                    pos += this.carouselWidth;
+                }
+            }
+
+            shouldWrapLeft = (pos >= this.minWrapLeft &amp;&amp; pos &lt;= this.maxWrapLeft);
+            shouldWrapRight = (pos >= this.minWrapRight &amp;&amp; pos &lt;= this.maxWrapRight);
+            unWrapLeft = this.isWrap == 'left' &amp;&amp; !shouldWrapLeft &amp;&amp; (this.maxUnwrapLeft &lt;= pos &amp;&amp; this.minUnwrapLeft >= pos);
+            unWrapRight = this.isWrap == 'right' &amp;&amp; !shouldWrapRight &amp;&amp; (this.maxUnwrapRight &lt;= pos &amp;&amp; this.minUnwrapRight >= pos);//
+
+            if (unWrapLeft) {
+                this._changeWrap('left', 'l');
+            } else if (unWrapRight) {
+                this._changeWrap('right', 'l');
+            }
+
+            if (this.isWrap != 'left' &amp;&amp; shouldWrapLeft) {
+                this._changeWrap('left', 'ul');
+            } else if (this.isWrap != 'right' &amp;&amp; shouldWrapRight) {
+                this._changeWrap('right', 'ul');
+            }
+        }
+
+        this._pos = pos;
+        this.scroller.rbItemscrollerPos = this._pos;
+
+        unitPos = this.options.usePx ?
+        pos + 'px' :
+        (pos / this.viewportWidth * 100) + '%'
+        ;
+
+        if (this.usesTransform) {
+            this.scroller.style[transformProp] = (supports3dTransform) ?
+            'translate3d(' + unitPos + ', 0, 0)' :
+            'translateX(' + unitPos + ')'
+            ;
+        } else {
+            this.scroller.style.left = unitPos;
+        }
+
+        this.onslide.fireWith(this);
+}
+
+    updateCells() {
+        var that = this;
+        var cellSelector = ':not(.js'+ rb.nameSeparator + this.name + rb.elementSeparator + 'helper)';
+
+        if(this.options.excludeCell){
+            cellSelector += ':not(' + this.options.excludeCell + ')';
+        }
+
+        this.$cells = this.$scroller.children(cellSelector);
+
+        if(this.options.excludeHiddenCells){
+            this.$cells = this.$cells.filter(function(){
+                return rb.getStyles(this).display != 'none';
+            });
+        }
+
+        this.calculateLayout();
+
+        rb.rAFQueue(function () {
+            that.$scroller.prepend(that.helperElem);
+            that.$cells.addClass(that.name + rb.elementSeparator + 'cell');
+        });
+    }
+
+    _getCellWidth(element) {
+        return $(element).outerWidth();
+    }
+
+    calculateLayout() {
+        if (this.options.switchedOff) {
+            return;
+        }
+
+        if (this.cellData &amp;&amp; (!this.scroller.offsetWidth &amp;&amp; !this.scroller.offsetHeight)) {
+            return;
+        }
+
+        this.viewportWidth = this.$scroller.width();
+
+        this._calculateCellLayout();
+
+        this._calculatePages();
+
+        this._writeLayout();
+    }
+
+    _calculateCellLayout() {
+        var that = this;
+        var lastWidth = 0;
+
+        this.cellData = this.$cells.map(function () {
+            var returnWidth = lastWidth;
+            var width = that._getCellWidth(this);
+
+            lastWidth = returnWidth + width + rb.getCSSNumbers(this, ['margin-left', 'margin-right']);
+
+
+            return {w: width, elem: this, r: lastWidth, l: returnWidth};
+        }).get();
+
+        this.cellData.push({l: lastWidth, w: 0, r: lastWidth, index: 'last', elem: null});
+
+        this.maxWrapRight = (lastWidth - this.viewportWidth) * -1;
+
+        if(this.maxWrapRight > 0){
+            this.maxWrapRight = 0;
+        }
+    }
+
+    _writeLayout() {
+        var wasPos = this._pos;
+
+        if(this.isWrap){
+            this._changeWrap(this.isWrap, this.isCarousel ? 'ul' : 'l');
+        }
+
+        this.selectIndex(this._selectedIndex, true);
+
+        if (wasPos == this._pos) {
+            this._setPos(wasPos);
+            this._updateControls(this._pos);
+        }
+    }
+
+    _calculatePages() {
+        var overScrollPos, halfViewport, roundingTolerance, i, len, absMinScroll, nextPageLeft, nextI, curPage, cellData;
+
+        var scrollStep = this.options.scrollStep;
+        var pageLength = this.pageLength;
+        var overkillLength = 0;
+
+        this.pageData = this.cellData;
+
+        if (!this.$cells.length) {
+            return;
+        }
+
+        if (scrollStep == 'auto') {
+            scrollStep = (this.options.centerMode) ?
+                1 :
+                'view'
+            ;
+        }
+
+        if (scrollStep.indexOf &amp;&amp; scrollStep.indexOf('cell') != -1) {
+            scrollStep = 1;
+        }
+
+        if (this.options.carousel || !this.options.centerMode) {
+            absMinScroll = this.maxWrapRight * -1;
+            for (i = 0; i &lt; this.cellData.length; i++) {
+                roundingTolerance = i + 1;
+                if (this.cellData[i].l + roundingTolerance >= absMinScroll &amp;&amp; this.cellData[i].l - roundingTolerance &lt;= absMinScroll) {
+                    this.maxWrapRight = this.cellData[i].l * -1;
+                }
+            }
+            this.minWrapLeft = 0;
+        }
+
+        if (this.options.centerMode) {
+            halfViewport = this.viewportWidth / 2;
+            this.minScroll = halfViewport + (this.cellData[this.cellData.length - 2].l * -1) - ((this.cellData[this.cellData.length - 1].l - this.cellData[this.cellData.length - 2].l || 1) / 2);
+            this.maxScroll = halfViewport - ((this.cellData[1].l || 1) / 2);
+        } else {
+            this.minScroll = this.maxWrapRight;
+            this.maxScroll = this.minWrapLeft || 0;
+        }
+
+        overScrollPos = (this.minScroll * -1);
+
+        this.pageData = [];
+        nextPageLeft = 0;
+
+        this._isPageDirty = true;
+
+        for (i = 0, len = this.cellData.length - 1; i &lt; len; i++) {
+            roundingTolerance = (i * 0.5) + 0.5;
+            cellData = this.cellData[i];
+            if (!curPage || this.cellData[i + 1].l >= nextPageLeft + roundingTolerance) {
+
+                if (!this.options.centerMode &amp;&amp; curPage &amp;&amp; overScrollPos - roundingTolerance &lt; curPage.l) {
+                    overkillLength++;
+                }
+
+                curPage = {
+                    l: cellData.l,
+                    cells: [cellData],
+                    cellElems: [cellData.elem],
+                    i: curPage ? curPage.i + 1 : 0,
+                };
+                this.pageData.push(curPage);
+                nextPageLeft = cellData.l + this.viewportWidth;
+                if (scrollStep != 'view') {
+                    nextI = i + scrollStep;
+                    if (nextI > len) {
+                        nextI = len;
+                    }
+                    if (nextPageLeft > this.cellData[nextI].l) {
+                        nextPageLeft = this.cellData[nextI].l;
+                    }
+                }
+            } else {
+                curPage.cells.push(cellData);
+                curPage.cellElems.push(cellData.elem);
+            }
+            curPage.r = this.cellData[i + 1].l;
+            this.cellData[i].pageIndex = curPage.i;
+        }
+
+        this.baseIndex = 0;
+        this.baseLength = this.pageData.length;
+
+        this.carouselWidth = this.pageData[this.baseLength - 1].r;
+        this.velUnit = Math.max(Math.min(this.carouselWidth / this.baseLength, 999), 400);
+
+        this._createCarouselPages();
+
+        this.pageLength = this.baseLength - overkillLength;
+
+        if (this.pageLength != pageLength) {
+            if(pageLength != null){
+                this._adjustSelectedIndex();
+            }
+            this._createPagination();
+            if (pageLength > -1) {
+                this.trigger('pagelengthchanged');
+            }
+        }
+    }
+    _adjustSelectedIndex(){
+        var active = this.$cells.filter('.' + rb.statePrefix + 'active').get(0);
+
+        if(active){
+            this._selectedIndex = this.getPageIndexOfCell(active);
+        } else if(this.pageLength &lt; this.selectedIndex){
+            this.selectedIndex = this.pageLength - 1;
+        }
+    }
+
+    _addPosCorrect(pageData, cells, pageCorrect, wrappedIndex) {
+        var i, len, cell;
+
+        for (i = 0, len = pageData.cells.length; i &lt; len; i++) {
+            cell = pageData.cells[i];
+            cell.uIndex = wrappedIndex > -1 ? cell.pageIndex + wrappedIndex : wrappedIndex;
+            cell.ul = cell.l + pageCorrect;
+            cell.ur = cell.r + pageCorrect;
+            cells.push(cell);
+        }
+
+        return {
+            carouselWidth: pageCorrect,
+            ol: pageData.l,
+            or: pageData.r,
+            l: pageData.l + pageCorrect,
+            r: pageData.r + pageCorrect,
+            i: pageData.i,
+            cells: pageData.cells,
+            cellElems: pageData.cellElems,
+        };
+    }
+
+    _createCarouselPages() {
+        var i, len, pageData, curWidth, pageCorrect, negativeIndex, lastPos;
+
+        var viewport = this.viewportWidth;
+        var wasCarousel = this.isCarousel;
+
+        this.posPages = {left: [], right: []};
+        this.posPages.right.rbCells = [];
+        this.posPages.left.rbCells = [];
+
+        this.isCarousel = false;
+
+        if(supportSomeOrder &amp;&amp; this.options.carousel &amp;&amp; this.pageData.length > 1 &amp;&amp; (this.cellData[this.cellData.length - 1].l / 1.99) >= this.viewportWidth){
+            this.isCarousel = (this.cellData[this.cellData.length - 1].l / 2.4) > this.viewportWidth;
+
+            if(!this.isCarousel &amp;&amp; this.cellData[0].w > this.viewportWidth - 1 &amp;&amp; this.cellData[1].w > this.viewportWidth - 1){
+                this.isCarousel = true;
+            }
+        }
+
+        this.isCarouselChanged = wasCarousel != this.isCarousel;
+
+        if (!this.isCarousel) {
+            return;
+        }
+
+        this.maxWrapLeft = viewport;
+        this.minWrapRight = this.maxWrapRight - viewport;
+
+        pageCorrect = this.carouselWidth;
+
+        for (i = 0, len = this.pageData.length; i &lt; len; i++) {
+            pageData = this.pageData[i];
+            this.posPages.right.push(this._addPosCorrect(pageData, this.posPages.right.rbCells, pageCorrect, this.baseLength));
+            if (pageData.r >= viewport) {
+                break;
+            }
+        }
+
+        pageCorrect *= -1;
+        negativeIndex = 0;
+        for (i = this.pageData.length - 1, curWidth = 0; i >= 0; i--) {
+            pageData = this.pageData[i];
+            curWidth += pageData.r - pageData.l;
+            negativeIndex--;
+            this.posPages.left.push(this._addPosCorrect(pageData, this.posPages.left.rbCells, pageCorrect, negativeIndex));
+            if (curWidth >= viewport) {
+                break;
+            }
+        }
+
+        this.minUnwrapRight = viewport;
+
+        lastPos = this.posPages.right[this.posPages.right.length - 1];
+
+        this.posPages.right._helperLeft = lastPos.or;
+
+        this.maxUnwrapRight = (lastPos.or * -1) - viewport;
+
+        lastPos = this.posPages.left[this.posPages.left.length - 1];
+
+        this.posPages.left._helperLeft = lastPos.l;
+
+        this.minUnwrapLeft = (lastPos.ol * -1) + viewport;
+        this.maxUnwrapLeft = (this.posPages.left[0].or * -1) - viewport;
+
+        this.pageData.unshift.apply(this.pageData, this.posPages.left.reverse());
+        this.pageData.push.apply(this.pageData, this.posPages.right);
+        this.baseIndex = this.posPages.left.length;
+    }
+
+    _createPagination() {
+        var paginationItems, i;
+        var baseLength = this.pageLength;
+        var paginationItemTpl = this.interpolateName(this.options.paginationItemTpl);
+
+        this.element.setAttribute('data-page-length', baseLength);
+        this.$pageLength.html(baseLength);
+
+        if (this.$pagination.length &amp;&amp; this.$paginationBtns.length != baseLength) {
+            paginationItems = [];
+
+            for (i = 0; i &lt; baseLength; i++) {
+                paginationItems.push(paginationItemTpl.replace(regIndex, '' + (i + 1)));
+            }
+            this.$pagination.html(paginationItems.join(''));
+            this.$paginationBtns = this.$pagination
+                .find('.' + this.name + rb.elementSeparator + 'pagination' + rb.nameSeparator + 'btn')
+            ;
+            this.$paginationBtns.eq(this._selectedIndex).addClass(rb.statePrefix + 'selected');
+        }
+    }
+}
+
+
+
+Component.register('itemscroller', ItemScroller);
+
+export default ItemScroller;
+
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Mon Jun 11th 2018
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

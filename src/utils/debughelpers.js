@@ -7,7 +7,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
     };
 
     if(!rb.$){
-        rb.logError('You need to either include jQuery or `rawblock/$` and map it to rb.');
+        rb.logError('You need to either include `rawblock/$` or jQuery (jQuery needs to be mapped to rb.$).');
     }
 
     if(!Element.prototype.append){

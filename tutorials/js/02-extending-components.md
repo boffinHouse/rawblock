@@ -2,7 +2,7 @@
 
 For this tutorial we will generate some kind of a select list of checkboxes or radio buttons, that opens on a button click.
 
-The final demo can be seen on [codepen](http://codepen.io/aFarkas/pen/RoEpby).
+The final demo can be seen on [codesandbox](https://codesandbox.io/s/vyoj82o425).
 
 As a base we will use the [panelgroup component](rb.components.panelgroup.html). A similar component could also be build with the [popover component](rb.components.popover.html)
 
@@ -21,7 +21,6 @@ class CheckList extends Panelgroup {
 Component.register('checklist', CheckList);
 
 export default CheckList;
-
 ```
 
 ### Excursion: The "name" feature of rawblock.
@@ -247,8 +246,8 @@ class CheckList extends Panelgroup {
         return input.closest('label, li').textContent;
     }
 
-    constructor(element, initialDefaults){
-        super(element, initialDefaults);
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
 
         this.rAFs('_updateValue');
 
@@ -298,4 +297,4 @@ As a small refinement you can now add a simple animation to the component.
 }
 ```
 
-[final codepen demo](http://codepen.io/aFarkas/pen/RoEpby).
+[final codesandbox demo](https://codesandbox.io/s/vyoj82o425).

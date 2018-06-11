@@ -22,15 +22,11 @@ if(!rb.$){
     rb.$ = window.jQuery;
 }
 
-
-if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
-    require('./utils/debughelpers');
-}
-
 addLog(rb, (typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production') ? true : 1);
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
     rb.logWarn('rawblock dev mode active. Do not use in production');
+    require('./utils/debughelpers');
 }
 
 (function (window, document, _undefined) {

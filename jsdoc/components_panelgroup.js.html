@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>DocStrap Source: components/panelgroup.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">DocStrap</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.html">rb</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-ajaxform.html">ajaxform</a></li><li><a href="module-validity.html">validity</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.components._childfx.html">rb.components._childfx</a></li><li><a href="rb.components._composer_component.html">rb.components._composer_component</a></li><li><a href="rb.components._focus_component.html">rb.components._focus_component</a></li><li><a href="rb.components.accordion.html">rb.components.accordion</a></li><li><a href="rb.components.button.html">rb.components.button</a></li><li><a href="rb.components.dialog.html">rb.components.dialog</a></li><li><a href="rb.components.itemscroller.html">rb.components.itemscroller</a></li><li><a href="rb.components.panel.html">rb.components.panel</a></li><li><a href="rb.components.panelgroup.html">rb.components.panelgroup</a></li><li><a href="rb.components.popover.html">rb.components.popover</a></li><li><a href="rb.components.range.html">rb.components.range</a></li><li><a href="rb.components.scrolly.html">rb.components.scrolly</a></li><li><a href="rb.components.shrinknav.html">rb.components.shrinknav</a></li><li><a href="rb.components.sticky.html">rb.components.sticky</a></li><li><a href="rb.components.tabs.html">rb.components.tabs</a></li><li><a href="SpringAnimation.html">SpringAnimation</a></li><li><a href="SpringAnimationDemoGroup.html">SpringAnimationDemoGroup</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-01-basic-module.html">01-basic-module</a></li><li><a href="tutorial-02-extending-components.html">02-extending-components</a></li><li><a href="tutorial-03-communicating-composing-components.html">03-communicating-composing-components</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#map">map</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: components/panelgroup.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">import rb, { Component } from '../core';
+import './panelbutton';
+import './panel';
+import './_composer-component';
+import '../utils/contains';
+
+const $ = Component.$;
+const live = rb.live;
+const componentExpando = live.componentExpando;
+const components = rb.components;
+
+const cleanupCSS = function () {
+    const css = {display: ''};
+
+    if (!this.style.height.startsWith('0')) {
+        css.height = '';
+        css.overflow = '';
+    }
+
+    $(this).css(css);
+};
+
+/**
+ * Class component to create a tab-like or an accordion-like component. Associates panelbuttons and panels and manages the `isOpen` state of the panels.
+ *
+ * @alias rb.components.panelgroup
+ * @extends rb.components._composer_component
+ *
+ * @param element {Element}
+ *
+ * @fires componentName#changed Fires after the `selectedIndexes`/`selectedItems` changes. Note the panel#change and panel#changed events are also fired on the panel elements.
+ *
+ * @prop {Number[]} selectedIndexes The index(es) of the open panel(s)
+ * @prop {Element[]} selectedItems The dom element(s) of the open panel(s)
+ *
+ * @example
+ * &lt;div class="rb-tabs js-rb-click" data-module="panelgroup" data-panelgroup-toggle="false">
+ *      &lt;button type="button" class="panelgroup-ctrl-btn" data-type="prev">&amp;lt;&lt;/button>
+ *      &lt;button type="button" class="panelgroup-ctrl-btn" data-type="next">&amp;gt;&lt;/button>
+ *
+ *      &lt;button type="button" class="panelgroup-btn">1&lt;/button>
+ *      &lt;div class="panelgroup-panel">
+ *          {{panelContent}}
+ *      &lt;/div>
+ *
+ *      &lt;button type="button" class="panelgroup-btn">2&lt;/button>
+ *      &lt;div class="panelgroup-panel">
+ *          {{panelContent}}
+ *      &lt;/div>
+ * &lt;/div>
+ * @example
+ * rb.$('.rb-tabs').on('panelgroupchanged', function(){
+			 *      console.log(rb.$(this).rbComponent().selectedIndexes);
+			 * });
+ *
+ * rb.$('.rb-tabs').rbComponent().next();
+ */
+class PanelGroup extends rb.components._composer_component {
+    /**
+     * @static
+     * @mixes rb.components._composer_component.defaults
+     * @property {Object} defaults
+     * @property {Boolean}  toggle=true Whether a panel button toggles the state of a panel.
+     * @property {Boolean}  multiple=false Whether multiple panels are allowed to be open at the same time. If `multiple` is `true` `toggle` is also automatically set to `true`.
+     * @property {Number}  selectedIndex=-1 The initially opened index. If no panel with the class `is-open` was found. If no panel should be opened by default use -1. (For performance the `is-open` class should be favored instead of changing this value).
+     * @property {Boolean}  closeOnFocusout=false Closes all panels of a group on focusout.
+     * @property {String}  animation='' Possible animations: `adaptHeight` or `slide`. These should be combined with CSS transitions or animations.
+     * @property {String}  easing='' Easing function for the animation.
+     * @property {Number}  duration=400 Duration of the animation.
+     * @property {Boolean|Number}  adjustScroll=false Sets the adjustScroll option on the panel components.
+     * @property {Boolean|Number}  scrollIntoView=false Sets the scrollIntoView option on the panel components.
+     * @property {Boolean|String}  setDisplay=false Sets the setDisplay option on the panel components.
+     * @property {Boolean}  setFocus=true Whether component should try to focus a `js-rb-autofocus` element inside of an opening panel.
+     * @property {Boolean}  preventDefault=false Whether default click action on "{name}-btn" should be prevented.
+     * @property {String}  itemWrapper='' Set itemWrapper option of the panel instance.
+     * @property {Boolean}  switchedOff=false Turns off panelgroup.
+     * @property {Boolean} resetSwitchedOff=true Resets panels to initial state on reset switch.
+     * @property {Boolean}  closeOnEsc=false Panel closes on ESC keydown.
+     * @property {String}  panelSel='find(.{name}{e}panel)' Reference to find all panels associated with this component group. For a nested accordion/tab use "children(.{name}-panel)".
+     * @property {String}  btnSel='find(.{name}{e}btn)' Reference to find all panel buttons associated with this component group. For a nested accordion/tab use "children(.{name}-btn)".
+     * @property {String}  groupBtnSel='find(.{name}{e}ctrl{-}btn)' Reference to find all panelgroup buttons associated with this component group. For a nested accordion/tab use "children(.{name}-ctrl-btn)".
+     * @property {String}  panelWrapperSel='find(.{name}{e}panel{-}wrapper):0' Reference to find the panelwrapper(s) associated with this component group. If no panelwrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-wrapper)".
+     * @property {String}  btnWrapperSel='find(.{name}{e}btn{-}wrapper):0'  Reference to find the button wrapper(s) associated with this component group. If no button wrapper is found the component element is used. For a nested accordion/tab use "children(.{name}-panel-btn-wrapper)".
+     */
+    static get defaults(){
+        return {
+            multiple: false,
+            toggle: true,
+            animation: '', // 'adaptHeight' || 'slide'
+            easing: '',
+            duration: 400,
+            closeOnFocusout: false,
+            selectedIndex: -1,
+            adjustScroll: false,
+            scrollIntoView: false,
+            setFocus: true,
+            switchedOff: false,
+            resetSwitchedOff: true,
+            panelSel: 'find(.{name}{e}panel)',
+            btnSel: 'find(.{name}{e}btn)',
+            groupBtnSel: 'find(.{name}{e}ctrl{-}btn)',
+            panelWrapperSel: 'find(.{name}{e}panel{-}wrapper):0',
+            btnWrapperSel: 'find(.{name}{e}btn{-}wrapper):0',
+            itemWrapper: '',
+            setDisplay: false,
+            closeOnEsc: false,
+        };
+    }
+
+    constructor(element, initialDefaults) {
+        super(element, initialDefaults);
+
+        if (this.options.multiple &amp;&amp; !this.options.toggle) {
+            this.options.toggle = true;
+        }
+
+        this.$element = $(element);
+
+        this.selectedIndexes = [];
+        this.selectedItems = [];
+        this.closingItems = [];
+        this.openingItems = [];
+
+        rb.rAFs(this, 'setSelectedState', 'setSwitchedOffClass');
+
+        this._onOutSideInteraction = this._onOutSideInteraction.bind(this);
+
+        this.setOption('easing', this.options.easing);
+
+        if (!this.options.switchedOff) {
+            this.setOption('switchedOff', false);
+        } else {
+            this.setSwitchedOffClass();
+        }
+    }
+
+    setSwitchedOffClass(){
+        this.element.classList[this.options.switchedOff ? 'add' : 'remove'](rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
+    }
+
+    _handleAnimation(animationData){
+        if(animationData.animation == 'adaptHeight'){
+            if(animationData.panel.isOpen){
+                this.animateWrapper(animationData.panel.element);
+            } else if(!this._closedByOpen){
+                this.animateWrapper();
+            }
+        }
+    }
+
+    animateWrapper(openedPanel) {
+        let end;
+
+        const that = this;
+        const panels = this.$panels.get();
+        const panelWrapper = this.$panelWrapper.get(0);
+        const nextIndex = openedPanel ? panels.indexOf(openedPanel) : 0;
+        const closingPanels = [];
+
+        let curIndex = -1;
+
+        const start = panelWrapper.offsetHeight;
+
+        this.$panelWrapper.stop();
+
+        panelWrapper.style.height = 'auto';
+
+        this.closingItems.forEach(function (panel) {
+            panel.style.display = 'none';
+            curIndex = panels.indexOf(panel);
+            closingPanels.push(panel);
+        });
+
+        if(openedPanel){
+            openedPanel.style.display = 'block';
+            openedPanel.style.position = 'relative';
+        }
+
+        end = panelWrapper.offsetHeight;
+
+        this.closingItems.forEach(function (panel) {
+            panel.style.display = '';
+        });
+
+        if(openedPanel){
+            openedPanel.style.display = '';
+            openedPanel.style.position = '';
+        }
+
+        $(closingPanels).addClass(rb.statePrefix + 'closing');
+
+        this.$panelWrapper
+            .attr({'data-direction': nextIndex > curIndex ? 'up' : 'down'})
+            .css({
+                overflow: 'hidden',
+                height: start + 'px',
+            })
+            .animate({height: end}, {
+                duration: this.options.duration,
+                easing: this.options.easing,
+                always: function () {
+                    that.$panels.removeClass(rb.statePrefix + 'closing');
+                    that.$panelWrapper
+                        .removeClass(rb.statePrefix + 'fx')
+                        .attr({'data-direction': ''})
+                    ;
+                    cleanupCSS.call(this);
+                },
+            })
+            .addClass(rb.statePrefix + 'fx')
+        ;
+    }
+
+    setSelectedState() {
+        this.element.classList.toggle(rb.statePrefix + 'selected' + rb.nameSeparator + 'within', !!this.selectedIndexes.length);
+    }
+
+    _updatePanelInformation() {
+        const that = this;
+        this.selectedIndexes.length = 0;
+        this.selectedItems.length = 0;
+
+        this.$panels.each(function (i) {
+            if (this[componentExpando].isOpen) {
+                that.selectedIndexes.push(i);
+                that.selectedItems.push(this);
+            }
+        });
+
+        if (this.options.closeOnFocusout) {
+            this._addRemoveFocusOut();
+        }
+        this.setSelectedState();
+    }
+
+    _addRemoveFocusOut() {
+        const shouldInstall = this.options.closeOnFocusout &amp;&amp; this.selectedItems.length;
+        const touchEvts = {passive: true, capture: true};
+
+        document.removeEventListener('focus', this._onOutSideInteraction, true);
+        document.removeEventListener('mousedown', this._onOutSideInteraction, touchEvts);
+        document.removeEventListener('touchstart', this._onOutSideInteraction, touchEvts);
+
+        if (shouldInstall) {
+            document.addEventListener('focus', this._onOutSideInteraction, true);
+            document.addEventListener('mousedown', this._onOutSideInteraction, touchEvts);
+            document.addEventListener('touchstart', this._onOutSideInteraction, touchEvts);
+        }
+    }
+
+    _onOutSideInteraction(e) {
+        var target = e.type == 'touchstart' ?
+                (e.changedTouches || e.touches || [e])[0].target :
+                e.target
+            ;
+
+        if (target &amp;&amp; (e.type != 'focus' || target.tabIndex != -1) &amp;&amp; !rb.contains(this.element, target) &amp;&amp; document.body.contains(target)) {
+            this.closeAll();
+        }
+    }
+
+    _getElements() {
+        let panels;
+        const that = this;
+        const options = this.options;
+
+        const buttonWrapper = this.getElementsFromString(options.btnWrapperSel)[0];
+
+        this.$panelWrapper = $(this.getElementsFromString(options.panelWrapperSel));
+
+        this.$panels = $(this.getElementsFromString(options.panelSel, this.$panelWrapper.get(0)));
+
+        this.createChildComponents('panel', this.$panels.get(), [
+            {
+                name: 'itemWrapper',
+                computeValue: (value, name, component) => component.interpolateName(value || ''),
+            },
+            'resetSwitchedOff', 'setFocus', 'closeOnEsc', 'adjustScroll', 'scrollIntoView', 'setDisplay',
+            'autofocusSel', 'switchedOff',
+        ]).forEach(panel => {
+            panel.group = that.element;
+            panel.groupComponent = that;
+        });
+
+        panels = this.$panels;
+
+        this.$buttons = $(this.getElementsFromString(options.btnSel, buttonWrapper));
+
+        this.createChildComponents('panelbutton', this.$buttons.get(), [
+            {
+                name: 'toggle',
+                childName: 'type',
+                computeValue: (value) => value ? 'toggle' : 'open',
+            },
+            'preventDefault',
+            'switchedOff',
+        ]).forEach((btn, index)=>{
+            const panel = panels.get(index);
+
+            if(panel){
+                btn._setTarget(panels.get(index));
+            }
+        });
+
+        this.$groupButtons = $(this.getElementsFromString(options.groupBtnSel));
+
+        this.createChildComponents('panelgroupbutton', this.$groupButtons.get(), [
+            {
+                name: 'target',
+                computeValue: () => this.element,
+            },
+            'preventDefault',
+            'switchedOff',
+        ]);
+    }
+    /**
+     * Closes all panels of a group. If a panel is passed as the except argument, this panel won't be closed.
+     * @param {Element|ComponentInstance|Number} [except]
+     */
+    closeAll(except) {
+        if(this.selectedItems.length){
+            this.$panels.get().forEach(function (panel, i) {
+                const component = live.getComponent(panel);
+                if (component &amp;&amp; component != except &amp;&amp; panel != except &amp;&amp; i !== except) {
+                    component.close();
+                }
+            });
+        }
+    }
+
+    /**
+     * Opens all panels of a group. If a panel is passed as the except argument, this panel won't be opened.
+     * @param {Element|ComponentInstance|Number} [except]
+     */
+    openAll(except){
+        this.$panels.get().forEach(function(panel, i){
+            const component = live.getComponent(panel);
+            if (component &amp;&amp; component != except &amp;&amp; panel != except &amp;&amp; i !== except) {
+                component.open();
+            }
+        });
+    }
+
+    /**
+     * Toggles all panel isOpen state
+     */
+    toggleAll(){
+        if(this.selectedItems.length){
+            this.closeAll();
+        } else {
+            this.openAll();
+        }
+    }
+
+    _triggerOnce() {
+
+        if (!this._isTriggering) {
+            let that = this;
+            this._isTriggering = true;
+            setTimeout(function () {
+                that._isTriggering = false;
+                that.trigger();
+            });
+        }
+    }
+
+    panelChangeCB(panelComponent, action) {
+        const options = this.options;
+
+        if(action.startsWith('before')){
+
+            if (action == 'beforeopen' &amp;&amp; !options.multiple &amp;&amp; this.selectedItems.length) {
+                this._closedByOpen = true;
+                this.closeAll(panelComponent);
+                this._closedByOpen = false;
+            }
+
+            this[action == 'beforeopen' ? 'openingItems' : 'closingItems'].push(panelComponent.element);
+
+            this._updatePanelInformation();
+        } else if(action.startsWith('after')){
+
+            if(this.openingItems.length){
+                this.openingItems.length = 0;
+            }
+            if(this.closingItems.length){
+                this.closingItems.length = 0;
+            }
+
+            this._triggerOnce();
+        }
+
+    }
+
+    /**
+     * Selects next panel.
+     * @param options {Object} options Options are passed to the open method of the panel instance.
+     */
+    next(options) {
+        let selectedIndex = this.selectedIndexes[0];
+
+        selectedIndex = selectedIndex == null ? 0 : selectedIndex + 1;
+
+        if (selectedIndex >= this.$panels.get().length) {
+            selectedIndex = 0;
+        }
+
+        this.selectIndex(selectedIndex, options);
+    }
+
+    /**
+     * Selects previous panel.
+     * @param options {Object} options Options are passed to the open method of the panel instance.
+     */
+    prev(options) {
+        let selectedIndex = this.selectedIndexes[0];
+
+        selectedIndex = selectedIndex == null ? 0 : selectedIndex - 1;
+
+        if (selectedIndex &lt; 0) {
+            selectedIndex = this.$panels.get().length - 1;
+        }
+
+        this.selectIndex(selectedIndex, options);
+    }
+
+    getComponentByIndexOrDOM(index) {
+
+        if (index == null) {
+            index = 0;
+        }
+
+        let panel = typeof index == 'number' ?
+            this.$panels.get(index) :
+            index
+        ;
+
+        if (!panel || !panel[componentExpando]) {
+            return false;
+        }
+        return panel[componentExpando];
+    }
+
+    /**
+     * Selects/opens a panel.
+     * @param index {Number|Element}
+     * @param options {Object} Options are passed to the open method of the panel instance.
+     * @returns {Boolean}
+     */
+    selectIndex(index, options) {
+        const component = this.getComponentByIndexOrDOM(index);
+        return component &amp;&amp; component.open(options);
+    }
+
+    /**
+     * Closes a panel.
+     * @param index {Number|Element}
+     * @param options {Object} Options are passed to the close method of the panel instance.
+     * @returns {Boolean}
+     */
+    deselectIndex(index, options) {
+        const component = this.getComponentByIndexOrDOM(index);
+        return component &amp;&amp; component.close(options);
+    }
+
+    _switchOff() {
+        this.setSwitchedOffClass();
+    }
+
+    _switchOn() {
+        if (!this.$panelWrapper || !this.$panels.length) {
+            this._getElements();
+        }
+
+        this._updatePanelInformation();
+        this.setSwitchedOffClass();
+
+        if (!this.selectedIndexes.length) {
+            this.selectIndex(this.options.selectedIndex, {animationPrevented: true, setFocus: false});
+        }
+    }
+
+    setOption(name, value, isSticky) {
+
+        super.setOption(name, value, isSticky);
+
+        if (name == 'multiple' &amp;&amp; value &amp;&amp; !this.options.toggle) {
+            this.setOption('toggle', true, isSticky);
+        } else if (name == 'easing' &amp;&amp; value &amp;&amp; typeof value == 'string') {
+            rb.addEasing(value);
+        } else if (name == 'closeOnFocusout') {
+            this._addRemoveFocusOut();
+        } else if (name == 'switchedOff') {
+            if (value) {
+                this._switchOff();
+            } else {
+                this._switchOn();
+            }
+        }
+
+        if ((name == 'toggle' || name == 'multiple') &amp;&amp; this.options.multiple &amp;&amp; !this.options.toggle) {
+            setTimeout(() => {
+                if (this.options.multiple &amp;&amp; !this.options.toggle) {
+                    this.setOption('toggle', true, isSticky);
+                }
+            });
+        }
+    }
+}
+
+Component.register('panelgroup', PanelGroup);
+
+export default PanelGroup;
+
+class PanelGroupButton extends components.button {
+
+}
+
+Component.register('panelgroupbutton', PanelGroupButton);
+
+/**
+ * Class component to create a tab component. This component simply just changes some default options of the [panelgroup component]{@link rb.components.panelgroup}.
+ * @alias rb.components.tabs
+ * @extends rb.components.panelgroup
+ *
+ * @param element
+ * @param initialDefaults
+ *
+ * @example
+ * &lt;div class="rb-tabs js-rb-click" data-module="tabs">
+ *      &lt;button type="button" class="tabs-btn" aria-expanded="true">1&lt;/button>
+ *      &lt;button type="button" class="tabs-btn">2&lt;/button>
+ *
+ *      &lt;button type="button" class="tabs-ctrl-btn" data-type="prev">&amp;lt;&lt;/button>
+ *      &lt;button type="button" class="tabs-ctrl-btn" data-type="next">&amp;gt;&lt;/button>
+ *
+ *      &lt;div class="tabs-panel is-open">
+ *          {{panelContent}}
+ *      &lt;/div>
+ *      &lt;div class="tabs-panel">
+ *          {{panelContent}}
+ *      &lt;/div>
+ * &lt;/div>
+ * @example
+ * rb.$('.rb-tabs').on('tabschanged', function(){
+ *      console.log(rb.$(this).rbComponent().selectedIndexes);
+ * });
+ *
+ * rb.$('.rb-tabs').rbComponent().next();
+ */
+class Tabs extends components.panelgroup {
+
+    /**
+     * Changed options compared to the panelgroup component. Go to {@link rb.components.panelgroup#defaults} for detailed option descriptions.
+     *
+     * @static
+     * @mixes rb.components.panelgroup.defaults
+     * @property {Boolean}  toggle=false
+     * @property {Number}  selectedIndex=0
+     * @property {String}  animation='adaptHeight'
+     */
+    static get defaults(){
+        return {
+            selectedIndex: 0,
+            toggle: false,
+            animation: 'adaptHeight',
+        };
+    }
+}
+
+Component.register('tabs', Tabs);
+
+/**
+ * Class component to create a accordion component. This component simply just changes some default options of the [panelgroup component]{@link rb.components.panelgroup}.
+ * @alias rb.components.accordion
+ * @extends rb.components.panelgroup
+ *
+ *
+ * @example
+ * &lt;div class="rb-accordion js-rb-click" data-module="accordion">
+ *      &lt;button type="button" class="accordion-btn" aria-expanded="true">1&lt;/button>
+ *      &lt;div class="accordion-panel is-open">
+ *          {{panelContent}}
+ *      &lt;/div>
+ *
+ *      &lt;button type="button" class="accordion-btn">2&lt;/button>
+ *      &lt;div class="accordion-panel">
+ *          {{panelContent}}
+ *      &lt;/div>
+ * &lt;/div>
+ * @example
+ * rb.$('.rb-tabs').on('accordionchanged', function(){
+ *      console.log(rb.$(this).rbComponent().selectedIndexes);
+ * });
+ */
+
+class Accordion extends components.panelgroup {
+    /**
+     * Changed options compared to the panelgroup component. Go to {@link rb.components.panelgroup#defaults} for detailed option descriptions.
+     *
+     * @static
+     * @mixes rb.components.panelgroup.defaults
+     * @property {Boolean}  toggle=false
+     * @property {Number}  selectedIndex=0
+     * @property {String}  animation='slide'
+     * @property {String}  adjustScroll=10
+     */
+    static get defaults(){
+        return {
+            selectedIndex: 0,
+            toggle: false,
+            animation: 'slide',
+            adjustScroll: 10,
+            itemWrapper: '.{name}{e}item',
+        };
+    }
+}
+
+Component.register('accordion', Accordion);
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Mon Jun 11th 2018
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>DocStrap Tutorial: 01-basic-module</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">DocStrap</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.html">rb</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-ajaxform.html">ajaxform</a></li><li><a href="module-validity.html">validity</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.components._childfx.html">rb.components._childfx</a></li><li><a href="rb.components._composer_component.html">rb.components._composer_component</a></li><li><a href="rb.components._focus_component.html">rb.components._focus_component</a></li><li><a href="rb.components.accordion.html">rb.components.accordion</a></li><li><a href="rb.components.button.html">rb.components.button</a></li><li><a href="rb.components.dialog.html">rb.components.dialog</a></li><li><a href="rb.components.itemscroller.html">rb.components.itemscroller</a></li><li><a href="rb.components.panel.html">rb.components.panel</a></li><li><a href="rb.components.panelgroup.html">rb.components.panelgroup</a></li><li><a href="rb.components.popover.html">rb.components.popover</a></li><li><a href="rb.components.range.html">rb.components.range</a></li><li><a href="rb.components.scrolly.html">rb.components.scrolly</a></li><li><a href="rb.components.shrinknav.html">rb.components.shrinknav</a></li><li><a href="rb.components.sticky.html">rb.components.sticky</a></li><li><a href="rb.components.tabs.html">rb.components.tabs</a></li><li><a href="SpringAnimation.html">SpringAnimation</a></li><li><a href="SpringAnimationDemoGroup.html">SpringAnimationDemoGroup</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-01-basic-module.html">01-basic-module</a></li><li><a href="tutorial-02-extending-components.html">02-extending-components</a></li><li><a href="tutorial-03-communicating-composing-components.html">03-communicating-composing-components</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#map">map</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			<section class="tutorial-section">
+
+<header>
+    
+
+    <h2>01-basic-module</h2>
+</header>
+
+<article>
+    <h1>How to create a rawblock component I</h1><p>As an example component we will create a &quot;slim header&quot;. As soon as the user scrolls down a certain threshold the header gets slim. A full demo can be seen at <a href="https://codesandbox.io/s/3q51m1pxjm">codesandbox (SlimHeader with rawblock)</a>.</p>
+<h2>HTML of our slim header component</h2><p>A component markup always has to have a <code>data-module</code> attribute with the name of your component and in general a <code>js-rb-live</code> class to indicate, that rawblock should create the UI component immediately.</p>
+<h3>Excursion: Initializing components</h3><p>In general rawblock components have the class <code>js-rb-live</code> to be automatically created, if they are first seen in the document. In case a component only reacts to a <code>click</code> event and only needs to be created at this time, the author can add a <code>js-rb-click</code> class instead.</p>
+<p>There is also the possibility to use the rb_lazymodules module to lazily create modules as soon as they become visible in the viewport using the <code>js-rb-lazylive</code> class.</p>
+<p>Or a class can be fully omitted and the component can initialized from JS using the <a href="rb.html#.getComponent__anchor"><code>rb.getComponent</code></a> or <code>this.component</code> method.</p>
+<p>The functional childs should have a class prefixed with the component name (htmlName).</p>
+<pre class="prettyprint source lang-html"><code>&lt;div class=&quot;js-rb-live&quot; data-module=&quot;slimheader&quot;>&lt;/div></code></pre><h2>JS-Boilerplate of a rawblock component</h2><pre class="prettyprint source lang-js"><code>import { Component } from 'rawblock';
+
+class SlimHeader extends Component {
+
+    // The static defaults getter defines the default options of our component.
+    static get defaults(){
+        return {
+
+        };
+    }
+
+    // The static events getter defines the events rawblock should attach to the DOM.
+    static get events(){
+        return {
+
+        };
+    }
+
+    // The constructor is invoked to create the rb component
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+    }
+
+    // attached is invoked either after the constructor or if the DOM element is added to the DOM
+    // Normally the attached method should be used as an antagonist to the detached method.
+    attached(){
+
+    }
+
+    //detached is invoked after the element was removed from the document and should be used to clean up (i.e.: clear timeouts, unbind global events etc.)
+    detached(){
+
+    }
+}
+
+//rb.live.register registers the Component class and defines the component name. The class is then added to the `rb.components` namespace (i.e. `rb.components.clearinput`).
+Component.register('slimheader', SlimHeader);
+
+//in your app.js include core files...
+//import 'rawblock/$';
+//import rb from 'rawblock';
+
+//... and your component
+//import 'slimheader';
+
+//call rb.live.init in your main file to start rawblock.
+//rb.live.init();</code></pre><h2>SlimHeader JS Class</h2><h3>Working with options</h3><p>First we define the threshold as <code>topThreshold</code> in our <code>defaults</code> getter.</p>
+<pre class="prettyprint source lang-js"><code>import { Component } from 'rawblock';
+
+class SlimHeader extends Component {
+
+    static get defaults(){
+        return {
+            topThreshold: 60
+        };
+    }
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        this.log(this.options.topThreshold); //outputs 60
+    }
+}
+
+Component.register('slimheader', SlimHeader);</code></pre><p>A rawblock component can be configured in multiple ways.</p>
+<p>With JS:</p>
+<pre class="prettyprint source lang-js"><code>import rb from 'rawblock';
+//change the default itself (Note: rawblock changes the defaults getter to a defaults object value.)
+rb.components.slimheader.defaults.topThreshold = 70;
+
+//create a new component with changed options and use this instead (Note: rawblock will automatically merge/mixin your defaults object)
+class SuperSlimHeader extends rb.components.slimheader {
+    static get defaults(){
+        return {
+            topThreshold: 80
+        };
+    }
+}
+
+//change the specific component option
+rb.$('.slimheader').rbComponent().setOption('topThreshold', 90);</code></pre><p>With HTML:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!-- As one option -->
+&lt;div data-module=&quot;slimheader&quot; data-slimheader-top-threshold=&quot;100&quot;>&lt;/div>
+
+&lt;!-- As an option object (with multiple options) -->
+&lt;div data-module=&quot;slimheader&quot; data-slimheader-options='{&quot;topThreshold&quot;: 110}'>&lt;/div></code></pre><p>With CSS/SCSS</p>
+<pre class="prettyprint source lang-scss"><code>.slimheader {
+    @include rb-js-export((
+        topThreshold: 120,
+    ));
+}</code></pre><p>Due to the fact that the threshold is heavily style/layout related it might make sense to configure it with SCSS. It can get really helpful if you plan to act on it responsively.</p>
+<pre class="prettyprint source lang-scss"><code>.slimheader {
+    @include rb-js-export((
+        topThreshold: 120,
+    ));
+
+    @media (min-width: 120px) {
+        @include rb-js-export((
+            topThreshold: 180,
+        ));
+    }
+}</code></pre><p>By extending/overriding the <code>setOption</code> method it is possible to react to option changes:</p>
+<pre class="prettyprint source lang-js"><code>class SlimHeader extends Component {
+    setOption(name, value, isSticky){
+        super.setOption(name, value, isSticky);
+
+        if(name == 'topThreshold'){
+            //do the work
+        }
+    }
+}</code></pre><h3>Events</h3><p>JS events can be bound normally or by using the events object. In our case we need to bind the <code>scroll</code> event to the <code>window</code> object.</p>
+<p>Due to the fact, that the <code>window</code> object remains even if our component is destroyed. It makes sense to use the <code>attached</code>/<code>detached</code> lifecycle callbacks.</p>
+<pre class="prettyprint source lang-js"><code>class SuperSlimHeader extends rb.components.slimheader {
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        this.handleScroll = this.handleScroll.bind(this);
+    }
+
+    handleScroll(){
+
+    }
+
+    attached(){
+        window.addEventListener('scroll', this.handleScroll);
+    }
+
+    detached(){
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+}</code></pre><p>But you can also use the static <code>events</code> object of your component class. Normally rawblock binds all events to the component itself and gives you some options to help with event delegation.</p>
+<p>But due to the fact that the <code>scroll</code> event happens outside of the component event delegation does not help here. For this you can use the <code>@</code> event option. Every event option is prefixed with a <code>:</code>.</p>
+<pre class="prettyprint source lang-js"><code>class SlimHeader extends Component {
+
+    static get events(){
+        return {
+            'scroll:@(window)': 'handleScroll',
+        };
+    }
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+    }
+
+    handleScroll(){
+
+    }
+}</code></pre><h4>About event options:</h4><p>There are 4 different kinds of event options:</p>
+<ul>
+<li>The <code>@</code> allows to bind listeners to other elements than the component element. These elements are retrieved by the <code>this.getElementsByString</code> method, which not only allows to use predefined values like <code>&quot;window&quot;</code> or <code>&quot;document&quot;</code>, but also to use jQuery-like traversing methods to select an element (i.e.: <code>&quot;submit:@(closest(form))&quot;</code>, <code>&quot;click:@(next(.item))&quot;</code> etc.).</li>
+<li>Native event options: <code>capture</code>, <code>once</code> and <code>passive</code>.</li>
+<li>proxy functions: <code>closest</code>, <code>matches</code>, <code>keycodes</code> and some more.<ul>
+<li><code>closest</code> can be used for event delegation. For example <code>'click:closest(.button)'</code> means, if a click happens the proxy function will use the <code>closest</code> method on the <code>event.target</code> and if it finds an element will set the <code>event.delegatedTarget</code> property to this element and call the declared event handler.</li>
+<li><code>matches</code> can also be used for event delegation. For example <code>'change:matches(.input)'</code> means, if a change happens the proxy function will use the <code>matches</code> method on the <code>event.target</code> and if it returns <code>true</code> will set the <code>event.delegatedTarget</code> property to this element and call the declared event handler.</li>
+</ul>
+</li>
+<li>Different options for custom events.</li>
+</ul>
+<h3>Adding some logic</h3><p>Now we can fill in some logic to add a class as soon as the header reaches our threshold.</p>
+<pre class="prettyprint source lang-js"><code>class SlimHeader extends Component {
+
+    static get defaults(){
+        return {
+            topThreshold: 80
+        };
+    }
+
+    static get events(){
+        return {
+            'scroll:@(window)': 'handleScroll',
+        };
+    }
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        //call handleScroll to get the initial state right
+        this.handleScroll();
+    }
+
+    handleScroll(){
+        this.element.classList.toggle('is-slim', this.options.topThreshold &lt; document.scrollingElement.scrollTop);
+    }
+}
+
+Component.register('slimheader', SlimHeader);</code></pre><h3>Improvements to our current component</h3><p>The code above will give us a full functional rawblock component. But it can be improved in multiple ways.</p>
+<p>Performance considerations</p>
+<ol>
+<li><code>classList.toggle</code> is called with a very high frequency, even if the threshold expression has the same result as before.</li>
+<li><code>classList.toggle</code> mutates the DOM (= layout write) outside of a <code>requestAnimationFrame</code>, which is likely to produce layout thrashing in a complex application.</li>
+<li><code>handleScroll</code> could also be throttled.</li>
+</ol>
+<p>To fix the first point we will add a <code>isSlim</code> property and only change the class if it has changed</p>
+<pre class="prettyprint source lang-js"><code>class SlimHeader extends Component {
+    //.....
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        this.isSlim = false;
+
+        this.handleScroll();
+    }
+
+    handleScroll(){
+        const shouldBeSlim = this.options.topThreshold &lt; document.scrollingElement.scrollTop;
+
+        if(this.isSlim != shouldBeSlim){
+            this.isSlim = shouldBeSlim;
+            this.element.classList.toggle('is-slim', this.isSlim);
+        }
+    }
+}</code></pre><p>To fix the second point rawblock offers a method called <code>this.rAFs</code>. This method can take an unlimited number of method names and will make sure that these methods are called inside a <code>rAF</code>.</p>
+<p>Due to the fact, that getting <code>document.scrollingElement.scrollTop</code> is a layout read we need to separate it from our layout write <code>classList.toggle</code>.</p>
+<pre class="prettyprint source lang-js"><code>class SlimHeader extends Component {
+    //.....
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        this.isSlim = false;
+
+        this.rAFs('changeState');
+
+        this.calculateState();
+    }
+
+    changeState(){
+        this.element.classList.toggle('is-slim', this.isSlim);
+    }
+
+    calculateState(){
+        const shouldBeSlim = this.options.topThreshold &lt; document.scrollingElement.scrollTop;
+
+        if(this.isSlim != shouldBeSlim){
+            this.isSlim = shouldBeSlim;
+            this.changeState();
+        }
+    }
+}</code></pre><p>For small DOM changes rawblock also supports jQuery-like functions, that are called in a rAF. To these methods the string &quot;Raf&quot; is appended. In our case the method <code>toggleClassRaf</code> can be used:</p>
+<pre class="prettyprint source lang-js"><code>class SlimHeader extends Component {
+    //...
+    calculateState(){
+            const shouldBeSlim = this.options.topThreshold &lt; document.scrollingElement.scrollTop;
+
+            if(this.isSlim != shouldBeSlim){
+                this.isSlim = shouldBeSlim;
+                this.$element.toggleClassRaf('is-slim', this.isSlim);
+            }
+        }
+    }
+}</code></pre><p>Point 3. could be fixed by using <code>rb.throttle</code>. But I assume that in our refactored case the <code>calculateState</code> is so light, that throttling won't affect the performance too much.</p>
+<pre class="prettyprint source lang-js"><code>import rb, { Component } from 'rawblock';
+
+class SlimHeader extends Component {
+    //.....
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        this.isSlim = false;
+
+        this.calculateState = rb.throttle(this.calculateState, {read: true});
+
+        this.calculateState();
+    }
+}</code></pre><p>The slimheader component can be further improved under the following more rawblock specific aspects:</p>
+<ol>
+<li><p>A good component should dispatch an event as soon as it's state changes.</p>
+<p>This can be realized using the <code>trigger</code> method. The method accepts an event name as also a detail object for further event specific information. The event name is automatically prefixed by the component name (jsName). If a component only has one state that changes or one state can be seen as the main state the component should dispatch a <code>changed</code> state.</p>
+<p>In case no event name is given, <code>trigger</code> will automatically generate this <code>changed</code> state event prefixed by the component name. (In our case <code>&quot;slimheaderchanged&quot;</code>.)</p>
+<p>In case you are using a <code>*Raf</code> method to alter your DOM, your <code>trigger</code> call is not done in a rAF method and you want to dispatch the event after the DOM changes are done you can use the method <code>this.triggerRaf</code>.</p>
+</li>
+<li><p>rawblock allows you to define how state classes are defined (prefixed by <code>is-</code>, <code>modifier__</code> etc.).<br>To support this feature we need to use <code>rb.$.fn.rbToggleState</code> instead of <code>classList.toggle</code>.</p>
+</li>
+<li><p>Building responsive JS components often reveals, that you need to disable/switch off a component under certain media conditions and turn others on.</p>
+<p>rawblock uses the convention to use the option <code>switchedOff</code> for those cases. In case <code>options.switchedOff</code> is <code>true</code> no event listener bound by the events object is called (Keep in mind, that this won't help, if your bound listeners are called async du to throttling or debouncing.).</p>
+<p>Often the developer still has to do some work to react to those option changes (cleanup changed markup). In case your specific project needs this or you want to build a general re-usable component you should do this.</p>
+</li>
+</ol>
+<p>Our <a href="https://codesandbox.io/s/3q51m1pxjm">final improved code</a> could look like this:</p>
+<pre class="prettyprint source lang-js"><code>import rb, { Component } from 'rawblock';
+
+class SlimHeader extends Component {
+
+    static get defaults(){
+        return {
+            topThreshold: 80,
+        };
+    }
+
+    static get events(){
+        return {
+            'scroll:@(window)': 'calculateState',
+        };
+    }
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        this.isSlim = false;
+
+        this.calculateState = rb.throttle(this.calculateState, {read: true});
+
+        this.calculateState();
+    }
+
+    setOption(name/*, value, isSticky*/){
+        super.setOption(...arguments);
+
+        //if topThreshold or switchedOff option changed re-calculate with these options.
+        if(name == 'topThreshold' || name == 'switchedOff'){
+            this.calculateState();
+        }
+    }
+
+    calculateState(){
+        const {switchedOff, topThreshold} = this.options;
+        //if it is switchedOff it is never slim
+        const shouldBeSlim = !switchedOff && topThreshold &lt; document.scrollingElement.scrollTop;
+
+        if(this.isSlim != shouldBeSlim){
+            this.isSlim = shouldBeSlim;
+            this.$element.rbToggleStateRaf('slim', this.isSlim);
+            this.triggerRaf();
+        }
+    }
+}
+
+Component.register('slimheader', SlimHeader);</code></pre>
+</article>
+
+</section>
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Mon Jun 11th 2018
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
