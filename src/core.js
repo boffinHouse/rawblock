@@ -1,7 +1,8 @@
 import rb from './utils/global-rb';
 import deferred from './utils/deferred';
 import rIC from './utils/request-idle-callback';
-import rAFQueue from './utils/rafqueue';
+import rAFQueue, {mutationPhase} from './utils/rafqueue';
+import rAFs from './utils/rafs';
 import './utils/rafs';
 import throttle from './utils/throttle';
 import getId from './utils/get-id';
@@ -1968,7 +1969,11 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
         }
 
         rAFs(){
-            return rb.rAFs(this, ...arguments);
+            return rAFs(this, ...arguments);
+        }
+
+        mutationPhase(){
+            return mutationPhase();
         }
 
         /**
@@ -2354,7 +2359,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          *          super(element, initialDefaults);
          *          this.child = this.query('.{name}__close-button');
          *
-         *          rb.rAFs(this, 'setLayout');
+         *          this.rAFs('setLayout');
          *      }
          *
          *      static get events(){

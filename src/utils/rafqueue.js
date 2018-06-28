@@ -9,6 +9,10 @@ const immediatePromise = Promise.resolve();
 
 let curFns = fns1;
 
+const setProgressFalse = () => {
+    isInProgress = false;
+};
+
 const run = function () {
     inProgressStack = curFns;
     curFns = fns1.length ? fns2 : fns1;
@@ -19,7 +23,7 @@ const run = function () {
         inProgressStack.shift()();
     }
 
-    isInProgress = false;
+    immediatePromise.then(setProgressFalse);
 };
 
 /**
