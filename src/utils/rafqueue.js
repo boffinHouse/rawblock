@@ -14,16 +14,18 @@ const setProgressFalse = () => {
 };
 
 const run = function () {
-    inProgressStack = curFns;
-    curFns = fns1.length ? fns2 : fns1;
+    if(curFns.length){
+        inProgressStack = curFns;
+        curFns = fns1.length ? fns2 : fns1;
 
-    isInProgress = true;
+        isInProgress = true;
 
-    while (inProgressStack.length) {
-        inProgressStack.shift()();
+        while (inProgressStack.length) {
+            inProgressStack.shift()();
+        }
+
+        immediatePromise.then(setProgressFalse);
     }
-
-    immediatePromise.then(setProgressFalse);
 };
 
 /**
@@ -31,23 +33,27 @@ const run = function () {
  * @memberof rb
  * @alias rb#rAFQueue
  * @param fn {Function} the function that should be invoked
- * @param [inProgress] {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
- * @param [hiddenRaf] {boolean} Whether the rAF should also be used if document is hidden.
+ * @param [inProgress=true] {boolean} Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.
  */
-export default function rAFQueue(fn, inProgress, hiddenRaf) {
+export default function rAFQueue(fn, inProgress = true) {
 
     if (inProgress && isInProgress) {
         immediatePromise.then(fn);
     } else {
         curFns.push(fn);
         if (curFns.length == 1) {
-            ((hiddenRaf || !document.hidden) ? requestAnimationFrame : setTimeout)(run);
+            (!document.hidden ? requestAnimationFrame : setTimeout)(run);
         }
     }
 }
 
 let rafPromise;
 
+/**
+ *
+ * @param fn {Function} Function that will be executed in the mutation phase
+ * @return {Promise}
+ */
 export const mutationPhase = (fn) => {
     if(!rafPromise || rafPromise.isResolved){
         rafPromise = deferred();

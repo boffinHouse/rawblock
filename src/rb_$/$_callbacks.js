@@ -1,3 +1,5 @@
+import rb from '../utils/global-rb';
+
 export default function Callbacks(flags) {
     if (flags) {
         rb.log('not supported: ' + flags);
@@ -33,6 +35,6 @@ export default function Callbacks(flags) {
     };
 }
 
-if(typeof window != 'undefined' && window.rb && window.rb.$ && !window.rb.$.Callbacks){
+if(rb.$ && !rb.$.Callbacks){
     rb.$.Callbacks = Callbacks;
 }

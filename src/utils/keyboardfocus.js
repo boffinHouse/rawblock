@@ -24,7 +24,7 @@ rb.ready.then(() => {
 
     var removeChildFocus = function () {
         if (keyboardFocusElem) {
-            rb.rAFQueue(_removeChildFocus);
+            rb.rAFQueue(_removeChildFocus, true);
         }
     };
 

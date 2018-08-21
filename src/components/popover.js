@@ -88,13 +88,9 @@ class Popover extends rb.components.panel {
     }
 
     initPositionedElement() {
-        var that = this;
 
         this.position = new Position(this.element);
-
-        rb.rAFQueue(function () {
-            that.$element.css({display: 'block'});
-        });
+        this.$element.cssRaf({display: 'block'});
         this.setOption('my', this.options.my);
     }
 

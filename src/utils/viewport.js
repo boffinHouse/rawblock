@@ -1,4 +1,3 @@
-const rb = window.rb;
 
 /**
  *
@@ -8,7 +7,7 @@ const rb = window.rb;
  * @param [viewportWidth] {Number}
  * @param [viewportHeight] {Number}
  */
-rb.checkInViewport = function (element, margin, intersect, viewportWidth, viewportHeight){
+export default function checkInViewport(element, margin = 0, intersect = 0, viewportWidth, viewportHeight){
     let tmpValue, boxArea, intersectArea;
     let value = false;
     let box = element.getBoundingClientRect();
@@ -44,7 +43,4 @@ rb.checkInViewport = function (element, margin, intersect, viewportWidth, viewpo
 
 
     return value;
-};
-
-
-export default rb.checkInViewport;
+}

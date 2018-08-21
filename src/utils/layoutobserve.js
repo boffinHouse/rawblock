@@ -1,19 +1,22 @@
+import rb from './global-rb';
+import Callbacks from '../rb_$/$_callbacks';
+import rbSymbol from './symbol';
+import rAFQueue from './rafqueue';
+import events from './events';
+
 let observeClass, observedElements;
 
-const rb = window.rb;
-const $ = rb.$;
-const layoutObserveProp = rb.Symbol('layoutObserve');
-const rbRic = rb.rIC;
+const layoutObserveProp = rbSymbol('layoutObserve');
 
 let isInstalled = false;
 let resumeElementIndex = 0;
 let elementIndex = 0;
 
 const timedOutCheck = function(){
-    rbRic(resumeCheckElements);
+    setTimeout(resumeCheckElements);
 };
 
-const rIC = function(){rb.rAFQueue(timedOutCheck, true);};
+const rIC = function(){rAFQueue(timedOutCheck, true);};
 
 const resumeCheckElements = function(){
     if(resumeElementIndex == elementIndex){
@@ -32,7 +35,7 @@ const checkElements = function (e){
 
             if(!(observer = element[layoutObserveProp])){
                 /* jshint loopfunc: true */
-                rb.rAFQueue(function(){ // eslint-disable-line no-loop-func
+                rAFQueue(function(){ // eslint-disable-line no-loop-func
                     element.classList.remove(observeClass);
                 }, true);
                 continue;
@@ -41,15 +44,15 @@ const checkElements = function (e){
             event = [{target: element, type: 'rb_layoutchange', originalEvent: e}];
 
             observer.cbs.fireWith(element, event);
+        }
 
-            if(!start){
-                start = Date.now();
-            } else if(Date.now() - start > 3){
-                elementIndex++;
-                resumeElementIndex = elementIndex;
-                rIC();
-                return;
-            }
+        if(!start){
+            start = Date.now();
+        } else if(Date.now() - start > 3){
+            elementIndex++;
+            resumeElementIndex = elementIndex;
+            rIC();
+            return;
         }
     }
 
@@ -69,7 +72,7 @@ const addEvents = function(){
     observedElements = document.getElementsByClassName(observeClass);
 
     window.addEventListener('scroll', throtteledCheckElements, true);
-    rb.resize.on(throtteledCheckElements);
+    window.addEventListener('resize', throtteledCheckElements);
 
     if(window.MutationObserver){
         new MutationObserver( throtteledCheckElements ).observe( rb.root, {childList: true, subtree: true, attributes: true} );
@@ -86,20 +89,20 @@ const addEvents = function(){
     });
 };
 
-rb.events.special.rb_layoutchange = rb.events.special.rb_layoutchange || {
+events.special.rb_layoutchange = events.special.rb_layoutchange || {
     add: function (elem, fn, _opts) {
         let observer = elem[layoutObserveProp];
 
         if(!observer){
             observer = {
-                cbs: $.Callbacks(),
+                cbs: Callbacks(),
             };
 
             elem[layoutObserveProp] = observer;
 
             addEvents();
 
-            rb.rAFQueue(function(){
+            rAFQueue(function(){
                 elem.classList.add(observeClass);
             }, true);
         }
@@ -115,16 +118,16 @@ rb.events.special.rb_layoutchange = rb.events.special.rb_layoutchange || {
 
         if(!observer.cbs.has()){
             delete elem[layoutObserveProp];
-            rb.rAFQueue(function(){
+            rAFQueue(function(){
                 elem.classList.remove(observeClass);
             }, true);
         }
     },
 };
 
-rb.events.special.rb_layoutobserve = rb.events.special.rb_layoutchange;
+events.special.rb_layoutobserve = events.special.rb_layoutchange;
 
-export default rb.events.special.rb_layoutchange;
+export default events.special.rb_layoutchange;
 
 if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'production'){
     if(rb.z__layoutobserve){

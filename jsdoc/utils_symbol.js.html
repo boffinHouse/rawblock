@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>DocStrap Source: utils/ajaxform.js</title>
+	<title>DocStrap Source: utils/symbol.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -93,52 +93,31 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: utils/ajaxform.js</h1>
+		<h1 class="page-title">Source: utils/symbol.js</h1>
     
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">/**
- * @module ajaxform
- */
-
-import serialize from './serialize';
-import param from '../rb_$/$_param';
-import fetch from './fetch';
+            class="sunlight-highlight-javascript linenums">import rb from './global-rb';
+import getId from './get-id';
 
 /**
- * Returns option to fetch a form using rb.fetch.
- * @param element {HTMLFormElement}
- * @return {{url: (string), type: string, data: *}}
+ * Returns a Symbol or unique String
+ * @memberof rb
+ * @param {String} description ID or description of the symbol
+ * @type {Function}
+ * @returns {String|Symbol}
  */
-export function getFormFetchOptions(element){
-    const fetchOpts = {
-        url: element.action,
-        type: element.method.toUpperCase(),
+rb.Symbol = window.Symbol;
+
+if (!rb.Symbol) {
+    rb.Symbol = function (name) {
+        name = name || '_';
+        return name + getId();
     };
-
-    if(fetchOpts.type == 'POST'){
-        Object.assign(fetchOpts, {
-            data: new FormData(element),
-            contentType: false,
-            processData: false,
-        });
-    } else {
-        fetchOpts.url += '?' + param(serialize(element));
-    }
-
-    return fetchOpts;
 }
 
-/**
- * Fetches a form using rb.fetch
- *
- * @param element {HTMLFormElement}
- * @return {Promise}
- */
-export default function fetchForm(element){
-    return fetch(getFormFetchOptions(element));
-}
+export default rb.Symbol;
 </pre>
     </article>
 </section>

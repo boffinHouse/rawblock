@@ -285,9 +285,7 @@ class ShrinkNav extends Component {
 
             this.$submenu.prop({className: this.interpolateName(`${togglePanel.replace(regPoint, '')}{-}list`)});
 
-            rb.rAFQueue(()=>{
-                $menuWrapper.append(this.$submenu);
-            });
+            $menuWrapper.appendRaf(this.$submenu);
         }
 
         this.mainbarItems = [...this.allItems];

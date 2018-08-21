@@ -193,9 +193,7 @@ class Dialog extends rb.components._focus_component {
             this.storeActiveElement();
         }
 
-        rb.rAFQueue(() => {
-            this.$backdrop.rbToggleState('opened', this.isOpen);
-        });
+        this.$backdrop.rbToggleStateRaf('opened', this.isOpen);
 
         this.trigger(options);
     }

@@ -61,7 +61,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#map">map</a></li>
+					<li><a href="global.html#map">map</a></li><li><a href="global.html#mutationPhase">mutationPhase</a></li>
 				</ul>
 			</li>
 			
@@ -501,245 +501,32 @@
     
 </dd>
 
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
+        
             
 <hr>
-<dt>
-    <h4 class="name" id=".checkInViewport"><span class="type-signature">&lt;static> </span>checkInViewport(element [, margin] [, intersect] [, viewportWidth] [, viewportHeight])</h4>
-    
+<dt class="name" id=".Symbol">
+    <h4 id=".Symbol"><span class="type-signature">&lt;static> </span>Symbol<span class="type-signature"> :function</span></h4>
+
     
 </dt>
 <dd>
-
+    
+    <div class="description">
+        <p>Returns a Symbol or unique String</p>
+    </div>
     
 
     
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>element</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-                <td class="attributes">
+        <h5>Type:</h5>
+        <ul>
+            <li>
                 
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>margin</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
+<span class="param-type">function</span>
 
 
 
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>intersect</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>viewportWidth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>viewportHeight</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
+            </li>
+        </ul>
     
 
     
@@ -777,8 +564,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="utils_viewport.js.html">utils/viewport.js</a>,
-				 <a href="utils_viewport.js.html#sunlight-1-line-11">line 11</a>
+				<a href="utils_symbol.js.html">utils/symbol.js</a>,
+				 <a href="utils_symbol.js.html#sunlight-1-line-11">line 11</a>
 			</li>
 		</ul>
 	</dd>
@@ -793,21 +580,15 @@
 
 
     
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
 
-        
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
             
 <hr>
 <dt>
@@ -3617,7 +3398,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".module.exports"><span class="type-signature">&lt;static> </span>module.exports(element, styles, onlyPositive)</h4>
+    <h4 class="name" id=".module.exports"><span class="type-signature">&lt;static> </span>module.exports()</h4>
     
     
 </dt>
@@ -3625,7 +3406,7 @@
 
     
     <div class="description">
-        <p>Sums up all style values of an element</p>
+        <p>Returns a unique id based on Math.random and Date.now().</p>
     </div>
     
 
@@ -3634,104 +3415,6 @@
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>element</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Element</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>styles</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;String></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The names of the style properties (i.e. paddingTop, marginTop)</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>onlyPositive</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Whether only positive numbers should be considered</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
     
 
     
@@ -3769,8 +3452,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="utils_get-css-numbers.js.html">utils/get-css-numbers.js</a>,
-				 <a href="utils_get-css-numbers.js.html#sunlight-1-line-14">line 14</a>
+				<a href="utils_get-id.js.html">utils/get-id.js</a>,
+				 <a href="utils_get-id.js.html#sunlight-1-line-10">line 10</a>
 			</li>
 		</ul>
 	</dd>
@@ -3798,10 +3481,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    <p>Total of all style values</p>
-</div>
-
 
 
 <dl>
@@ -3810,7 +3489,7 @@
     </dt>
     <dd>
         
-<span class="param-type">number</span>
+<span class="param-type">string</span>
 
 
 
@@ -3819,12 +3498,6 @@
 
 
         
-
-    
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">var innerWidth = rb.getCSSNumbers(domElement, [&#x27;paddingLeft&#x27;, &#x27;paddingRight&#x27;, &#x27;width&#x27;];</pre>
-
 
     
 </dd>
@@ -4217,7 +3890,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".module.exports"><span class="type-signature">&lt;static> </span>module.exports()</h4>
+    <h4 class="name" id=".module.exports"><span class="type-signature">&lt;static> </span>module.exports(element, styles, onlyPositive)</h4>
     
     
 </dt>
@@ -4225,7 +3898,7 @@
 
     
     <div class="description">
-        <p>Returns a unique id based on Math.random and Date.now().</p>
+        <p>Sums up all style values of an element</p>
     </div>
     
 
@@ -4234,6 +3907,104 @@
     
 
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Element</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>styles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The names of the style properties (i.e. paddingTop, marginTop)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onlyPositive</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Whether only positive numbers should be considered</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
     
 
     
@@ -4271,8 +4042,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="utils_get-id.js.html">utils/get-id.js</a>,
-				 <a href="utils_get-id.js.html#sunlight-1-line-10">line 10</a>
+				<a href="utils_get-css-numbers.js.html">utils/get-css-numbers.js</a>,
+				 <a href="utils_get-css-numbers.js.html#sunlight-1-line-14">line 14</a>
 			</li>
 		</ul>
 	</dd>
@@ -4300,6 +4071,10 @@
     <h5>Returns:</h5>
     
             
+<div class="param-desc">
+    <p>Total of all style values</p>
+</div>
+
 
 
 <dl>
@@ -4308,7 +4083,7 @@
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
 
@@ -4317,6 +4092,12 @@
 
 
         
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">var innerWidth = rb.getCSSNumbers(domElement, [&#x27;paddingLeft&#x27;, &#x27;paddingRight&#x27;, &#x27;width&#x27;];</pre>
+
 
     
 </dd>
@@ -5542,7 +5323,7 @@ compiled({ &#x27;users&#x27;: [&#x27;fred&#x27;, &#x27;barney&#x27;] });
             
 <hr>
 <dt>
-    <h4 class="name" id="rAFQueue"><span class="type-signature"></span>rAFQueue(fn [, inProgress] [, hiddenRaf])</h4>
+    <h4 class="name" id="rAFQueue"><span class="type-signature"></span>rAFQueue(fn [, inProgress])</h4>
     
     
 </dt>
@@ -5576,6 +5357,8 @@ compiled({ &#x27;users&#x27;: [&#x27;fred&#x27;, &#x27;barney&#x27;] });
         <th>Argument</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -5611,6 +5394,10 @@ compiled({ &#x27;users&#x27;: [&#x27;fred&#x27;, &#x27;barney&#x27;] });
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><p>the function that should be invoked</p></td>
         </tr>
@@ -5645,42 +5432,14 @@ compiled({ &#x27;users&#x27;: [&#x27;fred&#x27;, &#x27;barney&#x27;] });
             
 
             
-
-            <td class="description last"><p>Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>hiddenRaf</code></td>
-            
-
-            <td class="type">
-            
+                <td class="default">
                 
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
+                    true
                 
                 </td>
             
 
-            
-
-            <td class="description last"><p>Whether the rAF should also be used if document is hidden.</p></td>
+            <td class="description last"><p>Whether the fn should be added to an ongoing rAF or should be appended to the next rAF.</p></td>
         </tr>
 
     
@@ -5725,7 +5484,7 @@ compiled({ &#x27;users&#x27;: [&#x27;fred&#x27;, &#x27;barney&#x27;] });
 		<ul class="dummy">
 			<li>
 				<a href="utils_rafqueue.js.html">utils/rafqueue.js</a>,
-				 <a href="utils_rafqueue.js.html#sunlight-1-line-37">line 37</a>
+				 <a href="utils_rafqueue.js.html#sunlight-1-line-38">line 38</a>
 			</li>
 		</ul>
 	</dd>
@@ -5808,7 +5567,7 @@ compiled({ &#x27;users&#x27;: [&#x27;fred&#x27;, &#x27;barney&#x27;] });
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
-		on Wed Jun 27th 2018
+		on Tue Aug 21st 2018
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

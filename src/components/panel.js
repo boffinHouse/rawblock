@@ -93,7 +93,7 @@ class Panel extends rb.components._focus_component {
         } else {
             rb.rAFQueue(function () {
                 element.classList.add(rb.statePrefix + 'switched' + rb.nameSeparator + 'off');
-            });
+            }, true);
         }
     }
 

@@ -1,8 +1,10 @@
+import rb from './global-rb';
 import checkInViewport from './viewport';
+import Callbacks from '../rb_$/$_callbacks';
+import rbSymbol from './symbol';
+import events from './events';
 
-const rb = window.rb;
-const $ = rb.$;
-const intersectProp = rb.Symbol('intersect');
+const intersectProp = rbSymbol('intersect');
 const wait = Promise.resolve();
 
 rb.intersects = function(element, margin, intersect){
@@ -40,7 +42,7 @@ function checkIntersect(e){
     }
 }
 
-rb.events.special.rb_intersect = {
+events.special.rb_intersect = {
     add: function (element, fn, opts) {
         let intersectValue = element[intersectProp];
         const margin = opts && opts.margin && parseInt(opts.margin, 10) || 0;
@@ -50,7 +52,7 @@ rb.events.special.rb_intersect = {
             intersectValue = {};
             element[intersectProp] = intersectValue;
 
-            rb.events.add(element, 'rb_layoutchange', checkIntersect);
+            events.add(element, 'rb_layoutchange', checkIntersect);
         }
 
         if(!intersectValue[margin]){
@@ -62,7 +64,7 @@ rb.events.special.rb_intersect = {
                 value: checkInViewport(element, margin, intersect),
                 margin: margin,
                 intersect: intersect,
-                cbs: $.Callbacks(),
+                cbs: Callbacks(),
             };
         }
 
@@ -71,7 +73,7 @@ rb.events.special.rb_intersect = {
         if(intersectValue[margin][intersect].value){
             wait.then(function(){
                 if(intersectValue[margin][intersect].value){
-                    fn.call(element, {target: element, type: 'rb_intersect', inViewport: true, originalEvent: $.Event('initial')});
+                    fn.call(element, {target: element, type: 'rb_intersect', inViewport: true, originalEvent: events.Event('initial')});
                 }
             });
         }
@@ -106,7 +108,7 @@ rb.events.special.rb_intersect = {
 
             if(remove){
                 element[intersectProp] = null;
-                rb.events.remove(element, 'rb_layoutchange', checkIntersect);
+                events.remove(element, 'rb_layoutchange', checkIntersect);
             }
         }
     },

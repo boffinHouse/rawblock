@@ -297,7 +297,7 @@ class Scrolly extends (rb.components._childfx || Component) {
                 shouldEnter = true;
                 rb.rAFQueue(function () {
                     that.destroy();
-                });
+                }, true);
             }
         }
 

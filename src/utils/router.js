@@ -406,6 +406,7 @@ rb.Router = addLog({
         window.sessionStorage.setItem(this.storageKey, JSON.stringify({sessionHistories: this.sessionHistories}));
     },
     listen() {
+        this.last = this.current;
         this.current = this.getFragment();
 
         this.unlisten();
@@ -524,6 +525,19 @@ rb.Router = addLog({
         } else {
             this.onRouteChanged(event);
         }
+
+        setTimeout(() => {
+            const customEvent = new CustomEvent('rb_pushstate', {
+                bubbles: true,
+                cancelable: false,
+                detail: {
+                    event,
+                    state,
+                },
+            });
+
+            window.dispatchEvent(customEvent);
+        }, 0);
 
         return this;
     },

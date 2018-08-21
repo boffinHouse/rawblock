@@ -10,7 +10,6 @@ const tween = function (element, endProps, options) {
     var start = Date.now();
     var elementStyle = element.style;
     var props = {};
-    var rAF = rb.rAFQueue;
     var stop = function (clearQueue, jumpToEnd) {
         isStopped = true;
         if (jumpToEnd) {
@@ -80,7 +79,7 @@ const tween = function (element, endProps, options) {
 
         if (pos < 1) {
             if (!isStopped) {
-                rAF(step, false, true);
+                requestAnimationFrame(step);
             } else {
                 alwaysEnd();
             }
@@ -107,7 +106,7 @@ const tween = function (element, endProps, options) {
     tweenObj.props = endProps;
 
     if(!options.stopped){
-        rAF(step, false, true);
+        requestAnimationFrame(step);
     }
 
     return {tweenObj, element, step, setPos, options, duration};

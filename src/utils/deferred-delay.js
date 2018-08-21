@@ -9,7 +9,7 @@ export default function deferredDelay(delay, readOptimized){
             setTimeout(fn, 30);
         } :
         (fn) => {
-            rb.rAFQueue(fn, false, true);
+            requestAnimationFrame(fn);
         }
     ;
     const startRaf = ()=> {
