@@ -32,7 +32,7 @@ if (!rb.components._childfx) {
  *
  * <style type="text/scss">
  *     .rb-header {
- *          (at)include exportToJS((
+ *          (at)include rb-js-export((
  *              container: false,
  *              progress: 100,
  *              childSel: 'find(.header-fx)',
@@ -42,7 +42,7 @@ if (!rb.components._childfx) {
  *              padding: 20px;
  *              font-size: 16px;
  *
- *              (at)include exportToJS((
+ *              (at)include rb-js-export((
  *                  fontSize: 12,
  *                  paddingTop: 10,
  *                  paddingBottom: 10

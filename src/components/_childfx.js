@@ -23,9 +23,9 @@ const pseudoExpando = rb.Symbol('childfxPseudo');
  *              (at)include exportToJS((
  *                  top: 50,
  *                  //complicated values like transform/backgroundColor...
- *                  rotate: (
+ *                  transform: (
  *                      start: "rotate(0deg)",
- *                      end: "rotate(10deg)",
+ *                      value: "rotate(10deg)",
  *                  )
  *              ));
  *          }
@@ -80,7 +80,7 @@ class _ChildFX extends Component {
         if (typeof endValue == 'object') {
 
             Object.assign(value, endValue);
-            options.end[prop] = endValue.value || 0;
+            options.end[prop] = endValue.value || endValue.end || 0;
 
             if ('start' in endValue) {
                 value.value = endValue.start;

@@ -59,7 +59,7 @@ const docElem = rb.root;
  *              (at)include rb-js-export((
  *                  top: 50,
  *                  //complicated values like transform/backgroundColor...
- *                  rotate: (
+ *                  transform: (
  *                      start: "rotate(0deg)",
  *                      value: "rotate(10deg)",
  *                  )

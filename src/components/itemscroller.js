@@ -1056,6 +1056,7 @@ class ItemScroller extends Component {
     }
 
     _writeLayout() {
+        if(this.options.switchedOff){return;}
         var wasPos = this._pos;
 
         if(this.isWrap){
