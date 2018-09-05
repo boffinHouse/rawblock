@@ -98,8 +98,19 @@ export function rAFs(obj) {
     const nameAppendix = options && options.nameAppendix || '';
 
     args.forEach(function (fn) {
-        obj[fn + nameAppendix] = rb.rAF(obj[fn], options);
+        obj[fn + nameAppendix] = rAF(obj[fn], options);
     });
+}
+
+export function rafDecorator(options){
+    return function (t, n, descriptor) {
+
+        if(typeof descriptor.value == 'function'){
+            descriptor.value = rAF(descriptor.value, options);
+        }
+
+        return descriptor;
+    };
 }
 
 export default function(fn){
