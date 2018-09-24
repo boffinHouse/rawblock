@@ -10,7 +10,8 @@ styleguide
 visual-tests
 sources/components/**/tests/visual/visual-tests/results
 
-//npm files
+#npm files
+
 /components
 /helpers
 /utils
