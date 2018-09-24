@@ -502,7 +502,7 @@ Object.assign(Draggy.prototype, {
 
                 that._destroyPointer();
 
-                if (e.defaultPrevented || e.isPrimary === false || (isMouse && !options.useMouse) || e.button || !options.useTouch || !this.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
+                if (e.defaultPrevented || e.isPrimary === false || (isMouse && !options.useMouse) || e.button || !options.useTouch || !that.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
                     return;
                 }
 
