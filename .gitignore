@@ -21,6 +21,7 @@ sources/components/**/tests/visual/visual-tests/results
 /polyfills.js
 /_basics.scss
 /_helpers.scss
+/jsdoc
 
 
 .sass-cache
