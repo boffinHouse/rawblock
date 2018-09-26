@@ -57,6 +57,7 @@
             'test',
             'clean:publish',
             'jsdoc',
+            'rb_version',
             'babel:publish',
             'copy:publish',
         ]);
@@ -87,6 +88,7 @@
             //'csscomb',
             'svg',
             'css',
+            'rb_version',
             'eslint',
             'uglify:inline',
             'assemble:dev',

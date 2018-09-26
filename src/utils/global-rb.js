@@ -1,7 +1,10 @@
 import glob from './glob';
+import version from 'rb-version';
 
 if(!glob.rb){
-    glob.rb = {};
+    glob.rb = {
+        version,
+    };
 }
 
 const rb = glob.rb;
