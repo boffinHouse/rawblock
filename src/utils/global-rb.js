@@ -1,5 +1,5 @@
 import glob from './glob';
-import version from 'rb-version';
+import version from './rb-version';
 
 if(!glob.rb){
     glob.rb = {
