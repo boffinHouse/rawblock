@@ -50,21 +50,42 @@ export default function rAFQueue(fn, inProgress = true) {
 let rafPromise;
 
 /**
- *
- * @param fn {Function} Function that will be executed in the mutation phase
+ * If no function is given returns a promise that is resolved in the mutation phase
+ * @param [fn] {Function} Function that will be executed in the mutation phase
  * @return {Promise}
  */
 export const mutationPhase = (fn) => {
-    if(!rafPromise || rafPromise.isResolved){
+    if(fn){
+        rAFQueue(fn, true);
+    } else if(!rafPromise || rafPromise.isResolved){
         rafPromise = deferred();
         rAFQueue(rafPromise.resolve, true);
     }
 
-    if(fn){
-        rAFQueue(fn, true);
+    return rafPromise;
+};
+
+let measurePromise;
+
+/**
+ * Returns a promise that is resolved in the measure/read phase.
+ * @return {Promise<void> | Deferred}
+ */
+export const measurePhase = () => {
+    let promise;
+
+    if (isInProgress) {
+        if (!measurePromise || measurePromise.isResolved()) {
+            measurePromise = deferred();
+            setTimeout(measurePromise.resolve);
+        }
+
+        promise = measurePromise;
+    } else {
+        promise = immediatePromise;
     }
 
-    return rafPromise;
+    return promise;
 };
 
 rb.rAFQueue = rAFQueue;

@@ -1,7 +1,7 @@
 import rb from './utils/global-rb';
 import deferred from './utils/deferred';
 import rIC from './utils/request-idle-callback';
-import rAFQueue, {mutationPhase} from './utils/rafqueue';
+import rAFQueue, {mutationPhase, measurePhase} from './utils/rafqueue';
 import rAFs from './utils/rafs';
 import './utils/rafs';
 import throttle from './utils/throttle';
@@ -1756,12 +1756,32 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             return rb.getComponent(element, moduleName, initialOpts);
         }
 
+        /**
+         * Binds method names of an instance to the mutation phase
+         * @param methodsNames[] {String}
+         *
+         * @example
+         *
+         * this.rAFs('setClass', 'setAttribute'); // this.setClass('foo') is now executed async in the mutation phase
+         */
         rAFs(){
             return rAFs(this, ...arguments);
         }
 
+        /**
+         * Returns a promise that is executed in the mutation/write phase
+         * @return {Promise}
+         */
         mutationPhase(){
-            return mutationPhase();
+            return mutationPhase(...arguments);
+        }
+
+        /**
+         * Returns a promise that is executed in the measure/read phase
+         * @return {Promise}
+         */
+        measurePhase(){
+            return measurePhase();
         }
 
         /**

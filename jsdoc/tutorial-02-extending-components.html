@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>DocStrap Tutorial: 02-extending-components</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">DocStrap</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.html">rb</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-ajaxform.html">ajaxform</a></li><li><a href="module-validity.html">validity</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="rb.components._childfx.html">rb.components._childfx</a></li><li><a href="rb.components._composer_component.html">rb.components._composer_component</a></li><li><a href="rb.components._focus_component.html">rb.components._focus_component</a></li><li><a href="rb.components.accordion.html">rb.components.accordion</a></li><li><a href="rb.components.button.html">rb.components.button</a></li><li><a href="rb.components.dialog.html">rb.components.dialog</a></li><li><a href="rb.components.itemscroller.html">rb.components.itemscroller</a></li><li><a href="rb.components.panel.html">rb.components.panel</a></li><li><a href="rb.components.panelgroup.html">rb.components.panelgroup</a></li><li><a href="rb.components.popover.html">rb.components.popover</a></li><li><a href="rb.components.range.html">rb.components.range</a></li><li><a href="rb.components.scrolly.html">rb.components.scrolly</a></li><li><a href="rb.components.shrinknav.html">rb.components.shrinknav</a></li><li><a href="rb.components.sticky.html">rb.components.sticky</a></li><li><a href="rb.components.tabs.html">rb.components.tabs</a></li><li><a href="SpringAnimation.html">SpringAnimation</a></li><li><a href="SpringAnimationDemoGroup.html">SpringAnimationDemoGroup</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-01-basic-module.html">01-basic-module</a></li><li><a href="tutorial-02-extending-components.html">02-extending-components</a></li><li><a href="tutorial-03-communicating-composing-components.html">03-communicating-composing-components</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#map">map</a></li><li><a href="global.html#measurePhase">measurePhase</a></li><li><a href="global.html#mutationPhase">mutationPhase</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			<section class="tutorial-section">
+
+<header>
+    
+
+    <h2>02-extending-components</h2>
+</header>
+
+<article>
+    <h1>Extending a rawblock component (panelgroup)</h1><p>For this tutorial we will generate some kind of a select list of checkboxes or radio buttons, that opens on a button click.</p>
+<p>The final demo can be seen on <a href="https://codesandbox.io/s/vyoj82o425">codesandbox</a>.</p>
+<p>As a base we will use the <a href="rb.components.panelgroup.html">panelgroup component</a>. A similar component could also be build with the <a href="rb.components.popover.html">popover component</a></p>
+<h2>Extend the panelgroup</h2><p>First we extend the panelgroup component and register our new component class with the name <code>checklist</code>:</p>
+<pre class="prettyprint source lang-js"><code>import Panelgroup from 'rawblock/components/panelgroup';
+import rb, { Component } from 'rawblock';
+
+class CheckList extends Panelgroup {
+
+}
+
+Component.register('checklist', CheckList);
+
+export default CheckList;</code></pre><h3>Excursion: The &quot;name&quot; feature of rawblock.</h3><p>In rawblock events and the CSS classes for elements are prefixed with the component name. For example panels and panelbutton elements for the panelgroup component have the class <code>.panelgroup-panel</code>/<code>.panelgroup-btn</code>.</p>
+<p>Our checklist component changes this now to <code>.checklist-panel</code> and <code>.checklist-btn</code>. Rawblock has the concept of basically 3 different names:</p>
+<ul>
+<li>componentName: This is the name that was used to register the component and has to be used in the <code>data-module</code> attribute as also for changing options via the <code>data-*</code> attributes.</li>
+<li>htmlName (defaults to the componentName): This is the name that is used to prefix element classes and can be changed via the <code>name</code> option. This is especially useful to create new CSS components based on an unmodified normal JS component.<pre class="prettyprint source lang-html"><code>&lt;style type=&quot;text/scss&quot;>
+  .herotabs {
+      @include rb-js-export((
+          name: herotabs,
+      ));
+  }
+&lt;/style>
+&lt;div class=&quot;herotabs js-rb-click&quot; data-module=&quot;tabs&quot;>
+  &lt;button class=&quot;herotabs-btn&quot; type=&quot;button&quot; aria-expanded=&quot;true&quot;>Tab 1&lt;/button>
+  &lt;button class=&quot;herotabs-btn&quot; type=&quot;button&quot;>Tab 2&lt;/button>
+  &lt;div class=&quot;herotabs-panel-wrapper&quot;>
+      &lt;div class=&quot;herotabs-panel&quot;>Panel 1&lt;/div>
+      &lt;div class=&quot;herotabs-panel&quot;>Panel 2&lt;/div>
+  &lt;/div>
+&lt;/div>
+&lt;/div></code></pre></li>
+<li>jsName (defaults to the componentName): This is the name that is used to prefix the events which are dispatched by the component. This option can be changed using the <code>jsName</code> option. In most cases you wont change this option.</li>
+</ul>
+<p>Rawblock gives the developer some methods to deal with these dynamic naming. A developer should use the placeholder <code>{name}</code> in the event object as also inside of method calls like (<code>this.query</code>, <code>this.queryAll</code>, <code>this.$queryAll</code>, <code>this.getElementsByString</code>, <code>this.component</code>). Rawblock also gives a primitive <code>this.interpolateName</code> to deal with this.</p>
+<p>Of course you are not forced to use this in your components, but we highly recommend it.</p>
+<h2>Checklist markup</h2><p>Our component markup will now look like this. There are 3 different inerhited behavior elements in our component. (<code>checklist-btn</code>, <code>checklist-panel</code> and <code>checklist-panel-close</code>).</p>
+<pre class="prettyprint source lang-html"><code>&lt;div class=&quot;rb-checklist js-rb-click&quot; data-module=&quot;checklist&quot; role=&quot;group&quot; aria-label=&quot;Auswahlliste&quot;>
+    &lt;button class=&quot;checklist-btn&quot; type=&quot;button&quot;>
+        &lt;span class=&quot;checklist-value&quot;>Auswählen&lt;/span>
+    &lt;/button>
+    &lt;div class=&quot;checklist-panel&quot;>
+        &lt;div class=&quot;checklist-panel-box&quot;>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;radio&quot; name=&quot;foo&quot;> Option 1&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;radio&quot; name=&quot;foo&quot;> Option 2&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;radio&quot; name=&quot;foo&quot;> Option 3&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;radio&quot; name=&quot;foo&quot;> Option 4&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;radio&quot; name=&quot;foo&quot;> Option 5&lt;/label>
+        &lt;/div>
+    &lt;/div>
+&lt;/div>
+
+
+&lt;div class=&quot;rb-checklist js-rb-click&quot; data-module=&quot;checklist&quot; role=&quot;group&quot; aria-label=&quot;Auswahlliste&quot;>
+    &lt;button class=&quot;checklist-btn&quot; type=&quot;button&quot;>
+        &lt;span class=&quot;checklist-value&quot;>Auswählen&lt;/span>
+    &lt;/button>
+    &lt;div class=&quot;checklist-panel&quot;>
+        &lt;div class=&quot;checklist-panel-box&quot;>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;checkbox&quot;> Option 1&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;checkbox&quot;> Option 2&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;checkbox&quot;> Option 3&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;checkbox&quot;> Option 4&lt;/label>
+            &lt;label class=&quot;checklist-option&quot;>&lt;input type=&quot;checkbox&quot;> Option 5&lt;/label>
+            &lt;button type=&quot;button&quot; class=&quot;checklist-panel-close&quot;>close&lt;/button>
+        &lt;/div>
+    &lt;/div>
+&lt;/div></code></pre><p>We can additionally improve the behavior of the component by adding the attribute <code>aria-haspopup=&quot;true&quot;</code>. This tells rawblocks <code>button</code> component to not only run the default action on click but also if the cursor down key (with the alt key) is pressed.</p>
+<pre class="prettyprint source lang-html"><code>&lt;button class=&quot;checklist-btn&quot; type=&quot;button&quot; aria-haspopup=&quot;true&quot;>
+    &lt;span class=&quot;checklist-value&quot;>Auswählen&lt;/span>
+&lt;/button></code></pre><p>Additionally we can change some of the panelgroup default options:</p>
+<pre class="prettyprint source lang-js"><code>class CheckList extends Panelgroup {
+   static get defaults() {
+        return {
+            closeOnFocusout: true,
+            autofocusSel: 'input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;]',
+            closeOnEsc: true,
+        };
+    }
+}</code></pre><h2>Adding some custom logic to our component.</h2><p>We are now pretty close to our final component behavior.</p>
+<p>What we need to change is add the label text of the selected options into our <code>.checklist-value</code> element.</p>
+<p>To do this, we first save the current value <code>.checklist-value</code> as a default value and then check write the function to update its content.</p>
+<pre class="prettyprint source lang-js"><code>class CheckList extends Panelgroup {
+
+    //...
+
+    initItemOptions(){
+        // get the value element
+        this.valueElement = this.query('.{name}-value');
+
+        // ... and save the textContent as the defaultValue.
+        this.defaultValue = this.valueElement && this.valueElement.textContent || '';
+        this.currentValue = this.defaultValue;
+    }
+
+    static get events(){
+        return {
+            // run updateValue everytime a checkbox/rawdio button changes
+            'change:matches(input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;])': 'updateValue',
+        };
+    }
+
+    updateValue(){
+        // get the textContent of all checked options
+        const currentValue = this.queryAll(':checked')
+                .map(CheckList.getLabelContent).join(', ') ||
+            this.defaultValue
+        ;
+
+        // if it has changed update the value element
+        if(currentValue != this.currentValue){
+            this.currentValue = currentValue;
+            this._updateValue();
+        }
+    }
+
+    static getLabelContent(input){
+        return input.closest('label, li').textContent;
+    }
+
+    _updateValue(){
+        if(this.valueElement){
+            this.valueElement.innerText = this.currentValue;
+        }
+
+        //trigger checklistvaluechanged
+        this.trigger('valuechanged');
+    }
+}</code></pre><p>Additionally we also want to automatically close the list if a radio button, but not a checkbox was changed. To do this we refactor the change handler. The panelgroup gives us a nice method called <a href="rb.components.panelgroup.html#closeAll__anchor"><code>closeAll</code></a> to do exactly this.</p>
+<pre class="prettyprint source lang-js"><code>class CheckList extends Panelgroup {
+
+    static get defaults() {
+        return {
+            closeOnFocusout: true,
+            autofocusSel: 'input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;]',
+            closeOnEsc: true,
+        };
+    }
+
+    static get events(){
+        return {
+            'change:matches(input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;])': function(e, _superHandler){
+                if(e.target.type == 'radio'){
+                    this.closeAll();
+                }
+
+                this.updateValue();
+            },
+        };
+    }
+}</code></pre><p>The event handler is not only passed the event object, but also a function, that will invoke a possible overridden handler defined in a super class.</p>
+<h3>A11y fixes</h3><p>Unfortunately the <code>change</code> event is also dispatched by using the keyboard to navigate in the radio group. To only close the list if it was handled by mouse we add a <code>mouseup</code> listener.</p>
+<p>Our final component JS looks now like this:</p>
+<pre class="prettyprint source lang-js"><code>import Panelgroup from 'rawblock/components/panelgroup';
+import rb, { Component } from 'rawblock';
+
+class CheckList extends Panelgroup {
+
+    static get defaults() {
+        return {
+            closeOnFocusout: true,
+            autofocusSel: 'input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;]',
+            closeOnEsc: true,
+        };
+    }
+
+    static get events(){
+        return {
+            'mouseup:closest(.{name}-panel)': function(_e, _superHandler){
+                this._allowOptionClose = true;
+
+                clearTimeout(this._allowOptionCloseTimer);
+                this._allowOptionCloseTimer = setTimeout(()=>{
+                    this._allowOptionClose = false;
+                }, 9);
+            },
+            'change:matches(input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;])': function(e, _superHandler){
+                if(this._allowOptionClose && e.target.type == 'radio'){
+                    this.closeAll();
+                }
+
+                this.updateValue();
+            },
+        };
+    }
+
+    static getLabelContent(input){
+        return input.closest('label, li').textContent;
+    }
+
+    constructor(/*element, initialDefaults*/){
+        super(...arguments);
+
+        this.rAFs('_updateValue');
+
+        this.initItemOptions();
+        this.updateValue();
+    }
+
+    initItemOptions(){
+        this.valueElement = this.query('.{name}-value');
+
+        this.defaultValue = this.valueElement && this.valueElement.textContent || '';
+        this.currentValue = this.defaultValue;
+    }
+
+    updateValue(){
+        const currentValue = this.queryAll(':checked')
+                .map(CheckList.getLabelContent).join(', ') ||
+            this.defaultValue
+        ;
+
+        if(currentValue != this.currentValue){
+            this.currentValue = currentValue;
+            this._updateValue();
+        }
+    }
+
+    _updateValue(){
+        if(this.valueElement){
+            this.valueElement.innerText = this.currentValue;
+        }
+        this.trigger('valuechanged');
+    }
+}
+
+Component.register('checklist', CheckList);
+
+export default CheckList;</code></pre><p>As a small refinement you can now add a simple animation to the component.</p>
+<pre class="prettyprint source lang-scss"><code>.rb-checklist {
+    @include rb-js-export((
+        animation: slide,
+    ));
+}</code></pre><p><a href="https://codesandbox.io/s/vyoj82o425">final codesandbox demo</a>.</p>
+</article>
+
+</section>
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Sun Mar 24th 2019
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

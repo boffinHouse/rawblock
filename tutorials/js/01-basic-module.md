@@ -25,7 +25,7 @@ The functional childs should have a class prefixed with the component name (html
 ```js
 import { Component } from 'rawblock';
 
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
 
     // The static defaults getter defines the default options of our component.
     static get defaults(){
@@ -81,7 +81,7 @@ First we define the threshold as `topThreshold` in our `defaults` getter.
 ```js
 import { Component } from 'rawblock';
 
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
 
     static get defaults(){
         return {
@@ -109,7 +109,7 @@ import rb from 'rawblock';
 rb.components.slimheader.defaults.topThreshold = 70;
 
 //create a new component with changed options and use this instead (Note: rawblock will automatically merge/mixin your defaults object)
-class SuperSlimHeader extends rb.components.slimheader {
+export default class SuperSlimHeader extends rb.components.slimheader {
     static get defaults(){
         return {
             topThreshold: 80
@@ -161,7 +161,7 @@ Due to the fact that the threshold is heavily style/layout related it might make
 By extending/overriding the `setOption` method it is possible to react to option changes:
 
 ```js
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
     setOption(name, value, isSticky){
         super.setOption(name, value, isSticky);
 
@@ -180,7 +180,7 @@ Due to the fact, that the `window` object remains even if our component is destr
 
 
 ```js
-class SuperSlimHeader extends rb.components.slimheader {
+export default class SuperSlimHeader extends rb.components.slimheader {
 
     constructor(/*element, initialDefaults*/){
         super(...arguments);
@@ -208,7 +208,7 @@ But due to the fact that the `scroll` event happens outside of the component eve
 
 
 ```js
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
 
     static get events(){
         return {
@@ -240,7 +240,7 @@ There are 4 different kinds of event options:
 Now we can fill in some logic to add a class as soon as the header reaches our threshold.
 
 ```js
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
 
     static get defaults(){
         return {
@@ -282,7 +282,7 @@ Performance considerations
 To fix the first point we will add a `isSlim` property and only change the class if it has changed
 
 ```js
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
     //.....
 
     constructor(/*element, initialDefaults*/){
@@ -309,7 +309,7 @@ To fix the second point rawblock offers a method called `this.rAFs`. This method
 Due to the fact, that getting `document.scrollingElement.scrollTop` is a layout read we need to separate it from our layout write `classList.toggle`.
 
 ```js
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
     //.....
 
     constructor(/*element, initialDefaults*/){
@@ -340,26 +340,45 @@ class SlimHeader extends Component {
 For small DOM changes rawblock also supports jQuery-like functions, that are called in a rAF. To these methods the string "Raf" is appended. In our case the method `toggleClassRaf` can be used:
 
 ```js
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
     //...
     calculateState(){
-            const shouldBeSlim = this.options.topThreshold < document.scrollingElement.scrollTop;
+        const shouldBeSlim = this.options.topThreshold < document.scrollingElement.scrollTop;
 
-            if(this.isSlim != shouldBeSlim){
-                this.isSlim = shouldBeSlim;
-                this.$element.toggleClassRaf('is-slim', this.isSlim);
-            }
+        if(this.isSlim != shouldBeSlim){
+            this.isSlim = shouldBeSlim;
+            this.$element.toggleClassRaf('is-slim', this.isSlim);
         }
     }
 }
 ```
+
+As a more modern way rawblocks also adds the method `this.mutationPhase` which returns a promise to be likely used in an async method.
+
+```js
+export default class SlimHeader extends Component {
+    //...
+    async calculateState(){
+        const shouldBeSlim = this.options.topThreshold < document.scrollingElement.scrollTop;
+
+        if(this.isSlim != shouldBeSlim){
+            this.isSlim = shouldBeSlim;
+            
+            await this.mutationPhase();
+            
+            this.element.classList.toggle('is-slim', this.isSlim);
+        }
+    }
+}
+```
+
 
 Point 3. could be fixed by using `rb.throttle`. But I assume that in our refactored case the `calculateState` is so light, that throttling won't affect the performance too much.
 
 ```js
 import rb, { Component } from 'rawblock';
 
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
     //.....
 
     constructor(/*element, initialDefaults*/){
@@ -399,7 +418,7 @@ Our [final improved code](https://codesandbox.io/s/3q51m1pxjm) could look like t
 ```js
 import rb, { Component } from 'rawblock';
 
-class SlimHeader extends Component {
+export default class SlimHeader extends Component {
 
     static get defaults(){
         return {
@@ -432,15 +451,21 @@ class SlimHeader extends Component {
         }
     }
 
-    calculateState(){
+    async calculateState(){
         const {switchedOff, topThreshold} = this.options;
         //if it is switchedOff it is never slim
         const shouldBeSlim = !switchedOff && topThreshold < document.scrollingElement.scrollTop;
 
         if(this.isSlim != shouldBeSlim){
             this.isSlim = shouldBeSlim;
-            this.$element.rbToggleStateRaf('slim', this.isSlim);
-            this.triggerRaf();
+            
+            await this.mutationPhase();
+            
+            this.$element.rbToggleState('slim', this.isSlim);
+            
+            // trigger event after render was complete and we are in read mode again (if you need to in form other scripts earlier skip measurePhase)
+            await this.measurePhase();
+            this.trigger();
         }
     }
 }
