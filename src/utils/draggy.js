@@ -145,17 +145,30 @@ Object.assign(Draggy.prototype, {
         this.element.style.touchAction = style;
     },
     hasRelevantChange() {
-        let horizontalDif, verticalDif;
         const options = this.options;
         let ret = true;
 
         if (options.horizontal != options.vertical) {
-            horizontalDif = Math.abs(this.curPos.x - this.lastPos.x);
-            verticalDif = Math.abs(this.curPos.y - this.lastPos.y);
+            const dif = {
+                horizontal: {
+                    cur: Math.abs(this.curPos.x - this.lastPos.x),
+                    abs: Math.abs(this.curPos.x - this.startPos.x)
+                },
+                vertical: {
+                    cur: Math.abs(this.curPos.y - this.lastPos.y),
+                    abs: Math.abs(this.curPos.y - this.startPos.y),
+                },
+            };
+            const [testOrientation, oppositeOrientation] = options.horizontal ?
+                ['horizontal', 'vertical'] :
+                ['vertical', 'horizontal'];
 
-            ret = (options.horizontal && horizontalDif * 0.8 > verticalDif) || (options.vertical && verticalDif * 0.8 > horizontalDif);
+            ret = dif[testOrientation].cur * 0.8 > dif[oppositeOrientation].cur ||
+                (dif[testOrientation].cur < dif[testOrientation].abs &&
+                dif[testOrientation].abs * 0.85 > dif[oppositeOrientation].abs);
 
-            if (!ret && ((horizontalDif < 2 && verticalDif < 2))) {
+
+            if (!ret && dif.horizontal.cur < 2 && dif.vertical.cur < 2 && dif.horizontal.abs < 9 && dif.vertical.abs < 9) {
                 ret = 'undecided';
             }
         }
