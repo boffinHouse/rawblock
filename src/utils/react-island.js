@@ -18,9 +18,9 @@ export default function createRbReactIsland(name, ReactComponent, defaults = {})
             this.elemId = this.getId(true);
             this.providerStore = getProviderStore();
 
-            this.render();
+            this.render = throttle(this.render, {delay: 30, write: true});
 
-            this.render = throttle(this.render, {delay: 0});
+            this.render();
         }
 
         setOption() {
@@ -40,10 +40,8 @@ export default function createRbReactIsland(name, ReactComponent, defaults = {})
             );
         }
 
-        async render() {
+        render() {
             const {Provider, store} = this.providerStore;
-
-            await this.mutationPhase();
 
             ReactDOM.render(Provider && store ?
                 (
