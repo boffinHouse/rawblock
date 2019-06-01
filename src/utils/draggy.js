@@ -49,7 +49,7 @@ function Draggy(element, options) {
 
     this.touchOpts = this.options.usePassiveEventListener && supportsTouchAction ?
         {passive: true} :
-        false
+        {passive: false}
     ;
 
     this.reset();
@@ -473,7 +473,7 @@ Object.assign(Draggy.prototype, {
         this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
 
         if(hasIOSScrollBug){
-            window.addEventListener('touchmove', this.noop);
+            window.addEventListener('touchmove', this.noop, {passive: false});
         }
 
         if(this.options.catchMove){
@@ -560,7 +560,7 @@ Object.assign(Draggy.prototype, {
         }
 
         if(hasIOSScrollBug){
-            window.removeEventListener('touchmove', this.noop);
+            window.removeEventListener('touchmove', this.noop, {passive: false});
         }
 
         this.element.removeEventListener('click', this._onclick, true);
