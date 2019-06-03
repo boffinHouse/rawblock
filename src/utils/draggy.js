@@ -139,7 +139,7 @@ Object.assign(Draggy.prototype, {
             } else if(!this.options.vertical){
                 style = 'pan-y';
             } else {
-                style = 'none';
+                style = 'pan-x pan-y';
             }
         }
 
@@ -476,6 +476,7 @@ Object.assign(Draggy.prototype, {
                 }
 
                 if(hasIOSScrollBug){
+                    e.preventDefault();
                     window.addEventListener('touchmove', this.noop, {passive: false});
                 }
 
