@@ -102,6 +102,7 @@ Draggy._defaults = {
     usePointerOnActive: false,
     // catches start also with with touchmove event instead of touchstart only.
     catchMove: false,
+    handleDefaultPrevented: false,
     // velocityBase moved pixel in 333
     velocityBase: 333,
 };
@@ -376,7 +377,9 @@ Object.assign(Draggy.prototype, {
 
         this._onmousedown = (e)=> {
             this._destroyMouse();
-            if (e.defaultPrevented || e.button || !this.options.useMouse || !this.isAllowedForType('mouse') || !this.allowedDragTarget(e.target)) {
+            const { handleDefaultPrevented, useMouse } = this.options;
+
+            if ((e.defaultPrevented && !handleDefaultPrevented) || e.button || !useMouse || !this.isAllowedForType('mouse') || !this.allowedDragTarget(e.target)) {
                 return;
             }
 
@@ -438,6 +441,10 @@ Object.assign(Draggy.prototype, {
                 this.element.removeEventListener('touchmove', move, this.touchOpts);
                 this.element.removeEventListener('touchend', end, this.touchOpts);
                 this.element.removeEventListener('touchcancel', end, this.touchOpts);
+
+                if(hasIOSScrollBug){
+                    window.removeEventListener('touchmove', this.noop, {passive: false});
+                }
             };
         }
 
@@ -447,9 +454,11 @@ Object.assign(Draggy.prototype, {
                     return;
                 }
 
+                const { handleDefaultPrevented, useTouch } = this.options;
+
                 this._destroyTouch();
 
-                if (e.defaultPrevented || !this.options.useTouch || !this.isAllowedForType('touch') || !e.touches[0] || !this.allowedDragTarget(e.target)) {
+                if ((e.defaultPrevented && !handleDefaultPrevented)|| !useTouch || !this.isAllowedForType('touch') || !e.touches[0] || !this.allowedDragTarget(e.target)) {
                     return;
                 }
 
@@ -466,15 +475,15 @@ Object.assign(Draggy.prototype, {
                     this.element.removeEventListener('touchmove', this._ontouchstart, this.touchOpts);
                 }
 
+                if(hasIOSScrollBug){
+                    window.addEventListener('touchmove', this.noop, {passive: false});
+                }
+
                 this.start(e.touches[0], e);
             };
         }
 
         this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
-
-        if(hasIOSScrollBug){
-            window.addEventListener('touchmove', this.noop, {passive: false});
-        }
 
         if(this.options.catchMove){
             this.element.addEventListener('touchmove', this._ontouchstart, this.touchOpts);
@@ -512,10 +521,11 @@ Object.assign(Draggy.prototype, {
                 }
 
                 const isMouse = e.pointerType == 'mouse';
+                const { handleDefaultPrevented, useTouch, useMouse } = this.options;
 
                 that._destroyPointer();
 
-                if (e.defaultPrevented || e.isPrimary === false || (isMouse && !options.useMouse) || e.button || !options.useTouch || !that.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
+                if ((e.defaultPrevented && !handleDefaultPrevented) || e.isPrimary === false || (isMouse && !useMouse) || e.button || !useTouch || !that.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
                     return;
                 }
 
