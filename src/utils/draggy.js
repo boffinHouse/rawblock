@@ -257,9 +257,11 @@ Object.assign(Draggy.prototype, {
             return;
         }
 
-        if (options.preventMove && this.relevantChange != 'undecided' && !supportsPassiveEventListener) {
+        if (options.preventMove && this.relevantChange != 'undecided' &&
+            (!supportsPassiveEventListener || !options.usePassiveEventListener)) {
             evt.preventDefault();
         }
+
         if(options.stopPropagation){
             evt.stopImmediatePropagation();
         }
@@ -273,9 +275,9 @@ Object.assign(Draggy.prototype, {
     },
     end(pos, evt) {
         const options = this.options;
-        let { useSyntheticClick, preventClick } = options;
+        let { useSyntheticClick, preventClick, horizontal, vertical } = options;
 
-        useSyntheticClick = useSyntheticClick && hasIOSScrollBug;
+        useSyntheticClick = useSyntheticClick && hasIOSScrollBug && horizontal && vertical;
 
         clearInterval(this._velocityTimer);
         this.velocitySnapShot();
@@ -426,7 +428,7 @@ Object.assign(Draggy.prototype, {
     },
     setupTouch() {
         let identifier;
-        const { useSyntheticClick } = this.options;
+        let { useSyntheticClick, horizontal, vertical } = this.options;
         const getTouch = function(touches){
             let i, len, touch;
 
@@ -498,13 +500,15 @@ Object.assign(Draggy.prototype, {
                     this.element.removeEventListener('touchmove', this._ontouchstart, this.touchOpts);
                 }
 
-                if (hasIOSScrollBug && useSyntheticClick) {
+                if (useSyntheticClick) {
                     e.preventDefault();
                 }
 
                 this.start(e.touches[0], e);
             };
         }
+
+        useSyntheticClick = hasIOSScrollBug && useSyntheticClick && horizontal && vertical;
 
         this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
 
