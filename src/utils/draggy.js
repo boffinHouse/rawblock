@@ -74,57 +74,61 @@ function Draggy(element, options) {
     });
 }
 
-Draggy._defaults = {
-    move: noop,
-    start: noop,
-    end: noop,
-    // set to false to allow only vertical drag
-    horizontal: true,
-    // set to true to allow only vertical drag
-    vertical: true,
-    // selector
-    exclude: false,
-    excludeNothing: false,
-    //prevents mouse click, if a drag happend
-    preventClick: true,
-    //prevents touchMove events if currently dragging.
-    preventMove: true,
-    //allow drag by touch (includes pointer events)
-    useTouch: true,
-    //allow drag by mouse
-    useMouse: true,
-    //handle mouse events in pointer events, if false uses oldSchool mouseevents.
-    usePointerMouse: false,
-    // stops event propagation, improves nested drags
-    stopPropagation: true,
-    // uses passive event listener
-    usePassiveEventListener: true,
-    usePointerOnActive: false,
-    // catches start also with with touchmove event instead of touchstart only.
-    catchMove: false,
-    useSyntheticClick: true,
-    handleDefaultPrevented: false,
-    // velocityBase moved pixel in 333
-    velocityBase: 333,
-};
+Object.assign(Draggy, {
+    _defaults: {
+        move: noop,
+        start: noop,
+        end: noop,
+        // set to false to allow only vertical drag
+        horizontal: true,
+        // set to true to allow only vertical drag
+        vertical: true,
+        // selector
+        exclude: false,
+        excludeNothing: false,
+        //prevents mouse click, if a drag happend
+        preventClick: true,
+        //prevents touchMove events if currently dragging.
+        preventMove: true,
+        //allow drag by touch (includes pointer events)
+        useTouch: true,
+        //allow drag by mouse
+        useMouse: true,
+        //handle mouse events in pointer events, if false uses oldSchool mouseevents.
+        usePointerMouse: false,
+        // stops event propagation, improves nested drags
+        stopPropagation: true,
+        // uses passive event listener
+        usePassiveEventListener: true,
+        usePointerOnActive: false,
+        // catches start also with with touchmove event instead of touchstart only.
+        catchMove: false,
+        // better performance on ios only if we have vertical: true and horizontal: true
+        useSyntheticClick: true,
+        handleDefaultPrevented: false,
+        // velocityBase moved pixel in 333
+        velocityBase: 333,
+    },
+    supportsTouchAction,
+    constructs: [],
+    extend: function(defaults, construct, proto){
+        Draggy.constructs.push(construct);
 
-Draggy.constructs = [];
-Draggy.extend = function(defaults, construct, proto){
-    Draggy.constructs.push(construct);
+        Object.entries(proto).forEach(([name, prop]) => {
+            if(typeof Draggy.prototype[name] == 'function'){
+                prop.superFn = Draggy.prototype[name];
 
-    Object.entries(proto).forEach(([name, prop]) => {
-        if(typeof Draggy.prototype[name] == 'function'){
-            prop.superFn = Draggy.prototype[name];
+                Draggy.prototype[name] = prop;
 
-            Draggy.prototype[name] = prop;
+            } else {
+                Draggy.prototype[name] = prop;
+            }
+        });
 
-        } else {
-            Draggy.prototype[name] = prop;
-        }
-    });
+        Object.assign(Draggy._defaults, defaults);
+    },
+});
 
-    Object.assign(Draggy._defaults, defaults);
-};
 
 Object.assign(Draggy.prototype, {
     setTouchAction(){
@@ -175,7 +179,7 @@ Object.assign(Draggy.prototype, {
             }
         }
 
-        return ret;
+        return true || ret;
     },
     reset() {
         this.isType = '';
