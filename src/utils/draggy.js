@@ -406,7 +406,6 @@ Object.assign(Draggy.prototype, {
     },
     setupTouch() {
         let identifier;
-        let { horizontal, vertical } = this.options;
         const getTouch = function(touches){
             let i, len, touch;
 
