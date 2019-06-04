@@ -102,6 +102,7 @@ Draggy._defaults = {
     usePointerOnActive: false,
     // catches start also with with touchmove event instead of touchstart only.
     catchMove: false,
+    useSyntheticClick: true,
     handleDefaultPrevented: false,
     // velocityBase moved pixel in 333
     velocityBase: 333,
@@ -214,15 +215,19 @@ Object.assign(Draggy.prototype, {
         this._velPos = this.curPos;
         this.velTime = Date.now();
     },
-    start(pos, evt) {
-        const options = this.options;
-
-        this.startPos = {
+    getPos(pos) {
+        return {
             x: 'draggyX' in pos ? pos.draggyX : pos.clientX,
             y: 'draggyY' in pos ? pos.draggyY :pos.clientY,
             pX: pos.pageX,
             pY: pos.pageY,
+            time: Date.now(),
         };
+    },
+    start(pos, evt) {
+        const options = this.options;
+
+        this.startPos = this.getPos(pos);
         this.movedPos = {
             x: 0,
             y: 0,
@@ -245,12 +250,7 @@ Object.assign(Draggy.prototype, {
         const options = this.options;
 
         this.lastPos = this.curPos;
-        this.curPos = {
-            x: 'draggyX' in pos ? pos.draggyX : pos.clientX,
-            y: 'draggyY' in pos ? pos.draggyY :pos.clientY,
-            pX: pos.pageX,
-            pY: pos.pageY,
-        };
+        this.curPos = this.getPos(pos);
 
         if (this.relevantChange !== true && !(this.relevantChange = this.hasRelevantChange())) {
             this.end(pos, evt);
@@ -273,7 +273,9 @@ Object.assign(Draggy.prototype, {
     },
     end(pos, evt) {
         const options = this.options;
-        let preventClick = options.preventClick;
+        let { useSyntheticClick, preventClick } = options;
+
+        useSyntheticClick = useSyntheticClick && hasIOSScrollBug;
 
         clearInterval(this._velocityTimer);
         this.velocitySnapShot();
@@ -303,13 +305,37 @@ Object.assign(Draggy.prototype, {
 
         options.end(this, evt);
 
-        if((Math.abs(this.lastPos.x - this.startPos.x) > 15 || Math.abs(this.lastPos.y - this.startPos.y) > 15)){
+        if((Math.abs(this.movedPos.x) > 15 || Math.abs(this.movedPos.y) > 15)){
             if(options.stopPropagation){
                 evt.stopImmediatePropagation();
             }
             if (preventClick) {
                 this.preventClick(evt);
             }
+        } else if (useSyntheticClick && evt.type == 'touchend' && Date.now() - this.startPos.time < 400) {
+            const event = new MouseEvent('click', {
+                cancelable: true,
+                bubbles: true,
+                shiftKey: false,
+                altKey: false,
+                ctrlKey: false,
+                metaKey: false,
+                button: 0,
+                which: 1,
+                clientX: pos.clientX,
+                clientY: pos.clientY,
+                pageX: pos.pageX,
+                pageY: pos.pageY,
+                screenX: pos.screenX,
+                screenY: pos.screenY,
+            });
+
+            evt.preventDefault();
+
+            pos.target.dispatchEvent(event);
+
+            // prevent possible second click event
+            this.preventClick();
         }
         this.reset();
     },
@@ -321,7 +347,7 @@ Object.assign(Draggy.prototype, {
             this.isClickPrevented = false;
         }, 333);
 
-        if (evt && evt.preventDefault && (!supportsPassiveEventListener || (evt.type != 'touchend' && evt.type != 'pointerup'))) {
+        if (evt && evt.preventDefault) {
             evt.preventDefault();
         }
     },
@@ -400,6 +426,7 @@ Object.assign(Draggy.prototype, {
     },
     setupTouch() {
         let identifier;
+        const { useSyntheticClick } = this.options;
         const getTouch = function(touches){
             let i, len, touch;
 
@@ -439,12 +466,8 @@ Object.assign(Draggy.prototype, {
         if(!this._destroyTouch){
             this._destroyTouch = () => {
                 this.element.removeEventListener('touchmove', move, this.touchOpts);
-                this.element.removeEventListener('touchend', end, this.touchOpts);
+                this.element.removeEventListener('touchend', end);
                 this.element.removeEventListener('touchcancel', end, this.touchOpts);
-
-                if(hasIOSScrollBug){
-                    window.removeEventListener('touchmove', this.noop, {passive: false});
-                }
             };
         }
 
@@ -468,16 +491,15 @@ Object.assign(Draggy.prototype, {
                 this.isTechnicalType = 'touch';
 
                 this.element.addEventListener('touchmove', move, this.touchOpts);
-                this.element.addEventListener('touchend', end, this.touchOpts);
+                this.element.addEventListener('touchend', end);
                 this.element.addEventListener('touchcancel', end, this.touchOpts);
 
                 if(this.options.catchMove){
                     this.element.removeEventListener('touchmove', this._ontouchstart, this.touchOpts);
                 }
 
-                if(hasIOSScrollBug){
+                if (hasIOSScrollBug && useSyntheticClick) {
                     e.preventDefault();
-                    window.addEventListener('touchmove', this.noop, {passive: false});
                 }
 
                 this.start(e.touches[0], e);
@@ -485,6 +507,10 @@ Object.assign(Draggy.prototype, {
         }
 
         this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
+
+        if(hasIOSScrollBug && !useSyntheticClick){
+            window.addEventListener('touchmove', this.noop, {passive: false});
+        }
 
         if(this.options.catchMove){
             this.element.addEventListener('touchmove', this._ontouchstart, this.touchOpts);
