@@ -2,6 +2,7 @@ import rb from './global-rb';
 import rIC from './request-idle-callback';
 import rAFQueue from './rafqueue';
 
+const wait = Promise.resolve();
 
 /**
  * Throttles a given function
@@ -9,10 +10,11 @@ import rAFQueue from './rafqueue';
  * @param {function} fn - The function to be throttled.
  * @param {object} [options] - options for the throttle.
  *  @param {object} options.that=null -  the context in which fn should be called.
- *  @param {boolean} options.write=false -  wether fn is used to write layout.
- *  @param {boolean} options.read=false -  wether fn is used to read layout.
+ *  @param {boolean} options.write=false -  Whether fn is used to write layout.
+ *  @param {boolean} options.read=false -  Whether fn is used to read layout.
  *  @param {number} options.delay=200 -  the throttle delay.
- *  @param {boolean} options.unthrottle=false -  Wether function should be invoked directly.
+ *  @param {boolean} options.unthrottle=false -  Whether function should be invoked directly.
+ *  @param {boolean} options.micro=false -  Whether function should be in a micro task if called with a delay of 0.
  * @returns {function} the throttled function.
  */
 export default function throttle(fn, options) {
@@ -58,11 +60,18 @@ export default function throttle(fn, options) {
             if (delay < 0) {
                 delay = 0;
             }
-            if(!delay && (options.read || options.write)){
-                getAF();
-            } else {
-                setTimeout(getAF, delay);
+
+            if(!delay){
+                if (options.read || options.write) {
+                    getAF();
+                    return;
+                } else if (options.micro) {
+                    wait.then(getAF);
+                    return;
+                }
             }
+
+            setTimeout(getAF, delay);
         }
     };
 

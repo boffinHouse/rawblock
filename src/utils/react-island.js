@@ -2,7 +2,7 @@ import { Component } from '../core';
 /* eslint-disable no-unused-vars */
 import React  from 'react';
 import ReactDOM from 'react-dom';
-import { getProviderStore } from './redux-store';
+import { getStoreNProvider } from './redux-store';
 import throttle from './throttle';
 
 
@@ -16,7 +16,7 @@ export default function createRbReactIsland(name, ReactComponent, defaults = {})
             super(...arguments);
 
             this.elemId = this.getId(true);
-            this.providerStore = getProviderStore();
+            this.providerStore = getStoreNProvider();
 
             this.render = throttle(this.render, {delay: 30, write: true});
 

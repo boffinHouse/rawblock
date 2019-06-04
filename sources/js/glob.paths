@@ -5,3 +5,5 @@
 !../../src/components/**/*-spec.js
 !../../src/utils/rb_elemresize.js
 !../../src/utils/rb_packageloader.js
+!../../src/components/_*-dummy.js
+!../../src/utils/react-island.js
