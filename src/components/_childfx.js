@@ -189,7 +189,7 @@ class _ChildFX extends Component {
                         if (!retFn) {
                             /*jshint loopfunc: true */
                             retFn = function () { // eslint-disable-line no-loop-func
-                                var value = (animOptions.end[prop][i2] - option.value[i2]) * eased + option.value[i2];
+                                let value = (animOptions.end[prop][i2] - option.value[i2]) * eased + option.value[i2];
                                 i2++;
                                 if (prop == 'backgroundColor') {
                                     value = Math.round(value);

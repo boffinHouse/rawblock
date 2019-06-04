@@ -103,8 +103,6 @@ Object.assign(Draggy, {
         usePointerOnActive: false,
         // catches start also with with touchmove event instead of touchstart only.
         catchMove: false,
-        // better performance on ios only if we have vertical: true and horizontal: true
-        useSyntheticClick: true,
         handleDefaultPrevented: false,
         // velocityBase moved pixel in 333
         velocityBase: 333,
@@ -279,9 +277,8 @@ Object.assign(Draggy.prototype, {
     },
     end(pos, evt) {
         const options = this.options;
-        let { useSyntheticClick, preventClick, horizontal, vertical } = options;
+        let { preventClick } = options;
 
-        useSyntheticClick = useSyntheticClick && hasIOSScrollBug && horizontal && vertical;
 
         clearInterval(this._velocityTimer);
         this.velocitySnapShot();
@@ -318,31 +315,8 @@ Object.assign(Draggy.prototype, {
             if (preventClick) {
                 this.preventClick(evt);
             }
-        } else if (useSyntheticClick && evt.type == 'touchend' && Date.now() - this.startPos.time < 400) {
-            const event = new MouseEvent('click', {
-                cancelable: true,
-                bubbles: true,
-                shiftKey: false,
-                altKey: false,
-                ctrlKey: false,
-                metaKey: false,
-                button: 0,
-                which: 1,
-                clientX: pos.clientX,
-                clientY: pos.clientY,
-                pageX: pos.pageX,
-                pageY: pos.pageY,
-                screenX: pos.screenX,
-                screenY: pos.screenY,
-            });
-
-            evt.preventDefault();
-
-            pos.target.dispatchEvent(event);
-
-            // prevent possible second click event
-            this.preventClick();
         }
+
         this.reset();
     },
     preventClick(evt) {
@@ -432,7 +406,7 @@ Object.assign(Draggy.prototype, {
     },
     setupTouch() {
         let identifier;
-        let { useSyntheticClick, horizontal, vertical } = this.options;
+        let { horizontal, vertical } = this.options;
         const getTouch = function(touches){
             let i, len, touch;
 
@@ -504,20 +478,14 @@ Object.assign(Draggy.prototype, {
                     this.element.removeEventListener('touchmove', this._ontouchstart, this.touchOpts);
                 }
 
-                if (useSyntheticClick) {
-                    e.preventDefault();
-                }
-
                 this.start(e.touches[0], e);
             };
         }
 
-        useSyntheticClick = hasIOSScrollBug && useSyntheticClick && horizontal && vertical;
-
         this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
 
-        if(hasIOSScrollBug && !useSyntheticClick){
-            window.addEventListener('touchmove', this.noop, {passive: false});
+        if(hasIOSScrollBug && !this.element.ontouchmove){
+            this.element.ontouchmove = this.noop;
         }
 
         if(this.options.catchMove){
@@ -604,8 +572,8 @@ Object.assign(Draggy.prototype, {
             this.element.removeEventListener('mousedown', this._onmousedown);
         }
 
-        if(hasIOSScrollBug){
-            window.removeEventListener('touchmove', this.noop, {passive: false});
+        if(hasIOSScrollBug && this.element.ontouchmove == this.noop){
+            this.element.ontouchmove = '';
         }
 
         this.element.removeEventListener('click', this._onclick, true);
