@@ -1,6 +1,6 @@
 module.exports = {
     options: {
-        presets: ['es2015-loose', 'es2016', 'es2017', 'stage-2'],
+        presets: ['react', 'es2015-loose', 'es2016', 'es2017', 'stage-2'],
         plugins: [
             ['transform-runtime', {
                 'polyfill': false,
