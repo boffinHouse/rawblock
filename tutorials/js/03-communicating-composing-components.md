@@ -1,4 +1,4 @@
-# Commmunicating between components and compsing components
+# Commmunicating between components and composing components
 
 For this tutorial we will build two very simple components. The first component is a native select element that controls the `isOpen` state of panels.
 
