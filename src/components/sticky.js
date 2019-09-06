@@ -184,12 +184,16 @@ class Sticky extends (rb.components._childfx || Component) {
 
         if (options.container) {
             this.container = this.element[options.container] || this.element[isContainerAncestor[options.container]] || this.element.closest(this.interpolateName(options.container));
-            if (this.container == document.body || this.container == docElem) {
-                this.container = null;
-            } else if (this.container) {
+            // if (this.container == document.body || this.container == docElem) {
+            //     this.container = null;
+            // } else
+            //
+            if (this.container) {
                 this.isContainerScroll = !!isContainerScroll[getCss(this.container, 'overflowY', false, this.containerStyles) || getCss(this.container, 'overflow', false, this.containerStyles)];
                 this.containerStyles = rb.getStyles(this.container);
             }
+        } else {
+            this.container = document.body;
         }
 
         this.calcedOffset = this.offset;
@@ -208,15 +212,16 @@ class Sticky extends (rb.components._childfx || Component) {
         }
 
         if(!this.options.scrollContainer || !this.scrollingElement){
-            if (this.isContainerScroll) {
-                this.$scrollEventElem = this.$container;
-                curScrollingEventElement = this.$container.get(0);
-                this.scrollingElement = curScrollingEventElement;
-            } else {
-                curScrollingEventElement = window;
-                this.$scrollEventElem = $(curScrollingEventElement);
-                this.scrollingElement = document.scrollingElement;
-            }
+            // if (this.isContainerScroll) {
+            //     this.$scrollEventElem = this.$container;
+            //     curScrollingEventElement = this.$container.get(0);
+            //     this.scrollingElement = curScrollingEventElement;
+            // } else {
+            //
+            // }
+            curScrollingEventElement = window;
+            this.$scrollEventElem = $(curScrollingEventElement);
+            this.scrollingElement = document.scrollingElement;
         }
 
         if(oldEventElement != curScrollingEventElement){
@@ -264,7 +269,7 @@ class Sticky extends (rb.components._childfx || Component) {
             boxes.maxFixedPos = elemOffset - this.calcedOffset - this.viewportheight;
 
             if (this.options.progress) {
-                boxes.minProgressPos = boxes.maxFixedPos - boxes.options.progress;
+                boxes.minProgressPos = boxes.maxFixedPos - this.options.progress;
                 boxes.maxProgressPos = boxes.maxFixedPos;
             }
         }
