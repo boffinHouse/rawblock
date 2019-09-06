@@ -1,4 +1,5 @@
 import rb, { Component } from '../core';
+import { afterframePhase } from '../utils/rafqueue';
 
 const $ = Component.$;
 
@@ -273,7 +274,7 @@ class Scrolly extends (rb.components._childfx || Component) {
 
         if (Date.now() - this.lastCheck > this.checkTime) {
             this.lastCheck = Date.now();
-            rb.rIC(this.calculateLayout);
+            afterframePhase(this.calculateLayout);
         }
 
         shouldEnterScrollFix = this.minFixed <= pos && this.maxFixed >= pos;

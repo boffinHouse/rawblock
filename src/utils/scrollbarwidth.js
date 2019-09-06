@@ -1,3 +1,5 @@
+import { afterframePhase } from './rafqueue';
+
 let added, scrollbarWidth;
 
 const rb = window.rb;
@@ -29,7 +31,7 @@ const add = function(){
         added = true;
         scrollbarDiv.className = 'js' + rb.nameSeparator + 'rb' + rb.nameSeparator + 'scrollbarobserve';
         (document.body || rb.root).appendChild(scrollbarDiv);
-        rb.rIC(read);
+        afterframePhase(read);
     }
 };
 

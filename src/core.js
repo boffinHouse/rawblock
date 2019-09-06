@@ -1,7 +1,6 @@
 import rb from './utils/global-rb';
 import deferred from './utils/deferred';
-import rIC from './utils/request-idle-callback';
-import rAFQueue, {mutationPhase, measurePhase} from './utils/rafqueue';
+import rAFQueue, { mutationPhase, measurePhase, afterframePhase } from './utils/rafqueue';
 import rAFs from './utils/rafs';
 import './utils/rafs';
 import throttle from './utils/throttle';
@@ -258,7 +257,7 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
             _setup: function () {
                 if (!installed) {
                     installed = true;
-                    rIC(function () {
+                    afterframePhase(function () {
                         iWidth = innerWidth;
                         cHeight = docElem.clientHeight;
                     });
@@ -1782,6 +1781,15 @@ if(typeof process != 'undefined' && process.env && process.env.NODE_ENV != 'prod
          */
         measurePhase(){
             return measurePhase();
+        }
+
+        /**
+         * Returns a promise in a save read phase
+         * @param fn
+         * @return {Promise<void>|Deferred}
+         */
+        afterframePhase(fn) {
+            return afterframePhase(fn);
         }
 
         /**

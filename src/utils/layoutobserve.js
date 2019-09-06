@@ -1,7 +1,7 @@
 import rb from './global-rb';
 import Callbacks from '../rb_$/$_callbacks';
 import rbSymbol from './symbol';
-import rAFQueue from './rafqueue';
+import rAFQueue, { afterframePhase } from './rafqueue';
 import events from './events';
 
 let observeClass, observedElements;
@@ -12,11 +12,9 @@ let isInstalled = false;
 let resumeElementIndex = 0;
 let elementIndex = 0;
 
-const timedOutCheck = function(){
-    setTimeout(resumeCheckElements);
+const readSaveResumeCheckElements = function(){
+    afterframePhase(resumeCheckElements);
 };
-
-const rIC = function(){rAFQueue(timedOutCheck, true);};
 
 const resumeCheckElements = function(){
     if(resumeElementIndex == elementIndex){
@@ -51,7 +49,7 @@ const checkElements = function (e){
         } else if(Date.now() - start > 3){
             elementIndex++;
             resumeElementIndex = elementIndex;
-            rIC();
+            readSaveResumeCheckElements();
             return;
         }
     }

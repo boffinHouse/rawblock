@@ -49,7 +49,7 @@ function Draggy(element, options) {
 
     this.touchOpts = this.options.usePassiveEventListener && supportsTouchAction ?
         {passive: true} :
-        {passive: false}
+        {passive: !this.options.preventMove}
     ;
 
     this.reset();
@@ -79,6 +79,7 @@ Object.assign(Draggy, {
         move: noop,
         start: noop,
         end: noop,
+        cancelTouch: noop,
         // set to false to allow only vertical drag
         horizontal: true,
         // set to true to allow only vertical drag
@@ -130,9 +131,9 @@ Object.assign(Draggy, {
 
 Object.assign(Draggy.prototype, {
     setTouchAction(){
-        const {usePointerOnActive, usePassiveEventListener} = this.options;
+        const {usePointerOnActive, usePassiveEventListener, preventMove} = this.options;
 
-        if(!supportsTouchAction || (!usePassiveEventListener && (!usePointerOnActive || !supportsPointerWithoutTouch))){return;}
+        if(!preventMove || !supportsTouchAction || (!usePassiveEventListener && (!usePointerOnActive || !supportsPointerWithoutTouch))){return;}
 
         let style = '';
 
@@ -360,7 +361,7 @@ Object.assign(Draggy.prototype, {
     },
     setupMouse() {
         let timer;
-
+        const { options } = this;
         const move = (e)=> {
             if (!e.buttons && !e.which) {
                 up(e);
@@ -385,7 +386,8 @@ Object.assign(Draggy.prototype, {
             this._destroyMouse();
             const { handleDefaultPrevented, useMouse } = this.options;
 
-            if ((e.defaultPrevented && !handleDefaultPrevented) || e.button || !useMouse || !this.isAllowedForType('mouse') || !this.allowedDragTarget(e.target)) {
+            if ((e.defaultPrevented && !handleDefaultPrevented) || e.button || !useMouse ||
+                !this.isAllowedForType('mouse') || !this.allowedDragTarget(e.target) || options.cancelTouch(e, e)) {
                 return;
             }
 
@@ -406,6 +408,7 @@ Object.assign(Draggy.prototype, {
     },
     setupTouch() {
         let identifier;
+        const { options } = this;
         const getTouch = function(touches){
             let i, len, touch;
 
@@ -456,11 +459,13 @@ Object.assign(Draggy.prototype, {
                     return;
                 }
 
-                const { handleDefaultPrevented, useTouch } = this.options;
+                const { handleDefaultPrevented, useTouch } = options;
 
                 this._destroyTouch();
 
-                if ((e.defaultPrevented && !handleDefaultPrevented)|| !useTouch || !this.isAllowedForType('touch') || !e.touches[0] || !this.allowedDragTarget(e.target)) {
+                if ((e.defaultPrevented && !handleDefaultPrevented)|| !useTouch ||
+                    !this.isAllowedForType('touch') || !e.touches[0] ||
+                    !this.allowedDragTarget(e.target) || options.cancelTouch(e.touches[0], e)) {
                     return;
                 }
 
@@ -483,7 +488,7 @@ Object.assign(Draggy.prototype, {
 
         this.element.addEventListener('touchstart', this._ontouchstart, this.touchOpts);
 
-        if(hasIOSScrollBug && !this.element.ontouchmove){
+        if(hasIOSScrollBug && !this.element.ontouchmove && options.preventMove){
             this.element.ontouchmove = this.noop;
         }
 
@@ -527,7 +532,10 @@ Object.assign(Draggy.prototype, {
 
                 that._destroyPointer();
 
-                if ((e.defaultPrevented && !handleDefaultPrevented) || e.isPrimary === false || (isMouse && !useMouse) || e.button || !useTouch || !that.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
+                if ((e.defaultPrevented && !handleDefaultPrevented) || e.isPrimary === false ||
+                    (isMouse && !useMouse) || e.button || !useTouch ||
+                    !that.isAllowedForType('pointer') || !that.allowedDragTarget(e.target) ||
+                    options.cancelTouch(e, e)) {
                     return;
                 }
 

@@ -1,6 +1,5 @@
 import rb from './global-rb';
-import rIC from './request-idle-callback';
-import rAFQueue from './rafqueue';
+import rAFQueue, { measurePhase } from './rafqueue';
 
 const wait = Promise.resolve();
 
@@ -35,7 +34,7 @@ export default function throttle(fn, options) {
     };
 
     let afterAF = function () {
-        rIC(_run);
+        measurePhase().then(_run);
     };
 
     const throttel = function () {

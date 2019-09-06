@@ -66,18 +66,29 @@ export const mutationPhase = (fn) => {
 };
 
 let measurePromise;
+const measurePhaseChannel = new MessageChannel();
+
+measurePhaseChannel.port1.onmessage = () => {
+    if (measurePromise && measurePromise.resolve) {
+        measurePromise.resolve();
+    }
+};
+
+function postMeasurePhaseMessage() {
+    measurePhaseChannel.port2.postMessage(undefined);
+}
 
 /**
  * Returns a promise that is resolved in the measure/read phase.
  * @return {Promise<void> | Deferred}
  */
-export const measurePhase = () => {
+export const measurePhase = (fn) => {
     let promise;
 
     if (isInProgress) {
-        if (!measurePromise || measurePromise.isResolved()) {
+        if (!measurePromise || measurePromise.isResolved) {
             measurePromise = deferred();
-            setTimeout(measurePromise.resolve);
+            postMeasurePhaseMessage();
         }
 
         promise = measurePromise;
@@ -85,7 +96,49 @@ export const measurePhase = () => {
         promise = immediatePromise;
     }
 
+    if (fn) {
+        promise.then(fn);
+    }
+
     return promise;
+};
+
+let afterframePromise;
+const afterframePhaseChannel = new MessageChannel();
+
+afterframePhaseChannel.port1.onmessage = () => {
+    if (afterframePromise && afterframePromise.resolve) {
+        afterframePromise.resolve();
+    }
+};
+
+function postAfterframePhaseMessage() {
+    afterframePhaseChannel.port2.postMessage(undefined);
+}
+
+/**
+ *
+ * Returns a promise that is resolved in the afterframe/read phase.
+ * @return {Promise<void> | Deferred}
+ */
+export const afterframePhase = (fn) => {
+
+    if (!afterframePromise || afterframePromise.isResolved) {
+        afterframePromise = deferred();
+
+        if (isInProgress) {
+            postAfterframePhaseMessage();
+        } else {
+            rAFQueue(postAfterframePhaseMessage, true);
+        }
+
+    }
+
+    if (fn) {
+        afterframePromise.then(fn);
+    }
+
+    return afterframePromise;
 };
 
 rb.rAFQueue = rAFQueue;

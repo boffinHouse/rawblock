@@ -1,6 +1,6 @@
 import rb from './global-rb';
 import rAFQueue from './rafqueue';
-import rIC from './request-idle-callback';
+import { measurePhase } from './rafqueue';
 
 /**
  *
@@ -29,7 +29,7 @@ rb.debounce = function(fn, opts){
             rAFQueue(later);
         }  else if(!isReadCalled && !opts.write) {
             isReadCalled = true;
-            rIC(later);
+            measurePhase().then(later);
         } else {
             timeout = null;
             fn.apply(that, args);
@@ -37,7 +37,7 @@ rb.debounce = function(fn, opts){
     };
     const countFrames = function(){
         frames++;
-        if(timeout){
+        if(timeout && opts.minFrame < frames){
             rAFQueue(countFrames);
         }
     };
