@@ -491,6 +491,7 @@ Object.assign(Draggy.prototype, {
     },
     setupPointer(){
         let identifier;
+        const options = this.options;
 
         const move = (e)=> {
             if(e.pointerId == identifier){
@@ -514,7 +515,6 @@ Object.assign(Draggy.prototype, {
         };
 
         this._pointerdown = this._pointerdown || ((e)=> {
-                const options = this.options;
                 if (identifier) {
                     return;
                 }
