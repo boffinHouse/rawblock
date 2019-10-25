@@ -15,7 +15,7 @@ const btnsMap = {
 const regInputs = /^(?:input|textarea)$/i;
 const supportsPointerWithoutTouch = window.PointerEvent && (!window.TouchEvent || !window.Touch || !window.TouchList);
 const supportsCssTouchActionPan = cssSupports('(touch-action: pan-y)') && cssSupports('(touch-action: none)');
-const supportsPassiveEventListener = !supportsPointerWithoutTouch && supportsCssTouchActionPan && (function(){
+const supportsPassiveEventListener = !supportsPointerWithoutTouch && supportsCssTouchActionPan && (()=> {
         let supportsPassiveOption = false;
         const id = 'test' + getId();
 
@@ -109,7 +109,7 @@ Object.assign(Draggy, {
     },
     supportsTouchAction,
     constructs: [],
-    extend: function(defaults, construct, proto){
+    extend(defaults, construct, proto){
         Draggy.constructs.push(construct);
 
         Object.entries(proto).forEach(([name, prop]) => {
@@ -177,7 +177,7 @@ Object.assign(Draggy.prototype, {
             }
         }
 
-        return true || ret;
+        return ret;
     },
     reset() {
         this.isType = '';
@@ -283,7 +283,7 @@ Object.assign(Draggy.prototype, {
         clearInterval(this._velocityTimer);
         this.velocitySnapShot();
 
-        this.allowClick = function () {
+        this.allowClick = ()=> {
             preventClick = false;
         };
 
@@ -332,17 +332,15 @@ Object.assign(Draggy.prototype, {
         }
     },
     setupEvents() {
-        const that = this;
-
-        this._onclick = function (e) {
-            if (that.isClickPrevented) {
+        this._onclick = (e)=> {
+            if (this.isClickPrevented) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
             }
         };
 
-        this._onSelectStart = function (e) {
-            if (that.allowedDragTarget(e.target)) {
+        this._onSelectStart = (e)=> {
+            if (this.allowedDragTarget(e.target)) {
                 e.preventDefault();
             }
         };
@@ -350,7 +348,7 @@ Object.assign(Draggy.prototype, {
         this.element.addEventListener('click', this._onclick, true);
         this.element.addEventListener('selectstart', this._onSelectStart, true);
     },
-    allowedDragTarget: function(target){
+    allowedDragTarget(target){
         const {excludeNothing, exclude} = this.options;
         return excludeNothing ||
             (btnsMap[target.type] || !regInputs.test(target.nodeName || '') && (!exclude || !target.closest(exclude)));
@@ -406,7 +404,7 @@ Object.assign(Draggy.prototype, {
     },
     setupTouch() {
         let identifier;
-        const getTouch = function(touches){
+        const getTouch = (touches)=> {
             let i, len, touch;
 
             for(i = 0, len = touches.length; i < len; i++){
@@ -491,9 +489,8 @@ Object.assign(Draggy.prototype, {
             this.element.addEventListener('touchmove', this._ontouchstart, this.touchOpts);
         }
     },
-    setupPointer: function(){
+    setupPointer(){
         let identifier;
-        const that = this;
         const options = this.options;
 
         const move = (e)=> {
@@ -517,22 +514,22 @@ Object.assign(Draggy.prototype, {
             document.removeEventListener('pointercancel', end);
         };
 
-        this._pointerdown = this._pointerdown || function (e) {
+        this._pointerdown = this._pointerdown || ((e)=> {
                 if (identifier) {
                     return;
                 }
 
                 const isMouse = e.pointerType == 'mouse';
-                const { handleDefaultPrevented, useTouch, useMouse } = this.options;
+                const { handleDefaultPrevented, useTouch, useMouse } = options;
 
-                that._destroyPointer();
+                this._destroyPointer();
 
-                if ((e.defaultPrevented && !handleDefaultPrevented) || e.isPrimary === false || (isMouse && !useMouse) || e.button || !useTouch || !that.isAllowedForType('pointer') || !that.allowedDragTarget(e.target)) {
+                if ((e.defaultPrevented && !handleDefaultPrevented) || e.isPrimary === false || (isMouse && !useMouse) || e.button || !useTouch || !this.isAllowedForType('pointer') || !this.allowedDragTarget(e.target)) {
                     return;
                 }
 
                 if(isMouse && !options.usePointerMouse){
-                    if(options.useMouse && options.stopPropagation){
+                    if(useMouse && options.stopPropagation){
                         e.stopImmediatePropagation();
                     }
                     return;
@@ -544,15 +541,15 @@ Object.assign(Draggy.prototype, {
 
                 identifier = e.pointerId;
 
-                that.isType = isMouse ? 'mouse' : 'touch';
-                that.isTechnicalType = 'pointer';
+                this.isType = isMouse ? 'mouse' : 'touch';
+                this.isTechnicalType = 'pointer';
 
                 document.addEventListener('pointermove', move);
                 document.addEventListener('pointerup', end);
                 document.addEventListener('pointercancel', end);
 
-                that.start(e, e);
-            };
+                this.start(e, e);
+            });
 
         this.element.addEventListener('pointerdown', this._pointerdown);
     },
