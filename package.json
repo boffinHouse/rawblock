@@ -104,7 +104,7 @@
     "jasmine-core": "^2.99.1",
     "jit-grunt": "~0.10.0",
     "jsdoc-to-markdown": "^2.0.1",
-    "karma": "^1.7.1",
+    "karma": "^6.3.14",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.2",
     "load-grunt-configs": "~1.0.0",
